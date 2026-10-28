@@ -1,0 +1,95 @@
+/* Comentário com ✨ e font-size: 9px e linear-gradient(#6366f1, #a855f7): não conta. */
+:root {
+  --cor-marca: #2563eb;
+  --gradiente-marca: linear-gradient(90deg, #1d4ed8, #2563eb);
+  --raio: 8px;
+}
+.lista {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-fg);
+  background: var(--color-panel);
+}
+.linha {
+  font: 600 13px/20px var(--fonte);
+  border-radius: var(--raio);
+}
+.avatar {
+  border-radius: 999px;
+}
+.pill {
+  border-radius: 24px;
+}
+.dialogo {
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--color-fg) 20%, transparent);
+}
+.menu {
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-fg) 16%, transparent);
+}
+.rotulo {
+  text-transform: uppercase;
+}
+.hero {
+  background: var(--color-panel);
+  border-radius: 12px;
+}
+.faixa {
+  background-image: linear-gradient(to bottom, transparent, var(--color-panel));
+}
+.botao {
+  transition: background-color 150ms ease;
+}
+@media (hover: hover) {
+  .linha:hover {
+    transform: translateX(2px);
+  }
+}
+.spinner {
+  animation: girar 1s linear infinite;
+}
+.sidebar {
+  backdrop-filter: blur(20px);
+}
+blockquote {
+  border-left: 3px solid var(--color-fg);
+}
+.nav-item.ativo {
+  border-left: 2px solid var(--cor-marca);
+}
+.botao:focus-visible {
+  border: 2px solid var(--cor-marca);
+  background: transparent;
+}
+.campo {
+  border: 1px solid var(--color-fg);
+  background: transparent;
+}
+@media (forced-colors: active) {
+  .botao {
+    border: 1px solid ButtonText;
+    background: transparent;
+  }
+}
+.menu-lateral:hover .rotulo {
+  transform: translateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:hover {
+    transform: none !important;
+  }
+}
+.topo[data-rolou="true"]::before {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+@media (forced-colors: active) {
+  .aviso {
+    border-left: 3px solid CanvasText;
+  }
+}
+@media print {
+  .rodape {
+    font-size: 8pt;
+  }
+}

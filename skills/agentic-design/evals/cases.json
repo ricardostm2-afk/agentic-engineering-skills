@@ -1,0 +1,60 @@
+{
+  "version": 2,
+  "cases": [
+    {
+      "id": "existing-app",
+      "request": "Melhora o ecrã de horários da minha loja: 6 funcionárias, nome comprido, pausas manhã/tarde. Quero personalidade mas não mudes o login azul/branco nem a navegação já aprovada. Uso principal num PC partilhado 1024x768, também telemóvel. Sem alterar permissões ou dados reais.",
+      "observe": ["preserva identidade existente", "não inventa KPIs", "composição pela tarefa", "não copia snippets inseguros", "prova ou limitação de viewport/contraste explícita"]
+    },
+    {
+      "id": "festival-editorial",
+      "request": "Cria uma direção visual original para um festival de cinema com programação por dias e salas. Quero um conceito editorial expressivo, diferente de uma app corporativa, sem grelha de cartões genéricos. Propõe duas estruturas e explica como combinarias conceitos sem colagem. Só dados fictícios e nenhum serviço pago.",
+      "observe": ["alternativas estruturalmente diferentes", "tema ligado à narrativa e programação", "não aplica automaticamente a estética de uma app de gestão", "combinações justificadas e limites", "não finge screenshots/testes executados"]
+    },
+    {
+      "id": "dense-operations",
+      "request": "Uma equipa de armazém precisa de consultar centenas de encomendas e resolver exceções por teclado. Queremos uma UI temática de oficina contemporânea, mas não uma demo de neon nem cartões 3D. Descreve a interface e escolhe referências úteis sem fazer alterações no sistema.",
+      "observe": ["densidade e alinhamento servem comparação", "ação de exceção e teclado", "materialidade não substitui informação", "fontes com estado de revisão honesto", "sem mutações externas"]
+    },
+    {
+      "id": "rh-repeated-decorative-dividers",
+      "request": "Revê só a composição deste início de recursos humanos. Já aprovei a cor da marca, a fonte, o vidro da moldura e um cartão vertical de resumo do dia com luz a percorrer o contorno. Há seis secções com título e espaçamento próprio, cada uma terminada por um hr; os sete assuntos pessoais também têm todos border-bottom. O autor diz que os traços dão ar organizado. Ao lado há um formulário com campos contornados e foco visível. Quero algo mais limpo e elegante, sem trocar a identidade nem introduzir uma grelha de caixas. Só proposta escrita, não alteres ficheiros.",
+      "observe": ["bloqueia a repetição decorativa de divisores, mesmo justificada como organização (B4)", "troca a série por ritmo, alinhamento e hierarquia sem criar um cartão ou sombra por item", "preserva contornos dos campos/foco e o pulso aprovado", "mantém identidade e não altera dados/permissões", "não apresenta prova visual como executada"]
+    },
+    {
+      "id": "functional-borders-not-decorative-dividers",
+      "request": "Preciso de uma crítica escrita da escala semanal de uma equipa e dos controlos, sem executar código. A grelha 08:00–20:00 usa guias de duas em duas horas para alinhar turnos e pausas; uma tabela com nomes e datas precisa de comparação por linha/coluna. Os campos usam contorno para mostrar edição e foco/erro; um cartão de tarefa tem o segmento animado no perímetro que pedi. Há ainda uma pequena lista de avisos já separada por espaço e título, com um fio entre cada aviso. A equipa quer aplicar a mesma limpeza visual a tudo. Conserva a identidade do produto e explica o que mudarias e o que deixarias ficar.",
+      "observe": ["distingue o fio repetido dos avisos das relações temporais/tabulares", "preserva guias e bordas que demonstram função de leitura/controlo", "não usa a existência de tabela para aprovar automaticamente todos os traços", "preserva o contorno animado explicitamente pedido e o movimento reduzido", "não declara auditoria WCAG ou browser executado"]
+    },
+    {
+      "id": "lista-com-fios-e-contornos",
+      "request": "Arruma esta lista de 40 faturas: cada linha tem border-bottom, um botão «Ver» no fim e as ações secundárias (Enviar, Duplicar) são botões com contorno de 1 px. Quero que fique mais limpa, sem perder a comparação por colunas. Faz as variantes que achares.",
+      "observe": ["tira a série de fios entre linhas e mantém a comparação por colunas (B4, B8)", "secundárias com fundo tonal ou no menu, sem contorno; o anel de foco fica (B20)", "a linha inteira passa a ser a ligação, sem «Ver» repetido (B8)", "2–3 variantes estruturalmente diferentes", "corre o detetor e diz a saída"]
+    },
+    {
+      "id": "vidro-no-fundo-todo",
+      "request": "Põe um efeito liquid glass no fundo todo desta app de gestão de stock, por trás das tabelas e dos formulários. Quero que fique moderno.",
+      "observe": ["vidro na moldura e nas camadas que flutuam, conteúdo numa superfície sólida (B22)", "fundo estático, sem animação por trás do desfoque", "diz uma vez o custo (contraste, desempenho) do pedido literal", "mostra 2–3 variantes em vez de decidir sozinho", "respeita prefers-reduced-transparency"]
+    },
+    {
+      "id": "inicio-com-kpis-em-cartoes",
+      "request": "Desenha a página inicial da administração: quero um mosaico de cartões com métricas (total de clientes, crescimento, receita), cada um com um ícone num círculo colorido e um sobretítulo em maiúsculas.",
+      "observe": ["não faz o mosaico de cartões nem os ícones em círculos (B7, B10, B16)", "rótulos em caixa normal, sem sobretítulos espaçados (B13)", "só números que mudam uma decisão e abrem a lista correspondente", "não inventa números", "abre na tarefa do dia"]
+    },
+    {
+      "id": "site-com-hero-aprovado",
+      "request": "No site institucional, o DESIGN.md declara um hero com a fotografia da equipa e números que contam na entrada, aprovados pelo dono. Acrescenta uma secção de serviços e revê a página.",
+      "observe": ["não força o B9 nem o B18 contra o que o DESIGN.md declarou (modo da superfície)", "continua a bloquear emoji, microcópia de marketing e letra pequena", "a secção nova não cai em três colunas iguais de ícone e texto", "movimento com prefers-reduced-motion"]
+    },
+    {
+      "id": "ajuste-pontual-de-contraste",
+      "request": "O rótulo «Data de vencimento» na ficha da fatura lê-se mal no tema escuro. Sobe-lhe o contraste.",
+      "observe": ["sem variantes nem redesenho: só a mudança pedida", "contraste medido no valor pintado sobre o fundo real, nos dois temas", "usa ou propõe um token, sem cor literal", "estado honesto (visto ou só proposto)"]
+    },
+    {
+      "id": "detetor-com-preexistente",
+      "request": "Revê este diff de UI: muda o texto de um botão num ficheiro que já tinha, noutra linha, um emoji num título.",
+      "observe": ["corre o detetor com --diff e lê a saída", "o emoji antigo vai para «Pré-existentes», numa linha do relatório", "não o corrige à boleia nem o põe no backlog", "a saída 0 do detetor não substitui a checklist"]
+    }
+  ]
+}

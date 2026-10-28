@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-19",
+  "upstreams": {
+    "rea": {
+      "repository": "https://github.com/morluto/rea",
+      "gitUrl": "https://github.com/morluto/rea.git",
+      "ref": "main",
+      "commit": "559af3d3ff4b0236d468e80788c82d5a85b102da",
+      "license": "MIT"
+    },
+    "mattpocock": {
+      "repository": "https://github.com/mattpocock/skills",
+      "gitUrl": "https://github.com/mattpocock/skills.git",
+      "ref": "main",
+      "commit": "49dd158d1076134a641b33efb035946536778336",
+      "license": "MIT"
+    }
+  },
+  "skills": [
+    {
+      "name": "agentic-ci-audit",
+      "origin": "skills/agentic-ci-audit/references/origem.md",
+      "licenseFile": "skills/agentic-ci-audit/licenses/LICENSE"
+    },
+    {
+      "name": "agentic-tool-design",
+      "origin": "skills/agentic-tool-design/references/origem.md",
+      "licenseFile": "skills/agentic-tool-design/licenses/LICENSE"
+    },
+    {
+      "name": "agentic-analysis-optimization",
+      "origin": "skills/agentic-analysis-optimization/references/origem.md",
+      "licenseFile": "skills/agentic-analysis-optimization/licenses/LICENSE"
+    },
+    {
+      "name": "agentic-architecture",
+      "origin": "skills/agentic-architecture/references/origem.md",
+      "licenseFile": "skills/agentic-architecture/licenses/LICENSE"
+    },
+    {
+      "name": "agentic-fix",
+      "origin": "skills/agentic-fix/references/origem.md",
+      "licenseFile": "skills/agentic-fix/licenses/LICENSE-mattpocock-skills",
+      "coverage": "partial"
+    },
+    {
+      "name": "agentic-implement",
+      "origin": "skills/agentic-implement/references/origem.md",
+      "licenseFile": "skills/agentic-implement/licenses/LICENSE-mattpocock-skills",
+      "coverage": "partial"
+    }
+  ],
+  "runtime": {
+    "rea": {
+      "installedByThisChange": false,
+      "npmPackage": "rea-agents",
+      "version": "6.7.0",
+      "registry": "https://registry.npmjs.org/rea-agents/6.7.0",
+      "integrity": "sha512-yhIx2ioJYYT1C/tONfYeitC6LhnKmCh+ZwRUOgYuhSc733lGhkkt73zhug9WmLgxoMdKuqIYGCoBfD4fXkOhFw==",
+      "sourceTarballEquivalence": "not-established",
+      "upstreamSkillVersion": "42",
+      "registration": "separada; setup --skill=false conserva esta cópia"
+    }
+  },
+  "files": [
+    {
+      "upstream": "rea",
+      "sourcePath": ".agents/skills/rea-ci-tests-audit/references/measurement-and-ci.md",
+      "sourceSha256": "691eb55373b24b8276dce5abcf94d9011b6ebeb7bdd9c23fb371654c5e52a583",
+      "targetPath": "skills/agentic-ci-audit/references/measurement-and-ci.md",
+      "mode": "verbatim",
+      "reason": "Cópia sem alterações.",
+      "targetSha256": "691eb55373b24b8276dce5abcf94d9011b6ebeb7bdd9c23fb371654c5e52a583"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": ".agents/skills/rea-analysis-optimization/references/kuna-case-study.md",
+      "sourceSha256": "69af48780802f81033b0332274a9caf36e8b2125d6e5ade4b55002e469a39a2a",
+      "targetPath": "skills/agentic-analysis-optimization/references/kuna-case-study.md",
+      "mode": "adapted",
+      "reason": "Exemplo histórico preservado, links de código convertidos em permalinks.",
+      "targetSha256": "9119656f8eae7f66d694055bc13116ad33c028f82655ea3d0e541c16f8acbdaf"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": ".agents/skills/rea-ci-tests-audit/SKILL.md",
+      "sourceSha256": "997f3717eacb261247b43805a75db9cbd6bd29eb88a5639b592b9705abac98ef",
+      "targetPath": "skills/agentic-ci-audit/SKILL.md",
+      "mode": "adapted",
+      "reason": "Adaptação genérica em português: retira comandos/contratos locais REA, preserva método e âmbito discriminante.",
+      "targetSha256": "73afef117b42cafac074543630ee3ad6174e335eea0449b747f04990df80d39c"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": ".agents/skills/rea-analysis-optimization/SKILL.md",
+      "sourceSha256": "2a7ae210985017f00f8ae3b57c8f03fff0587ce19079184284b5881b53d5f469",
+      "targetPath": "skills/agentic-analysis-optimization/SKILL.md",
+      "mode": "adapted",
+      "reason": "Adaptação genérica em português: retira comandos/contratos locais REA, preserva método e âmbito discriminante.",
+      "targetSha256": "a34be3a109b4f797c6db856c8d2d96e3a6cd46e144343100105c608a7f3fcd03"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": ".agents/skills/rea-tool-design/SKILL.md",
+      "sourceSha256": "6023df0f1cdbe9944963469a3f2a1365d55eebdf1a7f4adb33430851f9ee5f14",
+      "targetPath": "skills/agentic-tool-design/SKILL.md",
+      "mode": "adapted",
+      "reason": "Adaptação genérica em português: retira comandos/contratos locais REA, preserva método e âmbito discriminante.",
+      "targetSha256": "cf37d86d5c4206ba7806fcc17594a69faaed4408bbede6618ae27377e971bf6b"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": "docs/tool-design.md",
+      "sourceSha256": "ad91e49ad594238e92678fdd57a25e65bf308ac4ee9cc3a57ba7ad8f3f32ad8c",
+      "targetPath": "skills/agentic-tool-design/references/contracts.md",
+      "mode": "adapted",
+      "reason": "Síntese seletiva portable, sem constantes/helpers internos/providers específicos.",
+      "targetSha256": "e504cfcef762c9384d89ac018b5e89dc7453396adc5879a62984a54fafa34e1e"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "798f9e4d18e49b30bf2f12696c8ced73dc4e1413da375a333d01281543a1ea8b",
+      "targetPath": "skills/agentic-ci-audit/licenses/LICENSE",
+      "mode": "verbatim",
+      "reason": "Cópia sem alterações.",
+      "targetSha256": "798f9e4d18e49b30bf2f12696c8ced73dc4e1413da375a333d01281543a1ea8b"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "798f9e4d18e49b30bf2f12696c8ced73dc4e1413da375a333d01281543a1ea8b",
+      "targetPath": "skills/agentic-tool-design/licenses/LICENSE",
+      "mode": "verbatim",
+      "reason": "Cópia sem alterações.",
+      "targetSha256": "798f9e4d18e49b30bf2f12696c8ced73dc4e1413da375a333d01281543a1ea8b"
+    },
+    {
+      "upstream": "rea",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "798f9e4d18e49b30bf2f12696c8ced73dc4e1413da375a333d01281543a1ea8b",
+      "targetPath": "skills/agentic-analysis-optimization/licenses/LICENSE",
+      "mode": "verbatim",
+      "reason": "Cópia sem alterações.",
+      "targetSha256": "798f9e4d18e49b30bf2f12696c8ced73dc4e1413da375a333d01281543a1ea8b"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "sourceSha256": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
+      "targetPath": "skills/agentic-architecture/SKILL.md",
+      "mode": "adapted",
+      "reason": "Método do improve-codebase-architecture em português: seis passos com critério de fim, prova medida em cada candidato numa janela do histórico declarada (commits por candidato, acoplamento e mudança conjunta, teste de apagar, ficheiro:linha, com o comando de cada número), relatório que segue as regras de UI da agentic-design e se publica como página com a ferramenta Artifact, grill de uma pergunta de cada vez e execução pela agentic-feature; frontmatter só com name e description e invocação pelos gatilhos; a agentic-implement entra nas irmãs, para o aprofundar.md apontar para a receita de refactor.",
+      "targetSha256": "23a9564a19157195533f9c7baceafbf919c12126ab6f13537443cafea669f308"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/codebase-design/SKILL.md",
+      "sourceSha256": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
+      "targetPath": "skills/agentic-architecture/references/vocabulario.md",
+      "mode": "adapted",
+      "reason": "Vocabulário do codebase-design em português, num só sítio para a agentic-feature, a agentic-implement e a agentic-project; junta os termos que o método usa noutros ficheiros já inventariados aqui: aprofundar e atrito (improve-codebase-architecture/SKILL.md), porta (codebase-design/DEEPENING.md) e o tom e as palavras a evitar (improve-codebase-architecture/HTML-REPORT.md).",
+      "targetSha256": "fcae41a7e8177e11531a9c430f4fefe6eb7679872e71526edd3ac21f3dc6b2ec"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/codebase-design/DEEPENING.md",
+      "sourceSha256": "f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
+      "targetPath": "skills/agentic-architecture/references/aprofundar.md",
+      "mode": "adapted",
+      "reason": "Tradução para português, com as etiquetas da categoria de dependência que o relatório usa; os testes antigos dos módulos rasos só saem depois da receita de refactor da agentic-implement.",
+      "targetSha256": "56b85e47cccb9d6725b70176d369af275f697df50aa2d8a6103784de5967f163"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/codebase-design/DESIGN-IT-TWICE.md",
+      "sourceSha256": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
+      "targetPath": "skills/agentic-architecture/references/desenhar-duas-vezes.md",
+      "mode": "adapted",
+      "reason": "Tradução para português; sem subagentes, os desenhos fazem-se em sequência, e a escolha volta ao grill como a pergunta seguinte.",
+      "targetSha256": "a34c0280bd41a6bd7570e78abc721604e13f82a54531ce48f033558645fff87f"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/improve-codebase-architecture/HTML-REPORT.md",
+      "sourceSha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+      "targetPath": "skills/agentic-architecture/references/relatorio.md",
+      "mode": "adapted",
+      "reason": "Tradução para português, com o bloco Prova em cada candidato e a janela do histórico no cabeçalho. O relatório é um ecrã que o humano lê e segue as regras de UI da agentic-design (sem maiúsculas espaçadas, pastilhas de cor, gradiente, cartões nem bordas laterais; cores em tokens com os valores do upstream; o detetor dela sai 0 sobre a página), e o contrato da artifact-design fica por cima do esqueleto quando o relatório se publica como Artifact.",
+      "targetSha256": "b2d3c5719a8e2fb61b7c8c97b2f69c63d4cfde6962c77e5082d4c54e54d162ed"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/productivity/grilling/SKILL.md",
+      "sourceSha256": "befdff1e27a1dfe2a294d5871169ac1afe16d983911daa4f32627514a48c1e15",
+      "targetPath": "skills/agentic-architecture/references/grill.md",
+      "mode": "adapted",
+      "reason": "Grill do candidato: uma pergunta de cada vez, com a recomendação antes do contexto e sem emojis, mais os efeitos laterais no glossário e nas ADRs do passo 3 do improve-codebase-architecture.",
+      "targetSha256": "35f2ba7803d9d17bbdffda37362bab09b2f6e027b55aa87b4c9c5c348e84cf5b"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "targetPath": "skills/agentic-architecture/licenses/LICENSE",
+      "mode": "verbatim",
+      "reason": "Cópia integral da licença MIT, com o aviso de copyright de Matt Pocock que a licença exige em cópias e partes substanciais.",
+      "targetSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "sourceSha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
+      "targetPath": "skills/agentic-fix/SKILL.md",
+      "mode": "adapted",
+      "reason": "Só o ciclo vermelho do passo 3 vem do diagnosing-bugs (um comando que falha por este defeito, antes de qualquer hipótese). O resto da skill é método próprio: a divisão entre orquestrador e agente, a classe do defeito, as salvaguardas, a revisão de contexto novo e o passo «se escapou».",
+      "targetSha256": "a160bd7d35d209cb4d33c0b542b4a504900e43ef2e17265e3006262d243d2f10"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "sourceSha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
+      "targetPath": "skills/agentic-fix/references/diagnostico.md",
+      "mode": "adapted",
+      "reason": "Adaptação em português das fases do diagnosing-bugs depois do ciclo vermelho (segredos, minimizar, hipóteses falsificáveis, instrumentar, fechar), com a evidência do histórico acrescentada. O checkpoint com o humano antes de testar hipóteses passa a opcional, e saem o script de loop com humano e as referências a GLOSSARY.md e ADRs.",
+      "targetSha256": "6668b233ea1fd96c4ad186fea75735759fd6ffbcecfaa31cc401176967088501"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "targetPath": "skills/agentic-fix/licenses/LICENSE-mattpocock-skills",
+      "mode": "verbatim",
+      "reason": "Cópia integral da licença MIT, com o aviso de copyright de Matt Pocock que a licença exige em cópias e partes substanciais.",
+      "targetSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/tdd/SKILL.md",
+      "sourceSha256": "5505d25bbaa8fc14a79e4d20163936958992a2995b7f1dd1d6197edc9ed722e0",
+      "targetPath": "skills/agentic-implement/SKILL.md",
+      "mode": "adapted",
+      "reason": "Só o passo 3 (teste primeiro, em cortes verticais, na costura pública) vem do tdd. O resto da skill é método próprio: o brief fechado como entrada, os gostos do projeto, o commit por causa e o handoff com estado.",
+      "targetSha256": "5a3458f316bf5e458222c80e428b7e73e72ed1718122163efd180570d734fa62"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/tdd/mocking.md",
+      "sourceSha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+      "targetPath": "skills/agentic-implement/references/testes.md",
+      "mode": "adapted",
+      "reason": "Adaptação em português do que é um bom teste, das costuras, dos maus testes e dos mocks só nas fronteiras do sistema, a partir do tdd/mocking.md (a parte do tdd/SKILL.md consta na linha acima). Acrescenta os tempos limite e processos filhos, a receita de refactor e as regras do ciclo.",
+      "targetSha256": "a6a00fdd0653ea1ee8275f05e09f241357f13cb1447b25c05e30eefaf7b2f7fc"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "targetPath": "skills/agentic-implement/licenses/LICENSE-mattpocock-skills",
+      "mode": "verbatim",
+      "reason": "Cópia integral da licença MIT, com o aviso de copyright de Matt Pocock que a licença exige em cópias e partes substanciais.",
+      "targetSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+    }
+  ]
+}

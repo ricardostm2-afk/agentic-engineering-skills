@@ -1,0 +1,21 @@
+.cartao {
+  border-radius: 1.5rem;
+  color: #334155;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+.cartao:hover {
+  transform: translateY(-2px);
+}
+.fundo {
+  animation: respirar 4s ease-in-out infinite;
+}
+.lista {
+  backdrop-filter: blur(12px);
+}
+.alerta {
+  border-left: 4px solid var(--aviso);
+}
+.botao-secundario {
+  border: 1px solid var(--marca);
+  background: transparent;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "agentic-skills",
+  "owner": {
+    "name": "agentic-skills contributors"
+  },
+  "metadata": {
+    "description": "Ten skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, audit CI, design tools and optimize analyses. Text in European Portuguese."
+  },
+  "plugins": [
+    {
+      "name": "agentic-skills",
+      "source": "./",
+      "description": "Ten skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, audit CI, design tools and optimize analyses. Text in European Portuguese.",
+      "category": "workflow",
+      "homepage": "https://github.com/ricardostm2-afk/agentic-engineering-skills",
+      "repository": "https://github.com/ricardostm2-afk/agentic-engineering-skills",
+      "keywords": [
+        "agents",
+        "skills",
+        "tdd",
+        "worktrees",
+        "code-review",
+        "ui-design",
+        "architecture",
+        "ci",
+        "tool-design",
+        "spec-kit",
+        "portuguese"
+      ]
+    }
+  ]
+}

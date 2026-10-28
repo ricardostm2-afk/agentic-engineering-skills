@@ -1,0 +1,23 @@
+.cartaoPremium {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+}
+.hero {
+  background: linear-gradient(180deg, #0ea5e9, #22d3ee);
+}
+.legenda {
+  font-size: 0.65rem;
+}
+.novo::before {
+  content: "✨";
+}
+.marca {
+  --brilho: radial-gradient(circle, hsl(265 85% 60%), transparent);
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+}
+.cartao {
+  transition: all 200ms ease;
+}

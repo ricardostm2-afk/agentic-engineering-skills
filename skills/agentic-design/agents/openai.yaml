@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Design"
+  short_description: "UI sem estética de IA: perguntas, variantes, detetor e prova"
+  default_prompt: "Usa $agentic-design para desenhar, variar ou rever UI sem estética de IA, com o detetor e capturas."
