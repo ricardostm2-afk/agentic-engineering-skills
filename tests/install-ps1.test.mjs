@@ -12,7 +12,7 @@ const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SCRIPT = path.join(RAIZ, "install.ps1");
 const PS = ["pwsh", "powershell"].find((b) => spawnSync(b, ["-NoProfile", "-Command", "exit 0"]).status === 0);
 const opcoes = { skip: PS ? false : "sem PowerShell (pwsh ou powershell) nesta máquina" };
-const DEZ = ["agentic-analysis-optimization", "agentic-architecture", "agentic-ci-audit", "agentic-code-review", "agentic-design", "agentic-feature", "agentic-fix", "agentic-implement", "agentic-project", "agentic-tool-design"];
+const ONZE = ["agentic-analysis-optimization", "agentic-architecture", "agentic-ci-audit", "agentic-code-review", "agentic-design", "agentic-explain", "agentic-feature", "agentic-fix", "agentic-implement", "agentic-project", "agentic-tool-design"];
 
 function casa(t, pastas = []) {
   const home = mkdtempSync(path.join(tmpdir(), "install-ps1-"));
@@ -44,18 +44,18 @@ test("simulação deteta os agentes pelas pastas e não cria nada", opcoes, (t) 
   assert.match(r.out, /SIMULAÇÃO/);
   assert.match(r.out, /^claude → ~\/\.claude\/skills$/m);
   assert.match(r.out, /^codex → ~\/\.agents\/skills$/m);
-  for (const nome of DEZ) assert.match(r.out, new RegExp("^\\s+copiaria\\s+" + nome + "$", "m"));
+  for (const nome of ONZE) assert.match(r.out, new RegExp("^\\s+copiaria\\s+" + nome + "$", "m"));
   assert.ok(!existsSync(path.join(home, ".claude", "skills")));
   assert.ok(!existsSync(path.join(home, ".agents")));
 });
 
-test("-Aplicar copia as dez skills para o Claude e o Codex, e a 2.ª corrida não muda nada", opcoes, (t) => {
+test("-Aplicar copia as onze skills para o Claude e o Codex, e a 2.ª corrida não muda nada", opcoes, (t) => {
   const { home, corre } = casa(t);
   const r = corre("-Aplicar", "-Agente", "claude,codex");
   assert.equal(r.status, 0, r.out);
   for (const pasta of [".claude", ".agents"]) {
     const destino = path.join(home, pasta, "skills");
-    assert.deepEqual(readdirSync(destino).sort(), DEZ, destino);
+    assert.deepEqual(readdirSync(destino).sort(), ONZE, destino);
     assert.ok(existsSync(path.join(destino, "agentic-code-review", "scripts", "validar-relatorio.mjs")));
     assert.ok(existsSync(path.join(destino, "agentic-architecture", "licenses", "LICENSE")));
   }

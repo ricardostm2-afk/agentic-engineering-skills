@@ -1,7 +1,7 @@
 {
   "name": "agentic-skills",
   "private": true,
-  "description": "Ten skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, audit CI, design tools and optimize analyses. Text in European Portuguese.",
+  "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Text in European Portuguese.",
   "license": "MIT",
   "engines": {
     "node": ">=20"
@@ -20,6 +20,8 @@
     "ci",
     "tool-design",
     "spec-kit",
-    "portuguese"
+    "portuguese",
+    "explain",
+    "visualization"
   ]
 }

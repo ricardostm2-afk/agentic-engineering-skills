@@ -37,6 +37,10 @@ checks it. For `agentic-fix` and `agentic-implement` it lists only the files ada
 - The visual report of `agentic-architecture` loads Tailwind (`cdn.tailwindcss.com`) and Mermaid
   (`cdn.jsdelivr.net/npm/mermaid@11`) from public CDNs when you open it.
 - The board page in `agentic-project/assets/quadro/quadro.html` imports IBM Plex from Google Fonts.
+- The page that `agentic-explain` generates loads two libraries from jsDelivr (`cdn.jsdelivr.net`) when you
+  open it, with no copy in this repository: `3d-force-graph` 1.80.1, by vasturiano
+  ([vasturiano/3d-force-graph](https://github.com/vasturiano/3d-force-graph)), MIT; and `three` 0.186.1, by the
+  three.js authors ([mrdoob/three.js](https://github.com/mrdoob/three.js)), MIT.
 
 ## Optional companion skills (not included)
 

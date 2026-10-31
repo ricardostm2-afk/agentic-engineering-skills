@@ -23,9 +23,9 @@ test("o plugin e o marketplace têm o mesmo nome (os ids de instalação depende
   assert.ok(plugin.author?.name);
 });
 
-test("a raiz do plugin tem skills/ com as dez skills e nada dentro de .claude-plugin/ além dos manifestos", () => {
+test("a raiz do plugin tem skills/ com as onze skills e nada dentro de .claude-plugin/ além dos manifestos", () => {
   const pastas = readdirSync(path.join(RAIZ, "skills"), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort();
-  assert.equal(pastas.length, 10);
+  assert.equal(pastas.length, 11);
   for (const p of pastas) assert.ok(existsSync(path.join(RAIZ, "skills", p, "SKILL.md")), p);
   assert.deepEqual(readdirSync(path.join(RAIZ, ".claude-plugin")).sort(), ["marketplace.json", "plugin.json"]);
 });

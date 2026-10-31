@@ -1,0 +1,2065 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net ; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{titulo}}</title>
+<style>
+:root {
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --raio-s: 4px;
+  --raio: 8px;
+  --raio-l: 12px;
+  color-scheme: light;
+  --fundo: #ffffff;
+  --painel: #ffffff;
+  --sombra: 0 1px 2px rgb(20 24 31 / 0.08), 0 6px 20px rgb(20 24 31 / 0.09);
+  --superficie: #eceef1;
+  --superficie-2: #dcdfe4;
+  --tinta: #1e1f22;
+  --tinta-2: #4b4e54;
+  --acao: #1e1f22;
+  --sobre-acao: #ffffff;
+  --foco: #0a63a0;
+  --lig: #6a6f78;
+  --lig-esb: #c3c7cd;
+  --lig-real: #1e1f22;
+  --no-esb: #bdbdbd;
+  --placa: #e6e9ee;
+  --placa-2: #d6dae1;
+  --t-1: #8f6a00;
+  --t-2: #0072b2;
+  --t-3: #0a7f5f;
+  --t-4: #c2531b;
+  --t-5: #a33f7c;
+  --t-6: #5e5aa8;
+  --r-baixo: #0072b2;
+  --r-medio: #8f6a00;
+  --r-alto: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --fundo: #15171b;
+    --painel: #1d2026;
+    --sombra: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 24px rgb(0 0 0 / 0.4);
+    --superficie: #292d34;
+    --superficie-2: #363b44;
+    --tinta: #ecedf0;
+    --tinta-2: #c3c7cd;
+    --acao: #ecedf0;
+    --sobre-acao: #15171b;
+    --foco: #6ab7ee;
+    --lig: #9a9ea8;
+    --lig-esb: #444850;
+    --lig-real: #ecedf0;
+    --no-esb: #50545c;
+    --placa: #272b33;
+    --placa-2: #323741;
+    --t-1: #e0b83a;
+    --t-2: #5bb3f0;
+    --t-3: #3dc9a0;
+    --t-4: #f08a5a;
+    --t-5: #e58bbe;
+    --t-6: #a9a3ee;
+    --r-baixo: #5bb3f0;
+    --r-medio: #e0b83a;
+    --r-alto: #ff7b6b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --fundo: #15171b;
+  --painel: #1d2026;
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 24px rgb(0 0 0 / 0.4);
+  --superficie: #292d34;
+  --superficie-2: #363b44;
+  --tinta: #ecedf0;
+  --tinta-2: #c3c7cd;
+  --acao: #ecedf0;
+  --sobre-acao: #15171b;
+  --foco: #6ab7ee;
+  --lig: #9a9ea8;
+  --lig-esb: #444850;
+  --lig-real: #ecedf0;
+  --no-esb: #50545c;
+  --placa: #272b33;
+  --placa-2: #323741;
+  --t-1: #e0b83a;
+  --t-2: #5bb3f0;
+  --t-3: #3dc9a0;
+  --t-4: #f08a5a;
+  --t-5: #e58bbe;
+  --t-6: #a9a3ee;
+  --r-baixo: #5bb3f0;
+  --r-medio: #e0b83a;
+  --r-alto: #ff7b6b;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--tinta);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+button { font: inherit; color: inherit; border: 0; background: none; padding: 0; margin: 0; cursor: pointer; text-align: left; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; border-radius: var(--raio-s); }
+code.nb { white-space: nowrap; }
+code {
+  font-family: var(--mono);
+  font-size: 0.875em;
+  background: var(--superficie);
+  padding: 0.1em 0.35em;
+  border-radius: var(--raio-s);
+  overflow-wrap: anywhere;
+}
+h1 { font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+h2 { font-size: 1.25rem; line-height: 1.25; font-weight: 700; }
+h3 { font-size: 1rem; line-height: 1.3; font-weight: 700; }
+.texto { max-width: 62ch; overflow-wrap: anywhere; }
+.texto + .texto { margin-top: 0.75rem; }
+
+/* ---- grelha da página: texto à esquerda, vistas fixas à direita ---- */
+.pagina {
+  display: grid;
+  grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
+  column-gap: 3rem;
+  align-items: start;
+  padding: 1.5rem 2rem 2rem;
+  max-width: 100rem;
+}
+.col-texto { min-width: 0; padding-bottom: 3rem; }
+.cab { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+/* ---- controlo Simples / Técnico: tom neutro, o ativo invertido ---- */
+.seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--superficie); border-radius: var(--raio-l); }
+.seg button { min-height: 40px; padding: 0 1rem; border-radius: var(--raio); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--acao); color: var(--sobre-acao); }
+
+/* ---- botões: uma ação dominante, as outras tonais; nenhum delimitado por linha ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 44px; padding: 0 1.1rem; border-radius: var(--raio);
+  background: var(--superficie); color: var(--tinta); font-weight: 600;
+}
+.btn[aria-pressed="true"], .btn-primeiro { background: var(--acao); color: var(--sobre-acao); }
+.btn-discreto { min-height: 40px; padding: 0 0.9rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .seg button, .no, .aba { transition: background-color 120ms, color 120ms; }
+}
+@media (hover: hover) {
+  .btn:not([aria-pressed="true"]):not(.btn-primeiro):hover { background: var(--superficie-2); }
+  .seg button[aria-pressed="false"]:hover { background: var(--superficie-2); }
+  .aba[aria-selected="false"]:hover { background: var(--superficie-2); }
+  .no:not([aria-pressed="true"]):hover { background: var(--superficie); }
+}
+
+/* ---- caminhos e endereços: partem-se só depois de «/», nunca a meio de um nome ---- */
+.caminho { font-family: var(--mono); font-size: 0.8125rem; line-height: 1.45; }
+.sg { white-space: nowrap; }
+.refs { color: var(--tinta-2); }
+
+/* ---- linha de um nó: a linha inteira é o botão; o realce do passo é negrito e uma marca à esquerda ---- */
+.no {
+  position: relative; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.7rem;
+  width: 100%; padding: 0.4rem 0.75rem; border-radius: var(--raio); min-height: 36px;
+}
+.no .caminho, .no .rotulo { order: 1; flex: 1 1 auto; min-width: 0; }
+.no .rotulo { font-size: 0.9375rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.no .refs-cit { order: 3; flex: 1 0 100%; font-family: var(--mono); font-size: 0.8125rem; line-height: 1.45; color: var(--tinta-2); overflow-wrap: anywhere; }
+.no .risco-tag { order: 2; flex: none; margin-left: auto; font-size: 0.875rem; font-weight: 600; color: var(--tinta-2); white-space: nowrap; }
+.no[data-real] .caminho { font-weight: 700; }
+.no[data-real]::before { content: ""; position: absolute; left: 0; top: 0.3rem; bottom: 0.3rem; width: 3px; border-radius: 2px; background: var(--tinta); }
+.no[aria-pressed="true"] { background: var(--acao); color: var(--sobre-acao); }
+.no[aria-pressed="true"] .refs, .no[aria-pressed="true"] .refs-cit, .no[aria-pressed="true"] .risco-tag { color: var(--sobre-acao); }
+.no[aria-pressed="true"] .caminho { font-weight: 700; }
+.no[aria-pressed="true"]::before { display: none; }
+.lista-nos { display: grid; gap: 2px; }
+@media (pointer: coarse) { .no { min-height: 44px; } }
+
+/* ---- índice dos nós e glossário: recolhidos depois da introdução ---- */
+.indice { margin-top: 1rem; }
+.indice + .indice { margin-top: 0.25rem; }
+.indice summary { list-style: none; display: flex; align-items: center; column-gap: 0.6rem; min-height: 44px; padding: 0 0.75rem; border-radius: var(--raio); font-weight: 700; cursor: pointer; }
+.indice summary::-webkit-details-marker { display: none; }
+.indice summary::before { content: ""; width: 0.45rem; height: 0.45rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); margin-right: 0.15rem; }
+.indice[open] summary::before { transform: rotate(45deg); }
+.indice[open] summary { margin-bottom: 0.25rem; }
+@media (hover: hover) { .indice summary:hover { background: var(--superficie); } }
+.glossario { display: grid; gap: 0.9rem; padding: 0.25rem 0.75rem 0.5rem; }
+.glossario dt { font-weight: 700; }
+.glossario dd { max-width: 62ch; overflow-wrap: anywhere; }
+
+/* ---- conceitos-chave (perfil A): blocos de tom neutro, sem moldura ---- */
+.conceitos { display: grid; gap: 0.75rem; margin-top: 1.25rem; }
+.conceito { padding: 0.9rem 1.1rem 1rem; background: var(--superficie); border-radius: var(--raio-l); }
+.conceito .rot { font-size: 0.9375rem; font-weight: 600; color: var(--tinta-2); }
+.conceito .termo { font-size: 1.0625rem; font-weight: 700; line-height: 1.3; }
+.conceito .texto { margin-top: 0.35rem; }
+
+/* ---- o documento: um passo de cada vez ---- */
+.documento > h2 { margin-top: 1.75rem; font-size: 1.0625rem; overflow-wrap: anywhere; }
+.passo { margin-top: 1.75rem; }
+.passo-cab { display: block; width: 100%; padding: 0.4rem 0; border-radius: var(--raio); }
+.passo-cab .n { display: flex; justify-content: space-between; column-gap: 1rem; font-size: 0.875rem; font-weight: 700; color: var(--tinta-2); }
+.passo-cab .n .d-on { display: none; }
+.passo-cab .t { display: block; font-size: 1.1875rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.passo-cab[aria-pressed="true"] { background: var(--acao); color: var(--sobre-acao); padding: 0.55rem 0.75rem; margin-inline: -0.75rem; width: calc(100% + 1.5rem); }
+.passo-cab[aria-pressed="true"] .n { color: var(--sobre-acao); }
+.passo-cab[aria-pressed="true"] .n .d-on { display: inline; }
+.passo-cab[aria-pressed="true"] .n .d-off { display: none; }
+@media (hover: hover) { .passo-cab[aria-pressed="false"]:hover .t { text-decoration: underline; text-underline-offset: 3px; } }
+.passo .texto { margin-top: 0.6rem; }
+.passo .toca { margin: 1rem 0 0.35rem; font-weight: 700; font-size: 0.9375rem; }
+.passo .bloco-no { margin: 1rem 0 0.25rem; }
+#miolo > .bloco-no, #bloco-no > .bloco-no { margin-top: 0.5rem; }
+.cita-lista { display: grid; gap: 0.2rem; padding: 0 0.75rem; }
+.rodape { margin-top: 2.25rem; font-size: 0.875rem; color: var(--tinta-2); max-width: 62ch; overflow-wrap: anywhere; }
+.fontes { margin-top: 2.25rem; }
+.fontes h2 { font-size: 1.0625rem; }
+.fontes ul { display: grid; gap: 0.9rem; margin-top: 0.6rem; }
+.fontes li { display: grid; gap: 0.1rem; max-width: 62ch; }
+.fontes .fonte-titulo { font-weight: 600; overflow-wrap: anywhere; }
+.fontes .refs { font-size: 0.875rem; }
+
+/* ---- bloco de um nó: bloco elevado ---- */
+.bloco-no {
+  scroll-margin-top: 1rem; padding: 1.1rem 1.25rem 1.4rem;
+  background: var(--painel); border-radius: var(--raio-l); box-shadow: var(--sombra);
+}
+.bloco-no:focus, .bloco-no:focus-visible { outline: none; }
+.bloco-no .meta { display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem 0.75rem; font-size: 0.875rem; color: var(--tinta-2); margin-bottom: 0.25rem; }
+.bloco-no .meta .meta-risco { font-weight: 700; color: var(--tinta); }
+.bloco-no .meta .btn { margin-left: auto; color: var(--tinta); font-size: 1rem; }
+.bloco-no .meta .btn-primeiro { order: -1; margin-left: 0; margin-right: auto; color: var(--sobre-acao); }
+.bloco-no .titulo-no { font-size: 1.0625rem; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.bloco-no .titulo-no.caminho-h { font-family: var(--mono); }
+.bloco-no .texto { margin-top: 0.75rem; }
+.bloco-no section { margin-top: 1.5rem; }
+.bloco-no section > h3 { margin-bottom: 0.4rem; }
+.ficheiros-no { display: grid; gap: 0.2rem; }
+.lig-item { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 0.75rem; }
+.lig-item .no { flex: 1 1 0; min-width: 0; width: auto; padding-right: 0; }
+.lig-item .verbo { flex: none; max-width: 45%; font-size: 0.9375rem; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.lig-item .ref { flex: 1 0 100%; font-family: var(--mono); font-size: 0.8125rem; color: var(--tinta-2); padding: 0 0.75rem 0.4rem 0.75rem; overflow-wrap: anywhere; }
+.passos-do-no { display: grid; gap: 2px; }
+.passos-do-no button { display: block; width: 100%; padding: 0.45rem 0.75rem; min-height: 40px; border-radius: var(--raio); }
+.passos-do-no button[aria-pressed="true"] { background: var(--acao); color: var(--sobre-acao); }
+@media (hover: hover) { .passos-do-no button[aria-pressed="false"]:hover { background: var(--superficie); } }
+
+/* ---- a coluna das vistas: separadores por cima, e o painel, o único bloco elevado da página com o do nó aberto ---- */
+.coluna-vistas {
+  position: sticky; top: 1.5rem; height: calc(100vh - 3rem); min-height: 28rem;
+  display: flex; flex-direction: column; gap: 0.6rem; min-width: 0;
+}
+.abas { display: flex; flex-wrap: wrap; gap: 2px; padding: 3px; align-self: flex-start; max-width: 100%; background: var(--superficie); border-radius: var(--raio-l); }
+.aba { min-height: 40px; padding: 0 1rem; border-radius: var(--raio); font-weight: 600; overflow-wrap: anywhere; }
+.aba[aria-selected="true"] { background: var(--acao); color: var(--sobre-acao); }
+/* Ao toque, os separadores e os botões do painel têm 44 px como os nós (depois das regras base de cada um, que têm a mesma especificidade). */
+@media (pointer: coarse) { .aba, .seg button, .btn-discreto { min-height: 44px; } }
+.painel-vista {
+  flex: 1 1 auto; min-height: 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 1rem 1.1rem 1.1rem; background: var(--painel); border-radius: var(--raio-l); box-shadow: var(--sombra);
+}
+.painel-cab { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+.painel-cab h2 { font-size: 1.0625rem; overflow-wrap: anywhere; }
+.painel-acoes { display: flex; gap: 0.4rem; margin-left: auto; }
+.corpos { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.corpo-vista { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.1rem; font-size: 0.875rem; color: var(--tinta); }
+.legenda li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legenda .ponto { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--cor); }
+.legenda .ponto.p1 { width: 0.5rem; height: 0.5rem; }
+.legenda .ponto.p3 { width: 1rem; height: 1rem; }
+.legenda .traco { width: 1.5rem; border-top: 2px dashed currentColor; }
+.setas { font-size: 0.875rem; color: var(--tinta-2); max-width: 62ch; }
+.tela-area { position: relative; flex: 1 1 auto; min-height: 20rem; }
+.tela { position: absolute; inset: 0; overflow: hidden; }
+.tela canvas { display: block; width: 100%; height: 100%; }
+.capa-rotulos { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+/* A biblioteca mostra por instantes uma dica em inglês (10px) antes de o showNavInfo(false) valer. */
+.tela .scene-nav-info { display: none !important; }
+.estado-vista { position: absolute; inset: 0; display: grid; place-items: center; color: var(--tinta-2); font-size: 0.9375rem; }
+.btn-toque { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 3; }
+.rotulo-no { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 2; }
+.rotulo-no span, .rotulo-3d span {
+  display: block; white-space: nowrap;
+  font-size: 0.8125rem; line-height: 1.2; padding: 2px 6px; border-radius: var(--raio-s);
+  color: var(--tinta);
+  text-shadow: 0 0 2px var(--painel), 0 0 2px var(--painel), 0 0 4px var(--painel), 0 0 4px var(--painel);
+}
+.rotulo-3d span { white-space: normal; max-width: 9rem; text-align: center; overflow-wrap: anywhere; }
+.rotulo-3d[data-longo] span { max-width: 13rem; }
+.rotulo-3d[data-estreito] span { max-width: 5.5rem; }
+.rotulo-3d[data-medio] span { max-width: 8rem; }
+.rotulo-3d[data-esq] span { text-align: left; }
+.rotulo-no[data-real] span, .rotulo-3d[data-real] span, .rotulo-3d[data-forte] span { font-weight: 700; }
+.rotulo-no[data-sel] span, .rotulo-3d[data-sel] span { background: var(--acao); color: var(--sobre-acao); font-weight: 700; text-shadow: none; }
+.sem-vista { padding: 0.5rem 0 1rem; max-width: 68ch; }
+.sem-vista .aviso { font-weight: 700; font-size: 1.0625rem; }
+.sem-vista .texto { margin-top: 0.25rem; }
+.sem-vista ul, .sem-vista ol { display: grid; gap: 0.3rem; margin-top: 0.75rem; }
+.sem-vista ol { padding-left: 1.4rem; list-style: decimal; }
+.sem-vista li { font-size: 0.9375rem; line-height: 1.45; }
+.sem-vista li .caminho { font-size: 0.8125rem; }
+.sem-vista .rotulo-texto { font-weight: 600; }
+/* Com a vista em texto, a coluna fica com a altura do que tem e rola por dentro se for maior que o ecrã. */
+.coluna-vistas[data-texto] { height: auto; min-height: 0; max-height: calc(100vh - 3rem); }
+.coluna-vistas[data-texto] .painel-vista { overflow: auto; }
+.coluna-vistas[data-texto] .corpos, .coluna-vistas[data-texto] .corpo-vista { flex: none; }
+
+@media (max-width: 56rem) {
+  .pagina { display: block; padding: 1.25rem 1rem 2rem; }
+  .col-texto { padding-bottom: 0; }
+  h1 { font-size: 1.5rem; }
+  .coluna-vistas, .coluna-vistas[data-texto] { position: static; height: auto; min-height: 0; max-height: none; margin-top: 2.5rem; }
+  .coluna-vistas[data-texto] .painel-vista { overflow: visible; }
+  .painel-vista { flex: none; }
+  .corpos, .corpo-vista { flex: none; }
+  .tela-area { flex: none; height: 26rem; min-height: 0; }
+  .bloco-no { padding: 1rem 1rem 1.25rem; }
+}
+</style>
+</head>
+<body>
+<div class="pagina">
+  <main class="col-texto" id="col-texto">
+    <div class="cab">
+      <h1 id="titulo"></h1>
+      <div class="seg" role="group" aria-label="Nível do texto">
+        <button type="button" data-nivel="simples" aria-pressed="true">Simples</button>
+        <button type="button" data-nivel="tecnico" aria-pressed="false">Técnico</button>
+      </div>
+    </div>
+    <div id="intro"></div>
+    <section class="conceitos" id="conceitos" aria-label="Conceitos-chave" hidden></section>
+    <details class="indice" id="indice-det">
+      <summary id="indice-sum"></summary>
+      <ul class="lista-nos" id="indice"></ul>
+    </details>
+    <details class="indice" id="glossario-det" hidden>
+      <summary id="glossario-sum"></summary>
+      <dl class="glossario" id="glossario"></dl>
+    </details>
+    <div id="miolo">
+      <section class="documento" id="documento" aria-labelledby="h-doc" tabindex="-1"></section>
+      <div id="bloco-no" hidden></div>
+    </div>
+    <p class="rodape" id="rodape"></p>
+  </main>
+  <aside class="coluna-vistas" id="coluna-vistas" aria-label="Vistas">
+    <div class="abas" id="abas" role="tablist" aria-label="Vistas" hidden></div>
+    <section class="painel-vista" id="painel-vista">
+      <div class="painel-cab">
+        <h2 id="painel-titulo"></h2>
+        <div class="painel-acoes">
+          <button type="button" class="btn btn-discreto" id="b-plano" aria-pressed="false">Plano</button>
+          <button type="button" class="btn btn-discreto" id="b-enquadrar">Enquadrar</button>
+        </div>
+      </div>
+      <div class="corpos" id="corpos"></div>
+    </section>
+  </aside>
+</div>
+<script type="application/json" id="dados">{}</script>
+<script id="cena-codigo"></script>
+<script>
+(function () {
+'use strict';
+/* Todo o texto dos dados entra na página por textContent ou createElement; nenhum innerHTML com dados. */
+const dados = JSON.parse(document.getElementById('dados').textContent);
+if (!Array.isArray(dados.nos) || !Array.isArray(dados.passos) || !Array.isArray(dados.vistas)) {
+  document.getElementById('titulo').textContent = 'Modelo sem dados';
+  document.getElementById('intro').textContent = 'Este ficheiro é o modelo. A página gera-se com gerar-pagina.mjs, a partir dos dados da explicação.';
+  return;
+}
+
+/* As únicas bibliotecas externas, carregadas só quando uma vista as usa: o grafo (3d-force-graph) só para a vista «grafo»; o three e os seus dois addons para todas as outras e para a cena.
+   O grafo é um ficheiro só e leva a soma de verificação (SRI): o browser recusa-o se o jsDelivr o servir diferente. Os módulos do three ficam sem integrity: os +esm do jsDelivr são gerados pelo serviço e o hash não é garantido. */
+const URLS = {
+  grafo: 'https://cdn.jsdelivr.net/npm/3d-force-graph@1.80.1/dist/3d-force-graph.min.js',
+  grafoSri: 'sha384-i98VDQKdpyVrtyuFn0fjUWJBLBmxnqHqOANcvYe9HLJUgT2wPixa4ZkLd7Dh3VEk',
+  three: 'https://cdn.jsdelivr.net/npm/three@0.186.1/+esm',
+  orbit: 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/controls/OrbitControls.js/+esm',
+  css2d: 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/renderers/CSS2DRenderer.js/+esm',
+};
+
+/* ---------- dados e estado ---------- */
+const params = new URLSearchParams(location.search);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const perfil = dados.perfil;
+const gran = dados.granularidade;
+const conceitos = Array.isArray(dados.conceitos) ? dados.conceitos : [];
+const fontes = Array.isArray(dados.fontes) ? dados.fontes : [];
+const porId = new Map(dados.nos.map((n) => [n.id, n]));
+const tipoNome = Object.fromEntries(dados.tipos.map((t) => [t.id, t.nome]));
+const tipoIdx = new Map(dados.tipos.map((t, i) => [t.id, i + 1]));
+const N = dados.passos.length;
+const semMovimento = matchMedia('(prefers-reduced-motion: reduce)');
+const toque = matchMedia('(pointer: coarse)');
+const NOME = { blocos: 'bloco', componentes: 'componente', detalhe: 'elemento' }[gran] || 'nó';
+const LISTA = { blocos: 'Blocos', componentes: 'Componentes', detalhe: 'Detalhes' }[gran] || 'Nós';
+const PALAVRA_RISCO = { baixo: 'baixo', medio: 'médio', alto: 'alto' };
+const PALAVRA_MODO = { sincrona: 'síncrona', assincrona: 'assíncrona' };
+const mono = dados.tema === 'codigo' && gran !== 'blocos'; // nomes de ficheiros, módulos e funções
+const tema = params.get('tema');
+if (tema === 'escuro') document.documentElement.setAttribute('data-theme', 'dark');
+if (tema === 'claro') document.documentElement.setAttribute('data-theme', 'light');
+
+/* ---------- o que cada vista contém ---------- */
+const msgPorId = new Map();
+dados.vistas.forEach((v) => { if (v.tipo === 'sequencia') v.mensagens.forEach((m) => msgPorId.set(m.id, m)); });
+function nosDaVista(v) {
+  switch (v.tipo) {
+    case 'grafo': return v.nos && v.nos.length ? v.nos : dados.nos.map((n) => n.id);
+    case 'camadas': return v.camadas.flatMap((c) => c.nos);
+    case 'sequencia': return v.participantes;
+    case 'estados': return v.estados;
+    case 'linha-do-tempo': return [...new Set(v.eventos.map((e) => e.no))];
+    default: return v.nos || [];
+  }
+}
+// As ligações de uma vista (ligações, mensagens ou transições), para os vizinhos e para o texto.
+function arestasDaVista(v) {
+  if (v.tipo === 'grafo' || v.tipo === 'camadas') return (v.ligacoes || []).map((l) => ({ de: l.de, para: l.para }));
+  if (v.tipo === 'sequencia') return v.mensagens.map((m) => ({ de: m.de, para: m.para, id: m.id }));
+  if (v.tipo === 'estados') return v.transicoes.map((t) => ({ de: t.de, para: t.para }));
+  return [];
+}
+function vizinhosNaVista(v, id) {
+  const s = new Set();
+  arestasDaVista(v).forEach((a) => {
+    if (a.de === id || a.para === id) {
+      s.add(a.de); s.add(a.para);
+      if (a.id) s.add(a.id);
+    }
+  });
+  s.delete(id);
+  return s;
+}
+// O que um passo realça: os elementos da vista e, nas mensagens, quem as troca.
+function idsRealcados(p) {
+  const s = new Set(p.realca);
+  p.realca.forEach((id) => { const m = msgPorId.get(id); if (m) { s.add(m.de); s.add(m.para); } });
+  return s;
+}
+const nosDoPasso = (p) => [...new Set(p.realca.flatMap((id) => (porId.has(id) ? [id] : msgPorId.has(id) ? [msgPorId.get(id).de, msgPorId.get(id).para] : [])))];
+const passosDoNo = (id) => dados.passos.map((p, i) => (nosDoPasso(p).includes(id) ? i : -1)).filter((i) => i >= 0);
+// As relações de cada nó, vindas de todas as vistas: o que faz e o que lhe fazem.
+const faz = new Map();
+const sofre = new Map();
+{
+  const visto = new Set();
+  const rel = (de, para, verbo, modo, ref) => {
+    const k = `${de}\u0001${para}\u0001${verbo}`;
+    if (visto.has(k)) return;
+    visto.add(k);
+    if (!faz.has(de)) faz.set(de, []);
+    if (!sofre.has(para)) sofre.set(para, []);
+    faz.get(de).push({ outro: para, verbo, modo, ref });
+    sofre.get(para).push({ outro: de, verbo, modo, ref });
+  };
+  dados.vistas.forEach((v) => {
+    if (v.tipo === 'grafo' || v.tipo === 'camadas') (v.ligacoes || []).forEach((l) => rel(l.de, l.para, l.tipo, l.modo, l.ref));
+    if (v.tipo === 'sequencia') v.mensagens.forEach((m) => rel(m.de, m.para, m.texto, m.modo));
+    if (v.tipo === 'estados') v.transicoes.forEach((t) => rel(t.de, t.para, t.evento));
+  });
+}
+
+const vistas = dados.vistas.map((def, i) => ({
+  def, i, id: def.id, tipo: def.tipo, ids: nosDaVista(def), carga: 'nova', ctl: null, corpo: null, tela: null,
+  plano: params.get('plano') === '1', rodar: false,
+}));
+const vistaPorId = (id) => vistas.find((v) => v.id === id) || null;
+const nivelUrl = params.get('nivel');
+const estado = {
+  nivel: nivelUrl === 'tecnico' || nivelUrl === 'simples' ? nivelUrl : (perfil === 'A' ? 'simples' : 'tecnico'),
+  no: porId.has(params.get('no')) ? params.get('no') : null,
+  passo: null,
+  vista: 0,
+};
+{
+  const p = parseInt(params.get('passo'), 10);
+  if (p >= 1 && p <= N) estado.passo = p - 1;
+}
+const texto = (o) => o[estado.nivel];
+
+/* ---------- peças de DOM ---------- */
+function h(tag, attrs, ...filhos) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) if (v !== false && v != null) el.setAttribute(k, v === true ? '' : String(v));
+  for (const f of filhos.flat(Infinity)) if (f != null && f !== false) el.append(f);
+  return el;
+}
+// Só o que está entre acentos graves vira <code>; um acento grave sem par fica como texto.
+function rico(s) {
+  const partes = String(s).split('`');
+  if (partes.length % 2 === 0) { const ultima = partes.pop(); partes[partes.length - 1] += '`' + ultima; }
+  const f = document.createDocumentFragment();
+  partes.forEach((p, i) => {
+    if (!p) return;
+    if (i % 2 === 0) f.append(p);
+    else f.append(h('code', { class: p.length <= 28 ? 'nb' : null }, p));
+  });
+  return f;
+}
+const semCodigo = (s) => String(s).replaceAll('`', '');
+const paragrafos = (s) => String(s).split(/\n{2,}/).map((t) => h('p', { class: 'texto' }, rico(t.trim())));
+const caminhoDe = (c) => c.slice(0, c.lastIndexOf(':'));
+const linhasDe = (c) => c.slice(c.lastIndexOf(':') + 1);
+const ehUrl = (c) => String(c).startsWith('https:');
+function ehHttps(u) { try { return new URL(u).protocol === 'https:'; } catch (e) { return false; } }
+
+// Caminho que só se parte depois de «/»: cada pasta e o nome do ficheiro são blocos que não se dividem.
+function caminhoNos(caminho, refs = []) {
+  const partes = caminho.split('/');
+  const nome = partes.pop();
+  const saida = [];
+  partes.forEach((p) => { saida.push(h('span', { class: 'sg' }, p + '/'), document.createElement('wbr')); });
+  saida.push(h('span', { class: 'sg' }, nome, refs.length ? h('span', { class: 'refs' }, ':' + refs[0]) : null));
+  refs.slice(1).forEach((r) => { saida.push(', ', h('span', { class: 'sg refs' }, r)); });
+  return saida;
+}
+// O mesmo para um endereço: a parte «https:» fica agarrada ao domínio.
+function urlPartes(u) {
+  const m = /^(https:\/\/)(.*)$/.exec(String(u));
+  const partes = (m ? m[2] : String(u)).split('/');
+  if (m) partes[0] = m[1] + partes[0];
+  const nome = partes.pop();
+  const saida = [];
+  partes.forEach((p) => { saida.push(h('span', { class: 'sg' }, p + '/'), document.createElement('wbr')); });
+  saida.push(h('span', { class: 'sg' }, nome));
+  return saida;
+}
+// A ligação só se faz com um endereço https validado; o texto entra sempre por textContent.
+function ligacaoUrl(u, filhos) {
+  return ehHttps(u)
+    ? h('a', { class: 'caminho', href: u, target: '_blank', rel: 'noopener noreferrer' }, filhos)
+    : h('span', { class: 'caminho' }, filhos);
+}
+function dataPt(d) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d));
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : String(d);
+}
+
+// Uma citação `caminho:N-M` pertence a um nó quando cai nas linhas de um dos seus `ficheiros`.
+const intervalo = (c) => { const [a, b] = linhasDe(c).split('-').map(Number); return [a, b ?? a]; };
+function pertence(c, n) {
+  if (ehUrl(c)) return false;
+  const caminho = caminhoDe(c);
+  const [a, b] = intervalo(c);
+  return (n.ficheiros || []).some((f) => {
+    if (caminhoDe(f) !== caminho) return false;
+    const [x, y] = intervalo(f);
+    return a <= y && x <= b;
+  });
+}
+const citacoesDoNo = (p, id) => (p.citacoes || []).filter((c) => pertence(c, porId.get(id)));
+const citacoesSoltas = (p) => (p.citacoes || []).filter((c) => !nosDoPasso(p).some((id) => pertence(c, porId.get(id))));
+
+// O nome de um nó: em código (caminhos, módulos, funções) ou em palavras.
+function nomeDe(n) {
+  return mono
+    ? h('span', { class: 'caminho' }, n.curto.includes('/') ? caminhoNos(n.curto) : n.curto)
+    : h('span', { class: 'rotulo' }, n.curto);
+}
+function etiqueta(n, cits) {
+  return [nomeDe(n), cits.length && (gran !== 'blocos' || estado.nivel === 'tecnico') ? h('span', { class: 'refs-cit' }, cits.join(', ')) : null];
+}
+// O nome de um nó em texto corrido (as listas das vistas em texto).
+function nomeEl(id) {
+  const n = porId.get(id);
+  return h('span', { class: mono ? 'caminho' : 'rotulo-texto' }, n.curto);
+}
+function elNo(id, cits = []) {
+  const n = porId.get(id);
+  return h('button', { type: 'button', class: 'no', 'data-no': id, 'aria-pressed': 'false' },
+    etiqueta(n, cits),
+    perfil === 'C' && n.risco ? h('span', { class: 'risco-tag' }, 'risco ' + PALAVRA_RISCO[n.risco]) : null);
+}
+function elLigacoes(id) {
+  const verbo = (l) => l.verbo + (perfil === 'C' && l.modo ? ', ' + PALAVRA_MODO[l.modo] : '');
+  const linha = (l) => h('li', { class: 'lig-item' },
+    elNo(l.outro),
+    h('span', { class: 'verbo' }, verbo(l)),
+    estado.nivel === 'tecnico' && l.ref ? h('span', { class: 'ref' }, l.ref) : null);
+  const f = faz.get(id) || [], s = sofre.get(id) || [];
+  return [
+    f.length ? h('section', null, h('h3', null, `O que este ${NOME} faz`), h('ul', null, f.map(linha))) : null,
+    s.length ? h('section', null, h('h3', null, 'O que lhe fazem'), h('ul', null, s.map(linha))) : null,
+  ];
+}
+// O tipo escreve-se por extenso, e o risco também: as cores só existem junto das vistas.
+function elBloco(id, acao) {
+  const n = porId.get(id);
+  const ps = passosDoNo(id);
+  const tituloNo = h('h2', { id: 'no-titulo', class: 'titulo-no' + (mono ? ' caminho-h' : '') }, mono && n.curto.includes('/') ? caminhoNos(n.curto) : n.curto);
+  return h('article', { class: 'bloco-no', tabindex: '-1', 'aria-labelledby': 'no-titulo' },
+    h('div', { class: 'meta' },
+      h('span', null, 'Tipo: ' + tipoNome[n.tipo].toLowerCase()),
+      perfil === 'C' && n.risco ? h('span', { class: 'meta-risco' }, 'Risco ' + PALAVRA_RISCO[n.risco]) : null,
+      acao),
+    tituloNo,
+    paragrafos(texto(n)),
+    n.ficheiros && n.ficheiros.length
+      ? h('section', null, h('h3', null, gran === 'blocos' ? 'Ficheiros deste bloco' : 'Onde está'),
+        h('ul', { class: 'ficheiros-no' }, n.ficheiros.map((f) => h('li', { class: 'caminho' }, caminhoNos(caminhoDe(f), [linhasDe(f)])))))
+      : null,
+    elLigacoes(id),
+    ps.length
+      ? h('section', null, h('h3', null, 'Em que passos aparece'),
+        h('ul', { class: 'passos-do-no' }, ps.map((i) => h('li', null,
+          h('button', { type: 'button', 'data-passo': i, 'aria-pressed': 'false' }, `Passo ${i + 1}: ${dados.passos[i].titulo}`)))))
+      : null);
+}
+// Alguma ligação ou mensagem da vista é assíncrona: a legenda e a dica só falam do tracejado quando há o que tracejar.
+const temAssincrona = (def) => (def.ligacoes || def.mensagens || []).some((l) => l.modo === 'assincrona');
+function elLegenda(v) {
+  const ponto = (cor, extra) => h('span', { class: 'ponto' + (extra ? ' ' + extra : ''), style: `--cor: var(${cor})`, 'aria-hidden': 'true' });
+  const assinc = perfil === 'C' && temAssincrona(v.def);
+  const traco = assinc ? h('li', null, h('span', { class: 'traco', 'aria-hidden': 'true' }), 'Tracejada: assíncrona') : null;
+  if (perfil === 'C') {
+    const r = [['baixo', 'p1'], ['medio', 'p2'], ['alto', 'p3']];
+    return h('ul', { class: 'legenda', 'aria-label': 'Risco' }, r.map(([k, p]) => h('li', null, ponto('--r-' + k, p), 'Risco ' + PALAVRA_RISCO[k])), traco);
+  }
+  const usados = new Set(v.ids.map((id) => porId.get(id).tipo));
+  return h('ul', { class: 'legenda', 'aria-label': 'Tipos' },
+    dados.tipos.filter((t) => usados.has(t.id)).map((t) => h('li', null, ponto('--t-' + tipoIdx.get(t.id)), t.nome)));
+}
+function elFontes() {
+  if (!fontes.length) return null;
+  return h('section', { class: 'fontes', 'aria-labelledby': 'h-fontes' },
+    h('h2', { id: 'h-fontes' }, 'Fontes'),
+    h('ul', null, fontes.map((f) => h('li', null,
+      h('span', { class: 'fonte-titulo' }, f.titulo),
+      ligacaoUrl(f.url, urlPartes(f.url)),
+      h('span', { class: 'refs' }, 'lido a ' + dataPt(f.lido_em))))));
+}
+
+/* ---------- o documento ---------- */
+let scrollGuardado = 0;
+// Onde está o bloco do nó: null (fechado), 'doc' (no sítio, dentro do passo de onde veio) ou 'fora' (no lugar do documento).
+let modo = null;
+let passoDaVista = null;
+
+function citacaoEl(c) {
+  if (ehUrl(c)) {
+    const f = fontes.find((x) => x.url === c);
+    return h('li', { class: 'caminho' }, ligacaoUrl(c, f ? f.titulo : urlPartes(c)));
+  }
+  return h('li', { class: 'caminho' }, caminhoNos(caminhoDe(c), [linhasDe(c)]));
+}
+function elPasso(p, i) {
+  const soltas = citacoesSoltas(p);
+  const nosP = nosDoPasso(p);
+  return h('li', { class: 'passo', 'data-passo': i },
+    h('h3', null, h('button', { type: 'button', class: 'passo-cab', 'data-passo': i, 'aria-pressed': 'false', 'aria-label': `Passo ${i + 1} de ${N}: ${p.titulo}` },
+      h('span', { class: 'n', 'aria-hidden': 'true' },
+        h('span', null, `Passo ${i + 1} de ${N}`), h('span', { class: 'd-off' }, 'Realçar na vista'), h('span', { class: 'd-on' }, 'Realçado na vista')),
+      h('span', { class: 't', 'aria-hidden': 'true' }, p.titulo))),
+    paragrafos(texto(p)),
+    nosP.length ? h('div', { class: 'toca-bloco' },
+      h('p', { class: 'toca' }, 'Toca em'),
+      h('ul', { class: 'lista-nos' }, nosP.map((id) => h('li', null, elNo(id, citacoesDoNo(p, id)))))) : null,
+    soltas.length ? h('div', null,
+      h('p', { class: 'toca' }, 'Também cita'),
+      h('ul', { class: 'cita-lista' }, soltas.map(citacaoEl))) : null);
+}
+function renderIntro() { $('#intro').replaceChildren(...paragrafos(texto(dados.intro))); }
+function renderConceitos() {
+  const alvo = $('#conceitos');
+  alvo.hidden = perfil !== 'A' || !conceitos.length;
+  alvo.replaceChildren(...(perfil === 'A' ? conceitos.map((c) => h('aside', { class: 'conceito', 'aria-label': 'Conceito-chave: ' + c.termo },
+    h('p', { class: 'rot' }, 'Conceito-chave'), h('p', { class: 'termo' }, c.termo), paragrafos(texto(c)))) : []));
+}
+function renderIndice() {
+  $('#indice-sum').textContent = `${LISTA} (${dados.nos.length})`;
+  $('#indice').replaceChildren(...dados.nos.map((n) => h('li', null, elNo(n.id))));
+}
+function renderGlossario() {
+  const mostrar = perfil !== 'A' && conceitos.length > 0;
+  $('#glossario-det').hidden = !mostrar;
+  $('#glossario-sum').textContent = `Glossário (${conceitos.length})`;
+  $('#glossario').replaceChildren(...(mostrar ? conceitos.flatMap((c) => [h('dt', null, c.termo), h('dd', null, rico(texto(c)))]) : []));
+}
+function renderDocumento() {
+  $('#miolo').appendChild($('#bloco-no')); // o bloco do nó não pode ir com o conteúdo do documento
+  $('#documento').replaceChildren(...[h('h2', { id: 'h-doc' }, rico(dados.pergunta)), h('ol', null, dados.passos.map(elPasso)), elFontes()].filter(Boolean));
+  colocarBloco();
+}
+function renderRodape() {
+  const alvo = $('#rodape');
+  alvo.hidden = dados.tema === 'geral' || !dados.area;
+  alvo.replaceChildren(estado.nivel === 'tecnico'
+    ? `Área lida: ${dados.area} · base ${String(dados.base).slice(0, 12)}`
+    : `Explicação feita sobre ${dados.area}.`);
+}
+function renderBloco() {
+  const acao = modo === 'fora'
+    ? h('button', { type: 'button', class: 'btn btn-primeiro', id: 'voltar' }, '← Voltar ao documento')
+    : h('button', { type: 'button', class: 'btn btn-discreto', id: 'fechar-no' }, 'Fechar');
+  $('#bloco-no').replaceChildren(elBloco(estado.no, acao));
+}
+function colocarBloco() {
+  const v = $('#bloco-no');
+  if (estado.no == null || !modo) { v.hidden = true; return; }
+  if (modo === 'doc') $(`.passo[data-passo="${passoDaVista}"] .toca-bloco`).insertAdjacentElement('afterend', v);
+  else $('#miolo').appendChild(v);
+  v.hidden = false;
+}
+function mostrar() {
+  const fora = modo === 'fora' && estado.no != null;
+  $('#intro').hidden = fora;
+  $('#conceitos').hidden = fora || perfil !== 'A' || !conceitos.length;
+  $('#documento').hidden = fora;
+}
+
+/* ---------- o que cada vista realça ---------- */
+// ativos: null = nada escolhido (todos com a sua cor); senão, os ids (nós e mensagens) a realçar.
+// Com passo, os elementos do passo; com um nó fora do passo, ou sem passo, o nó e os vizinhos (vizinhanca).
+function focoDe(v) {
+  const vazio = { ativos: null, no: null, vizinhanca: false };
+  const p = estado.passo != null ? dados.passos[estado.passo] : null;
+  if (p && p.vista === v.id) {
+    const real = idsRealcados(p);
+    if (estado.no == null || real.has(estado.no)) return { ativos: real, no: estado.no, vizinhanca: false };
+  }
+  if (estado.no != null && v.ids.includes(estado.no)) {
+    const a = vizinhosNaVista(v.def, estado.no);
+    a.add(estado.no);
+    return { ativos: a, no: estado.no, vizinhanca: true };
+  }
+  return vazio;
+}
+// A aresta (ligação, transição) está ativa quando toca o nó aberto ou, num passo, quando as duas pontas estão realçadas.
+const arestaAtiva = (foco, de, para) => !!foco.ativos
+  && ((foco.no != null && (de === foco.no || para === foco.no)) || (!foco.vizinhanca && foco.ativos.has(de) && foco.ativos.has(para)));
+
+/* ---------- sincronização ---------- */
+function sincronizar() {
+  const real = new Set(estado.passo == null ? [] : nosDoPasso(dados.passos[estado.passo]));
+  $$('.no').forEach((b) => {
+    const id = b.dataset.no;
+    b.setAttribute('aria-pressed', String(id === estado.no));
+    if (real.has(id)) b.setAttribute('data-real', ''); else b.removeAttribute('data-real');
+  });
+  $$('button[data-passo]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.passo) === estado.passo)));
+  vistas.forEach((v) => { if (v.ctl) v.ctl.atualizar(focoDe(v)); });
+}
+
+// Escolher o separador da vista de um passo; de um nó, a primeira vista que o tem, se a atual não o tiver.
+function vistaDoPasso(i) { const v = vistaPorId(dados.passos[i].vista); if (v) ativarVista(v.i); }
+function vistaDoNo(id) {
+  if (vistas[estado.vista].ids.includes(id)) return;
+  const v = vistas.find((x) => x.ids.includes(id));
+  if (v) ativarVista(v.i);
+}
+
+// origem 'doc': veio de um passo, abre no sítio e o passo fica no ecrã. 'fora': veio do índice ou da vista, ocupa o lugar do documento (o realce do passo sai com ele).
+function abrirNo(id, { origem = modo || 'fora', passoIdx = passoDaVista, foco = true } = {}) {
+  if (origem === 'fora' && modo !== 'fora') scrollGuardado = window.scrollY;
+  estado.no = id;
+  modo = origem;
+  if (modo === 'doc') { passoDaVista = passoIdx; estado.passo = passoIdx; } else { passoDaVista = null; estado.passo = null; }
+  renderBloco();
+  colocarBloco();
+  mostrar();
+  if (modo === 'doc') vistaDoPasso(passoIdx); else vistaDoNo(id);
+  sincronizar();
+  const v = $('.bloco-no');
+  if (foco) v.focus({ preventScroll: true });
+  if (modo === 'doc') {
+    // O passo fica no ecrã: se o cabeçalho saiu por cima ou o fim do bloco por baixo, o cabeçalho do passo sobe ao topo.
+    const c = $(`.passo-cab[data-passo="${passoDaVista}"]`).getBoundingClientRect();
+    if (c.top < 0 || v.getBoundingClientRect().bottom > window.innerHeight) window.scrollTo({ top: c.top + window.scrollY - 12, behavior: 'auto' });
+  } else window.scrollTo({ top: $('#bloco-no').getBoundingClientRect().top + window.scrollY - 16, behavior: 'auto' });
+}
+function fecharNo() {
+  const antigo = estado.no, onde = passoDaVista;
+  estado.no = null; modo = null;
+  colocarBloco(); mostrar(); sincronizar();
+  const volta = $$(`.passo[data-passo="${onde}"] .no`).find((b) => b.dataset.no === antigo);
+  if (volta) volta.focus();
+}
+function voltar() {
+  estado.no = null; modo = null;
+  colocarBloco(); mostrar(); sincronizar();
+  window.scrollTo({ top: scrollGuardado, behavior: 'auto' });
+  $('#documento').focus({ preventScroll: true });
+}
+function alternarPasso(i) {
+  estado.passo = estado.passo === i ? null : i;
+  if (estado.passo != null) vistaDoPasso(i);
+  sincronizar();
+}
+function irAoPasso(i) {
+  estado.passo = i; estado.no = null; modo = null;
+  colocarBloco(); mostrar();
+  vistaDoPasso(i);
+  sincronizar();
+  const alvo = $(`.passo-cab[data-passo="${i}"]`);
+  alvo.scrollIntoView({ block: 'start' });
+  alvo.focus({ preventScroll: true });
+}
+
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('button');
+  if (!b) return;
+  if (b.classList.contains('no')) {
+    if (b.closest('.bloco-no')) abrirNo(b.dataset.no);
+    else if (b.closest('#documento')) abrirNo(b.dataset.no, { origem: 'doc', passoIdx: Number(b.closest('.passo').dataset.passo) });
+    else abrirNo(b.dataset.no, { origem: 'fora' });
+  } else if (b.classList.contains('passo-cab')) alternarPasso(Number(b.dataset.passo));
+  else if (b.closest('.passos-do-no')) irAoPasso(Number(b.dataset.passo));
+  else if (b.id === 'voltar') voltar();
+  else if (b.id === 'fechar-no') fecharNo();
+});
+
+/* ---------- bibliotecas, só quando uma vista as usa ---------- */
+let promessaTres = null;
+let promessaGrafo = null;
+function carregarTres() {
+  if (!promessaTres) {
+    promessaTres = (async () => {
+      // O mapa de importação entra antes do primeiro módulo; os addons importam o mesmo three, por endereço.
+      const mapa = h('script', { type: 'importmap' });
+      mapa.textContent = JSON.stringify({ imports: { three: URLS.three, 'three/addons/controls/OrbitControls.js': URLS.orbit, 'three/addons/renderers/CSS2DRenderer.js': URLS.css2d } });
+      document.head.appendChild(mapa);
+      const THREE = await import('three');
+      const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+      const { CSS2DRenderer, CSS2DObject } = await import('three/addons/renderers/CSS2DRenderer.js');
+      return { THREE, OrbitControls, CSS2DRenderer, CSS2DObject };
+    })();
+  }
+  return promessaTres;
+}
+function carregarGrafo() {
+  if (!promessaGrafo) {
+    promessaGrafo = new Promise((res, rej) => {
+      if (typeof ForceGraph3D === 'function') { res(); return; }
+      const s = document.createElement('script');
+      s.src = URLS.grafo;
+      s.integrity = URLS.grafoSri;
+      s.crossOrigin = 'anonymous';
+      s.onload = () => res();
+      s.onerror = () => rej(new Error('a biblioteca do grafo não carregou'));
+      document.head.appendChild(s);
+    });
+  }
+  return promessaGrafo;
+}
+function webglDisponivel() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch (e) { return false; }
+}
+const semWebgl = params.get('semwebgl') === '1' || !webglDisponivel();
+
+/* ---------- cores do tema, lidas dos tokens ---------- */
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function coresDoTema() {
+  const serie = [1, 2, 3, 4].map((i) => css('--t-' + i));
+  return {
+    fundo: css('--painel'), tinta: css('--tinta'), fraca: css('--tinta-2'), linha: css('--lig'), realce: css('--lig-real'), neutro: css('--no-esb'),
+    serie, risco: { baixo: css('--r-baixo'), medio: css('--r-medio'), alto: css('--r-alto') },
+  };
+}
+const corDoNo = (n) => (perfil === 'C' && n.risco ? css('--r-' + n.risco) : css('--t-' + tipoIdx.get(n.tipo)));
+const ESCALA_RISCO = { baixo: 0.75, medio: 1, alto: 1.4 };
+const escalaDoNo = (n) => (perfil === 'C' && n.risco ? ESCALA_RISCO[n.risco] : 1);
+const REPOUSO = 2000; // pára o desenho 2 s depois da última interação
+const razaoDePixeis = () => Math.min(window.devicePixelRatio || 1, 2);
+
+/* ---------- a moldura das vistas em three.js: o ciclo, a pausa, os controlos, o realce, o clique e o Enquadrar ---------- */
+function criarMoldura(vista, tela, L, construtor) {
+  const { THREE, OrbitControls, CSS2DRenderer, CSS2DObject } = L;
+  const def = vista.def;
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const render = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  render.setPixelRatio(razaoDePixeis());
+  const canvas = render.domElement;
+  tela.appendChild(canvas);
+  const rotulosR = new CSS2DRenderer();
+  rotulosR.domElement.className = 'capa-rotulos';
+  tela.appendChild(rotulosR.domElement);
+  const cena = new THREE.Scene();
+  cena.add(new THREE.AmbientLight(new THREE.Color(1, 1, 1), 2.5));
+  const sol = new THREE.DirectionalLight(new THREE.Color(1, 1, 1), 1.1);
+  sol.position.set(4, 9, 12);
+  cena.add(sol);
+  const camara = new THREE.PerspectiveCamera(40, 1, 0.1, 4000);
+  const controlos = new OrbitControls(camara, canvas);
+  controlos.enableDamping = true;
+  controlos.dampingFactor = 0.12;
+  controlos.screenSpacePanning = true;
+
+  let cores = coresDoTema();
+  let foco = { ativos: null, no: null, vizinhanca: false };
+  let ativa = false, acordado = false, rafId = 0, temporizador = 0, ultima = 0, ultimoQuadro = 0;
+  let imagens = 0, interagiu = false, apontado = null, baixo = null, tween = null, destruida = false;
+  let planoAtivo = vista.plano;
+  let mexeu = false;
+  const elementos = new Map(); // id -> { objs: [Object3D] }
+  const rotulos = [];          // { obj, el, id, fixo }
+  const arestas = [];          // { mat, ativa(foco) }
+  const animacoes = [];
+  const extras = [];           // pontos que o Enquadrar também tem de deixar à vista (as margens dos rótulos)
+  let usuario = {};            // o que a cena devolveu (aoRealcar)
+  let desenho = { dir3D: V3(0.3, 0.25, 1), dirPlano: V3(0, 0, 1), padrao: 'realce' };
+
+  /* -- ciclo com pausa: só desenha com interação ou ação da página -- */
+  function desenhar() {
+    render.render(cena, camara);
+    rotulosR.render(cena, camara);
+    imagens++;
+  }
+  function acordar() {
+    ultima = performance.now();
+    if (!ativa || destruida) return;
+    if (!acordado) { acordado = true; ultimoQuadro = performance.now(); rafId = requestAnimationFrame(ciclo); }
+    if (!temporizador) temporizador = setTimeout(verRepouso, REPOUSO);
+  }
+  function verRepouso() {
+    temporizador = 0;
+    const resta = REPOUSO - (performance.now() - ultima);
+    if (resta > 30 && ativa) { temporizador = setTimeout(verRepouso, resta); return; }
+    parar();
+  }
+  function parar() {
+    acordado = false;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+    if (temporizador) { clearTimeout(temporizador); temporizador = 0; }
+  }
+  function ciclo(t) {
+    rafId = 0;
+    if (!acordado || destruida) return;
+    const dt = Math.min((t - ultimoQuadro) / 1000, 0.1);
+    ultimoQuadro = t;
+    if (tween) { passoTween(t); ultima = performance.now(); }
+    if (!semMovimento.matches) {
+      // As animações da cena correm enquanto a vista está acordada; não a mantêm acordada (a vista pára 2 s depois da última interação).
+      for (let i = animacoes.length - 1; i >= 0; i--) {
+        try { animacoes[i](dt); } catch (e) { animacoes.splice(i, 1); }
+      }
+    }
+    controlos.update();
+    desenhar();
+    rafId = requestAnimationFrame(ciclo);
+  }
+
+  /* -- câmara: Enquadrar pela caixa dos registados, Plano, e o movimento entre posições -- */
+  function caixa() {
+    const b = new THREE.Box3();
+    elementos.forEach((el) => el.objs.forEach((o) => b.expandByObject(o)));
+    extras.forEach((p) => b.expandByPoint(p));
+    if (b.isEmpty()) b.set(V3(-1, -1, -1), V3(1, 1, 1));
+    return b;
+  }
+  function destinoDe(dir) {
+    const b = caixa();
+    const centro = b.getCenter(new THREE.Vector3());
+    const f = dir.clone().normalize();
+    const cima = V3(0, 1, 0);
+    const dir_ = new THREE.Vector3().crossVectors(cima, f);
+    if (dir_.lengthSq() < 1e-8) dir_.set(1, 0, 0);
+    dir_.normalize();
+    const u = new THREE.Vector3().crossVectors(f, dir_).normalize();
+    const tanV = Math.tan(THREE.MathUtils.degToRad(camara.fov / 2));
+    const tanH = tanV * Math.max(camara.aspect, 0.2);
+    let D = 0;
+    for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
+      const rel = V3(x, y, z).sub(centro);
+      D = Math.max(D, Math.abs(rel.dot(dir_)) / tanH + rel.dot(f), Math.abs(rel.dot(u)) / tanV + rel.dot(f));
+    }
+    D = Math.max(D * 1.04, 4);
+    // Na cena do agente os rótulos ficam ao lado dos elementos, fora da caixa que o Enquadrar mede: afasta a câmara até caberem (cerca de 70 px de cada lado).
+    if (vista.tipo === 'cena' && rotulos.length) {
+      const cam2 = camara.clone();
+      const mx = (2 * 70) / Math.max(tela.clientWidth, 1), my = (2 * 24) / Math.max(tela.clientHeight, 1);
+      for (let k = 0; k < 16; k++) {
+        cam2.position.copy(centro).addScaledVector(f, D);
+        cam2.lookAt(centro);
+        cam2.updateMatrixWorld();
+        const fora = rotulos.some((r) => { const q = r.obj.position.clone().project(cam2); return Math.abs(q.x) > 1 - mx || Math.abs(q.y) > 1 - my; });
+        if (!fora) break;
+        D *= 1.07;
+      }
+    }
+    return { pos: centro.clone().addScaledVector(f, D), alvo: centro, D };
+  }
+  function irPara(pos, alvo, ms) {
+    if (!ms || semMovimento.matches) {
+      tween = null;
+      camara.position.copy(pos);
+      controlos.target.copy(alvo);
+      camara.lookAt(alvo);
+      controlos.update();
+      acordar();
+      return;
+    }
+    tween = { t0: performance.now(), ms, p0: camara.position.clone(), a0: controlos.target.clone(), p1: pos.clone(), a1: alvo.clone() };
+    acordar();
+  }
+  function passoTween(t) {
+    const k = Math.min(1, (t - tween.t0) / tween.ms);
+    const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    camara.position.lerpVectors(tween.p0, tween.p1, e);
+    controlos.target.lerpVectors(tween.a0, tween.a1, e);
+    if (k >= 1) tween = null;
+  }
+  function direcaoAtual() {
+    const d = camara.position.clone().sub(controlos.target);
+    return d.lengthSq() < 1e-6 ? desenho.dir3D.clone() : d;
+  }
+  function enquadrar(ms, dir) {
+    const alvo = destinoDe(dir || (planoAtivo ? desenho.dirPlano : direcaoAtual()));
+    controlos.minDistance = alvo.D * 0.15;
+    controlos.maxDistance = alvo.D * 6;
+    camara.near = Math.max(alvo.D / 200, 0.05);
+    camara.far = alvo.D * 40;
+    camara.updateProjectionMatrix();
+    irPara(alvo.pos, alvo.alvo, ms);
+  }
+  function ajustarControlosPlano() {
+    controlos.enableRotate = !planoAtivo;
+    controlos.mouseButtons.LEFT = planoAtivo ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE;
+    controlos.touches.ONE = planoAtivo ? THREE.TOUCH.PAN : THREE.TOUCH.ROTATE;
+  }
+  function mudarPlano(b) {
+    planoAtivo = b;
+    vista.plano = b;
+    ajustarControlosPlano();
+    enquadrar(450, b ? desenho.dirPlano : desenho.dir3D);
+  }
+
+  /* -- registo dos elementos, rótulos e animações (o que a cena também usa) -- */
+  const donoDoMaterial = new Map();
+  function elemento(id, obj) {
+    if (!vista.ids.includes(id)) throw new Error(`o elemento «${id}» não é desta vista`);
+    if (!obj || !obj.isObject3D) throw new Error(`o elemento «${id}» tem de ser um objeto three.js`);
+    if (!obj.parent) cena.add(obj);
+    obj.traverse((o) => {
+      const ms = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];
+      ms.forEach((mt, i) => {
+        const dono = donoDoMaterial.get(mt);
+        if (dono && dono !== id) { // um material partilhado por dois elementos pintaria os dois: cada um fica com o seu
+          const c = mt.clone();
+          if (Array.isArray(o.material)) o.material[i] = c; else o.material = c;
+          donoDoMaterial.set(c, id);
+        } else donoDoMaterial.set(mt, id);
+      });
+    });
+    if (!elementos.has(id)) elementos.set(id, { objs: [] });
+    elementos.get(id).objs.push(obj);
+    return obj;
+  }
+  const FOLGA = { cima: 'Bottom', baixo: 'Top', dir: 'Left', esq: 'Right' };
+  const CENTRO = { cima: [0.5, 1], baixo: [0.5, 0], dir: [0, 0.5], esq: [1, 0.5] };
+  function rotulo(textoRotulo, pos, { id = null, fixo = true, ancora = null, folga = 0, longo = false, forte = false, estreito = false, medio = false, secundario = false, ativa = null } = {}) {
+    const sp = h('span', null, semCodigo(textoRotulo));
+    const el = h('div', { class: 'rotulo-3d', 'data-longo': longo, 'data-forte': forte, 'data-estreito': estreito, 'data-medio': medio, 'data-esq': ancora === 'dir' }, sp);
+    if (ancora && folga) sp.style['margin' + FOLGA[ancora]] = folga + 'rem';
+    const o = new CSS2DObject(el);
+    if (ancora && o.center) o.center.set(CENTRO[ancora][0], CENTRO[ancora][1]);
+    o.position.copy(pos);
+    cena.add(o);
+    rotulos.push({ obj: o, el, id, fixo, secundario, ativa });
+    return o;
+  }
+  function animar(fn) { if (!semMovimento.matches && typeof fn === 'function') animacoes.push(fn); }
+
+  /* -- as peças das vistas do catálogo -- */
+  const mat = (cor) => new THREE.MeshLambertMaterial({ color: cor });
+  const adicionar = (o) => { cena.add(o); return o; };
+  function cilindro(a, b, r, material) {
+    const d = new THREE.Vector3().subVectors(b, a);
+    const comp = d.length();
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, Math.max(comp, 1e-4), 8, 1), material);
+    m.position.copy(a).addScaledVector(d, 0.5);
+    m.quaternion.setFromUnitVectors(V3(0, 1, 0), d.normalize());
+    return m;
+  }
+  function ponta(base, dir, r, comp, material) {
+    const c = new THREE.Mesh(new THREE.ConeGeometry(r, comp, 14), material);
+    c.position.copy(base).addScaledVector(dir, comp / 2);
+    c.quaternion.setFromUnitVectors(V3(0, 1, 0), dir.clone().normalize());
+    return c;
+  }
+  // Uma linha de troços; tracejada, só os troços «ligados» de um traço de 0,55 e uma falha de 0,4.
+  function tracos(pts, r, material, tracejado) {
+    const g = new THREE.Group();
+    if (!tracejado) {
+      for (let i = 1; i < pts.length; i++) g.add(cilindro(pts[i - 1], pts[i], r, material));
+      return g;
+    }
+    let ligado = true, resta = 0.55;
+    for (let i = 1; i < pts.length; i++) {
+      let a = pts[i - 1].clone();
+      const b = pts[i];
+      let seg = a.distanceTo(b);
+      while (seg > 1e-6) {
+        const passo = Math.min(seg, resta);
+        const p = a.clone().lerp(b, passo / seg);
+        if (ligado) g.add(cilindro(a, p, r, material));
+        a = p; seg -= passo; resta -= passo;
+        if (resta <= 1e-6) { ligado = !ligado; resta = ligado ? 0.55 : 0.4; }
+      }
+    }
+    return g;
+  }
+  const aresta = (material, ativa) => arestas.push({ mat: material, ativa });
+  const estender = (p) => extras.push(p);
+  const m = {
+    THREE, V3, get cores() { return cores; }, mat, adicionar, cilindro, ponta, tracos, aresta, estender, elemento, rotulo,
+    corNo: (n) => new THREE.Color(corDoNo(n)), escala: escalaDoNo,
+    // Quanto alongar a vertical (de 1 a 3,5) para uma vista larga e baixa encher uma tela alta, como a do telemóvel, em vez de ficar encolhida.
+    esticar(largura, altura) {
+      const w = tela.clientWidth, hh = tela.clientHeight;
+      if (!w || !hh) return 1;
+      return Math.min(3.5, Math.max(1, largura / (altura * (w / hh))));
+    },
+    // Quantas unidades do mundo cabem em «px» pixeis quando a vista (de «largura» unidades, sem a folga) ocupa a tela: a folga que um rótulo largo, na ponta, precisa para não ser cortado.
+    // Com «altura» (a da vista, em unidades) conta-se também o que a tela dá na vertical: manda o lado que aperta mais.
+    folga(px, largura, altura = 0) {
+      const w = tela.clientWidth, hh = tela.clientHeight;
+      if (w <= 2 * px + 40) return px * 0.12;
+      const escala = Math.min((w - 2 * px) / largura, altura && hh ? hh / altura : Infinity);
+      return px / escala;
+    },
+    // A largura da tela em pixeis, para as vistas se medirem pelo ecrã onde estão.
+    get largura() { return tela.clientWidth || 640; },
+    get altura() { return tela.clientHeight || 420; },
+    get toque() { return toque.matches; },
+    configurar(o) { desenho = { ...desenho, ...o }; },
+  };
+
+  /* -- o realce: elementos, arestas e rótulos -- */
+  const lista = (o) => (Array.isArray(o.material) ? o.material : o.material ? [o.material] : []);
+  function pintar(ativos, modoCor) {
+    const real = new THREE.Color(cores.realce), neutro = new THREE.Color(cores.neutro);
+    elementos.forEach((el, id) => {
+      const ligado = !ativos || ativos.has(id);
+      el.objs.forEach((obj) => obj.traverse((o) => lista(o).forEach((mt) => {
+        if (!mt.color) return;
+        if (!mt.userData.nat) mt.userData.nat = mt.color.clone();
+        mt.color.copy(!ativos ? mt.userData.nat : ligado ? (modoCor === 'realce' ? real : mt.userData.nat) : neutro);
+      })));
+    });
+  }
+  function pintarArestas() {
+    const normal = new THREE.Color(cores.linha), real = new THREE.Color(css('--lig-real')), esb = new THREE.Color(css('--lig-esb'));
+    arestas.forEach((a) => a.mat.color.copy(!foco.ativos ? normal : a.ativa(foco) ? real : esb));
+  }
+  function atualizarRotulos() {
+    // Todos os rótulos com até 12 elementos; com mais, só nos realçados, no aberto e no apontado. Os secundários (o acontecimento de cada transição) pedem menos num ecrã estreito.
+    const limite = (sec) => (sec && tela.clientWidth < 520 ? 6 : 12);
+    const conta = (sec) => rotulos.filter((r) => !r.fixo && r.secundario === sec).length;
+    const todos = { false: conta(false) <= limite(false), true: conta(true) <= limite(true) };
+    rotulos.forEach((r) => {
+      const real = !!foco.ativos && (r.ativa ? r.ativa(foco) : r.id != null && foco.ativos.has(r.id));
+      const sel = r.id != null && r.id === foco.no;
+      const apt = r.id != null && r.id === apontado;
+      r.obj.visible = r.fixo || todos[r.secundario] || real || sel || apt;
+      r.el.toggleAttribute('data-real', real);
+      r.el.toggleAttribute('data-sel', sel);
+    });
+  }
+  function atualizar(novo) {
+    if (novo) foco = novo;
+    if (usuario.aoRealcar) {
+      try { usuario.aoRealcar(foco.ativos ? [...foco.ativos] : []); } catch (e) { /* o realce próprio falhou: fica o que estava */ }
+    } else pintar(foco.ativos, desenho.padrao);
+    pintarArestas();
+    atualizarRotulos();
+    acordar();
+  }
+
+  /* -- clique e hover: raios contra os elementos registados; no toque, o elemento mais perto do dedo -- */
+  const raio = new THREE.Raycaster();
+  const ptr = new THREE.Vector2();
+  function escolher(ev, tolerancia) {
+    const r = canvas.getBoundingClientRect();
+    ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    raio.setFromCamera(ptr, camara);
+    let melhor = null, d = Infinity;
+    elementos.forEach((el, id) => el.objs.forEach((o) => {
+      const hit = raio.intersectObject(o, true);
+      if (hit.length && hit[0].distance < d) { d = hit[0].distance; melhor = id; }
+    }));
+    if (melhor || !tolerancia) return melhor;
+    let dpx = tolerancia;
+    elementos.forEach((el, id) => el.objs.forEach((o) => {
+      const c = new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3()).project(camara);
+      if (c.z > 1) return;
+      const dist = Math.hypot((c.x * 0.5 + 0.5) * r.width + r.left - ev.clientX, (-c.y * 0.5 + 0.5) * r.height + r.top - ev.clientY);
+      if (dist < dpx) { dpx = dist; melhor = id; }
+    }));
+    return melhor;
+  }
+  canvas.addEventListener('pointerdown', (e) => { baixo = { x: e.clientX, y: e.clientY, t: performance.now() }; acordar(); });
+  canvas.addEventListener('pointerup', (e) => {
+    if (!baixo) return;
+    const mov = Math.hypot(e.clientX - baixo.x, e.clientY - baixo.y), dur = performance.now() - baixo.t;
+    baixo = null;
+    if (mov > 8 || dur > 700) return;
+    const id = escolher(e, e.pointerType === 'touch' ? 30 : 0);
+    if (id) { interagiu = true; if (m.aoEscolher) m.aoEscolher(id); }
+  });
+  canvas.addEventListener('pointercancel', () => { baixo = null; });
+  canvas.addEventListener('pointermove', (e) => {
+    acordar();
+    if (e.pointerType !== 'mouse' || e.buttons) return;
+    const id = escolher(e, 0);
+    if (id !== apontado) { apontado = id; canvas.style.cursor = id ? 'pointer' : ''; atualizarRotulos(); }
+  });
+  canvas.addEventListener('pointerleave', () => { if (apontado) { apontado = null; canvas.style.cursor = ''; atualizarRotulos(); } });
+  canvas.addEventListener('wheel', acordar, { passive: true });
+  canvas.addEventListener('touchstart', acordar, { passive: true });
+  controlos.addEventListener('start', () => { interagiu = true; });
+  controlos.addEventListener('change', () => { mexeu = true; acordar(); });
+
+  /* -- o deslocamento por toque: sem controlos a vista não o prende -- */
+  function ligarControlos(on) {
+    controlos.enabled = on;
+    const t = on ? 'none' : 'auto';
+    canvas.style.touchAction = t;
+    tela.style.touchAction = t;
+  }
+
+  /* -- tamanho -- */
+  function medir() {
+    const w = tela.clientWidth, hh = tela.clientHeight;
+    if (!w || !hh) return false;
+    render.setSize(w, hh, false);
+    rotulosR.setSize(w, hh);
+    camara.aspect = w / hh;
+    camara.updateProjectionMatrix();
+    return true;
+  }
+  // O formato (estreito, largo) conta-se com a largura que os construtores medem (m.largura, que com a tela escondida cai nos 640 de recurso): construir e o observador comparam a mesma medida.
+  const estreito = () => m.largura < 520;
+  let estreitaAoDesenhar = false;
+  const observador = new ResizeObserver(() => {
+    if (!medir()) return;
+    // Cruzou o limite entre ecrã largo e estreito (por exemplo, o telemóvel rodou, ou a tela só agora tem tamanho): as vistas do catálogo desenham-se de outra forma.
+    if (api.aoMudarFormato && estreito() !== estreitaAoDesenhar) { api.aoMudarFormato(); return; }
+    if (!interagiu) enquadrar(0, planoAtivo ? desenho.dirPlano : undefined);
+    acordar();
+  });
+
+  /* -- arranque: constrói, confere e enquadra -- */
+  const api = {
+    canvas, render, camara, controlos, cena, elementos, m,
+    imagens: () => imagens,
+    mexeu: () => mexeu,
+    atualizar, acordar, ligarControlos,
+    enquadrar: (ms) => { interagiu = false; enquadrar(ms, planoAtivo ? desenho.dirPlano : undefined); },
+    mudarPlano,
+    mostrar() { ativa = true; medir(); acordar(); },
+    esconder() { ativa = false; parar(); },
+    destruir() {
+      destruida = true; ativa = false; parar(); observador.disconnect();
+      cena.traverse((o) => { if (o.geometry) o.geometry.dispose(); lista(o).forEach((mt) => mt.dispose()); });
+      controlos.dispose(); render.dispose(); render.forceContextLoss();
+    },
+    iniciar() {
+      cores = coresDoTema();
+      render.setClearColor(new THREE.Color(cores.fundo));
+      camara.position.copy(desenho.dir3D.clone().multiplyScalar(40));
+      controlos.target.set(0, 0, 0);
+      const inicial = camara.position.clone();
+      estreitaAoDesenhar = estreito();
+      const r = construtor(m, def, cores, api);
+      usuario = r && typeof r === 'object' ? r : {};
+      if (!camara.position.equals(inicial)) desenho.dir3D = camara.position.clone().sub(controlos.target); // a cena escolheu um ponto de vista: fica a direção
+      ajustarControlosPlano();
+      medir();
+      enquadrar(0, planoAtivo ? desenho.dirPlano : desenho.dir3D);
+      observador.observe(tela);
+    },
+    // A moldura dá à cena o que a spec diz que ela recebe. Não a isola da página: a cena corre com os poderes dela (ver references/cena.md).
+    contexto() {
+      cores = coresDoTema();
+      return {
+        THREE, cena, camara, cores,
+        elemento: (id, obj) => elemento(id, obj),
+        rotulo: (t, pos) => rotulo(t, pos, { fixo: true }),
+        animar,
+        movimentoReduzido: semMovimento.matches,
+        toque: toque.matches,
+      };
+    },
+    // Depois de correr a cena: cada nó da vista tem de estar registado.
+    conferir() {
+      const faltam = vista.ids.filter((id) => !elementos.has(id));
+      if (faltam.length) throw new Error(`falta registar ${faltam.length === 1 ? 'o nó' : 'os nós'} ${faltam.map((id) => '«' + semCodigo(porId.get(id).curto) + '»').join(', ')}`);
+    },
+  };
+  tela.__moldura = api; // a prova no browser lê daqui a câmara e os elementos (como o __grafo, no grafo)
+  return api;
+}
+
+/* ---------- as vistas do catálogo, desenhadas com a moldura ---------- */
+const construtores = {
+  camadas(m, v) {
+    const { V3, THREE } = m;
+    const PASSO = 4.6, PROF = 3.2;
+    const maxN = Math.max(...v.camadas.map((c) => c.nos.length));
+    const estreita = m.largura < 520;
+    // A zona do nome da camada mede-se em pixeis (cerca de 120): num ecrã estreito pede mais unidades do mundo.
+    const ZONA = estreita ? Math.min(11, (120 * (maxN * PASSO + 2)) / Math.max(m.largura - 120, 120)) : 6.6;
+    const larg = ZONA + maxN * PASSO + 0.8;
+    const DY = 6.2 * m.esticar(larg + 1.2, (v.camadas.length - 1) * 6.2 + 8);
+    const pos = new Map();
+    v.camadas.forEach((c, k) => {
+      const y = -k * DY;
+      const placa = new THREE.Mesh(new THREE.BoxGeometry(larg, 0.3, PROF), m.mat(css(k % 2 ? '--placa-2' : '--placa')));
+      placa.position.set(0, y - 0.15, 0);
+      m.adicionar(placa);
+      m.rotulo(c.nome, V3(-larg / 2 + 0.5, y + 0.9, 0), { fixo: true, ancora: 'dir', forte: true, estreito: true });
+      c.nos.forEach((id, j) => {
+        const n = porId.get(id), e = m.escala(n);
+        const x = -larg / 2 + ZONA + (j + 0.5) * PASSO;
+        const hx = 1.4 * e, hy = 0.75 * e;
+        const bloco = new THREE.Mesh(new THREE.BoxGeometry(2 * hx, 2 * hy, 1.1), m.mat(m.corNo(n)));
+        bloco.position.set(x, y + hy, 0);
+        m.elemento(id, bloco);
+        const sob = (c.nos.length >= 3 || (estreita && c.nos.length >= 2)) && j % 2 === 1; // com 3 ou mais na fila (2 num ecrã estreito), os nomes alternam por cima e por baixo para não se cobrirem
+        m.rotulo(n.curto, sob ? V3(x, y - 0.35, 0) : V3(x, y + 2 * hy + 0.2, 0), { id, fixo: false, ancora: sob ? 'baixo' : 'cima', medio: true });
+        pos.set(id, { x, y: y + hy, hx, hy });
+      });
+    });
+    (v.ligacoes || []).forEach((l) => {
+      const a = pos.get(l.de), b = pos.get(l.para);
+      if (!a || !b) return;
+      const u = V3(b.x - a.x, b.y - a.y, 0).normalize();
+      const saida = (p) => Math.min(p.hx / Math.max(Math.abs(u.x), 1e-6), p.hy / Math.max(Math.abs(u.y), 1e-6)) + 0.12;
+      const p0 = V3(a.x, a.y, 0.75).addScaledVector(u, saida(a));
+      const p1 = V3(b.x, b.y, 0.75).addScaledVector(u, -saida(b));
+      if (p0.distanceTo(p1) < 0.9) return;
+      const material = m.mat(m.cores.linha);
+      const fim = p1.clone().addScaledVector(u, -0.6);
+      const g = new THREE.Group();
+      g.add(m.tracos([p0, fim], 0.07, material, perfil === 'C' && l.modo === 'assincrona'), m.ponta(fim, u, 0.25, 0.6, material));
+      m.adicionar(g);
+      m.aresta(material, (f) => arestaAtiva(f, l.de, l.para));
+    });
+    const alto = (v.camadas.length - 1) * DY + 8;
+    const fundo = -(v.camadas.length - 1) * DY - 1 - m.folga(m.toque ? 64 : 26, larg + 1.2, alto);
+    [-1, 1].forEach((s) => { m.estender(V3(s * (larg / 2 + 0.6), 5.4, 0)); m.estender(V3(s * (larg / 2 + 0.6), fundo, 0)); });
+    m.configurar({ dir3D: V3(0.28, 0.22, 1), dirPlano: V3(0, 0, 1), padrao: 'natural' });
+  },
+
+  sequencia(m, v) {
+    const { V3, THREE } = m;
+    const P = v.participantes, M = v.mensagens;
+    const SX = 8.6, SY = 2.4 * m.esticar((P.length - 1) * 8.6 + 12, (M.length + 1) * 2.4 + 5);
+    const x = new Map(P.map((id, i) => [id, (i - (P.length - 1) / 2) * SX]));
+    const H = (M.length + 1) * SY + 1.2;
+    P.forEach((id) => {
+      const n = porId.get(id), e = m.escala(n), px = x.get(id);
+      const g = new THREE.Group();
+      const cab = new THREE.Mesh(new THREE.BoxGeometry(2.8 * e, 1.1 * e, 1.1), m.mat(m.corNo(n)));
+      cab.position.set(px, 0, 0);
+      g.add(cab, m.cilindro(V3(px, -0.55 * e, 0), V3(px, -H, 0), 0.14, m.mat(m.cores.linha)));
+      m.elemento(id, g);
+      // Com 4 ou mais, os nomes alternam de altura (em 3 níveis num ecrã estreito, onde as colunas ficam muito juntas).
+      const nivel = P.length > 3 ? P.indexOf(id) % (m.largura < 520 ? 3 : 2) : 0;
+      m.rotulo(n.curto, V3(px, 0.55 * e, 0), { id, fixo: true, ancora: 'cima', folga: [0.25, 2.2, 4.15][nivel], forte: true, medio: true });
+    });
+    M.forEach((msg, k) => {
+      const y = -(k + 1) * SY - 0.3;
+      const xa = x.get(msg.de), xb = x.get(msg.para);
+      const material = m.mat(m.cores.linha);
+      const assinc = perfil === 'C' && msg.modo === 'assincrona';
+      const g = new THREE.Group();
+      let ponto, ancora;
+      if (msg.de === msg.para) {
+        const pts = [V3(xa + 0.2, y, 0.2), V3(xa + 2.2, y, 0.2), V3(xa + 2.2, y - 0.9, 0.2), V3(xa + 0.9, y - 0.9, 0.2)];
+        g.add(m.tracos(pts, 0.07, material, assinc), m.ponta(pts[3], V3(-1, 0, 0), 0.25, 0.6, material));
+        ponto = V3(xa + 2.5, y - 0.45, 0.2); ancora = 'dir';
+      } else {
+        const s = Math.sign(xb - xa);
+        const p0 = V3(xa + s * 0.2, y, 0.2), fim = V3(xb - s * 0.8, y, 0.2);
+        g.add(m.tracos([p0, fim], 0.07, material, assinc), m.ponta(fim, V3(s, 0, 0), 0.25, 0.6, material));
+        ponto = V3((xa + xb) / 2, y + 0.12, 0.2); ancora = 'cima';
+      }
+      m.adicionar(g);
+      m.aresta(material, (f) => f.ativos.has(msg.id) || (f.no != null && (msg.de === f.no || msg.para === f.no)));
+      m.rotulo(`${k + 1}. ${msg.texto}`, ponto, { id: msg.id, fixo: false, ancora, longo: true });
+    });
+    const xs = [...x.values()];
+    const lado = m.folga(58, Math.max(...xs) - Math.min(...xs) + 2, H + 6);
+    const topo = 3.2 + m.folga(P.length > 3 ? (m.largura < 520 ? 84 : 58) : 34, Math.max(...xs) - Math.min(...xs) + 2, H + 6);
+    m.estender(V3(Math.min(...xs) - lado, topo, 0)); m.estender(V3(Math.max(...xs) + lado, topo, 0));
+    const base = -H - 0.6 - m.folga(m.toque ? 64 : 20, Math.max(...xs) - Math.min(...xs) + 2, H + 6);
+    m.estender(V3(Math.min(...xs) - lado, base, 0)); m.estender(V3(Math.max(...xs) + lado, base, 0));
+    m.configurar({ dir3D: V3(0.22, 0.12, 1), dirPlano: V3(0, 0, 1), padrao: 'natural' });
+  },
+
+  estados(m, v) {
+    const { V3, THREE } = m;
+    const S = v.estados;
+    const R = Math.max(5.5, S.length * 1.3);
+    const pos = new Map(), raio = new Map();
+    S.forEach((id, i) => {
+      const a = (i / S.length) * Math.PI * 2 - Math.PI / 2;
+      const n = porId.get(id), e = m.escala(n), r = 0.9 * e;
+      const p = V3(R * Math.cos(a), 0, R * Math.sin(a));
+      pos.set(id, p); raio.set(id, r);
+      const g = new THREE.Group();
+      const esfera = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), m.mat(m.corNo(n)));
+      esfera.position.copy(p);
+      g.add(esfera);
+      if (id === v.inicial) {
+        const anel = new THREE.Mesh(new THREE.TorusGeometry(r + 0.4, 0.07, 8, 40), m.mat(m.corNo(n)));
+        anel.rotation.x = Math.PI / 2;
+        anel.position.copy(p);
+        g.add(anel);
+      }
+      m.elemento(id, g);
+      m.rotulo(id === v.inicial ? `${n.curto} (inicial)` : n.curto, p, { id, fixo: true, ancora: 'cima', folga: 1.0, forte: true });
+    });
+    // Os rótulos das transições não se cobrem: cada um procura, ao longo da sua curva, um ponto onde a caixa do texto (medida em unidades do mundo, pelo tamanho provável na tela) não toca nos já postos.
+    const pxPorUnidade = Math.max(3, Math.min(m.largura / (2 * R + 10), (m.altura || 420) / (2 * R + 8)));
+    const colocados = [];
+    const livre = (p, texto) => {
+      const w = (texto.length * 7.4 + 14) / pxPorUnidade, hh = 22 / pxPorUnidade;
+      return colocados.every((c) => Math.abs(c.p.x - p.x) > (c.w + w) / 2 || Math.abs(c.p.z - p.z) > (c.h + hh) / 2);
+    };
+    const poe = (curva, texto) => {
+      let escolhido = curva.getPoint(0.5);
+      for (const k of [0.5, 0.36, 0.64, 0.26, 0.74]) {
+        const p = curva.getPoint(k);
+        if (livre(p, texto)) { escolhido = p; break; }
+      }
+      colocados.push({ p: escolhido, w: (texto.length * 7.4 + 14) / pxPorUnidade, h: 22 / pxPorUnidade });
+      return escolhido;
+    };
+    v.transicoes.forEach((t) => {
+      const a = pos.get(t.de), b = pos.get(t.para);
+      const material = m.mat(m.cores.linha);
+      const g = new THREE.Group();
+      let ponto;
+      if (t.de === t.para) {
+        const fora = V3(a.x, 0, a.z).normalize();
+        const C = a.clone().addScaledVector(fora, raio.get(t.de) + 0.55), rr = 0.75, N = 28;
+        const fi = Math.atan2(a.z - C.z, a.x - C.x);
+        const fimAng = fi + Math.PI * 2 - 0.45;
+        const pts = [];
+        for (let i = 0; i <= N; i++) {
+          const th = fi + 0.45 + (i / N) * (fimAng - fi - 0.45);
+          pts.push(V3(C.x + rr * Math.cos(th), 0, C.z + rr * Math.sin(th)));
+        }
+        g.add(m.tracos(pts, 0.07, material, false), m.ponta(pts[N], V3(-Math.sin(fimAng), 0, Math.cos(fimAng)), 0.25, 0.55, material));
+        ponto = V3(C.x + fora.x * (rr + 0.9), 0, C.z + fora.z * (rr + 0.9));
+        colocados.push({ p: ponto, w: (t.evento.length * 7.4 + 14) / pxPorUnidade, h: 22 / pxPorUnidade });
+      } else {
+        const dir = b.clone().sub(a);
+        const L = dir.length();
+        dir.normalize();
+        const p0 = a.clone().addScaledVector(dir, raio.get(t.de) + 0.15);
+        const pf = b.clone().addScaledVector(dir, -(raio.get(t.para) + 0.15));
+        const perp = V3(-dir.z, 0, dir.x);
+        const ctrl = p0.clone().add(pf).multiplyScalar(0.5).addScaledVector(perp, L * 0.22).add(V3(0, 0.8, 0));
+        const tan = pf.clone().sub(ctrl).normalize();
+        const fim = pf.clone().addScaledVector(tan, -0.6);
+        const curva = new THREE.QuadraticBezierCurve3(p0, ctrl, fim);
+        g.add(m.tracos(curva.getPoints(30), 0.07, material, false), m.ponta(fim, tan, 0.25, 0.6, material));
+        ponto = poe(curva, t.evento);
+      }
+      m.adicionar(g);
+      const ativa = (f) => arestaAtiva(f, t.de, t.para);
+      m.aresta(material, ativa);
+      m.rotulo(t.evento, ponto, { fixo: false, ancora: 'cima', folga: 0.1, longo: true, secundario: true, ativa });
+    });
+    m.estender(V3(-R - 5, 0, -R - 4)); m.estender(V3(R + 5, 1.5, R + 4));
+    m.configurar({ dir3D: V3(0, 0.85, 0.5), dirPlano: V3(0, 1, 0.0001), padrao: 'natural' });
+  },
+
+  'linha-do-tempo'(m, v) {
+    const { V3, THREE } = m;
+    const E = v.eventos;
+    if (m.largura < 520 && E.length >= 3) {
+      // Num ecrã estreito e alto, o tempo corre de cima para baixo: a data à esquerda do eixo e o nome à direita.
+      const SY = 4.2, y0 = ((E.length - 1) / 2) * SY;
+      m.adicionar(m.cilindro(V3(0, y0 + 2.5, 0), V3(0, -y0 - 2.5, 0), 0.09, m.mat(m.cores.linha)));
+      E.forEach((ev, i) => {
+        const n = porId.get(ev.no), e = m.escala(n), y = y0 - i * SY;
+        const g = new THREE.Group();
+        const marca = new THREE.Mesh(new THREE.SphereGeometry(0.55 * e, 20, 14), m.mat(m.corNo(n)));
+        marca.position.set(0, y, 0);
+        g.add(marca);
+        m.elemento(ev.no, g);
+        m.rotulo(ev.quando, V3(-0.9 * e, y, 0), { id: ev.no, fixo: true, ancora: 'esq', forte: true, medio: true });
+        m.rotulo(n.curto, V3(0.9 * e, y, 0), { id: ev.no, fixo: false, ancora: 'dir', medio: true });
+      });
+      const alto = 2 * y0 + 7;
+      const lado = m.folga(130, 2, alto), cima = y0 + 3.5 + m.folga(12, 2, alto), baixo = -y0 - 3.5 - m.folga(m.toque ? 64 : 12, 2, alto);
+      [-1, 1].forEach((s) => { m.estender(V3(s * lado, cima, 0)); m.estender(V3(s * lado, baixo, 0)); });
+      m.configurar({ dir3D: V3(0.12, 0.1, 1), dirPlano: V3(0, 0, 1), padrao: 'natural' });
+      return;
+    }
+    const SX = 5.6;
+    const x0 = -((E.length - 1) / 2) * SX;
+    m.adicionar(m.cilindro(V3(x0 - 3, 0, 0), V3(-x0 + 3, 0, 0), 0.09, m.mat(m.cores.linha)));
+    E.forEach((ev, i) => {
+      const n = porId.get(ev.no), e = m.escala(n), x = x0 + i * SX;
+      const alto = i % 2 ? 3.0 : 1.7;
+      const g = new THREE.Group();
+      const marca = new THREE.Mesh(new THREE.SphereGeometry(0.55 * e, 20, 14), m.mat(m.corNo(n)));
+      marca.position.set(x, 0, 0);
+      g.add(marca,
+        m.cilindro(V3(x, 0.5 * e, 0), V3(x, alto - 0.3, 0), 0.05, m.mat(m.cores.linha)),
+        m.cilindro(V3(x, -0.5 * e, 0), V3(x, -alto + 0.3, 0), 0.05, m.mat(m.cores.linha)));
+      m.elemento(ev.no, g);
+      m.rotulo(ev.quando, V3(x, alto, 0), { id: ev.no, fixo: true, ancora: 'cima', forte: true });
+      m.rotulo(n.curto, V3(x, -alto, 0), { id: ev.no, fixo: false, ancora: 'baixo' });
+    });
+    const lado = 3 + m.folga(50, -2 * x0 + 6, 12);
+    [-1, 1].forEach((s) => { m.estender(V3(s * (-x0 + lado), 5, 0)); m.estender(V3(s * (-x0 + lado), -5, 0)); });
+    m.configurar({ dir3D: V3(0.15, 0.12, 1), dirPlano: V3(0, 0, 1), padrao: 'natural' });
+  },
+
+  // A cena do agente: a moldura chama-a só agora, com o three já carregado, e confere o que ela registou.
+  cena(m, v, cores, api) {
+    try {
+      if (typeof window.explainCena !== 'function') throw new Error('a página não traz o código da cena');
+      const f = window.explainCena; // chamada sem this: a cena não recebe a janela
+      const r = f(api.contexto());
+      api.conferir();
+      return r;
+    } catch (e) {
+      const er = new Error(String(e && e.message ? e.message : e).slice(0, 240));
+      er.daCena = true;
+      throw er;
+    }
+  },
+};
+
+/* ---------- a vista «grafo», pela biblioteca 3d-force-graph ---------- */
+function criarGrafo(vista, tela) {
+  const def = vista.def;
+  const idsV = vista.ids;
+  let G = null;
+  let nos = [];
+  let ligs = [];
+  let rotulos = new Map();
+  let valores = new Map();
+  let visiveis = new Set();
+  let hoverId = null;
+  let interagiu = false;
+  let acordado = true;        // o ciclo da biblioteca e o dos rótulos estão a correr
+  let cicloAtivo = false;
+  let motorParado = false;    // a simulação das forças já assentou
+  let ultimaInteracao = -Infinity;
+  let ultimaCamara = 0;
+  let temporizador = 0;
+  let ticks = 0;
+  let ativa = false;
+  let destruido = false;
+  let foco = { ativos: null, no: null, vizinhanca: false };
+  let baixo = null;
+  const api = { aoEscolher: null };
+  const idDe = (x) => (typeof x === 'object' ? x.id : x);
+  const baseRisco = { baixo: 5, medio: 9, alto: 15 };
+
+  function carregar() {
+    nos = idsV.map((id) => ({ id, curto: porId.get(id).curto }));
+    ligs = (def.ligacoes || []).map((l) => ({ source: l.de, target: l.para, modo: l.modo }));
+    motorParado = false;
+    G.graphData({ nodes: nos, links: ligs });
+    rotulos.forEach((el) => el.remove());
+    rotulos = new Map();
+    nos.forEach((n) => {
+      const el = h('div', { class: 'rotulo-no', 'aria-hidden': 'true', hidden: true }, h('span', null, semCodigo(n.curto)));
+      tela.appendChild(el);
+      rotulos.set(n.id, el);
+    });
+  }
+
+  function iniciar() {
+    G = new ForceGraph3D(tela, { controlType: 'orbit', rendererConfig: { antialias: true, powerPreference: 'high-performance' } });
+    G.renderer().setPixelRatio(razaoDePixeis());
+    api.G = G;
+    tela.__grafo = G; // a prova no browser lê daqui o renderer
+    G.width(tela.clientWidth || 320).height(tela.clientHeight || 320)
+      .showNavInfo(false)
+      .numDimensions(vista.plano ? 2 : 3)
+      .nodeRelSize(4).nodeResolution(toque.matches ? 10 : 16).nodeOpacity(1)
+      .nodeLabel(() => '') // os rótulos são os da página; a dica da biblioteca leva HTML e não se usa
+      .linkOpacity(0.85).linkResolution(toque.matches ? 4 : 6)
+      .linkDirectionalArrowLength(5).linkDirectionalArrowRelPos(1)
+      .enableNodeDrag(false)
+      .warmupTicks(80).cooldownTicks(150).cooldownTime(4000)
+      .d3VelocityDecay(0.3)
+      .onNodeHover((n) => { hoverId = n ? n.id : null; tela.style.cursor = n ? 'pointer' : ''; })
+      .onEngineTick(() => { if (!interagiu && ++ticks % 10 === 0) enquadrar(null, 0); })
+      .onEngineStop(() => { motorParado = true; if (!interagiu) enquadrar(null, 0); agendar(300); });
+    G.d3Force('link').distance(60);
+    G.d3Force('charge').strength(vista.plano ? -110 : -170);
+    carregar();
+    G.controls().addEventListener('start', () => { interagiu = true; });
+    G.controls().addEventListener('change', () => { ultimaCamara = performance.now(); });
+    ajustarControlos();
+    // O desenho pára quando nada mexe; qualquer interação o retoma. O clique perde-se com o ciclo parado: retoma-se logo em pointerdown.
+    ['pointerdown', 'wheel', 'touchstart', 'pointermove'].forEach((ev) => tela.addEventListener(ev, acordar, { passive: true }));
+    // Um toque ou clique sem arrastar escolhe o nó mais perto (no toque, com folga para o dedo).
+    tela.addEventListener('pointerdown', (e) => { baixo = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+    tela.addEventListener('pointercancel', () => { baixo = null; });
+    tela.addEventListener('pointerup', (e) => {
+      if (!baixo) return;
+      const mov = Math.hypot(e.clientX - baixo.x, e.clientY - baixo.y), dur = performance.now() - baixo.t;
+      baixo = null;
+      if (mov > 8 || dur > 700) return;
+      const id = escolherNo(e, e.pointerType === 'touch' ? 30 : 0);
+      if (id) { interagiu = true; if (api.aoEscolher) api.aoEscolher(id); }
+    });
+    atualizar();
+    const tentar = () => enquadrar(null, 0);
+    requestAnimationFrame(tentar);
+    setTimeout(tentar, 250);
+    new ResizeObserver(() => {
+      if (destruido || !tela.clientWidth || !tela.clientHeight) return;
+      G.width(tela.clientWidth).height(tela.clientHeight);
+      if (!interagiu) enquadrar(null, 0);
+      acordar();
+    }).observe(tela);
+    semMovimento.addEventListener('change', () => atualizar());
+    toque.addEventListener('change', () => atualizar());
+  }
+
+  /* ---- pausar o desenho quando nada mexe ---- */
+  function agendar(ms) {
+    if (!temporizador) temporizador = setTimeout(pausar, ms);
+  }
+  function pausar() {
+    temporizador = 0;
+    if (!G || destruido || !acordado || !motorParado) return;
+    const agora = performance.now();
+    const resta = Math.max(REPOUSO - (agora - ultimaInteracao), 300 - (agora - ultimaCamara));
+    if (resta > 40) { agendar(resta); return; }
+    posicionar();
+    G.pauseAnimation();
+    acordado = false;
+  }
+  // Retoma o desenho: numa interação, ou quando o código mexe na câmara, num realce ou na vista Plano/3D.
+  function acordar() {
+    if (!G || !ativa || destruido) return;
+    ultimaInteracao = performance.now();
+    if (!acordado) { acordado = true; G.resumeAnimation(); }
+    if (!cicloAtivo) { cicloAtivo = true; requestAnimationFrame(ciclo); }
+    agendar(REPOUSO);
+  }
+
+  function ajustarControlos() {
+    const c = G.controls();
+    if (!c) return;
+    c.enableRotate = !vista.plano;
+    c.mouseButtons.LEFT = vista.plano ? 2 : 0;
+    c.touches.ONE = vista.plano ? 1 : 0;
+  }
+  // Com ponteiro de toque a vista não prende o deslocamento da página, até «Rodar e aproximar».
+  function ligarControlos(on) {
+    if (!G) return;
+    G.controls().enabled = on;
+    const t = on ? 'none' : 'auto';
+    tela.style.touchAction = t;
+    G.renderer().domElement.style.touchAction = t;
+  }
+
+  // As ligações assíncronas (perfil C) levam a linha tracejada: a biblioteca não traceja linhas, por isso a linha afina-se até sumir e ficam pontos parados em fila; com movimento, os pontos andam.
+  const assincrona = (l) => l.modo === 'assincrona';
+  function atualizar(novo) {
+    if (novo) foco = novo;
+    if (!G) return;
+    const { ativos, no, vizinhanca } = foco;
+    const cores = {};
+    for (let i = 1; i <= 6; i++) cores['t-' + i] = css('--t-' + i);
+    ['baixo', 'medio', 'alto'].forEach((k) => { cores['r-' + k] = css('--r-' + k); });
+    const esb = css('--no-esb');
+    const ligN = css('--lig'), ligR = css('--lig-real'), ligE = css('--lig-esb');
+    const porRisco = (n) => perfil === 'C' && n.risco;
+    const corDe = (n) => (porRisco(n) ? cores['r-' + n.risco] : cores['t-' + tipoIdx.get(n.tipo)]);
+    // No perfil C o tamanho diz o risco; nos outros, diz o realce.
+    const valorDe = (n) => {
+      if (porRisco(n)) return n.id === no ? Math.round(baseRisco[n.risco] * 1.5) : baseRisco[n.risco];
+      return n.id === no ? 16 : !ativos ? 7 : ativos.has(n.id) ? 10 : 5;
+    };
+    valores = new Map(idsV.map((id) => [id, valorDe(porId.get(id))]));
+    const ativoLig = (l) => arestaAtiva(foco, idDe(l.source), idDe(l.target));
+    const corLig = (l) => (!ativos ? ligN : ativoLig(l) ? ligR : ligE);
+    const movimento = !semMovimento.matches && !toque.matches;
+    G.backgroundColor(css('--painel'))
+      .nodeColor((n) => (!ativos || ativos.has(n.id) ? corDe(porId.get(n.id)) : esb))
+      .nodeVal((n) => valores.get(n.id))
+      .linkColor(corLig)
+      .linkWidth((l) => (assincrona(l) ? 0.04 : ativos && ativoLig(l) ? 1.8 : 0.7))
+      .linkDirectionalArrowColor(corLig)
+      .linkDirectionalParticles((l) => (assincrona(l) ? 8 : 0))
+      .linkDirectionalParticleWidth(1.8)
+      .linkDirectionalParticleSpeed(movimento ? 0.006 : 0)
+      .linkDirectionalParticleColor(corLig);
+    // Rótulos: todos com até 12 elementos; com mais, só nos realçados (e no que está sob o cursor ou aberto).
+    visiveis = new Set(idsV.length <= 12 ? idsV : ativos ? ativos : []);
+    dims.clear();
+    rotulos.forEach((el, id) => {
+      if (id === no) el.setAttribute('data-sel', ''); else el.removeAttribute('data-sel');
+      if (ativos && ativos.has(id)) el.setAttribute('data-real', ''); else el.removeAttribute('data-real');
+    });
+    acordar();
+  }
+
+  function enquadrar(ids, ms) {
+    if (!G || destruido) return;
+    const dur = semMovimento.matches ? 0 : (ms ?? 0);
+    const filtro = ids && ids.length ? (n) => ids.includes(n.id) : undefined;
+    G.zoomToFit(dur, ids && ids.length ? 70 : 40, filtro);
+    if (dur) acordar();
+  }
+
+  function mudarPlano(b) {
+    if (!G) return;
+    vista.plano = b;
+    interagiu = false;
+    G.numDimensions(b ? 2 : 3);
+    G.d3Force('charge').strength(b ? -110 : -170);
+    carregar();
+    ajustarControlos();
+    atualizar();
+    if (b) G.camera().up.set(0, 1, 0);
+    G.cameraPosition({ x: 0, y: 0, z: 400 }, { x: 0, y: 0, z: 0 }, 0);
+    requestAnimationFrame(() => enquadrar(null, 0));
+    setTimeout(() => enquadrar(null, 0), 120);
+    acordar();
+  }
+
+  // Cada rótulo escolhe o primeiro sítio (por baixo, por cima, à direita, à esquerda) que não cubra outro rótulo nem outro nó.
+  const dims = new Map();
+  const dimDe = (el, id) => {
+    let d = dims.get(id);
+    if (!d) { d = { w: el.offsetWidth, h: el.offsetHeight }; dims.set(id, d); }
+    return d;
+  };
+  const cruzam = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  const discoCruza = (d, c) => {
+    const nx = Math.max(c.x, Math.min(d.x, c.x + c.w)), ny = Math.max(c.y, Math.min(d.y, c.y + c.h));
+    return Math.hypot(d.x - nx, d.y - ny) < d.r + 2;
+  };
+  // Onde um nó está no ecrã, o seu raio em pixéis e se está à frente da câmara.
+  function infoNo(n, cam, alvo, w, hh) {
+    const z = typeof n.z === 'number' ? n.z : 0;
+    const fx = alvo.x - cam.position.x, fy = alvo.y - cam.position.y, fz = alvo.z - cam.position.z;
+    const frente = (n.x - cam.position.x) * fx + (n.y - cam.position.y) * fy + (z - cam.position.z) * fz > 0;
+    const p = G.graph2ScreenCoords(n.x, n.y, z);
+    const dist = Math.hypot(n.x - cam.position.x, n.y - cam.position.y, z - cam.position.z) || 1;
+    const r = (Math.cbrt(valores.get(n.id) || 5) * 4 * (hh / 2)) / (0.4663 * dist);
+    return { x: p.x, y: p.y, r, frente, dentro: frente && p.x > -30 && p.x < w + 30 && p.y > -30 && p.y < hh + 30 };
+  }
+  function escolherNo(ev, tolerancia) {
+    const cam = G.camera();
+    cam.updateMatrixWorld();
+    const alvo = G.controls().target, r = tela.getBoundingClientRect();
+    let melhor = null, d = Infinity;
+    nos.forEach((n) => {
+      if (typeof n.x !== 'number') return;
+      const i = infoNo(n, cam, alvo, r.width, r.height);
+      if (!i.frente) return;
+      const dist = Math.hypot(i.x + r.left - ev.clientX, i.y + r.top - ev.clientY);
+      if (dist <= Math.max(i.r + 4, tolerancia) && dist < d) { d = dist; melhor = n.id; }
+    });
+    return melhor;
+  }
+  function posicionar() {
+    const cam = G.camera();
+    cam.updateMatrixWorld();
+    const alvo = G.controls().target;
+    const w = tela.clientWidth, hh = tela.clientHeight;
+    const infos = [];
+    nos.forEach((n) => {
+      const el = rotulos.get(n.id);
+      if (!el) return;
+      if (typeof n.x !== 'number') { el.hidden = true; return; }
+      const i = infoNo(n, cam, alvo, w, hh);
+      infos.push({ n, el, x: i.x, y: i.y, r: i.r, mostrar: i.dentro && (visiveis.has(n.id) || n.id === hoverId || n.id === foco.no) });
+    });
+    const discos = infos.filter((i) => i.x > -30 && i.x < w + 30 && i.y > -30 && i.y < hh + 30).map((i) => ({ x: i.x, y: i.y, r: i.r, id: i.n.id }));
+    const caixas = [];
+    const prioridade = (i) => (i.n.id === foco.no ? 3 : i.n.id === hoverId ? 2 : 1);
+    infos.filter((i) => i.mostrar).sort((a, b) => prioridade(b) - prioridade(a)).forEach((i) => {
+      if (i.el.hidden) i.el.hidden = false;
+      const { w: lw, h: lh } = dimDe(i.el, i.n.id);
+      const g = 6;
+      const cands = [
+        { x: i.x - lw / 2, y: i.y + i.r + g },
+        { x: i.x - lw / 2, y: i.y - i.r - g - lh },
+        { x: i.x + i.r + g, y: i.y - lh / 2 },
+        { x: i.x - i.r - g - lw, y: i.y - lh / 2 },
+      ].map((c) => ({ ...c, w: lw, h: lh }));
+      const cabe = (c) => c.x >= 0 && c.y >= 0 && c.x + c.w <= w && c.y + c.h <= hh;
+      const livre = (c) => cabe(c) && !caixas.some((b) => cruzam(c, b)) && !discos.some((d) => d.id !== i.n.id && discoCruza(d, c));
+      const esc = cands.find(livre) || cands.find((c) => cabe(c) && !caixas.some((b) => cruzam(c, b))) || cands.find(cabe) || cands[0];
+      caixas.push(esc);
+      const t = `translate(${Math.round(esc.x)}px, ${Math.round(esc.y)}px)`;
+      if (i.el.style.transform !== t) i.el.style.transform = t;
+    });
+    infos.filter((i) => !i.mostrar).forEach((i) => { if (!i.el.hidden) i.el.hidden = true; });
+  }
+  // Os rótulos acompanham o desenho: param com ele e voltam com ele.
+  function ciclo() {
+    if (!G || !acordado || destruido) { cicloAtivo = false; return; }
+    posicionar();
+    requestAnimationFrame(ciclo);
+  }
+
+  iniciar();
+  Object.assign(api, {
+    atualizar, acordar, enquadrar: (ms) => { interagiu = false; enquadrar(null, ms); }, mudarPlano, ligarControlos,
+    mostrar() { ativa = true; G.width(tela.clientWidth || 320).height(tela.clientHeight || 320); acordar(); },
+    esconder() { ativa = false; if (G) { if (temporizador) { clearTimeout(temporizador); temporizador = 0; } G.pauseAnimation(); acordado = false; } },
+    destruir() { destruido = true; ativa = false; if (temporizador) clearTimeout(temporizador); if (G) { G.pauseAnimation(); if (G._destructor) G._destructor(); } },
+  });
+  return api;
+}
+
+/* ---------- a versão em texto de cada vista: sem WebGL, sem biblioteca ou com a cena a falhar ---------- */
+function textoDaVista(vista, aviso) {
+  const v = vista.def;
+  const modoTxt = (md) => (perfil === 'C' && md ? ', ' + PALAVRA_MODO[md] : '');
+  const nomes = (ids) => ids.map((id, j) => [j ? ', ' : '', nomeEl(id)]);
+  const ligacoes = () => h('ul', null, (v.ligacoes || []).map((l) => h('li', null,
+    nomeEl(l.de), ' ', h('strong', null, l.tipo + modoTxt(l.modo)), ' ', nomeEl(l.para))));
+  let intro, corpo;
+  if (v.tipo === 'camadas') {
+    intro = 'As camadas, de cima para baixo, e as ligações entre os elementos:';
+    corpo = [h('ol', null, v.camadas.map((c) => h('li', null, h('strong', null, c.nome + ': '), nomes(c.nos)))), ligacoes()];
+  } else if (v.tipo === 'sequencia') {
+    intro = 'As mensagens, pela ordem em que acontecem:';
+    corpo = h('ol', null, v.mensagens.map((mg) => h('li', null, nomeEl(mg.de), ' → ', nomeEl(mg.para), ': ', mg.texto + modoTxt(mg.modo))));
+  } else if (v.tipo === 'estados') {
+    intro = 'As transições entre os estados, com o estado inicial à cabeça:';
+    corpo = [h('p', { class: 'texto' }, h('strong', null, 'Inicial: '), nomeEl(v.inicial)),
+      h('ul', null, v.transicoes.map((t) => h('li', null, nomeEl(t.de), ' → ', nomeEl(t.para), ': ', t.evento)))];
+  } else if (v.tipo === 'linha-do-tempo') {
+    intro = 'Os acontecimentos, por ordem:';
+    corpo = h('ol', null, v.eventos.map((e) => h('li', null, h('strong', null, e.quando + ': '), nomeEl(e.no))));
+  } else if (v.tipo === 'cena') {
+    intro = 'Os elementos desta vista:';
+    corpo = h('ul', null, v.nos.map((id) => h('li', null, nomeEl(id))));
+  } else {
+    intro = `O texto e a lista de ${LISTA.toLowerCase()} têm o mesmo conteúdo. As ligações, em texto:`;
+    const ligados = new Set((v.ligacoes || []).flatMap((l) => [l.de, l.para]));
+    const soltos = vista.ids.filter((id) => !ligados.has(id));
+    corpo = [ligacoes(), soltos.length ? h('p', { class: 'texto' }, 'Sem ligações: ', nomes(soltos)) : null];
+  }
+  return h('div', { class: 'sem-vista' }, h('p', { class: 'aviso' }, aviso), h('p', { class: 'texto' }, intro), corpo);
+}
+
+/* ---------- o painel: separadores, uma vista de cada vez, toque ---------- */
+const DICA = {
+  grafo: 'Cada seta aponta de quem age para o que sofre a ação.',
+  camadas: 'Cada seta aponta de quem age para o que sofre a ação.',
+  sequencia: 'As mensagens vão de cima para baixo, pela ordem em que acontecem.',
+  estados: 'Cada seta é uma transição, com o que a provoca.',
+  'linha-do-tempo': 'Os acontecimentos vão do mais antigo ao mais recente, pela ordem em que aconteceram.',
+};
+function textoDica(v) {
+  const base = DICA[v.tipo] || '';
+  if (!base || perfil !== 'C' || !temAssincrona(v.def)) return base;
+  const movimento = v.tipo === 'grafo' && !semMovimento.matches && !toque.matches;
+  return `${base} As assíncronas vão a tracejado${movimento ? ' e levam partículas' : ''}; a lista diz sempre qual é qual.`;
+}
+function renderPainel() {
+  const abas = $('#abas'), corpos = $('#corpos');
+  const varias = vistas.length > 1;
+  abas.hidden = !varias;
+  $('#painel-titulo').hidden = varias;
+  const painel = $('#painel-vista');
+  if (varias) painel.setAttribute('role', 'tabpanel');
+  vistas.forEach((v) => {
+    if (varias) abas.appendChild(h('button', { type: 'button', role: 'tab', class: 'aba', id: 'aba-' + v.i, 'aria-selected': 'false', 'aria-controls': 'painel-vista', tabindex: '-1', 'data-vista': v.i }, v.def.titulo));
+    v.tela = h('div', { class: 'tela', role: 'img', 'aria-label': `${v.def.titulo}: vista com ${v.ids.length} elementos; o documento tem o mesmo conteúdo em texto` });
+    v.botao = h('button', { type: 'button', class: 'btn btn-toque', 'data-toque': v.i, hidden: true }, 'Rodar e aproximar');
+    v.dica = h('p', { class: 'setas' }, textoDica(v));
+    v.corpo = h('div', { class: 'corpo-vista', 'data-vista': v.i, hidden: true },
+      v.tipo === 'cena' ? null : elLegenda(v), v.dica.textContent ? v.dica : null,
+      h('div', { class: 'tela-area' }, v.tela, v.botao));
+    corpos.appendChild(v.corpo);
+  });
+}
+function escolherDaVista(id) { abrirNo(id, { origem: 'fora' }); }
+function aplicarToque(v) {
+  if (!v.ctl) { v.botao.hidden = true; return; }
+  v.ctl.ligarControlos(!toque.matches || v.rodar);
+  v.botao.textContent = v.rodar ? 'Concluir' : 'Rodar e aproximar';
+  v.botao.hidden = !toque.matches || v !== vistas[estado.vista];
+}
+function atualizarPainel() {
+  const v = vistas[estado.vista];
+  const texto3 = v.carga === 'texto';
+  $('#coluna-vistas').toggleAttribute('data-texto', texto3);
+  $('#painel-titulo').textContent = v.def.titulo;
+  $('#b-plano').setAttribute('aria-pressed', String(v.plano));
+  $$('.painel-acoes button').forEach((b) => { b.hidden = !v.ctl; });
+  vistas.forEach(aplicarToque);
+  const painel = $('#painel-vista');
+  if (vistas.length > 1) painel.setAttribute('aria-labelledby', 'aba-' + v.i);
+  else painel.setAttribute('aria-labelledby', 'painel-titulo');
+}
+function mostrarTexto(v, aviso) {
+  v.carga = 'texto';
+  v.corpo.setAttribute('data-texto', '');
+  $('.tela-area', v.corpo).hidden = true;
+  $$('.legenda, .setas', v.corpo).forEach((e) => { e.hidden = true; });
+  v.corpo.appendChild(textoDaVista(v, aviso));
+}
+const AVISO_3D = 'As vistas 3D não abriram neste browser.';
+async function iniciarVista(v) {
+  v.carga = 'a abrir';
+  v.corpo.setAttribute('aria-busy', 'true');
+  v.tela.replaceChildren(h('p', { class: 'estado-vista' }, 'A abrir a vista…'));
+  try {
+    if (semWebgl) throw new Error(AVISO_3D);
+    if (v.tipo === 'grafo') {
+      await carregarGrafo();
+      v.tela.replaceChildren();
+      v.ctl = criarGrafo(v, v.tela);
+    } else {
+      const L = await carregarTres();
+      // O three pode chegar depois de o leitor mudar de separador: a tela escondida mede 0 e a vista desenhar-se-ia com a largura de recurso. Fica por desenhar até o separador abrir (a ativarVista volta aqui).
+      if (v.corpo.hidden) { v.carga = 'nova'; v.promessa = null; return; }
+      v.tela.replaceChildren();
+      v.ctl = criarMoldura(v, v.tela, L, construtores[v.tipo] || construtores.cena);
+      v.ctl.iniciar();
+    }
+    v.ctl.aoEscolher = escolherDaVista;
+    if (v.ctl.m) v.ctl.m.aoEscolher = escolherDaVista;
+    v.ctl.aoMudarFormato = () => refazer(v);
+    v.carga = 'aberta';
+  } catch (e) {
+    if (v.ctl) { try { v.ctl.destruir(); } catch (e2) { /* já estava partido */ } v.ctl = null; }
+    v.tela.replaceChildren();
+    mostrarTexto(v, e && e.daCena ? `A cena não desenhou: ${e.message}` : AVISO_3D);
+  } finally {
+    v.corpo.removeAttribute('aria-busy');
+  }
+}
+async function ativarVista(i) {
+  const v = vistas[i];
+  const antes = vistas[estado.vista];
+  if (antes !== v && antes.ctl) { antes.rodar = false; antes.ctl.esconder(); }
+  estado.vista = i;
+  vistas.forEach((x) => { x.corpo.hidden = x !== v; });
+  $$('.aba').forEach((a) => {
+    const ativo = Number(a.dataset.vista) === i;
+    a.setAttribute('aria-selected', String(ativo));
+    a.tabIndex = ativo ? 0 : -1;
+  });
+  atualizarPainel();
+  if (v.carga === 'nova') { v.promessa = iniciarVista(v); }
+  if (v.promessa) await v.promessa;
+  if (estado.vista !== i) return;
+  atualizarPainel();
+  if (v.ctl) { v.ctl.atualizar(focoDe(v)); v.ctl.mostrar(); }
+}
+// Teclado nos separadores: setas, Início e Fim.
+$('#abas').addEventListener('keydown', (ev) => {
+  const n = vistas.length;
+  const k = { ArrowRight: 1, ArrowLeft: -1 }[ev.key];
+  let i = estado.vista;
+  if (k) i = (i + k + n) % n; else if (ev.key === 'Home') i = 0; else if (ev.key === 'End') i = n - 1; else return;
+  ev.preventDefault();
+  ativarVista(i);
+  $('#aba-' + i).focus();
+});
+$('#abas').addEventListener('click', (ev) => {
+  const b = ev.target.closest('.aba');
+  if (b) ativarVista(Number(b.dataset.vista));
+});
+$('#corpos').addEventListener('click', (ev) => {
+  const b = ev.target.closest('.btn-toque');
+  if (!b) return;
+  const v = vistas[Number(b.dataset.toque)];
+  v.rodar = !v.rodar;
+  aplicarToque(v);
+});
+$('#b-plano').addEventListener('click', () => {
+  const v = vistas[estado.vista];
+  if (!v.ctl) return;
+  const novo = !v.plano;
+  $('#b-plano').setAttribute('aria-pressed', String(novo));
+  v.ctl.mudarPlano(novo);
+});
+$('#b-enquadrar').addEventListener('click', () => { const v = vistas[estado.vista]; if (v.ctl) v.ctl.enquadrar(450); });
+// O tema mudou: as vistas recolorem-se (o grafo ao vivo; as outras, desenhadas de novo).
+function refazer(v) {
+  if (!v.ctl) return;
+  v.ctl.destruir(); v.ctl = null; v.tela.replaceChildren(); v.carga = 'nova'; v.promessa = null;
+  if (v === vistas[estado.vista]) ativarVista(v.i);
+}
+function recolorir() {
+  vistas.forEach((v) => {
+    if (!v.ctl) return;
+    if (v.tipo === 'grafo') { v.ctl.atualizar(focoDe(v)); return; }
+    refazer(v);
+  });
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recolorir);
+new MutationObserver(recolorir).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+[semMovimento, toque].forEach((md) => md.addEventListener('change', () => { vistas.forEach((v) => { v.dica.textContent = textoDica(v); }); atualizarPainel(); }));
+
+/* ---------- arranque ---------- */
+function renderTudo() {
+  $('#titulo').textContent = dados.titulo;
+  renderIntro();
+  renderConceitos();
+  renderIndice();
+  renderGlossario();
+  renderDocumento();
+  renderRodape();
+  if (estado.no != null) renderBloco();
+  colocarBloco();
+  mostrar();
+  sincronizar();
+}
+$$('.seg button').forEach((b) => b.addEventListener('click', () => {
+  estado.nivel = b.dataset.nivel;
+  $$('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  renderTudo();
+}));
+$$('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.nivel === estado.nivel)));
+renderPainel();
+// Endereço com nó e passo (?no=…&passo=N): abre no sítio, dentro do passo, quando o nó é desse passo; senão no lugar do documento.
+if (estado.no != null) {
+  if (estado.passo != null && nosDoPasso(dados.passos[estado.passo]).includes(estado.no)) { modo = 'doc'; passoDaVista = estado.passo; }
+  else { modo = 'fora'; estado.passo = null; }
+}
+{
+  // A vista inicial: a pedida em ?vista=, a do passo, a que tem o nó aberto, ou a do primeiro passo.
+  const pedida = vistaPorId(params.get('vista'));
+  const doNo = estado.no != null ? vistas.find((x) => x.ids.includes(estado.no)) : null;
+  const doPasso = estado.passo != null ? vistaPorId(dados.passos[estado.passo].vista) : vistaPorId(dados.passos[0].vista);
+  estado.vista = (pedida || (estado.passo != null ? doPasso : null) || doNo || doPasso || vistas[0]).i;
+}
+renderTudo();
+ativarVista(estado.vista);
+if (modo === 'doc') $(`.passo[data-passo="${passoDaVista}"]`).scrollIntoView({ block: 'start' });
+else if (estado.passo != null) $(`.passo[data-passo="${estado.passo}"]`).scrollIntoView({ block: 'start' });
+})();
+</script>
+</body>
+</html>

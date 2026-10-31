@@ -45,13 +45,14 @@ export function lerFrontmatter(texto) {
 
 const pastas = readdirSync(SKILLS, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
 
-test("há as dez skills, cada uma com SKILL.md", () => {
+test("há as onze skills, cada uma com SKILL.md", () => {
   assert.deepEqual(pastas.sort(), [
     "agentic-analysis-optimization",
     "agentic-architecture",
     "agentic-ci-audit",
     "agentic-code-review",
     "agentic-design",
+    "agentic-explain",
     "agentic-feature",
     "agentic-fix",
     "agentic-implement",

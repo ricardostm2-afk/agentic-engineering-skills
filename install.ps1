@@ -1,4 +1,4 @@
-﻿# install.ps1: instala as dez skills do agentic-skills nos agentes.
+﻿# install.ps1: instala as onze skills do agentic-skills nos agentes.
 # Windows PowerShell 5.1 ou PowerShell 7 (também corre em macOS e Linux com o PowerShell 7).
 #
 # Por omissão é uma SIMULAÇÃO: mostra o que faria e não toca em nada. Só -Aplicar instala.
@@ -65,7 +65,7 @@ $EWindows = $true
 if (Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) { $EWindows = [bool]$IsWindows }
 
 $Repo = (Get-Item -LiteralPath (Split-Path -Parent $Script)).FullName
-$Skills = @('agentic-project', 'agentic-feature', 'agentic-fix', 'agentic-implement', 'agentic-design', 'agentic-code-review', 'agentic-architecture', 'agentic-ci-audit', 'agentic-tool-design', 'agentic-analysis-optimization')
+$Skills = @('agentic-project', 'agentic-feature', 'agentic-fix', 'agentic-implement', 'agentic-design', 'agentic-code-review', 'agentic-architecture', 'agentic-explain', 'agentic-ci-audit', 'agentic-tool-design', 'agentic-analysis-optimization')
 $Todos = @('claude', 'codex', 'cursor', 'gemini', 'copilot', 'opencode')
 $Legado = @('codex-legado')
 # Os agentes definidos do Claude Code (-Agentes) vivem como assets da agentic-implement.

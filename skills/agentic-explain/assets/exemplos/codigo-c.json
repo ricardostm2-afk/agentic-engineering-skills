@@ -1,0 +1,471 @@
+{
+  "versao": 2,
+  "titulo": "CLI do gerar-pagina",
+  "pergunta": "Como o gerar-pagina.mjs decide entre escrever a página e sair com erro, e o que um pedido de mudança tem de respeitar",
+  "tema": "codigo",
+  "area": "skills/agentic-explain/scripts/gerar-pagina.mjs",
+  "base": "8e7d72ba015e71f443a244cdae5953a0a039ea7d",
+  "perfil": "C",
+  "granularidade": "detalhe",
+  "objetivo": "mudar",
+  "intro": {
+    "simples": "O programa lê o que lhe pedem, confere os dados e só escreve a página se estiver tudo certo. Termina com um número: 0 quando escreveu, 1 quando os dados ou a cena estão errados e 2 quando falhou outra coisa.",
+    "tecnico": "O contrato a respeitar ao mudar este CLI são os três códigos de saída e o formato das linhas de erro (`campo: o que falha`, `cena:<linha>: o que falha`): o cabeçalho do ficheiro e o `SKILL.md` descrevem-nos, e os testes dependem deles. Os pontos de falha estão na validação dos dados (regra a mais ou a menos), na validação da cena (uma lista de palavras sobre o texto, não uma barreira de segurança) e na entrada (`comoPrograma`), que já saiu 0 sem escrever."
+  },
+  "tipos": [
+    {
+      "id": "funcao",
+      "nome": "Função"
+    },
+    {
+      "id": "estado",
+      "nome": "Estado do CLI"
+    },
+    {
+      "id": "saida",
+      "nome": "Saída"
+    }
+  ],
+  "nos": [
+    {
+      "id": "como-programa",
+      "curto": "comoPrograma",
+      "tipo": "funcao",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:484-489"
+      ],
+      "simples": "Decide se o ficheiro corre como programa ou só é importado por outro.",
+      "tecnico": "`comoPrograma()` compara `import.meta.url` com o caminho real de `process.argv[1]`, obtido com `realpathSync` (486-488); a última linha do ficheiro só chama `principal` quando ela dá verdadeiro (489). Sem o `realpathSync`, uma chamada por uma ligação simbólica (o `install.sh --ligar`) dava falso, porque o Node resolve a ligação num caminho e no outro não (484-485): saía 0 sem escrever nada. Ponto de falha: falha em silêncio e com sucesso. Trade-off: o `catch` devolve `false` quando `realpathSync` lança, por exemplo num caminho que não existe, e então também não corre nada.",
+      "risco": "medio"
+    },
+    {
+      "id": "principal",
+      "curto": "principal",
+      "tipo": "funcao",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:438-482",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:489"
+      ],
+      "simples": "A função que corre quando se chama o programa: lê os argumentos e os ficheiros, pede as validações, escreve a página e devolve o código de saída.",
+      "tecnico": "`principal(argv)` devolve 0, 1 ou 2 em vez de sair: o código vai para `process.exitCode` na linha que a chama (489), e as linhas de erro vão para o `err` que recebe, por omissão o stderr (438). Lê os argumentos (439-459), os dados (461-466) e a cena (467-470), valida (472-473), gera (475-476) e escreve (477-480). Ponto de falha: 1 (regra violada) e 2 (erro de uso ou de leitura) têm leitores diferentes, e quem mexer no encadeamento pode trocá-los.",
+      "risco": "medio"
+    },
+    {
+      "id": "validar",
+      "curto": "validar",
+      "tipo": "funcao",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:64-70",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:281-289",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:330-346"
+      ],
+      "simples": "Confere todos os dados de uma vez e devolve a lista do que está errado, sem corrigir nada.",
+      "tecnico": "`validar(dados, cena)` aplica o esquema 2 sem parar à primeira falha e cruza as vistas `cena` com o ficheiro de cena: uma vista `cena` obriga a `--cena` (284) e um ficheiro de cena obriga a uma vista `cena` (289). No fim, um varrimento procura chaves nos textos e nos nomes de campo (330-343). Trade-off: percorrer tudo dá ao agente a lista inteira numa volta, ao custo de uma função longa, da linha 67 à 346. Cada linha que `falha` junta passa por `oculta` (69), por isso nenhuma repete um segredo. Ponto de falha: uma regra a menos deixa passar dados que o modelo da página não sabe desenhar; uma regra a mais recusa explicações boas.",
+      "risco": "alto"
+    },
+    {
+      "id": "validar-cena",
+      "curto": "validarCena",
+      "tipo": "funcao",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:348-410",
+        "skills/agentic-explain/references/cena.md:62"
+      ],
+      "simples": "Confere o código da cena contra uma lista de proibições, sobre o texto inteiro.",
+      "tecnico": "`validarCena(codigo)` aplica regras estáticas ao texto inteiro, e não linha a linha: o teto de 40 KB (352, 385-386), uma só `function cena(` (388-391, 407-408), 32 palavras proibidas (355-370), entre elas `window`, `document`, `globalThis`, `self`, `constructor`, `Reflect`, `opener` e `frames` (365), e os padrões de `</script`, de `<!--`, de endereço, de cor literal e dos escapes `\\u` e `\\x` (371-378). Um achado partido entre linhas conta na linha onde começa, e há um por regra e por linha (349-351). Trade-off: o texto inteiro também apanha comentários e cadeias (recusa `location` num comentário) em troca de dispensar um analisador de JavaScript, e recusa os escapes em qualquer sítio, porque escreveriam uma palavra proibida sem ela aparecer no texto (376-378). Ponto de falha: é uma lista de proibições sobre texto e não uma barreira de segurança: uma palavra montada em duas cadeias (`\"fe\" + \"tch\"`) não aparece no texto e passa.",
+      "risco": "alto"
+    },
+    {
+      "id": "gerar-pagina",
+      "curto": "gerarPagina",
+      "tipo": "funcao",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:420-434",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:475-476"
+      ],
+      "simples": "Põe os dados, o título e a cena dentro do modelo da página.",
+      "tecnico": "`gerarPagina(dados, { cena, modelo })` troca o bloco de dados, o `<title>` e, com cena, o bloco da cena (429-432). O `<` do JSON sai escapado (425) e o título também (431). Os substitutos são funções, para um `$&` nos dados ou na cena não ser lido como padrão (421-422). Lança erro se o modelo não tiver exatamente um bloco de dados (426), o marcador do título (427) e, com cena, um só lugar para ela (428). Ponto de falha: um modelo que perca um marcador só se vê aqui, e `principal` converte o erro em saída 2 (475-476).",
+      "risco": "medio"
+    },
+    {
+      "id": "ler-modelo",
+      "curto": "lerModelo",
+      "tipo": "funcao",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:17-18",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:416-418",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:424"
+      ],
+      "simples": "Lê o ficheiro do modelo da página.",
+      "tecnico": "`lerModelo()` lê `assets/visualizador.html`, procurado a partir da pasta do script (17-18), e transforma o erro de leitura numa mensagem com o caminho do modelo (417). É o valor por omissão do parâmetro `modelo` de `gerarPagina` (424): só lê o ficheiro quando quem chama não passa um modelo, o que deixa passar outro em vez do real.",
+      "risco": "baixo"
+    },
+    {
+      "id": "e-args",
+      "curto": "Ler os argumentos",
+      "tipo": "estado",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:439-459"
+      ],
+      "simples": "O programa vê o que lhe pediram.",
+      "tecnico": "O ciclo sobre `argv` aceita `--saida` e `--cena` com um valor que não comece por `--` (443), recusa opções desconhecidas (455), um segundo ficheiro de dados (457) e `--cena` repetido (452), e exige ficheiro de dados e `--saida` (459). Um `--saida` repetido não é recusado: vale o último (451). Todas as falhas aqui são saída 2.",
+      "risco": "baixo"
+    },
+    {
+      "id": "e-dados",
+      "curto": "Ler os dados",
+      "tipo": "estado",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:461-470"
+      ],
+      "simples": "O programa abre o ficheiro de dados e, se houver, o da cena.",
+      "tecnico": "`ler` só aceita um ficheiro, com `statSync(...).isFile()` (461): uma pasta é saída 2, tal como um erro de leitura, que diz o caminho e o motivo (462, 468). Um JSON inválido dá saída 2 só com «<caminho> não é JSON válido»: o erro do `JSON.parse` citaria um bocado do ficheiro, e os dados não devem ir parar a um registo (464-466). Sem `--cena`, `cena` fica `null` (467).",
+      "risco": "baixo"
+    },
+    {
+      "id": "e-validar",
+      "curto": "Validar",
+      "tipo": "estado",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:472-473",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:475-480"
+      ],
+      "simples": "O programa confere dados e cena antes de escrever.",
+      "tecnico": "Junta as linhas de `validar` e, havendo cena, de `validarCena` (472). Com alguma, escreve-as uma a uma com `err` e devolve 1 (473), antes de ler o modelo (475-476) e antes do `mkdirSync` e do `writeFileSync` (478-479): o ficheiro de saída não é criado nem tocado.",
+      "risco": "alto"
+    },
+    {
+      "id": "e-modelo",
+      "curto": "Ler o modelo",
+      "tipo": "estado",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:416-418",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:424-428",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:472-476"
+      ],
+      "simples": "O programa abre a página já feita.",
+      "tecnico": "Acontece dentro de `gerarPagina`, pela omissão `modelo = lerModelo()` (424). Um modelo ilegível (417), sem os marcadores (426-427) ou sem lugar para a cena (428) dá saída 2 (476), depois de os dados já terem passado a validação (472-473).",
+      "risco": "medio"
+    },
+    {
+      "id": "e-escrever",
+      "curto": "Escrever",
+      "tipo": "estado",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:472-473",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:477-480"
+      ],
+      "simples": "O programa guarda a página no destino pedido.",
+      "tecnico": "`mkdirSync` recursivo da pasta de destino e `writeFileSync` da página (478-479). Só chega aqui com dados válidos (472-473); uma falha de escrita é saída 2 (480). A escrita não é atómica: vai direta para o destino, sem ficheiro temporário, e uma falha a meio pode deixar um ficheiro incompleto.",
+      "risco": "medio"
+    },
+    {
+      "id": "e-s0",
+      "curto": "Saída 0",
+      "tipo": "saida",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:481",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:489",
+        "skills/agentic-explain/SKILL.md:105-109"
+      ],
+      "simples": "A página foi escrita.",
+      "tecnico": "`principal` devolve 0 (481) e `process.exitCode` fica 0 (489). Quem chama (o agente) segue para o detetor (`SKILL.md`, passo 4).",
+      "risco": "baixo"
+    },
+    {
+      "id": "e-s1",
+      "curto": "Saída 1",
+      "tipo": "saida",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:5-8",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:472-473",
+        "skills/agentic-explain/SKILL.md:105-107"
+      ],
+      "simples": "Os dados ou a cena estão errados; nada foi escrito.",
+      "tecnico": "Uma linha por regra violada em stderr (`campo: o que falha` ou `cena:<linha>: o que falha`), sem escrever nada (5-8, 472). Quem chama corrige os dados ou a cena e repete (`SKILL.md`, passo 3); não é um erro do ambiente.",
+      "risco": "baixo"
+    },
+    {
+      "id": "e-s2",
+      "curto": "Saída 2",
+      "tipo": "saida",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:8",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:439-459",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:463",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:464-466",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:469",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:476",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:480"
+      ],
+      "simples": "Algo falhou fora das regras: um argumento, um ficheiro (também um JSON que não se lê), o modelo ou a escrita.",
+      "tecnico": "Erro de uso ou de leitura (8). Vem dos argumentos (439-459), da leitura dos dados (463), do JSON inválido (464-466), da cena (469), do modelo (476) e da escrita (480), e a mensagem diz qual. Quem chama não corrige as regras dos dados: corrige o comando, o ficheiro, o modelo ou a escrita. Só um JSON que não se lê obriga a reescrever os dados, e a mensagem não diz onde ele falha.",
+      "risco": "medio"
+    }
+  ],
+  "vistas": [
+    {
+      "id": "v1",
+      "tipo": "camadas",
+      "titulo": "Quem chama quem",
+      "camadas": [
+        {
+          "nome": "Linha de comandos",
+          "nos": [
+            "como-programa",
+            "principal"
+          ]
+        },
+        {
+          "nome": "Validação",
+          "nos": [
+            "validar",
+            "validar-cena"
+          ]
+        },
+        {
+          "nome": "Escrita",
+          "nos": [
+            "gerar-pagina",
+            "ler-modelo"
+          ]
+        }
+      ],
+      "ligacoes": [
+        {
+          "de": "como-programa",
+          "para": "principal",
+          "tipo": "decide se chama",
+          "modo": "sincrona",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:489"
+        },
+        {
+          "de": "principal",
+          "para": "validar",
+          "tipo": "chama",
+          "modo": "sincrona",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:472"
+        },
+        {
+          "de": "principal",
+          "para": "validar-cena",
+          "tipo": "chama, se há cena",
+          "modo": "sincrona",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:472"
+        },
+        {
+          "de": "principal",
+          "para": "gerar-pagina",
+          "tipo": "chama",
+          "modo": "sincrona",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:475"
+        },
+        {
+          "de": "gerar-pagina",
+          "para": "ler-modelo",
+          "tipo": "chama por omissão",
+          "modo": "sincrona",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:424"
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "tipo": "estados",
+      "titulo": "O ciclo do CLI",
+      "estados": [
+        "e-args",
+        "e-dados",
+        "e-validar",
+        "e-modelo",
+        "e-escrever",
+        "e-s0",
+        "e-s1",
+        "e-s2"
+      ],
+      "inicial": "e-args",
+      "transicoes": [
+        {
+          "de": "e-args",
+          "para": "e-dados",
+          "evento": "argumentos certos"
+        },
+        {
+          "de": "e-args",
+          "para": "e-s2",
+          "evento": "argumento em falta ou desconhecido"
+        },
+        {
+          "de": "e-dados",
+          "para": "e-validar",
+          "evento": "dados e cena lidos"
+        },
+        {
+          "de": "e-dados",
+          "para": "e-s2",
+          "evento": "ficheiro ilegível ou JSON inválido"
+        },
+        {
+          "de": "e-validar",
+          "para": "e-modelo",
+          "evento": "sem erros"
+        },
+        {
+          "de": "e-validar",
+          "para": "e-s1",
+          "evento": "alguma regra violada"
+        },
+        {
+          "de": "e-modelo",
+          "para": "e-escrever",
+          "evento": "modelo com os marcadores"
+        },
+        {
+          "de": "e-modelo",
+          "para": "e-s2",
+          "evento": "modelo ilegível ou incompleto"
+        },
+        {
+          "de": "e-escrever",
+          "para": "e-s0",
+          "evento": "página escrita"
+        },
+        {
+          "de": "e-escrever",
+          "para": "e-s2",
+          "evento": "a escrita falhou"
+        }
+      ]
+    }
+  ],
+  "passos": [
+    {
+      "titulo": "Quem chama quem",
+      "vista": "v1",
+      "realca": [
+        "como-programa",
+        "principal",
+        "validar",
+        "validar-cena",
+        "gerar-pagina",
+        "ler-modelo"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:438-482",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:484-489",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:424",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:67",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:381"
+      ],
+      "simples": "Três andares: a entrada, a conferência e a escrita. Só a entrada fala com os outros dois.",
+      "tecnico": "O fim do ficheiro (489) só chama `principal` se `comoPrograma` der verdadeiro. `principal` chama `validar` e, havendo cena, `validarCena` (472) e depois `gerarPagina` (475), que lê o modelo por omissão (424). Tudo síncrono: lê com `readFileSync` (461) e escreve com `writeFileSync` (479). As funções de validação recebem os dados e a cena como argumentos (67, 381), por isso quem as importa chama-as sem criar processos."
+    },
+    {
+      "titulo": "A entrada só corre como programa",
+      "vista": "v1",
+      "realca": [
+        "como-programa"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:10-11",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:484-489",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1118-1128"
+      ],
+      "simples": "O ficheiro também exporta as suas funções, por isso só corre sozinho quando o chamam como programa.",
+      "tecnico": "A guarda compara `import.meta.url` com o `realpathSync` de `process.argv[1]` (486-488). Por uma ligação simbólica, sem o `realpathSync`, a guarda dava falso e o ficheiro saía 0 sem escrever (484-485); um teste fixa que isso não volta a acontecer (1118-1125). Mudar a guarda sem manter esse teste volta a abrir o defeito, e a saída 0 esconde-o."
+    },
+    {
+      "titulo": "validar: tudo de uma vez, sem corrigir",
+      "vista": "v1",
+      "realca": [
+        "validar"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:64-70",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:330-346",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1296-1298"
+      ],
+      "simples": "A conferência não pára no primeiro erro: devolve a lista inteira, para o agente corrigir tudo numa volta.",
+      "tecnico": "Cada regra junta a sua linha à lista com `falha` (68-69) em vez de parar, e só no fim se devolve `erros` (345). Trade-off: a lista completa poupa voltas, mas obriga a manter cada regra independente das outras. Ao mudar uma regra, muda-se o teste dela, e os exemplos de `assets/exemplos/` têm de continuar válidos (1296-1298)."
+    },
+    {
+      "titulo": "validarCena: proibir no texto inteiro",
+      "vista": "v1",
+      "realca": [
+        "validar-cena"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:348-410",
+        "skills/agentic-explain/references/cena.md:62",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1243-1256"
+      ],
+      "simples": "O código do desenho 3D passa por uma lista de proibições antes de entrar na página.",
+      "tecnico": "A lista (32 palavras, endereços, `</script`, `<!--`, cores literais, os escapes `\\u` e `\\x`, 40 KB) corre sobre o texto inteiro, e não linha a linha (349-351). Recusa mais do que o estritamente perigoso (comentários e cadeias) e não impede tudo: uma palavra montada em duas cadeias (`\"fe\" + \"tch\"`) não está no texto. Não é uma barreira de segurança, e a rede à página fecha-a o CSP do modelo (fixado num teste). Acrescentar uma palavra é uma entrada na lista (356-365); tirar uma deixa a cena usar o que se proibia."
+    },
+    {
+      "titulo": "gerarPagina: substituir sem ler padrões",
+      "vista": "v1",
+      "realca": [
+        "gerar-pagina",
+        "ler-modelo"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:416-418",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:420-434"
+      ],
+      "simples": "O programa põe os dados na página já feita, tal como estão, sem os interpretar.",
+      "tecnico": "Os substitutos de `replace` são funções, por isso `$&`, `$1` e `$'` nos dados ou na cena saem literais (429-432). O `<` do JSON sai escapado, para um `</script>` num texto não fechar o bloco (425). Os três `throw` (426-428) avisam de um modelo sem os marcadores, e um modelo ilegível lança em `lerModelo` (417)."
+    },
+    {
+      "titulo": "O ciclo do CLI",
+      "vista": "v2",
+      "realca": [
+        "e-args",
+        "e-dados",
+        "e-validar",
+        "e-modelo",
+        "e-escrever",
+        "e-s0"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:438-482"
+      ],
+      "simples": "O programa segue sempre os mesmos passos, por esta ordem: argumentos, ficheiros, conferência, modelo, escrita.",
+      "tecnico": "Cada estado só avança se o anterior correu bem. A ordem importa: validar (472-473) antes de ler o modelo (475-476) faz com que um defeito dos dados nunca se confunda com um defeito do modelo, e que a saída 1 nunca crie o ficheiro."
+    },
+    {
+      "titulo": "Onde sai 1 e onde sai 2",
+      "vista": "v2",
+      "realca": [
+        "e-validar",
+        "e-s1",
+        "e-s2"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:5-8",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:439-459",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:461-470",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:472-473",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:475-476",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:480",
+        "skills/agentic-explain/SKILL.md:105-107",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1130-1145",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1174-1202"
+      ],
+      "simples": "O 1 quer dizer «corrige os dados ou a cena»; o 2 quer dizer «algo falhou à volta».",
+      "tecnico": "A saída 1 vem só da validação (472-473) e deixa o destino como estava. A saída 2 vem de vários sítios: os argumentos (439-459), a leitura dos dados e da cena (461-470), o modelo (475-476) e a escrita (480). Quem chama o CLI trata-as de forma diferente: ao 1 responde com dados ou cena corrigidos; ao 2, com o comando, o ficheiro ou o ambiente corrigidos (só reescreve os dados se o JSON não se lê). O cabeçalho do ficheiro (5-8), o `SKILL.md` e os testes dependem destes códigos."
+    }
+  ],
+  "conceitos": [
+    {
+      "termo": "falhar sem escrever",
+      "simples": "Se os dados ou a cena têm erros, o programa não deixa nada novo no disco.",
+      "tecnico": "Com saída 1 o ficheiro de saída não é criado nem tocado, porque o `mkdirSync` e o `writeFileSync` só vêm depois da validação (nós «Validar» e «Escrever»). Com saída 2 por argumentos, leitura ou modelo, também ainda nada foi escrito; com saída 2 por falha de escrita, o destino pode ficar incompleto."
+    },
+    {
+      "termo": "texto cru",
+      "simples": "A cena é lida como texto, sem a perceber como código.",
+      "tecnico": "`validarCena` não analisa JavaScript: usa expressões regulares sobre o texto inteiro, com fronteira de identificador, comentários e cadeias incluídos."
+    }
+  ]
+}

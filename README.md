@@ -1,6 +1,6 @@
 # agentic-skills
 
-Ten [Agent Skills](https://agentskills.io/specification) that give a coding agent a method: set a
+Eleven [Agent Skills](https://agentskills.io/specification) that give a coding agent a method: set a
 project up for agents, deliver a feature, fix a defect, write the code with proof, review it with fresh
 context, and keep the UI, the architecture and the CI honest. Built for Claude Code; they also load in
 Codex, Cursor, Gemini CLI, GitHub Copilot and OpenCode.
@@ -30,6 +30,7 @@ Codex, Cursor, Gemini CLI, GitHub Copilot and OpenCode.
 | `agentic-implement` | The skill of the agent that writes the code (Claude or Codex). From a closed brief to a commit: read only what is needed, state assumptions, failing test first, minimal change in the style of the surrounding code, green with evidence, one commit per cause, hand-off with a status line | loaded by the briefs that `agentic-feature` and `agentic-fix` write | original; the test-first discipline adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `agentic-code-review` | Reviews a diff, a branch or a PR, alone or called by `agentic-feature`. Level by risk, a panel of independent lenses in a throw-away worktree, consolidation, confirmation of the serious findings, a report whose first line is validated by a script, limited rounds, and lessons and evaluation cases to measure the reviewer | «revê este ramo», «code review» | original |
 | `agentic-architecture` | Improves the architecture of code that already exists: shallow modules where the code changes most, with measured proof, a visual report, a grill on the chosen candidate and execution through `agentic-feature`. Carries the vocabulary of modules and seams the other skills use | «melhora a arquitetura», «módulos rasos» | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `agentic-explain` | Explains code, or any other topic from sources it reads, at the level of whoever asks. Three calibration questions (the goal, familiarity with concepts found in the material, the depth), three profiles (functional with metaphors; intermediate with parts and a glossary; advanced with details, risks and sync or async calls), and one page with the explanation beside 3D views chosen from a catalogue (graph, layers, sequence, states, timeline) or a free three.js scene in a fixed frame, generated from a template and validated data. It only reads: in code, debugging goes to `agentic-fix`, changes to `agentic-architecture` or `agentic-feature` | «explica isto», «como funciona X» | original |
 | `agentic-ci-audit` | Audits which regressions the CI checks really catch and which work can leave without losing that protection (test discovery, false greens, fixtures, caches, cost) | «audita o CI» | [morluto/rea](https://github.com/morluto/rea) |
 | `agentic-tool-design` | Designs tools for agents and their contracts: identity, coverage, effects and lifecycle | «desenha esta ferramenta para agentes» | [morluto/rea](https://github.com/morluto/rea) |
 | `agentic-analysis-optimization` | Improves methods and costs of analysis and production bottlenecks: reuse, cancellation, resources, and how to measure them | «otimiza esta análise» | [morluto/rea](https://github.com/morluto/rea) |
@@ -47,6 +48,8 @@ flowchart LR
   F -->|UI work| D[agentic-design]
   F -->|one brief per lane| I[agentic-implement<br/>the agent that writes code]
   X[agentic-fix<br/>a defect] --> I
+  E[agentic-explain<br/>explain code or a topic] -->|a defect| X
+  E -->|a change| F
   F -->|diff| R[agentic-code-review]
   X -->|diff| R
 ~~~
@@ -55,7 +58,7 @@ flowchart LR
 
 The skills find their siblings in the folder next to them (`../agentic-feature`, `../agentic-design`,
 …), unless an environment variable points elsewhere (`AGENTIC_FEATURE_DIR`, `AGENTIC_DESIGN_DIR`,
-`AGENTIC_PROJECT_DIR`, `AGENTIC_IMPLEMENT_DIR`, `AGENTIC_CODE_REVIEW_DIR`, `AGENTIC_ARCHITECTURE_DIR`),
+`AGENTIC_FIX_DIR`, `AGENTIC_PROJECT_DIR`, `AGENTIC_IMPLEMENT_DIR`, `AGENTIC_CODE_REVIEW_DIR`, `AGENTIC_ARCHITECTURE_DIR`),
 then in the agent's skill folders and in the installed plugin. That is why they work as a plugin, as
 copies or as links.
 
@@ -142,7 +145,7 @@ version (`--forcar` in both, or `--ligar`).
 
 **Codex.** User skills live in `~/.agents/skills` (repository skills in `.agents/skills`), per the
 [Codex documentation](https://developers.openai.com/codex/skills). Use `install.sh --agente codex`, or copy
-the ten folders of `skills/` there. Invoke a skill with `$agentic-feature`. Codex versions that still read
+the eleven folders of `skills/` there. Invoke a skill with `$agentic-feature`. Codex versions that still read
 `~/.codex/skills` can be served with `--agente codex-legado`. `codex plugin marketplace add` and
 `copilot plugin marketplace add` read `.claude-plugin/marketplace.json`; the install step after that was
 not verified, so prefer the installer.
@@ -154,7 +157,7 @@ install into `~/.agents/skills` serves Codex, Cursor, Gemini CLI, Copilot and Op
 
 ~~~bash
 for skill in agentic-project agentic-feature agentic-fix agentic-implement agentic-design \
-  agentic-code-review agentic-architecture agentic-ci-audit agentic-tool-design \
+  agentic-code-review agentic-architecture agentic-explain agentic-ci-audit agentic-tool-design \
   agentic-analysis-optimization; do
   gh skill install ricardostm2-afk/agentic-engineering-skills "$skill" --dir ~/.agents/skills
 done
@@ -168,7 +171,7 @@ executable bit of the `.sh` files; the skills call them with `bash`, so they sti
 
 ~~~bash
 for skill in agentic-project agentic-feature agentic-fix agentic-implement agentic-design \
-  agentic-code-review agentic-architecture agentic-ci-audit agentic-tool-design \
+  agentic-code-review agentic-architecture agentic-explain agentic-ci-audit agentic-tool-design \
   agentic-analysis-optimization; do
   gemini skills install https://github.com/ricardostm2-afk/agentic-engineering-skills.git --scope user --path "skills/$skill" --consent
 done
@@ -306,7 +309,7 @@ Claude Code's own validator; `tests/skills.test.mjs` checks it too, and that eve
   The manifest has a `version`; bump it when you release, or installed copies will not update.
 - Links made with `--ligar`: `git pull` and you are done. Copies: `git pull` and
   `./install.sh --aplicar --forcar` (the previous ones go to `~/.agentic-skills-backups/`).
-- Uninstall: `claude plugin uninstall agentic-skills@agentic-skills`, or delete the ten skill folders from
+- Uninstall: `claude plugin uninstall agentic-skills@agentic-skills`, or delete the eleven skill folders from
   the destinations above. The four agent files, if you copied them, are in `~/.claude/agents/`.
 
 Open a new agent session after any change.

@@ -1,0 +1,270 @@
+{
+  "versao": 2,
+  "titulo": "Do endereço à página",
+  "pergunta": "O que acontece entre escrever um endereço como example.org no navegador e ver a página",
+  "tema": "geral",
+  "fontes": [
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works",
+      "titulo": "How the web works (MDN)",
+      "lido_em": "2026-10-31"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Glossary/DNS",
+      "titulo": "DNS (glossário da MDN)",
+      "lido_em": "2026-10-31"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name",
+      "titulo": "What is a Domain Name? (MDN)",
+      "lido_em": "2026-10-31"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc1034.txt",
+      "titulo": "RFC 1034: Domain Names, Concepts and Facilities",
+      "lido_em": "2026-10-31"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.txt",
+      "titulo": "RFC 9110: HTTP Semantics",
+      "lido_em": "2026-10-31"
+    }
+  ],
+  "perfil": "A",
+  "granularidade": "blocos",
+  "objetivo": "perceber",
+  "intro": {
+    "simples": "O que acontece quando escreves um endereço como example.org e carregas em Enter: antes de a página aparecer, o navegador tem de descobrir em que computador ela está. Pergunta a um «livro de moradas» da internet, o DNS, e só depois pede a página a esse computador.",
+    "tecnico": "O navegador pede ao resolvedor o endereço IP do nome. O resolvedor responde pela cache ou segue as delegações da raiz ao servidor autoritativo da zona, e guarda cada resposta pelo seu TTL. Com o IP, o navegador envia o pedido HTTP, e o servidor responde com `200 OK` e os ficheiros da página."
+  },
+  "tipos": [
+    {
+      "id": "teu",
+      "nome": "No teu computador"
+    },
+    {
+      "id": "moradas",
+      "nome": "O livro de moradas (DNS)"
+    },
+    {
+      "id": "site",
+      "nome": "O computador do site"
+    }
+  ],
+  "nos": [
+    {
+      "id": "navegador",
+      "curto": "Navegador",
+      "tipo": "teu",
+      "simples": "O programa onde escreves o endereço. Não sabe em que computador o site mora, por isso pergunta a quem sabe.",
+      "tecnico": "O cliente HTTP. Precisa do endereço IP do servidor antes de enviar o pedido: pede-o ao resolvedor e, com ele, abre a ligação e pede a página. No fim monta os ficheiros recebidos e mostra-os."
+    },
+    {
+      "id": "resolvedor",
+      "curto": "Resolvedor",
+      "tipo": "moradas",
+      "simples": "Quem trata de descobrir a morada por ti. Primeiro olha para o caderno dele; só se não estiver lá é que vai perguntar a outros.",
+      "tecnico": "O programa que recebe o pedido do navegador e consulta a sua cache. Sem a resposta, pergunta aos servidores de nomes e segue as indicações até ao que tem os dados; guarda cada resposta pelo tempo (TTL) que ela traz."
+    },
+    {
+      "id": "raiz",
+      "curto": "Raiz",
+      "tipo": "moradas",
+      "simples": "O primeiro a quem se pergunta. Não sabe a morada do site, mas sabe quem trata de cada final de endereço, como .org.",
+      "tecnico": "O topo da árvore dos nomes, o nível com o rótulo vazio. Um servidor deste nível não guarda os nomes todos: indica quem trata do nível abaixo (a delegação)."
+    },
+    {
+      "id": "tld",
+      "curto": "Final do nome",
+      "tipo": "moradas",
+      "simples": "Quem trata de todos os endereços que acabam em .org. Também não sabe a morada: sabe quem trata do nome example.",
+      "tecnico": "O servidor do domínio de topo (TLD), a última parte do nome. Indica os servidores da zona do nome pedido, o passo a seguir da árvore."
+    },
+    {
+      "id": "autoritativo",
+      "curto": "Servidor do nome",
+      "tipo": "moradas",
+      "simples": "O que guarda mesmo a morada de example.org e dá a resposta final.",
+      "tecnico": "O servidor autoritativo da zona: responde com dados que são seus, e marca a resposta como autoritativa para quem pergunta distinguir."
+    },
+    {
+      "id": "web",
+      "curto": "Servidor do site",
+      "tipo": "site",
+      "simples": "O computador onde a página está guardada. Quando recebe o pedido, manda os ficheiros da página.",
+      "tecnico": "O servidor HTTP. Responde ao pedido com o estado `200 OK` (pedido bem-sucedido) e envia os ficheiros (HTML, CSS, JavaScript e outros) em pacotes pequenos."
+    }
+  ],
+  "vistas": [
+    {
+      "id": "v1",
+      "tipo": "sequencia",
+      "titulo": "Quem pergunta a quem",
+      "participantes": [
+        "navegador",
+        "resolvedor",
+        "web"
+      ],
+      "mensagens": [
+        {
+          "id": "m1",
+          "de": "navegador",
+          "para": "resolvedor",
+          "texto": "Onde mora example.org?"
+        },
+        {
+          "id": "m2",
+          "de": "resolvedor",
+          "para": "navegador",
+          "texto": "Mora em 192.0.2.172"
+        },
+        {
+          "id": "m3",
+          "de": "navegador",
+          "para": "web",
+          "texto": "Pede a página"
+        },
+        {
+          "id": "m4",
+          "de": "web",
+          "para": "navegador",
+          "texto": "200 OK e os ficheiros"
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "tipo": "cena",
+      "titulo": "A árvore dos nomes",
+      "nos": [
+        "resolvedor",
+        "raiz",
+        "tld",
+        "autoritativo"
+      ]
+    }
+  ],
+  "passos": [
+    {
+      "titulo": "Escreves o endereço",
+      "vista": "v1",
+      "realca": [
+        "navegador"
+      ],
+      "citacoes": [
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works"
+      ],
+      "simples": "Escreves example.org e carregas em Enter. O navegador tem o nome, mas não sabe em que computador a página está.",
+      "tecnico": "O primeiro passo do que o MDN descreve: o navegador vai ao DNS buscar o endereço real do servidor onde o site vive, antes de pedir qualquer página."
+    },
+    {
+      "titulo": "O navegador pergunta ao resolvedor",
+      "vista": "v1",
+      "realca": [
+        "navegador",
+        "resolvedor",
+        "m1"
+      ],
+      "citacoes": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/DNS"
+      ],
+      "simples": "O navegador faz uma pergunta: «Onde mora example.org?». Quem a recebe é o resolvedor, o ajudante que sabe fazer esta pesquisa.",
+      "tecnico": "O DNS traduz um nome fácil de lembrar num endereço numérico (o exemplo do MDN é 192.0.2.172); a esse pedido chama-se consulta DNS (DNS lookup)."
+    },
+    {
+      "titulo": "O resolvedor olha primeiro para o caderno",
+      "vista": "v2",
+      "realca": [
+        "resolvedor"
+      ],
+      "citacoes": [
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simples": "Se alguém perguntou há pouco pelo mesmo endereço, o resolvedor já tem a resposta anotada e responde logo. Poupa viagens.",
+      "tecnico": "O RFC 1034 diz que um objetivo importante do resolvedor é evitar atrasos e carga nos servidores de nomes, respondendo a partir da cache dos resultados anteriores; cada resposta traz um TTL que diz por quanto tempo se pode guardar."
+    },
+    {
+      "titulo": "Um endereço lê-se do fim para o princípio",
+      "vista": "v2",
+      "realca": [
+        "raiz",
+        "tld",
+        "autoritativo"
+      ],
+      "citacoes": [
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name",
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simples": "Em example.org, o .org é a última parte, e é por ela que a pesquisa começa. Depois vem o example. É como uma morada: primeiro o país, depois a cidade, depois a rua.",
+      "tecnico": "O MDN lê o nome da direita para a esquerda: primeiro o TLD, depois os rótulos. No RFC 1034 os nomes são uma árvore em que todos acabam na raiz, e cada nível pode entregar o nível abaixo a outros servidores (delegação)."
+    },
+    {
+      "titulo": "Cada servidor aponta para o seguinte",
+      "vista": "v2",
+      "realca": [
+        "resolvedor",
+        "raiz",
+        "tld",
+        "autoritativo"
+      ],
+      "citacoes": [
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simples": "Nenhum servidor sabe tudo. Cada um diz «não sei, mas pergunta àquele», até se chegar ao que guarda a morada.",
+      "tecnico": "No algoritmo do RFC 1034, o resolvedor escolhe os melhores servidores, pergunta, e, se a resposta trouxer uma delegação melhor, guarda-a e volta a escolher; pára quando a resposta responde à pergunta. O ponto viaja na cena por essa ordem, sempre com o resolvedor a perguntar."
+    },
+    {
+      "titulo": "A resposta volta ao navegador",
+      "vista": "v1",
+      "realca": [
+        "resolvedor",
+        "navegador",
+        "m2"
+      ],
+      "citacoes": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/DNS",
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simples": "O resolvedor entrega a morada ao navegador e fica com ela anotada por algum tempo, para não repetir o caminho.",
+      "tecnico": "O resolvedor responde com o endereço IP e guarda a resposta na cache enquanto o TTL o permitir. Com o IP, o navegador já sabe a que servidor se ligar."
+    },
+    {
+      "titulo": "O navegador pede a página",
+      "vista": "v1",
+      "realca": [
+        "navegador",
+        "web",
+        "m3",
+        "m4"
+      ],
+      "citacoes": [
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works",
+        "https://www.rfc-editor.org/rfc/rfc9110.txt"
+      ],
+      "simples": "Agora o navegador sabe a morada e pede a página ao computador do site. Se o pedido estiver certo, ele manda os ficheiros e o navegador monta a página.",
+      "tecnico": "O navegador envia um pedido HTTP; o RFC 9110 define o `200 (OK)` como pedido bem-sucedido. O servidor envia os ficheiros em pacotes, e o navegador monta-os no ecrã."
+    }
+  ],
+  "conceitos": [
+    {
+      "termo": "DNS",
+      "simples": "O livro de moradas da internet: liga um nome fácil de lembrar a uma morada numérica.",
+      "tecnico": "O Domain Name System, um sistema de nomes hierárquico e descentralizado que associa nomes de domínio a recursos, como endereços IP."
+    },
+    {
+      "termo": "Endereço IP",
+      "simples": "A morada de um computador na internet, em números.",
+      "tecnico": "O identificador numérico de um computador ligado à rede, como o 192.0.2.172 do exemplo, em IPv4 ou IPv6."
+    },
+    {
+      "termo": "Final do nome (TLD)",
+      "simples": "A última parte de um endereço, como .org ou .pt.",
+      "tecnico": "O domínio de topo (Top-Level Domain): a parte à direita do nome, lida em primeiro lugar."
+    },
+    {
+      "termo": "Cache e TTL",
+      "simples": "O caderno onde o resolvedor anota respostas, e o prazo que diz até quando valem.",
+      "tecnico": "O TTL de uma resposta, em segundos, diz por quanto tempo o resolvedor a pode guardar antes de a descartar."
+    }
+  ]
+}

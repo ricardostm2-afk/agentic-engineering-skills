@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh: instala as dez skills do agentic-skills nos agentes.
+# install.sh: instala as onze skills do agentic-skills nos agentes.
 #
 # Por omissão é uma SIMULAÇÃO: mostra o que faria e não toca em nada. Só --aplicar instala.
 #
@@ -35,7 +35,7 @@ set -euo pipefail
 uso() { awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"; }
 
 REPO="$(cd "$(dirname "$0")" && pwd -P)"  # caminho real: o mesmo clone por uma ligação conta como o mesmo
-SKILLS="agentic-project agentic-feature agentic-design agentic-implement agentic-fix agentic-code-review agentic-architecture agentic-analysis-optimization agentic-ci-audit agentic-tool-design"
+SKILLS="agentic-project agentic-feature agentic-design agentic-implement agentic-fix agentic-code-review agentic-architecture agentic-explain agentic-analysis-optimization agentic-ci-audit agentic-tool-design"
 TODOS="claude codex cursor gemini copilot opencode"
 LEGADO="codex-legado"  # só a pedido: o Codex atual lê ~/.agents/skills
 # Os agentes definidos do Claude Code (--agentes) vivem como assets da agentic-implement.

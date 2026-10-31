@@ -49,7 +49,7 @@ test("simulação deteta os agentes pelas pastas e não cria nada", (t) => {
   assert.ok(!existsSync(path.join(home, ".agents")));
 });
 
-test("--aplicar preserva as dez skills e todos os recursos no Claude e Codex", (t) => {
+test("--aplicar preserva as onze skills e todos os recursos no Claude e Codex", (t) => {
   const { home, corre } = casa(t);
   const resultado = corre("--aplicar", "--agente", "claude,codex");
   assert.equal(resultado.status, 0, resultado.out);
@@ -204,7 +204,7 @@ function skillsDoCiclo(readme, titulo) {
 test("README: o ciclo do gh skill e o do Gemini CLI levam as mesmas skills que o SKILLS do install.sh", () => {
   const readme = readFileSync(path.join(RAIZ, "README.md"), "utf8");
   const esperadas = skillsDoInstall();
-  assert.deepEqual(esperadas, [...["agentic-project","agentic-feature","agentic-design","agentic-implement","agentic-fix","agentic-code-review","agentic-architecture","agentic-analysis-optimization","agentic-ci-audit","agentic-tool-design"]].sort(), "o SKILLS do install.sh devia ter as dez");
+  assert.deepEqual(esperadas, [...["agentic-project","agentic-feature","agentic-design","agentic-implement","agentic-fix","agentic-code-review","agentic-architecture","agentic-explain","agentic-analysis-optimization","agentic-ci-audit","agentic-tool-design"]].sort(), "o SKILLS do install.sh devia ter as onze");
   assert.deepEqual(skillsDoCiclo(readme, "`gh skill`"), esperadas, "gh skill");
   assert.deepEqual(skillsDoCiclo(readme, "Gemini CLI"), esperadas, "Gemini CLI");
 });

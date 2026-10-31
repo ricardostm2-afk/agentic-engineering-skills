@@ -1,0 +1,498 @@
+{
+  "versao": 2,
+  "titulo": "A skill agentic-explain",
+  "pergunta": "O que faz a skill agentic-explain e que ficheiros trabalham juntos para gerar a página de uma explicação",
+  "tema": "codigo",
+  "area": "skills/agentic-explain",
+  "base": "8e7d72ba015e71f443a244cdae5953a0a039ea7d",
+  "perfil": "B",
+  "granularidade": "componentes",
+  "objetivo": "perceber",
+  "intro": {
+    "simples": "A skill recebe um pedido para explicar algo, lê o material, pergunta ao humano em que nível quer a explicação e entrega uma página com texto e desenhos 3D. Um programa pequeno confere os dados e monta a página; o resto é texto que o agente segue.",
+    "tecnico": "A skill é um `SKILL.md` com cinco referências, um gerador (`scripts/gerar-pagina.mjs`) e um modelo de página (`assets/visualizador.html`). O agente segue as duas etapas do `SKILL.md`, escreve um JSON no esquema 2 e, quando precisa, um `cena.js`; o gerador valida tudo e escreve a página a partir do modelo; depois o agente corre o detetor da `agentic-design`, abre a página e publica-a."
+  },
+  "tipos": [
+    {
+      "id": "ator",
+      "nome": "Quem a usa"
+    },
+    {
+      "id": "texto",
+      "nome": "Texto da skill"
+    },
+    {
+      "id": "codigo",
+      "nome": "Código"
+    },
+    {
+      "id": "pagina",
+      "nome": "Página"
+    },
+    {
+      "id": "fora",
+      "nome": "Fora da skill"
+    }
+  ],
+  "nos": [
+    {
+      "id": "agente",
+      "curto": "O agente",
+      "tipo": "ator",
+      "ficheiros": [
+        "skills/agentic-explain/SKILL.md:10-11",
+        "skills/agentic-explain/SKILL.md:36-52",
+        "skills/agentic-explain/SKILL.md:76-127"
+      ],
+      "simples": "Quem recebe o pedido, lê o material e faz as perguntas. É ele que escreve os dados, corre os programas e publica a página; só lê e explica.",
+      "tecnico": "O agente que corre a skill segue o `SKILL.md`: lê o material, faz as três perguntas, escolhe as vistas, escreve o JSON e, quando há uma vista `cena`, o `cena.js`, corre o gerador e o detetor, abre a página num browser e publica-a. Só lê e explica, nunca altera nada."
+    },
+    {
+      "id": "skill",
+      "curto": "SKILL.md",
+      "tipo": "texto",
+      "ficheiros": [
+        "skills/agentic-explain/SKILL.md:32-135",
+        "skills/agentic-explain/SKILL.md:137-146",
+        "skills/agentic-explain/SKILL.md:166"
+      ],
+      "simples": "O guião que o agente segue, em duas etapas: primeiro calibrar (perguntar), depois fazer a página.",
+      "tecnico": "Define a etapa 1 (ler o material, nomear 2 a 3 conceitos, fazer as três perguntas numa só chamada e esperar) e a etapa 2 (escolher as vistas, escrever os dados, gerar, correr o detetor, abrir no browser, publicar e escrever a mensagem final), cada uma com «Feito quando». Aponta para as cinco referências e, só com o tema código, propõe no fim a skill seguinte, conforme a Q1."
+    },
+    {
+      "id": "perfis",
+      "curto": "perfis.md",
+      "tipo": "texto",
+      "ficheiros": [
+        "skills/agentic-explain/references/perfis.md:1-89"
+      ],
+      "simples": "Explica como escrever para quem não conhece os conceitos (A), para quem conhece a base mas não estes padrões (B) e para quem domina (C).",
+      "tecnico": "Fixa, para cada perfil, a linguagem, a estrutura do documento e a granularidade (blocos, componentes ou detalhe), com um exemplo bom e um mau. É a referência do agente ao escrever os campos `simples` e `tecnico`."
+    },
+    {
+      "id": "dados-md",
+      "curto": "dados.md",
+      "tipo": "texto",
+      "ficheiros": [
+        "skills/agentic-explain/references/dados.md:1-100"
+      ],
+      "simples": "A lista do que o JSON da explicação tem de ter, e do que o gerador recusa.",
+      "tecnico": "Documenta o esquema 2 e as regras que o validador aplica (limites de nós, vistas e passos, forma das citações com o caminho relativo à raiz, `risco` e `modo` só no perfil C, sem segredos nos textos nem nos nomes de campo) e os códigos de saída 0, 1 e 2 do gerador."
+    },
+    {
+      "id": "vistas-md",
+      "curto": "vistas.md",
+      "tipo": "texto",
+      "ficheiros": [
+        "skills/agentic-explain/references/vistas.md:1-120"
+      ],
+      "simples": "Ajuda a escolher o desenho certo: um grafo, camadas, uma sequência, estados ou uma linha do tempo.",
+      "tecnico": "Diz quando serve cada vista do catálogo e que campos leva, com um exemplo mínimo de cada, e deixa a `cena` para quando nenhuma serve. Uma página leva de 1 a 4 vistas."
+    },
+    {
+      "id": "cena-md",
+      "curto": "cena.md",
+      "tipo": "texto",
+      "ficheiros": [
+        "skills/agentic-explain/references/cena.md:1-115"
+      ],
+      "simples": "Para o caso raro em que nenhum desenho do catálogo serve: o agente escreve o seu próprio desenho 3D, dentro de regras.",
+      "tecnico": "Descreve o contrato `ctx` da função `cena(ctx)`, o que a moldura da página faz por ela, as regras estáticas que o gerador aplica ao código (palavras proibidas, sequências de escape, endereços, cores literais, até 40 KB), que valem para o texto todo e não linha a linha, e um exemplo curto."
+    },
+    {
+      "id": "origem-md",
+      "curto": "origem.md",
+      "tipo": "texto",
+      "ficheiros": [
+        "skills/agentic-explain/references/origem.md:1-58"
+      ],
+      "simples": "De onde vêm as ideias e as bibliotecas, e como atualizar as versões.",
+      "tecnico": "Regista que a skill é própria do repo, as duas bibliotecas que a página carrega do CDN (`3d-force-graph` e `three`, sem cópia no repo) e os passos para as atualizar, que incluem a lista de endereços aprovada no teste."
+    },
+    {
+      "id": "gerador",
+      "curto": "gerar-pagina.mjs",
+      "tipo": "codigo",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:64-346",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:348-410",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:420-434",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:438-489"
+      ],
+      "simples": "O programa que confere os dados e, se estiverem certos, monta a página. Se não estiverem, lista o que falha e não monta nada.",
+      "tecnico": "Exporta `validar` (o esquema 2), `validarCena` (as regras estáticas do código da cena, sobre o texto inteiro) e `gerarPagina`, e corre como programa pelo `principal`: sai 0 e escreve, 1 com uma linha por regra violada, 2 em erro de uso ou de leitura, incluindo um JSON inválido, de que não repete nada. Põe os dados, o título e a cena no modelo sem nunca ler um `$&` como padrão de substituição."
+    },
+    {
+      "id": "teste",
+      "curto": "gerar-pagina.test.mjs",
+      "tipo": "codigo",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1-1440"
+      ],
+      "simples": "Os testes do programa: cada regra tem um caso que ela tem de recusar.",
+      "tecnico": "Testa o gerador por `validar`, `validarCena`, `gerarPagina` e pela linha de comandos (saídas 0, 1 e 2), com um controlo negativo por regra. Os casos de escrita usam um modelo mínimo de fixture; o modelo real é conferido no CSP, na lista de endereços aprovados, nos marcadores e numa geração sem cena. No fim, confere que os exemplos de `assets/exemplos/` passam o validador, geram a página e citam ficheiros que existem."
+    },
+    {
+      "id": "modelo",
+      "curto": "visualizador.html",
+      "tipo": "pagina",
+      "ficheiros": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:412-434",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:475-476",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1243-1256"
+      ],
+      "simples": "A página já feita, sem conteúdo: o gerador só lhe põe os dados lá dentro. Traz uma política de segurança que só deixa carregar código do jsDelivr e fecha os outros pedidos à rede.",
+      "tecnico": "É o ficheiro `assets/visualizador.html`. O gerador exige nele um só bloco `<script type=\"application/json\" id=\"dados\">`, o marcador `<title>{{titulo}}</title>` e, para quem usa `--cena`, um só lugar para a cena; a falta de qualquer um dá erro e saída 2. Um `<meta>` com o Content-Security-Policy (`default-src 'none'`, scripts só em linha ou do jsDelivr) vem antes de qualquer `<script>` e `<style>`, e um teste fixa o texto dele. Desenhar as vistas é com o código do próprio modelo."
+    },
+    {
+      "id": "detetor",
+      "curto": "detetar-slop.mjs",
+      "tipo": "fora",
+      "ficheiros": [
+        "skills/agentic-design/scripts/detetar-slop.mjs:20-23",
+        "skills/agentic-explain/SKILL.md:109-115"
+      ],
+      "simples": "Um verificador da skill de design: procura sinais de página «feita por IA», e a skill só manda publicar se não achar nenhum bloqueio.",
+      "tecnico": "O `detetar-slop.mjs` da `agentic-design` analisa a página e sai 0 sem bloqueios (pode haver avisos), 1 com bloqueios, 2 se não conseguiu analisar. O `SKILL.md` exige 0 antes de publicar; um bloqueio num texto corrige-se nos dados e a página gera-se outra vez."
+    },
+    {
+      "id": "publicacao",
+      "curto": "Publicação",
+      "tipo": "fora",
+      "ficheiros": [
+        "skills/agentic-explain/SKILL.md:121-126"
+      ],
+      "simples": "O último passo: pôr a página onde o humano a possa abrir, como página publicada ou como ficheiro.",
+      "tecnico": "Com a ferramenta Artifact, publica-se como página (pela skill `artifact-design`) e dá-se o link; sem ela, grava-se `explain-<data-hora>.html` fora do repo, abre-se e dá-se o caminho absoluto. É o mesmo caminho do relatório da `agentic-architecture`."
+    }
+  ],
+  "vistas": [
+    {
+      "id": "v1",
+      "tipo": "grafo",
+      "titulo": "Quem lê, escreve ou testa quem",
+      "ligacoes": [
+        {
+          "de": "agente",
+          "para": "skill",
+          "tipo": "lê e segue"
+        },
+        {
+          "de": "skill",
+          "para": "perfis",
+          "tipo": "remete para",
+          "ref": "skills/agentic-explain/SKILL.md:57-58"
+        },
+        {
+          "de": "skill",
+          "para": "vistas-md",
+          "tipo": "remete para",
+          "ref": "skills/agentic-explain/SKILL.md:76-77"
+        },
+        {
+          "de": "skill",
+          "para": "cena-md",
+          "tipo": "remete para",
+          "ref": "skills/agentic-explain/SKILL.md:83-86"
+        },
+        {
+          "de": "skill",
+          "para": "dados-md",
+          "tipo": "remete para",
+          "ref": "skills/agentic-explain/SKILL.md:87"
+        },
+        {
+          "de": "skill",
+          "para": "origem-md",
+          "tipo": "remete para",
+          "ref": "skills/agentic-explain/SKILL.md:166"
+        },
+        {
+          "de": "agente",
+          "para": "gerador",
+          "tipo": "corre",
+          "ref": "skills/agentic-explain/SKILL.md:99-103"
+        },
+        {
+          "de": "gerador",
+          "para": "modelo",
+          "tipo": "lê e preenche",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:416-434"
+        },
+        {
+          "de": "gerador",
+          "para": "dados-md",
+          "tipo": "aplica as regras de",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:9"
+        },
+        {
+          "de": "gerador",
+          "para": "cena-md",
+          "tipo": "aplica as regras de",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.mjs:348-351"
+        },
+        {
+          "de": "teste",
+          "para": "gerador",
+          "tipo": "testa",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.test.mjs:14"
+        },
+        {
+          "de": "teste",
+          "para": "modelo",
+          "tipo": "confere o CSP e os endereços de",
+          "ref": "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1243-1286"
+        },
+        {
+          "de": "agente",
+          "para": "detetor",
+          "tipo": "corre",
+          "ref": "skills/agentic-explain/SKILL.md:109-113"
+        },
+        {
+          "de": "agente",
+          "para": "publicacao",
+          "tipo": "faz",
+          "ref": "skills/agentic-explain/SKILL.md:121-126"
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "tipo": "sequencia",
+      "titulo": "Do pedido à página publicada",
+      "participantes": [
+        "agente",
+        "gerador",
+        "modelo",
+        "detetor",
+        "publicacao"
+      ],
+      "mensagens": [
+        {
+          "id": "m1",
+          "de": "agente",
+          "para": "gerador",
+          "texto": "Dados, cena e destino"
+        },
+        {
+          "id": "m2",
+          "de": "gerador",
+          "para": "modelo",
+          "texto": "Pede o modelo da página"
+        },
+        {
+          "id": "m3",
+          "de": "modelo",
+          "para": "gerador",
+          "texto": "O HTML com os marcadores"
+        },
+        {
+          "id": "m4",
+          "de": "gerador",
+          "para": "agente",
+          "texto": "Página escrita, ou a lista do que falha"
+        },
+        {
+          "id": "m5",
+          "de": "agente",
+          "para": "detetor",
+          "texto": "Analisa a página"
+        },
+        {
+          "id": "m6",
+          "de": "detetor",
+          "para": "agente",
+          "texto": "Sai 0, sem bloqueios"
+        },
+        {
+          "id": "m7",
+          "de": "agente",
+          "para": "publicacao",
+          "texto": "Publica ou grava e abre"
+        },
+        {
+          "id": "m8",
+          "de": "publicacao",
+          "para": "agente",
+          "texto": "O link ou o caminho"
+        }
+      ]
+    }
+  ],
+  "passos": [
+    {
+      "titulo": "Ler o pedido e o material",
+      "vista": "v1",
+      "realca": [
+        "agente",
+        "skill"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:34-42"
+      ],
+      "simples": "O agente começa por ler o que o pedido aponta. Sem ler não há explicação.",
+      "tecnico": "A etapa 1 começa por ler o material com `caminho:linha` e guardar o SHA lido, que vai em `base` (`SKILL.md:36-38`). Sem tema nem área nomeados, o agente faz uma só pergunta, sobre o quê, e espera."
+    },
+    {
+      "titulo": "As três perguntas e o perfil",
+      "vista": "v1",
+      "realca": [
+        "skill",
+        "perfis"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:43-52",
+        "skills/agentic-explain/SKILL.md:60-68",
+        "skills/agentic-explain/references/perfis.md:1-18"
+      ],
+      "simples": "O agente pergunta o que quer, se conhece os conceitos e quão fundo ir. Das respostas sai o nível da linguagem.",
+      "tecnico": "Nomeia 2 a 3 conceitos que existem mesmo no material e faz as três perguntas numa só chamada, cada uma com recomendação, e pára. A Q2 escolhe o perfil (A, B ou C) e a Q3 a granularidade (blocos, componentes ou detalhe); `perfis.md` diz o que cada perfil escreve."
+    },
+    {
+      "titulo": "Escolher as vistas",
+      "vista": "v1",
+      "realca": [
+        "skill",
+        "vistas-md",
+        "cena-md"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:76-86",
+        "skills/agentic-explain/SKILL.md:98",
+        "skills/agentic-explain/references/vistas.md:13-26"
+      ],
+      "simples": "Cada desenho serve para uma coisa: o grafo mostra quem depende de quem, a sequência mostra quem fala com quem. O desenho próprio só entra se nenhum serve.",
+      "tecnico": "De 1 a 4 vistas por página. A tabela «Qual escolher» liga cada necessidade a uma vista do catálogo; a `cena` fica para o que nenhuma desenha (uma árvore, um mecanismo, um espaço) e obriga a escrever `cena.js`."
+    },
+    {
+      "titulo": "Escrever os dados",
+      "vista": "v1",
+      "realca": [
+        "skill",
+        "dados-md",
+        "perfis"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:87-97",
+        "skills/agentic-explain/references/dados.md:41-78"
+      ],
+      "simples": "O agente escreve a explicação num ficheiro de dados. Cada peça leva dois textos, um simples e um técnico, e só cita o que leu.",
+      "tecnico": "O JSON segue o esquema 2: cada nó, passo e conceito tem `simples` e `tecnico`, cada passo aponta para uma vista, realça elementos dela e cita pelo menos uma fonte. O validador não confere que as linhas citadas existem nem que o texto está certo, por isso cita-se só o que se leu. Com mais de 60 nós, agrupa-se por pasta ou módulo antes de escrever."
+    },
+    {
+      "titulo": "Gerar a página",
+      "vista": "v2",
+      "realca": [
+        "agente",
+        "gerador",
+        "m1"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:99-108",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:438-482"
+      ],
+      "simples": "O agente corre o programa com o ficheiro de dados e diz onde quer a página.",
+      "tecnico": "`gerar-pagina.mjs <dados.json> [--cena <cena.js>] --saida <pagina.html>`. O `principal` lê os argumentos, os dados e a cena, valida, gera e escreve, por esta ordem, e devolve 0, 1 ou 2."
+    },
+    {
+      "titulo": "O gerador valida antes de escrever",
+      "vista": "v2",
+      "realca": [
+        "gerador",
+        "m4"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:472-473",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:464-466",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:348-351",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:376-378",
+        "skills/agentic-explain/references/dados.md:3-5",
+        "skills/agentic-explain/references/dados.md:89-100"
+      ],
+      "simples": "Se alguma coisa estiver errada, o programa diz o que e onde, e não escreve nada. O agente corrige e repete.",
+      "tecnico": "`validar` e `validarCena` juntam as linhas de erro (`campo: o que falha` e `cena:<linha>: o que falha`); com alguma, o `principal` escreve-as em stderr e sai 1 sem criar o ficheiro. O validador recusa e nunca corrige. As regras da cena correm sobre o texto inteiro, não linha a linha: um achado partido entre linhas conta na linha onde começa, e `\\u` e `\\x` são recusados porque escreveriam uma palavra proibida sem ela aparecer. Um JSON que não se lê sai 2 com «<ficheiro> não é JSON válido» e nada do seu conteúdo, para os dados não irem parar a um registo."
+    },
+    {
+      "titulo": "O modelo recebe os dados",
+      "vista": "v2",
+      "realca": [
+        "gerador",
+        "modelo",
+        "m2",
+        "m3"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:420-434",
+        "skills/agentic-explain/scripts/gerar-pagina.mjs:475-476",
+        "skills/agentic-explain/scripts/gerar-pagina.test.mjs:1243-1256"
+      ],
+      "simples": "O programa pega na página já feita e põe lá dentro os dados e o título.",
+      "tecnico": "`gerarPagina` troca o bloco de dados (com o `<` escapado, para um `</script>` num texto não o fechar), o `<title>` e, com cena, o código dela. Falha se o modelo não tiver exatamente um bloco de dados, o marcador do título e, para a cena, um só lugar, e o `principal` converte a falha em saída 2. A rede fecha-se no próprio modelo, com um Content-Security-Policy que o teste fixa."
+    },
+    {
+      "titulo": "O detetor",
+      "vista": "v2",
+      "realca": [
+        "agente",
+        "detetor",
+        "m5",
+        "m6"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:109-115",
+        "skills/agentic-design/scripts/detetar-slop.mjs:20-23"
+      ],
+      "simples": "Antes de publicar, um verificador procura sinais de página «feita por IA». Tem de dar «sem bloqueios».",
+      "tecnico": "`node <agentic-design>/scripts/detetar-slop.mjs <pagina.html>` tem de sair 0. Um bloqueio num texto corrige-se nos dados e a página gera-se de novo; sem saída 0 não se publica."
+    },
+    {
+      "titulo": "Publicar e dizer onde está",
+      "vista": "v2",
+      "realca": [
+        "agente",
+        "publicacao",
+        "m7",
+        "m8"
+      ],
+      "citacoes": [
+        "skills/agentic-explain/SKILL.md:121-126",
+        "skills/agentic-explain/SKILL.md:148-153"
+      ],
+      "simples": "A página fica num link (se houver Artifact) ou num ficheiro aberto no computador, e o agente diz onde.",
+      "tecnico": "Artifact ou `explain-<data-hora>.html` na pasta temporária. A mensagem final tem quatro linhas: a página, o perfil com a granularidade e as vistas, como pedir outro perfil e o que a Q1 propõe a seguir, mais uma «Precisa de ti» se algo ficou por fazer."
+    }
+  ],
+  "conceitos": [
+    {
+      "termo": "esquema 2",
+      "simples": "O formato em que se escrevem os dados da explicação.",
+      "tecnico": "O JSON com `versao: 2` que `validar` aplica: nós, vistas, passos, citações e conceitos, com os limites de `references/dados.md`."
+    },
+    {
+      "termo": "perfil",
+      "simples": "O nível da linguagem: A sem jargão, B com o fluxo, C com os trade-offs.",
+      "tecnico": "A, B ou C, decidido pela Q2. Muda os textos e não a forma dos dados, salvo `risco` e `modo`, que só existem no C."
+    },
+    {
+      "termo": "vista",
+      "simples": "Uma maneira de desenhar as mesmas peças.",
+      "tecnico": "Um dos cinco tipos do catálogo (`grafo`, `camadas`, `sequencia`, `estados`, `linha-do-tempo`) ou a `cena`; de 1 a 4 por página."
+    },
+    {
+      "termo": "cena",
+      "simples": "Um desenho 3D escrito de propósito para esta explicação.",
+      "tecnico": "Uma função `cena(ctx)` em three.js, que o agente escreve num `cena.js`; o gerador valida-a com regras estáticas antes de a pôr na página."
+    },
+    {
+      "termo": "modelo",
+      "simples": "A página sem conteúdo, onde o gerador põe os dados.",
+      "tecnico": "`assets/visualizador.html`, com os marcadores que o gerador substitui."
+    },
+    {
+      "termo": "detetor",
+      "simples": "Um verificador de aspeto que corre antes de publicar.",
+      "tecnico": "O `detetar-slop.mjs` da `agentic-design`: sai 0 sem bloqueios e é condição para publicar."
+    }
+  ]
+}
