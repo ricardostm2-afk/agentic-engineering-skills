@@ -21,6 +21,7 @@ invariantes, os casos-limite e o teste vermelho, ou parte a tarefa em passos que
 
 Depois passa as quatro perguntas por ordem e pára na primeira que manda para **complexa**:
 
+<!-- cartao:nivel-1 -->
 1. **Causa por descobrir?** Um defeito cuja causa ainda não se conhece, ou uma corrida a
    diagnosticar. Sim: complexa.
 2. **Desenho que só aparece no código?** O contrato, o esquema ou o módulo só se decidem com uma
@@ -34,6 +35,7 @@ Passou nas quatro: **bem-definida**. Desenho novo, lógica delicada (dinheiro, c
 de acesso) ou várias áreas não fazem a tarefa complexa quando o brief já os decidiu. Exemplos: um
 rótulo; um arredondamento; uma faixa com spec e tarefas; a correção de um Importante que o
 orquestrador reproduziu e cuja regra escreveu.
+<!-- /cartao:nivel-1 -->
 
 Uma bem-definida é **curta** quando cabe numa faixa só, com 1 ficheiro de código e o seu teste, até
 ~50 linhas alteradas, fora das zonas sensíveis (tenant, sessão, faturação, dados pessoais, e as do
@@ -44,14 +46,24 @@ a 4 não se aplicam. A revisão continua a ser de um subagente de contexto novo:
 revê. Se a mudança passar destes limites a meio, pára e lança um agente pelo nível que ela tem.
 
 - O humano pode forçar o nível.
+<!-- cartao:nivel-2 -->
 - Zona sensível (tenant, sessão, faturação, dados pessoais) não sobe o nível: o brief leva os
   invariantes e os testes de recusa, e a zona pesa no nível da revisão (`agentic-code-review`).
+<!-- /cartao:nivel-2 -->
 
-Escreve no brief `nível: <bem-definida|complexa> — <porquê>`. Numa bem-definida, o porquê são as
-decisões fechadas (`nível: bem-definida — decisões fechadas: contrato, 4 regras, testes vermelhos`);
-numa complexa, o que fica por decidir ou descobrir (`nível: complexa — causa por descobrir: o
-total diverge só em produção`). Numa curta não há brief: diz ao humano numa linha
-`nível: curta — <porquê>`.
+<!-- cartao:nivel-3 -->
+Escreve no brief a linha `nível:` com estes rótulos; a guarda do lançamento lê-a:
+
+- `nível: bem-definida — decisões fechadas: <quais>`;
+- `nível: complexa — <rótulo>: <detalhe>`, com o rótulo igual a uma das quatro perguntas, em
+  minúsculas e sem «?»: `causa por descobrir`, `desenho que só aparece no código`,
+  `passos por enumerar`, `já falhou`;
+- o humano forçou o nível: `nível: <nível> — forçado pelo humano: <as palavras dele>`.
+<!-- /cartao:nivel-3 -->
+
+Exemplos: `nível: bem-definida — decisões fechadas: contrato, 4 regras, testes vermelhos`;
+`nível: complexa — causa por descobrir: o total diverge só em produção`. Numa curta não há brief:
+diz ao humano numa linha `nível: curta — <porquê>`.
 
 Feito quando o brief tem a linha `nível:` (numa curta, quando a disseste ao humano) e ela diz as
 decisões fechadas ou o que fica por descobrir.
@@ -61,10 +73,12 @@ decisões fechadas ou o que fica por descobrir.
 O projeto escolhe os seus modelos e esforços, e a regra do utilizador ganha sempre. Sem ela, por
 exemplo:
 
+<!-- cartao:modelo -->
 | Nível | Claude | Codex |
 |---|---|---|
 | bem-definida | Sonnet 5.5, esforço xhigh | gpt-6.1-sol, esforço medium |
 | complexa | Opus 5.5, esforço xhigh | gpt-6.1-sol, esforço max |
+<!-- /cartao:modelo -->
 
 Os nomes da tabela são só exemplos e envelhecem depressa: troca-os pelos que o teu fornecedor
 oferece hoje. O que a tabela fixa é a ordem: a tarefa complexa recebe mais capacidade ou mais

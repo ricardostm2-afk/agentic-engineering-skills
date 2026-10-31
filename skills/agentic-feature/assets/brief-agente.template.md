@@ -10,7 +10,8 @@ Para quem orquestra (apaga este bloco ao preencher):
 - Preenche cada campo; apaga os opcionais sem uso. Sem «<…>», «a definir» ou opções por fechar.
 - Num job sem subagentes, o brief não pede faixas, painéis nem verificadores: §4 de
   escolher-o-agente.md da agentic-implement.
-- O nível vem do §1 de escolher-o-agente.md da agentic-implement. A ordem leva as palavras do
+- O nível vem do §1 de escolher-o-agente.md da agentic-implement, com os rótulos da linha `nível:`
+  tal e qual (a guarda do lançamento lê-a). A ordem leva as palavras do
   humano, ou «nenhuma»; usa o mecanismo do lançador quando ele regista a ordem.
 - Sem UI, apaga o bloco «UI». Com UI, os estados e larguras vão na tabela de tarefas.
 - Num refactor, a coluna «Teste vermelho na base» leva o comando que fixa o comportamento
@@ -19,7 +20,7 @@ Para quem orquestra (apaga este bloco ao preencher):
 
 <título da faixa: «# Faixa <letra ou nome> · <feature>», ou o formato do lançador, como «## Tarefa <n> — <nome>»>
 
-nível: <bem-definida|complexa> — <decisões fechadas ou o que falta descobrir>
+nível: <bem-definida — decisões fechadas: <quais> | complexa — <causa por descobrir|desenho que só aparece no código|passos por enumerar|já falhou>: <detalhe> | <nível> — forçado pelo humano: <as palavras dele>>
 
 ordem do humano: <palavras exatas, ou «nenhuma»>
 

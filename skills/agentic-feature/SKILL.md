@@ -20,6 +20,66 @@ escreves a spec e os briefs, lanças os agentes, revês e integras. Os agentes (
 jobs Codex) escrevem o código com a `agentic-implement`. O humano decide o que é dele: produto,
 compromissos e o irreversível.
 
+<!-- cartao:inicio — copiado das fontes que cita; atualiza-o quando elas mudarem -->
+## Cartão
+
+Fontes: `<agentic-implement>/references/escolher-o-agente.md` (nível §1, modelo §2); `<agentic-code-review>/SKILL.md` (revisão passos 5 e 6).
+
+Passo 0 — Feito quando disseste numa linha a via e o critério que acertou (e cada mudança de via depois).
+Passo 1 — Feito quando a Leitura tem as sugestões e a abordagem fechadas, com a pesquisa citada. Mostra-a ao humano no início do momento 1.
+Passo 2 — Feito quando a fronteira está vazia (não quando acaba a lista) e mostraste a tabela das decisões.
+Passo 4 — Feito quando a spec está commitada e, na Completa, ele disse «avança»; na Padrão, quando o aviso saiu.
+Passo 5 — Feito quando todas as faixas voltaram `concluido` e estão juntas, com a verificação completa verde.
+Passo 6 — Feito quando nenhum Importante está aberto e cada verificação tem comando e saída. Uma verificação que saltou, não correu ou saiu com 0 sem testar nada conta como vermelha.
+Passo 7 — Feito quando o commit de integração está onde a política do projeto manda e a mensagem final saiu no formato de «Entrega».
+
+**Nível**
+
+1. **Causa por descobrir?** Um defeito cuja causa ainda não se conhece, ou uma corrida a
+   diagnosticar. Sim: complexa.
+2. **Desenho que só aparece no código?** O contrato, o esquema ou o módulo só se decidem com uma
+   experiência dentro do código. Sim: complexa.
+3. **Passos por enumerar?** Um refactor tão acoplado que o brief não consegue escrever os passos.
+   Sim: complexa.
+4. **Já falhou?** Um agente falhou esta tarefa uma vez no nível bem-definida. Sim: complexa, e o
+   brief novo leva a premissa que o agente devolveu (passo 5 da `agentic-implement`).
+
+Passou nas quatro: **bem-definida**. Desenho novo, lógica delicada (dinheiro, concorrência, regras
+de acesso) ou várias áreas não fazem a tarefa complexa quando o brief já os decidiu. Exemplos: um
+rótulo; um arredondamento; uma faixa com spec e tarefas; a correção de um Importante que o
+orquestrador reproduziu e cuja regra escreveu.
+
+- Zona sensível (tenant, sessão, faturação, dados pessoais) não sobe o nível: o brief leva os
+  invariantes e os testes de recusa, e a zona pesa no nível da revisão (`agentic-code-review`).
+
+Escreve no brief a linha `nível:` com estes rótulos; a guarda do lançamento lê-a:
+
+- `nível: bem-definida — decisões fechadas: <quais>`;
+- `nível: complexa — <rótulo>: <detalhe>`, com o rótulo igual a uma das quatro perguntas, em
+  minúsculas e sem «?»: `causa por descobrir`, `desenho que só aparece no código`,
+  `passos por enumerar`, `já falhou`;
+- o humano forçou o nível: `nível: <nível> — forçado pelo humano: <as palavras dele>`.
+
+**Modelo** (nomes de exemplo; o projeto escolhe os seus)
+
+| Nível | Claude | Codex |
+|---|---|---|
+| bem-definida | Sonnet 5.5, esforço xhigh | gpt-6.1-sol, esforço medium |
+| complexa | Opus 5.5, esforço xhigh | gpt-6.1-sol, esforço max |
+
+**Revisão**
+
+```bash
+node <agentic-code-review>/scripts/validar-relatorio.mjs <relatorio.md>   # 0 = conforme; 1 = lista do que falha
+```
+
+- Limite de rondas pelo nível (1 na Rápida pedida, 2 na Padrão, 3 na Completa). Da 2.ª em diante:
+  só o diff novo, sem repetir achados fechados, e só as lentes com Importantes abertos, juntas.
+
+- **No limite, com um Importante aberto, pára e vai ao humano** com um resumo (achados abertos,
+  respostas, rondas, diff por rever, a tua recomendação). Nunca uma ronda extra em silêncio.
+<!-- cartao:fim -->
+
 As regras do repo ganham a esta skill: lê `AGENTS.md`/`CLAUDE.md`, a constituição
 (`.specify/memory/constitution.md`) e as ADRs antes de aplicar o que está aqui, e usa os comandos
 do projeto (`/ship`, `/deploy`, a bateria, o lançador de jobs) em vez dos genéricos.

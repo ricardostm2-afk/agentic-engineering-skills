@@ -215,7 +215,7 @@
       "targetPath": "skills/agentic-fix/SKILL.md",
       "mode": "adapted",
       "reason": "Só o ciclo vermelho do passo 3 vem do diagnosing-bugs (um comando que falha por este defeito, antes de qualquer hipótese). O resto da skill é método próprio: a divisão entre orquestrador e agente, a classe do defeito, as salvaguardas, a revisão de contexto novo e o passo «se escapou».",
-      "targetSha256": "a160bd7d35d209cb4d33c0b542b4a504900e43ef2e17265e3006262d243d2f10"
+      "targetSha256": "5506533d2facdaf92d075657ee85832fc846f7c6716e94f655c21eb93a6813a5"
     },
     {
       "upstream": "mattpocock",

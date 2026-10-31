@@ -142,9 +142,11 @@ Segue `assets/relatorio.template.md`: 1.ª linha
 `0 Importantes — nada a corrigir` logo a seguir quando não há; cada achado com etiqueta e
 `ficheiro:linha`; Pré-existentes numa linha. Antes de o mandar ao autor ou ao humano:
 
+<!-- cartao:revisao-1 -->
 ```bash
 node <skill>/scripts/validar-relatorio.mjs <relatorio.md>   # 0 = conforme; 1 = lista do que falha
 ```
+<!-- /cartao:revisao-1 -->
 
 O validador confere a forma, não a verdade dos achados; essa é do passo 4.
 
@@ -156,13 +158,17 @@ O validador confere a forma, não a verdade dos achados; essa é do passo 4.
 - Corrigir não é desta skill: os Importantes vão ao autor (o agente que fez a mudança, ou uma
   sessão de correção, que é autoria). Se o humano te pede que corrijas, és o autor dessa correção
   e a ronda seguinte revê-a.
+<!-- cartao:revisao-2 -->
 - Limite de rondas pelo nível (1 na Rápida pedida, 2 na Padrão, 3 na Completa). Da 2.ª em diante:
   só o diff novo, sem repetir achados fechados, e só as lentes com Importantes abertos, juntas.
+<!-- /cartao:revisao-2 -->
 - O que entra depois do SHA revisto sem abrir ronda (metadados, correção de um Importante com
   prova e diff conferido, teste do revisor integrado sem alterações), o tronco trazido para o
   ramo (merge ou rebase), o «como desfazer» e a linha `Revisão:` estão em `references/painel-e-rondas.md` §9–§10.
+<!-- cartao:revisao-3 -->
 - **No limite, com um Importante aberto, pára e vai ao humano** com um resumo (achados abertos,
   respostas, rondas, diff por rever, a tua recomendação). Nunca uma ronda extra em silêncio.
+<!-- /cartao:revisao-3 -->
 
 No fim de cada ronda confere `git worktree list` e `git -C <wt> status --short` (vazio: o revisor
 não deixou mutações) e remove cada worktree (`git worktree remove <wt>`).

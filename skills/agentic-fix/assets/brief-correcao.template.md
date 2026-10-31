@@ -5,7 +5,7 @@ um que regista a ordem e a junta ao prompt. -->
 
 # Correção: {{título curto}}
 
-nível: {{bem-definida|complexa}} — {{porquê}}
+nível: {{bem-definida — decisões fechadas: <quais> | complexa — <causa por descobrir|desenho que só aparece no código|passos por enumerar|já falhou>: <detalhe> | <nível> — forçado pelo humano: <as palavras dele>}}
 worktree: {{caminho}} · ramo: {{ramo}} · área: {{área}}
 
 ordem do humano: {{as palavras dele, tal como as disse, para o que é de quem orquestra (push,

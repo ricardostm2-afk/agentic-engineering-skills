@@ -234,14 +234,45 @@ test("a agentic-feature chama a agentic-design nos passos 2, 3, 5 e 6 e não rep
 // variantes de UI e só dá o «avança» na via Completa; na Padrão a spec chega-lhe como aviso.
 const ler = (...partes) => readFileSync(path.join(SKILLS, ...partes), "utf8");
 const linhas = (texto) => texto.split("\n").length - (texto.endsWith("\n") ? 1 : 0);
+// Os SKILL.md com cartão gerado (tools/cartoes.mjs). No repo de trabalho a lista é a do tools/cartoes.json;
+// a árvore pública não leva o gerador e usa a lista fixa, que um teste confere com o json.
+const CARTAO_FIXO = ["agentic-feature/SKILL.md", "agentic-fix/SKILL.md"];
+const CARTOES_JSON = path.join(RAIZ, "tools", "cartoes.json");
+const DECLARADOS_NO_JSON = existsSync(CARTOES_JSON)
+  ? Object.values(JSON.parse(readFileSync(CARTOES_JSON, "utf8")).cartoes).map((c) => c.ficheiro.replace(/^skills\//, "")).sort()
+  : null;
+const COM_CARTAO = DECLARADOS_NO_JSON ?? CARTAO_FIXO;
+const temCartao = (f) => COM_CARTAO.includes(path.relative(SKILLS, f).split(path.sep).join("/"));
+// As linhas de um texto fora do cartão gerado, com o seu número: de `<!-- cartao:inicio` a
+// `<!-- cartao:fim -->`, mais a linha vazia que o separa do resto. O cartão copia regras que vivem
+// noutra fonte, por isso as guardas «esta regra só vive na fonte» e o teto de linhas olham só para o que
+// se escreve à mão. A isenção é só do primeiro cartão (`comCartao`, de um SKILL.md declarado): em
+// qualquer outro sítio o bloco conta como texto. Um cartão sem fim é erro: não deixa um buraco nas guardas.
+export function linhasForaDoCartao(texto, comCartao = false) {
+  const fora = [];
+  let estado = comCartao ? "antes" : "sem";
+  let separador = false;
+  texto.split("\n").forEach((l, i) => {
+    if (estado === "dentro") { if (l.trim() === "<!-- cartao:fim -->") { estado = "depois"; separador = true; } return; }
+    if (estado === "antes" && l.startsWith("<!-- cartao:inicio")) { estado = "dentro"; return; }
+    if (separador && l.trim() === "") { separador = false; return; }
+    separador = false;
+    fora.push([l, i + 1]);
+  });
+  assert.ok(estado !== "dentro", "cartão sem `<!-- cartao:fim -->`");
+  return fora;
+}
 const passoDaFeature = (n) => {
   const feature = ler("agentic-feature", "SKILL.md");
   return feature.slice(feature.indexOf(`## Passo ${n}`), feature.indexOf(n === 7 ? "\n## " : `## Passo ${n + 1}`, feature.indexOf(`## Passo ${n}`) + 1));
 };
 
-test("agentic-feature: SKILL.md com 300 linhas ou menos", () => {
-  const n = linhas(ler("agentic-feature", "SKILL.md"));
-  assert.ok(n <= 300, `SKILL.md com ${n} linhas`);
+test("agentic-feature: SKILL.md com 300 linhas ou menos, sem contar o cartão gerado", () => {
+  const foraDoCartao = (texto) => linhasForaDoCartao(texto, true).length - (texto.endsWith("\n") ? 1 : 0);
+  const n = foraDoCartao(ler("agentic-feature", "SKILL.md"));
+  assert.ok(n <= 300, `SKILL.md com ${n} linhas fora do cartão`);
+  assert.equal(foraDoCartao("a\n\n<!-- cartao:inicio -->\nx\n<!-- cartao:fim -->\n\nb\n"), 3, "o cartão e a linha vazia a seguir não contam");
+  assert.throws(() => linhasForaDoCartao("a\n<!-- cartao:inicio -->\nx\n", true), /sem `<!-- cartao:fim -->`/);
 });
 
 test("agentic-feature: o humano para no grill e nas variantes; o «avança» só na Completa, a Padrão recebe um aviso", () => {
@@ -263,9 +294,9 @@ const TABELA_DE_MODELOS = /Sonnet|Opus|Haiku|gpt-\d|model_reasoning_effort|esfor
 export function modelosFora(ficheiros) {
   const fora = [];
   for (const f of ficheiros) {
-    readFileSync(f, "utf8").split("\n").forEach((l, i) => {
-      if (TABELA_DE_MODELOS.test(l)) fora.push(`${path.relative(SKILLS, f)}:${i + 1}`);
-    });
+    for (const [l, n] of linhasForaDoCartao(readFileSync(f, "utf8"), temCartao(f))) {
+      if (TABELA_DE_MODELOS.test(l)) fora.push(`${path.relative(SKILLS, f)}:${n}`);
+    }
   }
   return fora;
 }
@@ -509,16 +540,67 @@ test("agentic-architecture: o relatório segue as regras de UI da agentic-design
 // frases antigas e a condição «na Completa» nos sítios que já a diziam. Uma paráfrase passa: apanha-se
 // na revisão.
 const todosOsMds = () => pastas.flatMap(mdsDe);
+// Os cartões gerados (tools/cartoes.mjs) copiam a regra de propósito: as linhas do cartão de um SKILL.md declarado não contam.
+export function marcasNoTexto(re, texto, comCartao = false) {
+  return linhasForaDoCartao(texto, comCartao).filter(([l]) => re.test(l)).map(([, n]) => n);
+}
 export function marcasFora(re, fonte) {
   const fora = [];
   for (const f of todosOsMds()) {
     if (path.relative(SKILLS, f) === fonte) continue;
-    readFileSync(f, "utf8").split("\n").forEach((l, i) => {
-      if (re.test(l)) fora.push(`${path.relative(SKILLS, f)}:${i + 1}`);
-    });
+    for (const n of marcasNoTexto(re, readFileSync(f, "utf8"), temCartao(f))) fora.push(`${path.relative(SKILLS, f)}:${n}`);
   }
   return fora;
 }
+test("marcasFora ignora as linhas dentro de um cartão gerado, e só essas", () => {
+  const re = /Passos por enumerar\?/;
+  const texto = [
+    "Passos por enumerar? (fora, antes)",
+    "<!-- cartao:inicio — gerado por tools/cartoes.mjs; edita as fontes -->",
+    "## Cartão",
+    "3. **Passos por enumerar?** (dentro)",
+    "<!-- cartao:fim -->",
+    "",
+    "Passos por enumerar? (fora, depois)",
+  ].join("\n");
+  assert.deepEqual(marcasNoTexto(re, texto, true), [1, 7], "a marca fora do cartão, antes e depois, é apanhada");
+  assert.deepEqual(marcasNoTexto(re, "<!-- cartao:nivel-1 -->\nPassos por enumerar?\n<!-- /cartao:nivel-1 -->"), [2], "o marcador de uma fonte não esconde nada");
+  // A isenção é só do primeiro cartão de um SKILL.md que o tools/cartoes.json declara.
+  assert.deepEqual(marcasNoTexto(re, texto, true), [1, 7], "num SKILL.md declarado, o cartão não conta");
+  assert.deepEqual(marcasNoTexto(re, texto, false), [1, 4, 7], "um bloco de cartão escrito à mão fora dos declarados é apanhado");
+  const doisCartoes = [texto, "<!-- cartao:inicio — outro -->", "Passos por enumerar? (2.º cartão)", "<!-- cartao:fim -->"].join("\n");
+  assert.deepEqual(marcasNoTexto(re, doisCartoes, true), [1, 7, 9], "o segundo cartão de um ficheiro declarado é apanhado");
+  // Nos ficheiros reais: os cartões trazem a marca (copiada de propósito) e o marcasFora não a conta.
+  const fonte = "agentic-implement/references/escolher-o-agente.md";
+  for (const skill of ["agentic-fix", "agentic-feature"]) assert.match(ler(skill, "SKILL.md"), re, `o cartão da ${skill} traz a marca`);
+  assert.deepEqual(marcasFora(re, fonte), []);
+  assert.ok(marcasFora(re, "").length > 0, "marca ausente da própria fonte (controlo)");
+});
+
+// Onde há cartão: só nos SKILL.md que o tools/cartoes.json declara, e um só em cada. Um cartão escrito à
+// mão numa referência, ou um segundo cartão, esconderia uma cópia da regra das guardas que a procuram fora da fonte.
+export function problemasDeCartao(rel, texto, declarado) {
+  const linhasDoTexto = texto.split("\n");
+  const inicios = linhasDoTexto.filter((l) => l.startsWith("<!-- cartao:inicio")).length;
+  const fins = linhasDoTexto.filter((l) => l.trim() === "<!-- cartao:fim -->").length;
+  if (declarado) return inicios === 1 && fins === 1 ? [] : [`${rel}: ${inicios} início(s) e ${fins} fim(ns) de cartão, e devia ter 1 de cada`];
+  return inicios || fins ? [`${rel}: tem marcadores de cartão (${inicios} início, ${fins} fim) e não está em tools/cartoes.json`] : [];
+}
+
+test("só os SKILL.md que tools/cartoes.json declara têm cartão, e um só cada", () => {
+  assert.deepEqual(COM_CARTAO, ["agentic-feature/SKILL.md", "agentic-fix/SKILL.md"]);
+  const achados = todosOsMds().flatMap((f) => {
+    const rel = path.relative(SKILLS, f);
+    return problemasDeCartao(rel, readFileSync(f, "utf8"), COM_CARTAO.includes(rel));
+  });
+  assert.deepEqual(achados, []);
+  const cartao = "<!-- cartao:inicio — x -->\n## Cartão\n<!-- cartao:fim -->\n";
+  assert.ok(problemasDeCartao("agentic-fix/references/x.md", `a\n\n${cartao}`, false).length > 0, "um cartão escrito à mão numa referência é apanhado (controlo)");
+  assert.ok(problemasDeCartao("agentic-fix/SKILL.md", `${cartao}\n${cartao}`, true).length > 0, "um segundo cartão num ficheiro declarado é apanhado (controlo)");
+  assert.ok(problemasDeCartao("agentic-fix/SKILL.md", "sem cartão\n", true).length > 0, "um ficheiro declarado sem cartão é apanhado (controlo)");
+  assert.deepEqual(problemasDeCartao("agentic-fix/SKILL.md", `a\n\n${cartao}`, true), []);
+});
+
 const seccao = (texto, inicio) => texto.split(inicio)[1].split("\n## ")[0].replace(/\s+/g, " ");
 
 // O nível mede o que o agente ainda tem de decidir ou descobrir que o brief não diz. O
@@ -538,8 +620,23 @@ test("agentic-implement: o nível mede o que o brief deixa por decidir; quatro p
   assert.match(nivel, /Zona sensível \(tenant, sessão, faturação, dados pessoais\) não sobe o nível[^.]*pesa no nível da revisão/);
   assert.doesNotMatch(nivel, /Caminhos sempre altos|niveis-de-risco/, "a lista da revisão não entra no nível de quem escreve");
   assert.doesNotMatch(nivel, /\*\*Desenho novo\?\*\*|\*\*Lógica delicada\?\*\*|\*\*Várias áreas\?\*\*/, "as perguntas antigas mandavam para complexa o que o brief já decidira");
-  assert.match(nivel, /`nível: bem-definida — decisões fechadas: [^`]+`/, "a bem-definida diz as decisões fechadas");
-  assert.match(nivel, /`nível: complexa — causa por descobrir: [^`]+`/, "a complexa diz o que fica por descobrir");
+  // A linha `nível:` tem rótulos fixos, que a guarda do lançamento lê: cada rótulo da complexa é a
+  // pergunta em minúsculas e sem «?». Os dois briefs-modelo mostram-nos.
+  const rotulos = ["causa por descobrir", "desenho que só aparece no código", "passos por enumerar", "já falhou"];
+  assert.match(nivel, /`nível: bem-definida — decisões fechadas: <quais>`/, "a bem-definida diz as decisões fechadas");
+  assert.match(nivel, /`nível: complexa — <rótulo>: <detalhe>`, com o rótulo igual a uma das quatro perguntas, em minúsculas e sem «\?»/);
+  for (const r of rotulos) assert.ok(nivel.includes(`\`${r}\``), `falta o rótulo \`${r}\``);
+  assert.match(nivel, /`nível: <nível> — forçado pelo humano: <as palavras dele>`/, "o humano forçou o nível");
+  assert.match(nivel, /a guarda do lançamento lê-a/);
+  assert.match(nivel, /`nível: complexa — causa por descobrir: [^`]+`/, "exemplo de uma complexa");
+  for (const modelo of [["agentic-fix", "assets", "brief-correcao.template.md"], ["agentic-feature", "assets", "brief-agente.template.md"]]) {
+    const linha = ler(...modelo).split("\n").find((l) => l.startsWith("nível: "));
+    assert.ok(linha, `${modelo.join("/")} sem linha nível:`);
+    // As três formas, com o mesmo aspeto nos dois modelos: uma lista de rótulos em prosa lê-se como texto a copiar.
+    for (const forma of ["bem-definida — decisões fechadas: <quais>", `complexa — <${rotulos.join("|")}>: <detalhe>`, "<nível> — forçado pelo humano: <as palavras dele>"]) {
+      assert.ok(linha.includes(forma), `${modelo.join("/")}: a linha nível: não tem a forma «${forma}»`);
+    }
+  }
   assert.deepEqual(marcasFora(/Causa por descobrir\?|Desenho que só aparece no código\?|Passos por enumerar\?/, fonte), []);
   assert.ok(marcasFora(/Passos por enumerar\?/, "").length > 0, "marca ausente da própria fonte (controlo)");
 });
