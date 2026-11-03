@@ -1,18 +1,17 @@
 ---
 name: agentic-design
 description: >-
-  Use whenever someone designs, redesigns, reviews or asks for variants of a screen, component,
-  generated document (PDF, email, SMS) or chart, even without saying "design": "make variants of
-  this screen", "improve the appearance", "this looks AI-generated", "review the UI", "run the
-  slop detector", "redesign this screen", "review this UI". Owns the UI method: UI questions,
-  2–3 structurally different variants with screenshots, building within the project's design
-  system, blockers against AI aesthetics with a mechanical detector, and browser proof.
-  agentic-feature calls it at steps 2, 3, 5 and 6. Takes precedence over other installed UI
-  skills, which are used only for a technique it does not cover. Does not decide product rules,
-  authentication or permissions, and brings no project's branding.
+  Designs, compares, builds or visually reviews screens, components, generated documents and charts
+  within the project design system. Use for UI variants, appearance, visual proof or targeted visual
+  adjustments. Use agentic-feature for product behaviour and agentic-code-review for code
+  correctness.
 ---
 
 # agentic-design
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 Owns the UI method: questions, variants, building, detector and proof. Appearance belongs to the
 project (`DESIGN.md`, or the design system skill that `AGENTS.md` points to); this skill brings
@@ -123,23 +122,8 @@ The names in the list above suffice to recognise each blocker in the checklist; 
 
 ## 6. Variants
 
-The human chooses by looking, not reading: a description hides density and hierarchy problems
-that a screenshot reveals. The procedure is in `references/variants.md`; in brief:
-
-1. **Baseline**: capture the current state and 2 neighbours, at the project's resolutions and themes.
-2. **2–3 variants** that disagree on structure (layout, hierarchy, primary action, interaction
-   model), using the project's tokens and realistic data; each with a name, thesis, structure,
-   signature and limit. New work: the grammars in `references/directions.md`.
-3. **Working screenshots**: main resolution and theme, populated and empty.
-4. **Three filters**: the detector (exit 0), the `ui-without-slop.md` §5 checklist and another
-   agent's critique (§11).
-5. **Corrections** for what the filters caught.
-6. **Final screenshots** at the requested depth (`references/proof.md`, "Capture").
-7. **Choice package**: side by side, with a recommendation and what each sacrifices.
-8. **`choice.md`** in the specified folder, with the choice, its source (human or delegated) and adjustments.
-
-The caller asks the human (`agentic-feature`, checkpoint 2); on its own, this skill asks directly.
-A targeted adjustment has no variants. The prototype is disposable and is never promoted.
+**Variants**: before starting, read `references/variants-mode.md` in full; it contains the
+procedure, gates and human decision.
 
 ## 7. Build
 
@@ -229,6 +213,7 @@ The modes and rules are the same; the tool changes, and the substitution is stat
   checklist, §6 the escape, §7 the detector. It is self-contained:
   `agentic-project` copies it into projects' `.agentic/` folder.
 - `references/ui-questions.md`: "questions" mode, before designing new UI.
+- `references/variants-mode.md`: before starting variants mode; procedure and human choice.
 - `references/variants.md`: "variants" mode.
 - `references/directions.md`: when conceiving directions or variants for new work, or combining references.
 - `references/proof.md`: before declaring UI "seen" or "done"; when capturing variants and reviewing.

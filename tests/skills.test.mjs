@@ -638,12 +638,55 @@ test("agentic-feature: first Board command runs with both scrum.sh and scrum.mjs
     assert.match(result.stdout, /development board/);
   }
 });
-test("agentic-design takes precedence; other UI skills supply only uncovered techniques", () => {
+test("agentic-design takes precedence (§1); description separates visuals from behavior and correctness", () => {
   const precedence = section(read("agentic-design", "SKILL.md"), "## 1. Precedence");
   assert.match(precedence, /\*\*Other UI skills\.\*\*[^]*do not replace this/);
   assert.match(precedence, /only for a technique this skill does not cover/);
-  assert.match(readFrontmatter(read("agentic-design", "SKILL.md")).fields.description, /Takes precedence over other installed UI skills/);
+  const description = readFrontmatter(read("agentic-design", "SKILL.md")).fields.description;
+  assert.match(description, /project design system/);
+  assert.match(description, /agentic-feature/);
+  assert.match(description, /agentic-code-review/);
   assert.deepEqual(markersOutside(/\*\*Other UI skills\.\*\*/, "agentic-design/SKILL.md"), []);
+});
+test("suite audits and slow CI enter through agentic-ci-audit without activating maintenance", () => {
+  const modes = section(read("agentic-code-review", "SKILL.md"), "## Two modes");
+  const when = section(read("agentic-code-review", "references", "maintenance.md"), "## When");
+  assert.doesNotMatch(modes, /finished flags, flaky tests, slow CI/);
+  assert.doesNotMatch(when, /“see why CI is slow”/);
+  for (const text of [modes, when]) assert.match(text, /agentic-ci-audit/);
+  assert.match(modes, /Only on an explicit human request in this conversation/);
+  const criteria = section(read("agentic-code-review", "references", "maintenance.md"), "## Flaky tests and slow CI");
+  assert.match(criteria, /passes N consecutive times/);
+  assert.match(criteria, /daily minutes saved/);
+});
+
+for (const [id, refusal] of [
+  ["glass-across-the-background", /content on a solid surface/],
+  ["home-with-kpi-cards", /does not build the card mosaic|without spaced overlines/],
+]) {
+  test(`agentic-design: case ${id} respects explicit-request precedence`, () => {
+    const cases = JSON.parse(read("agentic-design", "evals", "cases.json")).cases;
+    const example = cases.find((c) => c.id === id);
+    assert.ok(example, id);
+    const oracle = example.observe.join("; ");
+    assert.doesNotMatch(oracle, refusal, "oracle requires contradicting the explicit choice");
+    assert.match(oracle, /explicit request.*§1/);
+    assert.match(oracle, /cost.*once.*records/);
+    assert.match(oracle, /exception.*scope/);
+  });
+}
+
+test("board: only the orchestrator sends; phase, reference and template keep jobs on CLI", () => {
+  assert.doesNotMatch(read("agentic-project", "assets", "board", "board.html"), /each Claude agent sends/);
+  for (const text of [
+    section(read("agentic-project", "SKILL.md"), "## Phase 7"),
+    read("agentic-project", "references", "board.md"),
+    read("agentic-project", "assets", "AGENTS.template.md"),
+  ]) {
+    assert.match(text, /[Oo]nly the orchestrator/);
+    assert.match(text, /[Ss]ubagents[^.]*jobs[^.]*only through the CLI|subagents[^.]*jobs use CLI only/);
+    assert.match(text, /30 min/);
+  }
 });
 test("agentic-design reads anti-slop by mode; reviewer reads brief and references, not review SKILL.md", () => {
   const source = "agentic-design/SKILL.md";

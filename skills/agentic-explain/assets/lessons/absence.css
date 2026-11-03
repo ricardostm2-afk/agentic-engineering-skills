@@ -1,0 +1,15 @@
+main { max-width: 960px; margin: auto; padding: var(--space-6) var(--space-4); }
+header { max-width: 68ch; margin-bottom: var(--space-6); }
+nav { margin-top: var(--space-5); }
+nav a { display: inline-block; padding-block: var(--space-3); }
+section { margin-bottom: var(--space-7); }
+table { table-layout: fixed; margin-block: var(--space-5); }
+th, td { width: 50%; }
+.state-study { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+figure { margin: 0; }
+figcaption { margin-top: var(--space-4); }
+.transfer, footer { max-width: 68ch; }
+@media (max-width: 760px) {
+  .state-study { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  figure { max-width: 330px; }
+}

@@ -1,14 +1,10 @@
 ---
 name: agentic-feature
 description: >-
-  Use whenever someone wants to build, plan, add or change a feature or screen in a project with
-  code, even without saying “feature”: “develop this feature”, “new functionality”, “plan/spec
-  this feature”, “implement this”, “make a screen for…”, “take the next backlog feature”,
-  “continue feature X”, “build this feature”, “implement X”. In a Spec Kit repo use this instead
-  of calling speckit-* directly. Takes a feature from request to integration: triage, reading,
-  current research, grill of human decisions, UI variants without AI aesthetics (agentic-design),
-  spec, Claude/Codex agent briefs with agentic-implement, independent review and proof. Not for
-  fixing existing behavior (agentic-fix) or starting a project from scratch (agentic-project).
+  Plans and delivers new or changed functionality in an existing project, including screens, feature
+  specs and backlog items. Use for feature planning or delivery; use agentic-fix for broken existing
+  behaviour, agentic-implement for a closed implementation brief, and agentic-project for project
+  setup.
 ---
 
 # agentic-feature
@@ -76,20 +72,22 @@ node <agentic-code-review>/scripts/validate-report.mjs <report.md>   # 0 = confo
   responses, rounds, unreviewed diff, your recommendation). Never silently add a round.
 <!-- card:end -->
 
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
+
+The siblings `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`), `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`),
+`<agentic-design>` (`$AGENTIC_DESIGN_DIR`) and `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`) follow
+the same reference; paths, prefixes and order are not repeated here.
+
 Repo rules override this skill: read `AGENTS.md`/`CLAUDE.md`, constitution
 (`.specify/memory/constitution.md`) and ADRs before applying it; use project commands (`/ship`,
 `/deploy`, verification suite, job launcher) rather than generic ones.
 
-`<skill>` is this `SKILL.md`'s folder; scripts run from project repo root. Siblings
-`agentic-project`, `agentic-design`, `agentic-implement`, `agentic-code-review`,
-`agentic-architecture`, here `<agentic-project>`, `<agentic-design>`, `<agentic-implement>`,
-`<agentic-code-review>`, `<agentic-architecture>`, are the first folder with `SKILL.md` among:
-`$AGENTIC_PROJECT_DIR`, `$AGENTIC_DESIGN_DIR`, `$AGENTIC_IMPLEMENT_DIR`, `$AGENTIC_CODE_REVIEW_DIR`
-or `$AGENTIC_ARCHITECTURE_DIR`, if set; `<skill>/../<name>` (usual case: installed together, also
-in plugin); agent skills folders (`~/.claude/skills/`, `~/.agents/skills/`, `~/.codex/skills/`,
-project `.claude/skills/` or `.agents/skills/`); finally `agentic-skills` plugin (`installPath` in
-`~/.claude/plugins/installed_plugins.json`). Plugin names are `agentic-skills:<name>`; Codex uses
-`$<name>`; without Skill tool read and follow `SKILL.md`.
+`<skill>` is this `SKILL.md`'s folder; scripts run from project repo root. Resolve siblings
+through the single reference `<agentic-project>/references/host-compatibility.md>`; the explicit
+variable wins over the adjacent folder, project folders, global roots and plugin. Host invocation
+names do not change that order.
 
 ## The circuit and human stops
 

@@ -1,9 +1,16 @@
 ---
 name: agentic-ci-audit
-description: Audit test suites and CI pipelines to find false greens, discovery failures, stale fixtures, incorrect caches and measured costs. Use for a test/CI audit or suite optimization; does not replace normal feature tests or diagnosis of an isolated failure.
+description: >-
+  Audits test suites and CI pipelines for false greens, missing test discovery, stale fixtures, invalid
+  caches and measured waste. Use for suite reliability or cost audits; use agentic-fix for one failing
+  test and normal project checks for feature validation.
 ---
 
 # CI and test audit
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 Determine which regressions checks actually detect and which work can be removed without losing that protection. A valid conclusion may be a proven fix, a recommendation or leaving everything as it is.
 

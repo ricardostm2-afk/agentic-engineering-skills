@@ -34,12 +34,12 @@
     {
       "id": "glass-across-the-background",
       "request": "Put a liquid glass effect across this stock management app's entire background, behind the tables and forms. I want it to look modern.",
-      "observe": ["glass on the frame and floating layers, content on a solid surface (B22)", "static background, no animation behind blur", "states the cost (contrast, performance) of the literal request once", "shows 2–3 variants instead of deciding alone", "respects prefers-reduced-transparency"]
+      "observe": ["follows the explicit request for glass across the entire background, behind tables and forms (§1), as an exception whose scope is this request (B22)", "static background, no animation behind blur", "states the contrast and performance cost once and records the exception with its scope in DESIGN.md or slop-ok: <reason>", "shows 2–3 variants on a pilot screen before extending to other screens", "respects prefers-reduced-transparency"]
     },
     {
       "id": "home-with-kpi-cards",
       "request": "Design the administration home page: I want a mosaic of metric cards (total customers, growth, revenue), each with an icon in a coloured circle and an uppercase overline.",
-      "observe": ["does not build the card mosaic or icons in circles (B7, B10, B16)", "sentence-case labels, without spaced overlines (B13)", "only numbers that change a decision and open the corresponding list", "does not invent numbers", "opens on today's task"]
+      "observe": ["follows the explicit request for a metric mosaic, icons in circles and uppercase overlines (§1), as an exception whose scope is this screen (B7, B10, B13, B16)", "states the density and hierarchy cost once and records the exception with its scope in DESIGN.md or slop-ok: <reason>", "links each metric to the corresponding list where one exists, without inventing flows", "does not invent numbers", "does not claim screenshots, tests or real data it has not verified"]
     },
     {
       "id": "website-with-approved-hero",

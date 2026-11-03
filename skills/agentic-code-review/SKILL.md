@@ -1,18 +1,16 @@
 ---
 name: agentic-code-review
 description: >-
-  Use whenever someone asks to review code written by people or agents, even without saying
-  “code review”: “review this diff”, “review this branch”, “review this PR”, “review before
-  integrating”, “review what the agent did”. Check level against the change, launch independent
-  lenses in a worktree outside the repo, consolidate and confirm findings (Important, Nit,
-  Pre-existing, always with file:line), limit rounds and turn escapes into lessons and evaluation
-  cases. Works alone in any repo, with or without REVIEW.md, or called by agentic-feature at
-  step 6. Maintenance mode only on explicit request (“audit code for cleanup”, “audit for
-  maintenance”, “clean up dead code”): audit with evidence from multiple sources and one small
-  cleanup per commit. Does not fix reviewed code or write features (agentic-feature).
+  Reviews a code diff, branch, PR or completed agent change for evidenced defects before
+  integration. Also audits existing code for cleanup when explicitly requested. Use agentic-design
+  for visual critique, agentic-ci-audit for CI audits, and agentic-fix to fix a reported bug.
 ---
 
 # agentic-code-review
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 Code review for work with agents. The question is not “did someone read this?” but “what can go
 wrong with this change, and which check catches it?”. Review agents did not write the code;
@@ -35,27 +33,19 @@ levels with other names, zones and “what failure means”, always-high paths, 
 commands and guards; use them. Process (labels, report format, rounds, ceiling) belongs to this
 skill; model belongs to the user. Use the project's own review or classification commands when present.
 
-`<skill>` is this `SKILL.md`'s folder (for example `~/.claude/skills/agentic-code-review`,
-`~/.agents/skills/agentic-code-review`, or inside a plugin). Siblings `agentic-feature`,
-`agentic-design`, `agentic-implement` and `agentic-project`, here `<agentic-feature>`,
-`<agentic-design>`, `<agentic-implement>` and `<agentic-project>`, are the first folder containing
-`SKILL.md` among: `$AGENTIC_FEATURE_DIR`, `$AGENTIC_DESIGN_DIR`, `$AGENTIC_IMPLEMENT_DIR` or
-`$AGENTIC_PROJECT_DIR`, if set; the neighboring folder, `<skill>/../<name>` (usual case: installed
-together, including the plugin); agent skills folders (`$CLAUDE_CONFIG_DIR/skills/`,
-`~/.claude/skills/`, `~/.agents/skills/`, `~/.codex/skills/`, `~/.config/agents/skills/`,
-`~/.cursor/skills/`, `~/.gemini/skills/`, `~/.copilot/skills/`, `~/.config/opencode/skills/`,
-and project `.claude/skills/` and `.agents/skills/`); finally Claude Code's `agentic-skills` plugin
-at `<installPath>/skills/<name>`, using `agentic-skills@agentic-skills`'s `installPath` in
-`~/.claude/plugins/installed_plugins.json`. This skill does not need them to review; it uses them
-when present (agentic-design's detector and UI rules, agentic-implement's preferences,
-agentic-project's lessons file).
+The siblings `<agentic-design>` (`$AGENTIC_DESIGN_DIR`), `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`)
+and `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`) follow the common reference; paths, prefixes
+and order are not repeated here. This skill can review without them but uses those that are found.
 
 ## Two modes
 
 - **Review** (default): a diff, branch, PR, commit range or what an agent just did. Steps 0–7 below.
-- **Maintenance**: audit existing code for cleanup (dead code, finished flags, flaky tests, slow CI).
+- **Maintenance**: audit existing code for cleanup (dead code, finished flags).
   **Only on an explicit human request in this conversation**; never on your own initiative or
   “while here” during review. Read `references/maintenance.md` and use `assets/maintenance-brief.template.md`.
+
+Suite or CI audits (including flaky and slow tests) enter through `agentic-ci-audit`;
+the resulting diff returns to this skill for review.
 
 Outside both: scanning old code for defects during review. What existed on the base is Pre-existing,
 in one report line, and does not enter the backlog.

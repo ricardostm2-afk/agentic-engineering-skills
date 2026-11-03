@@ -1,17 +1,17 @@
 ---
 name: agentic-architecture
 description: >-
-  Use when someone wants to improve the architecture of a project that already has code, even
-  without saying “architecture”: “improve the architecture”, “shallow modules”, “where is the
-  friction in the code”, “improve the codebase architecture”, “find deepening opportunities”.
-  Read the domain model, look for shallow modules where code changes most, with measured evidence
-  (git log, coupling, deletion test, file:line), show candidates in a visual report, grill the
-  candidate the human chooses, design its interface twice, and hand the agreed design to
-  agentic-feature for execution. Provides the shared vocabulary of modules, interfaces and seams.
+  Assesses an existing codebase for architectural friction and module deepening, compares
+  interfaces and hands an agreed refactor to agentic-feature. Use for architecture assessment or
+  design; use agentic-fix for a specific bug and agentic-project for a new project.
   Not for a feature (agentic-feature) or a fix (agentic-fix).
 ---
 
 # agentic-architecture
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 Find where architecture holds back people changing the code and propose **deepenings**: refactors
 that replace shallow modules with a deep module, making the code easier for agents to test and
@@ -25,13 +25,9 @@ glossary names the modules; the vocabulary names the architecture.
 
 Repo rules override this skill: `AGENTS.md`/`CLAUDE.md`, ADRs and the glossary.
 
-`<skill>` is the folder containing this `SKILL.md`. Its siblings `agentic-feature`, `agentic-project`,
-`agentic-design` and `agentic-implement`, here `<agentic-feature>`, `<agentic-project>`,
-`<agentic-design>` and `<agentic-implement>`, are the first folder with `SKILL.md` among:
-`$AGENTIC_FEATURE_DIR`, `$AGENTIC_PROJECT_DIR`, `$AGENTIC_DESIGN_DIR` or `$AGENTIC_IMPLEMENT_DIR`,
-if set; `<skill>/../<name>` (the normal case: installed together, including
-in the plugin); the agent's skills folder; the `agentic-skills` plugin. In the plugin they are
-called `agentic-skills:<name>`; in Codex, `$<name>`; without the Skill tool, read `SKILL.md` and follow it.
+The siblings `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`), `<agentic-design>` (`$AGENTIC_DESIGN_DIR`)
+and `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`) follow the common reference; paths, prefixes
+and order are not repeated here. Without a Skill tool, read the found `SKILL.md`.
 
 ## 1. The domain model
 

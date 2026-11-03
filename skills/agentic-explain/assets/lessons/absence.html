@@ -1,0 +1,59 @@
+<main>
+<header>
+<h1>What can you infer from a 404?</h1>
+<p>A resource is unavailable. Should the server return 404 or 410? Compare the same situation, changing only what it knows about how long the absence will last.</p>
+<p>For readers familiar with GET and response codes. Goal: choose the code from the evidence and limit what the client infers from it. Synthetic cases, analyzed against the standard; no requests were executed.</p>
+<nav aria-label="Route"><a href="#compare">Compare</a> · <a href="#decide">Decide</a> · <a href="#transfer">Review a conclusion</a></nav>
+</header>
+<section id="compare">
+<h2>The same absence, different knowledge</h2>
+<p>Worked example: a GET requests a guide with no available representation. In case A, the server does not know how long the absence will last. In B, a recorded policy confirms withdrawal that is likely to be permanent.</p>
+<table>
+<caption>What distinguishes the two cases</caption>
+<thead><tr><th scope="col">Case A</th><th scope="col">Case B</th></tr></thead>
+<tbody>
+<tr><td><strong>404 · Not Found</strong></td><td><strong>410 · Gone</strong></td></tr>
+<tr><td>No information about permanence.</td><td>Evidence that unavailability is likely to be permanent.</td></tr>
+<tr><td>Does not say whether the absence is temporary or permanent.</td><td>Communicates that access is no longer available and will probably remain so.</td></tr>
+</tbody>
+</table>
+<p><strong>Reason for the choice:</strong> missing content alone does not decide. In case B, the extra information supports preferring 410. “Likely permanent” does not guarantee it will never change.</p>
+</section>
+<section id="decide" class="state-study">
+<figure>
+<svg viewBox="0 0 330 310" role="img" aria-labelledby="state-title state-desc">
+<title id="state-title">A change in the server's knowledge</title>
+<desc id="state-desc">With unknown duration, use 404. If a policy confirms that access has ended and the condition is likely permanent, there is a basis for 410. Elapsed time alone does not decide.</desc>
+<defs><marker id="state-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z"></path></marker></defs>
+<rect x="25" y="12" width="280" height="76" rx="4"></rect>
+<text x="165" y="42" text-anchor="middle">Unknown duration</text><text x="165" y="68" text-anchor="middle">404</text>
+<path d="M25 50H12V260H25" marker-end="url(#state-arrow)"></path>
+<text x="40" y="127">Policy confirms:</text><text x="40" y="152">access withdrawn,</text><text x="40" y="177">no return planned</text>
+<rect x="25" y="222" width="280" height="76" rx="4"></rect>
+<text x="165" y="252" text-anchor="middle">Withdrawal recorded</text><text x="165" y="278" text-anchor="middle">410 preferred</text>
+</svg>
+<figcaption>Knowledge states for the unavailable guide, not all HTTP resources. The arrow requires new evidence; it is not a timer.</figcaption>
+</figure>
+<div>
+<h2>Now decide with less help</h2>
+<p>Another guide has been unavailable for a month. The server keeps no history and has no way to determine whether the condition is permanent. Which code is supported? Explain what information is missing to prefer the other.</p>
+<details><summary>A hint, if needed</summary><p>Does elapsed time replace the information required by the arrow?</p></details>
+<details><summary>Check the decision</summary><p><strong>404.</strong> When permanence is unknown, the standard recommends 404. A month does not provide that certainty. Preferring 410 needs a basis for access having ended and the condition being likely permanent. 404 does not promise a return either.</p></details>
+</div>
+</section>
+<section id="transfer" class="transfer">
+<h2>The resource exists. Does your conclusion change?</h2>
+<p>An API returns 404 to a visitor without access. The internal catalogue confirms the guide exists; server policy conceals that existence. A colleague proposes the client message: “This guide has been deleted forever.”</p>
+<p>Explain whether the 404 contradicts the catalogue, assess the message and propose an alternative supported by the result. The premise changes here: the resource exists and the client does not know the reason for the response.</p>
+<details><summary>Compare against the criteria</summary>
+<ol><li><strong>Existence:</strong> 404 is also allowed when the server is unwilling to disclose that a representation exists. It does not necessarily contradict the catalogue.</li><li><strong>Duration:</strong> 404 does not prove deletion or permanence. The colleague's message goes beyond the evidence.</li><li><strong>Client response:</strong> for example, “This guide could not be found.” Do not reveal the internal catalogue to the visitor or promise a return.</li></ol>
+<p>If you only replaced 404 with 410, reconsider the perspective: you are writing a client message from the observed result, not choosing server policy.</p>
+</details>
+<p>Tomorrow, without consulting: what extra information distinguishes these codes? Give a case where 404 does not mean the resource was deleted.</p>
+</section>
+<footer>
+<h2>Check the sources</h2>
+<p><a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.5">RFC 9110, §15.5.5</a> and <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.11">§15.5.11</a>, June 2022; sections read on 2026-11-03. Scope omits caching, redirects and other responses.</p>
+<p>Worked comparison, faded support and transfer to client interpretation. Reader-controlled answers, without automatic scoring. <strong>Learning not measured.</strong></p>
+</footer>
+</main>

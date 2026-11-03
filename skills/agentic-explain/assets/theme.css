@@ -1,0 +1,87 @@
+/* Single theme: achromatic colours, one role per token. Compositions only consume them. */
+:root {
+  color-scheme: light dark;
+  --page: #ffffff;
+  --panel: #f4f4f4;
+  --text: #202020;
+  --text-secondary: #555555;
+  --link: #333333;
+  --line: #737373;
+  --focus: #161616;
+  --diagram-fill: #ffffff;
+  --diagram-stroke: #505050;
+  --diagram-label: #202020;
+  --font-body: system-ui, sans-serif;
+  --font-code: ui-monospace, monospace;
+  --type-body: 1rem;
+  --type-note: .9375rem;
+  --type-section: 1.625rem;
+  --type-title: 2.375rem;
+  --leading: 1.65;
+  --leading-heading: 1.22;
+  --weight-body: 400;
+  --weight-heading: 650;
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1.25rem;
+  --space-5: 1.75rem;
+  --space-6: 2.75rem;
+  --space-7: 4rem;
+  --radius-control: .25rem;
+  --radius-panel: .5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #171717;
+    --panel: #242424;
+    --text: #ededed;
+    --text-secondary: #bcbcbc;
+    --link: #dddddd;
+    --line: #999999;
+    --focus: #ffffff;
+    --diagram-fill: #171717;
+    --diagram-stroke: #b0b0b0;
+    --diagram-label: #ededed;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #171717;
+  --panel: #242424;
+  --text: #ededed;
+  --text-secondary: #bcbcbc;
+  --link: #dddddd;
+  --line: #999999;
+  --focus: #ffffff;
+  --diagram-fill: #171717;
+  --diagram-stroke: #b0b0b0;
+  --diagram-label: #ededed;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--text); font-family: var(--font-body); font-size: var(--type-body); line-height: var(--leading); font-weight: var(--weight-body); }
+h1, h2, h3, strong, th, dt { font-weight: var(--weight-heading); }
+h1, h2, h3 { line-height: var(--leading-heading); margin: 0 0 var(--space-4); }
+h1 { font-size: var(--type-title); }
+h2 { font-size: var(--type-section); }
+h3 { font-size: var(--type-body); }
+p, ul, ol, dl, figure, pre { margin: 0 0 var(--space-4); }
+li + li { margin-top: var(--space-2); }
+code, pre { font-family: var(--font-code); font-size: var(--type-note); overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; padding: var(--space-4); background: var(--panel); border-radius: var(--radius-panel); }
+a { color: var(--link); text-underline-offset: .2em; overflow-wrap: anywhere; }
+mark { background: var(--panel); color: var(--text); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+details { margin: var(--space-4) 0; }
+summary { cursor: pointer; min-height: 44px; padding: var(--space-3) 0; text-decoration: underline; text-underline-offset: .2em; }
+details > :not(summary) { margin-top: var(--space-3); }
+figcaption, small { font-size: var(--type-note); color: var(--text-secondary); }
+svg { display: block; width: 100%; height: auto; font-family: var(--font-body); }
+svg text { fill: var(--diagram-label); font-size: var(--type-body); }
+svg rect, svg polygon, svg circle, svg ellipse { fill: var(--diagram-fill); stroke: var(--diagram-stroke); stroke-width: 1.5; }
+svg path, svg line, svg polyline { fill: none; stroke: var(--diagram-stroke); stroke-width: 1.5; }
+svg marker path { fill: var(--diagram-stroke); stroke: none; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+caption { text-align: left; margin-bottom: var(--space-3); font-weight: var(--weight-heading); }
+td, th { vertical-align: top; padding: var(--space-3); }
+thead { background: var(--panel); }
+td:first-child, th:first-child { padding-left: 0; }

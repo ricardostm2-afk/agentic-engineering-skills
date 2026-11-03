@@ -8,9 +8,10 @@
 #   optional     improves security or quality           -> exit 0
 #
 # Usage: check-environment.sh [-h]
-# Variables: CLAUDE_PLUGINS_DIR (defaults to $CLAUDE_CONFIG_DIR/plugins or ~/.claude/plugins)
-#            to find plugins; AGENTIC_FEATURE_DIR and AGENTIC_DESIGN_DIR when agentic-feature
-#            or agentic-design lives in another folder.
+# Variables: AGENTIC_HOST=claude|codex (defaults to claude),
+#            CLAUDE_PLUGINS_DIR (defaults to $CLAUDE_CONFIG_DIR/plugins or ~/.claude/plugins)
+#            or AGENTIC_PLUGIN_DIR (Codex portable plugin.json),
+#            AGENTIC_FEATURE_DIR and AGENTIC_DESIGN_DIR when siblings live elsewhere.
 set -euo pipefail
 
 if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
@@ -18,20 +19,12 @@ if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
   exit 0
 fi
 
-CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
-PLUGINS_DIR="${CLAUDE_PLUGINS_DIR:-$CLAUDE_DIR/plugins}"
-# User and project skill folders, in discovery order (the same as SKILL.md).
-SKILL_FOLDERS="$CLAUDE_DIR/skills
-$HOME/.claude/skills
-$HOME/.agents/skills
-$HOME/.codex/skills
-$HOME/.config/agents/skills
-$HOME/.cursor/skills
-$HOME/.gemini/skills
-$HOME/.copilot/skills
-$HOME/.config/opencode/skills
-$PWD/.claude/skills
-$PWD/.agents/skills"
+AGENTIC_HOST="${AGENTIC_HOST:-claude}"
+case "$AGENTIC_HOST" in
+  claude) CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; PLUGINS_DIR="${CLAUDE_PLUGINS_DIR:-$CLAUDE_DIR/plugins}" ;;
+  codex) CLAUDE_DIR=""; PLUGINS_DIR="${AGENTIC_PLUGIN_DIR:-}" ;;
+  *) echo "check-environment.sh: AGENTIC_HOST must be claude or codex" >&2; exit 2 ;;
+esac
 OS="$(uname -s)"
 
 missing_essential=0
@@ -73,14 +66,46 @@ find_skill() { # find_skill <path-pattern>
   fi
 }
 
+# Validate identity and the requested file; a valid folder has the expected frontmatter name.
+skill_valid() { # skill_valid <folder> <name> [file]
+  [ -d "$1" ] && [ -f "$1/SKILL.md" ] && awk -v expected="$2" '
+    NR == 1 && /^---[[:space:]]*$/ { inside=1; next }
+    inside && /^name:[[:space:]]*/ { value=$0; sub(/^name:[[:space:]]*/, "", value); sub(/[[:space:]]+$/, "", value); if (value == expected) correct=1; found=1; next }
+    inside && /^---[[:space:]]*$/ { exit }
+    END { exit !(found && correct) }
+  ' "$1/SKILL.md" && { [ -z "${3:-}" ] || [ -f "$1/$3" ]; }
+}
+
 # Find a named skill in agent skill folders; return its folder or nothing.
 find_in_folders() { # find_in_folders <name>
-  local d
-  while IFS= read -r d; do
-    if [ -f "$d/$1/SKILL.md" ]; then printf '%s' "$d/$1"; return 0; fi
-  done <<EOF_FOLDERS
-$SKILL_FOLDERS
-EOF_FOLDERS
+  local d base name="$1" found="" total=0 variable
+  variable="${name#agentic-}"
+  variable="${variable//-/_}"
+  variable="$(printf '%s' "$variable" | tr '[:lower:]' '[:upper:]')"
+  base="$PWD"
+  while [ "$base" != "/" ]; do
+    if [ "$AGENTIC_HOST" = "claude" ]; then d="$base/.claude/skills"; else d="$base/.agents/skills"; fi
+    if skill_valid "$d/$name" "$name"; then
+      found="${found}${found:+$'\n'}$d/$name"
+      total=$((total + 1))
+    fi
+    base="$(dirname "$base")"
+  done
+  if [ "$total" -gt 1 ]; then
+    printf 'check-environment: sibling skill %s is ambiguous in project folders; set $AGENTIC_%s_DIR.\n%s\n' "$name" "$variable" "$found" >&2
+    return 2
+  elif [ "$total" -eq 1 ]; then
+    printf '%s' "$found"
+    return 0
+  fi
+  if [ "$AGENTIC_HOST" = "claude" ]; then
+    set -- "$CLAUDE_DIR/skills" "$HOME/.claude/skills"
+  else
+    set -- "$HOME/.agents/skills" "/etc/codex/skills"
+  fi
+  for d in "$@"; do
+    if skill_valid "$d/$name" "$name"; then printf '%s' "$d/$name"; return 0; fi
+  done
   return 0
 }
 
@@ -88,10 +113,17 @@ EOF_FOLDERS
 # (installed_plugins.json); without that file, the newest cache entry that is not orphaned.
 plugin_skill() { # plugin_skill <name>
   local p="$PLUGINS_DIR" c v best=""
+  if [ "$AGENTIC_HOST" = "codex" ]; then
+    p="${AGENTIC_PLUGIN_DIR:-}"
+    [ -n "$p" ] && [ -d "$p" ] && has node || return 0
+    c="$(node -e 'const fs=require("fs"),path=require("path");const root=path.resolve(process.argv[1]);const file=fs.existsSync(path.join(root,"plugin.json"))?path.join(root,"plugin.json"):path.join(root,".codex-plugin","plugin.json");if(!fs.existsSync(file))process.exit(1);const j=JSON.parse(fs.readFileSync(file));if(typeof j.skills!=="string")process.exit(1);const out=path.resolve(root,j.skills);if(out===root||out.startsWith(root+path.sep))console.log(out)' "$p" 2>/dev/null || true)"
+    if [ -n "$c" ] && skill_valid "$c/$1" "$1"; then printf '%s' "$c/$1"; fi
+    return 0
+  fi
   [ -d "$p" ] || return 0
   if [ -f "$p/installed_plugins.json" ] && has node; then
     while IFS= read -r c; do
-      if [ -f "$c/skills/$1/SKILL.md" ]; then printf '%s' "$c/skills/$1"; return 0; fi
+      if skill_valid "$c/skills/$1" "$1"; then printf '%s' "$c/skills/$1"; return 0; fi
     done < <(node -e 'const j=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));const e=[];for(const [k,v] of Object.entries(j.plugins||{}))if(k.split("@")[0]==="agentic-skills")for(const x of [].concat(v))if(x&&x.installPath)e.push(x);e.sort((a,b)=>String(b.lastUpdated||"").localeCompare(String(a.lastUpdated||"")));for(const x of e)console.log(x.installPath)' "$p/installed_plugins.json" 2>/dev/null || true)
   fi
   [ -d "$p/cache" ] || return 0
@@ -100,7 +132,7 @@ plugin_skill() { # plugin_skill <name>
     if [ -e "$v/.orphaned_at" ]; then continue; fi
     if [ -z "$best" ] || [ "$v" -nt "$best" ]; then best="$v"; fi
   done < <(find "$p/cache" -maxdepth 6 -type f -path "*/skills/$1/SKILL.md" 2>/dev/null || true)
-  if [ -n "$best" ]; then printf '%s' "$best/skills/$1"; fi
+  if [ -n "$best" ] && skill_valid "$best/skills/$1" "$1"; then printf '%s' "$best/skills/$1"; fi
   return 0
 }
 
@@ -170,30 +202,44 @@ fi
 
 # Sibling skills: agentic-feature (the entry point for each feature) and agentic-design
 # (UI slop rules and detector; essential for UI projects, used by pre-commit and AGENTS.md).
-# Order: $AGENTIC_FEATURE_DIR or $AGENTIC_DESIGN_DIR, this skill's sibling folder, each
-# agent's skill folders, then the agentic-skills plugin (the same order as the pre-commit
-# generated by prepare-repo.sh). agentic-design only counts when it has the detector.
+# Order: explicit variable, sibling folder, project/ancestors and this host's global roots; only
+# then this host's plugin. agentic-design only counts when it has the detector.
 SIBLINGS="$(cd "$(dirname "$0")/../.." && pwd)"
 sibling() { # sibling <name> <variable> <required-file>: print the folder or nothing
-  local c
-  for c in "${2:-/not-set}" "$SIBLINGS/$1"; do
-    if [ -f "$c/SKILL.md" ] && [ -f "$c/$3" ]; then printf '%s' "$c"; return 0; fi
-  done
-  c="$(find_in_folders "$1")"
-  if [ -n "$c" ] && [ -f "$c/$3" ]; then printf '%s' "$c"; return 0; fi
+  local c explicit="$2" variable="${1#agentic-}"
+  variable="${variable//-/_}"
+  variable="$(printf '%s' "$variable" | tr '[:lower:]' '[:upper:]')"
+  if [ -n "$explicit" ]; then
+    if skill_valid "$explicit" "$1" "$3"; then printf '%s' "$explicit"; return 0; fi
+    printf 'check-environment: $AGENTIC_%s_DIR points to an invalid skill for %s (%s).\n' "$variable" "$1" "$explicit" >&2
+    return 2
+  fi
+  if skill_valid "$SIBLINGS/$1" "$1" "$3"; then printf '%s' "$SIBLINGS/$1"; return 0; fi
+  if c="$(find_in_folders "$1")"; then :; else return $?; fi
+  if [ -n "$c" ] && skill_valid "$c" "$1" "$3"; then printf '%s' "$c"; return 0; fi
   c="$(plugin_skill "$1")"
-  if [ -n "$c" ] && [ -f "$c/$3" ]; then printf '%s' "$c"; fi
+  if [ -n "$c" ] && skill_valid "$c" "$1" "$3"; then printf '%s' "$c"; fi
   return 0
 }
-if [ -n "$(sibling agentic-feature "${AGENTIC_FEATURE_DIR:-}" SKILL.md)" ]; then
-  record agentic-feature 1 recommended "skill" ""
+if c="$(sibling agentic-feature "${AGENTIC_FEATURE_DIR:-}" SKILL.md)"; then
+  if [ -n "$c" ]; then
+    record agentic-feature 1 recommended "skill" ""
+  else
+    record agentic-feature 0 recommended "skill" "install the skills together (their repo's install.sh, or the plugin)"
+  fi
 else
-  record agentic-feature 0 recommended "skill" "install the skills together (their repo's install.sh, or the plugin)"
+  rc=$?
+  exit "$rc"
 fi
-if [ -n "$(sibling agentic-design "${AGENTIC_DESIGN_DIR:-}" scripts/detect-slop.mjs)" ]; then
-  record agentic-design 1 recommended "skill" ""
+if c="$(sibling agentic-design "${AGENTIC_DESIGN_DIR:-}" scripts/detect-slop.mjs)"; then
+  if [ -n "$c" ]; then
+    record agentic-design 1 recommended "skill" ""
+  else
+    record agentic-design 0 recommended "skill" "install the skills together (their repo's install.sh, or the plugin); essential with UI"
+  fi
 else
-  record agentic-design 0 recommended "skill" "install the skills together (their repo's install.sh, or the plugin); essential with UI"
+  rc=$?
+  exit "$rc"
 fi
 
 # Third-party skills: a Claude Code plugin or a skill installed in an agent's skill folder.

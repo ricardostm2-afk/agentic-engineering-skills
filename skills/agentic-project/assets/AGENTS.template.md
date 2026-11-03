@@ -58,7 +58,7 @@ Hooks before push (`.githooks/`): fix the cause of failures.
 ## Where to record things
 - Board: {{URL, or “docs/backlog.md” without a published board (`scrum.sh markdown > docs/backlog.md`
   at every transition and in the session's final commit)}}. CLI `.agentic/board/scrum.sh` (`help`;
-  commands and 4 “Sync” steps: folder README). All agents record via CLI and run
+  CLI: README; 4 “Sync” steps: `artifact-sync.md`). All agents record via CLI and run
   `scrum.sh agent heartbeat` at each transition and at least every 30 min while working.
   Only the orchestrator (session with artifact data tool) sends to the artifact; subagents,
   workflow agents and jobs use CLI only. Orchestrator also runs “Sync” at that cadence

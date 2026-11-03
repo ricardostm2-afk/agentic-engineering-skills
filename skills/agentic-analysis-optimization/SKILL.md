@@ -1,9 +1,13 @@
 ---
 name: agentic-analysis-optimization
-description: Optimize analysis pipelines and agent tools when latency, CPU, memory, subprocess or context costs are demonstrated; design caching, reuse and queries while preserving correctness and evidence. Suite and CI audits belong to agentic-ci-audit; not generic optimization by intuition.
+description: Optimizes agent analysis pipelines with measured latency, CPU, memory, subprocess or context costs while preserving evidence and results. Use for demonstrated repeated work or oversized responses; use agentic-ci-audit for test-suite cost and agentic-tool-design for tool contracts.
 ---
 
 # Analysis optimization
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 Find concrete unnecessary work, fix it at its owner and compare equivalent completed investigations. Deciding through measurement to leave an implementation unchanged is also a useful outcome.
 

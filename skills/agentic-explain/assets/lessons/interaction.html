@@ -1,0 +1,29 @@
+<main>
+<header>
+<h1>Predict the effect of a wait</h1>
+<p>A prediction is clearer when you change one cause and observe the result. This interaction uses wait duration as the causal variable.</p>
+<p>First choose a hypothesis. Then run the case, compare what happened, and read the feedback about the changed condition.</p>
+</header>
+<section aria-labelledby="interaction-title">
+<h2 id="interaction-title">Prediction and observation</h2>
+<p>If the wait exceeds the limit, the request is rejected. If it is equal to or below the limit, the request is accepted. Move the variable, predict the branch, and test it.</p>
+<div id="interaction-slot"></div>
+<p id="interaction-fallback" role="status">The interaction did not open. Use the rule above and compare a short-wait case with a long-wait case.</p>
+</section>
+<section>
+<h2>Transfer</h2>
+<p>Invent a different limit and explain why the same request can change result when duration changes. The variable is the cause; feedback should mention the condition. Try first; then open the answer and rubric to check your reasoning.</p>
+<details id="transfer-rubric">
+<summary>Reference answer and rubric</summary>
+<p>One valid answer chooses limit 50: with duration 60, duration is above 50 and the request is rejected; with duration 50, it equals the limit and is accepted. Another limit is valid if you apply the same rule to the chosen case.</p>
+<ul>
+<li>Identify duration and limit as the two conditions you are comparing.</li>
+<li>Apply “above” for rejection and “equal or below” for acceptance.</li>
+<li>Explain that changing the limit or duration changes the outcome because it changes the condition.</li>
+</ul>
+</details>
+</section>
+<footer>
+<p><strong>Learning not measured:</strong> this page shows a path and a verifiable answer, but does not collect learner results.</p>
+</footer>
+</main>

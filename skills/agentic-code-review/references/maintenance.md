@@ -8,9 +8,12 @@ look and what evidence justifies each change, and deliver small cleanups for rev
 ## When
 
 **Only on explicit human request in this conversation** (“audit code for cleanup/maintenance”,
-“clean dead code”, “see why CI is slow”). Never on initiative, “while here” in review or a feature,
+“clean dead code”). Never on initiative, “while here” in review or a feature,
 or a scheduled task without that request. Project request-only audit rules (`AGENTS.md`,
 `REVIEW.md`, decisions) override any trigger here.
+
+Suite or CI audits, including flaky and slow tests, enter through `agentic-ci-audit`.
+The criteria below for those cases guide review of the resulting diff; they do not activate maintenance.
 
 ## Rules (preventing false positives)
 

@@ -1,4 +1,4 @@
-// Claude Code plugin/marketplace manifests, license and package.json. Run: node --test.
+// Claude Code and Codex plugin manifests, license and package.json. Run: node --test.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -17,9 +17,17 @@ test("plugin and marketplace names agree; plugin source is the root", () => {
   assert.equal(marketplace.plugins[0].name, plugin.name);
   assert.equal(marketplace.plugins[0].source, "./");
   assert.ok(marketplace.owner?.name, "marketplace needs an owner");
-  assert.equal(plugin.version, "2.0.0");
+  assert.equal(plugin.version, "2.1.0");
   assert.equal(plugin.license, "MIT");
   assert.ok(plugin.author?.name);
+});
+test("Codex portable manifest points at the root skills folder", () => {
+  const codex = json("plugin.json");
+  assert.equal(codex.name, "agentic-skills");
+  assert.equal(codex.version, "2.1.0");
+  assert.equal(codex.skills, "./skills/");
+  assert.equal(codex.license, "MIT");
+  assert.ok(existsSync(path.join(ROOT, codex.skills, "agentic-project", "SKILL.md")));
 });
 test("root holds eleven skills; .claude-plugin contains manifests only", () => {
   const folders = readdirSync(path.join(ROOT, "skills"), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort();

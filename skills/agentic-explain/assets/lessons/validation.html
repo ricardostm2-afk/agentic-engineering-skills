@@ -1,0 +1,57 @@
+<main>
+<header>
+<h1>Does requesting again mean sending again?</h1>
+<p>Learn to predict an HTTP validation response. You need to know requests, responses and headers. An <strong>ETag</strong> identifies a version; <code>If-None-Match</code> makes the request conditional.</p>
+<p>Goal: distinguish a GET that reuses a stored copy from an operation that must be rejected. Synthetic cases, reasoned from the standard; these are not executed requests.</p>
+</header>
+<section>
+<h2>Predict before continuing</h2>
+<p>You stored a representation with ETag <code>"r7"</code>. You send GET with <code>If-None-Match: "r7"</code> and the server still has that version. Will you receive 200 with content, 304 or 412? Explain your hypothesis.</p>
+<details><summary>Check the prediction</summary><p><strong>304.</strong> The condition requires that no tag match; here one does. On GET, this false condition leads to 304. Choosing 200 ignores the condition; 412 confuses retrieval with other methods.</p></details>
+</section>
+<section class="worked">
+<div>
+<h2>A worked case</h2>
+<ol>
+<li>The client sends <code>GET /manual</code> with the tag of its stored copy.</li>
+<li>The server compares it with the selected representation, using weak comparison.</li>
+<li>Both are <code>"r7"</code>: the condition is false. Since this is GET, it responds 304 without content. The stored copy still supplies the content.</li>
+</ol>
+<p>The drawing answers one question: <strong>which condition chooses between reuse and receiving content?</strong> Follow both branches without confusing “false condition” with a server failure.</p>
+<p>Scope: an ordinary GET that would otherwise return 200, one tag, no other preconditions or errors. This is not a complete cache implementation.</p>
+</div>
+<figure>
+<svg viewBox="0 0 330 350" role="img" aria-labelledby="flow-title flow-desc">
+<title id="flow-title">A conditional GET decision</title>
+<desc id="flow-desc">If the tag matches, 304 without content. If it does not and GET would succeed, 200 with the representation.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z"></path></marker></defs>
+<rect x="55" y="8" width="220" height="44" rx="4"></rect><text x="165" y="36" text-anchor="middle">GET + stored tag</text>
+<path d="M165 52V82" marker-end="url(#arrow)"></path>
+<polygon points="165,84 304,148 165,212 26,148"></polygon>
+<text x="165" y="144" text-anchor="middle">Does the tag</text><text x="165" y="166" text-anchor="middle">match?</text>
+<path d="M26 148H12V266H82V286" marker-end="url(#arrow)"></path><text x="28" y="246">Yes</text>
+<path d="M304 148H318V266H248V286" marker-end="url(#arrow)"></path><text x="268" y="246">No</text>
+<rect x="6" y="288" width="152" height="52" rx="4"></rect><text x="82" y="310" text-anchor="middle">304</text><text x="82" y="331" text-anchor="middle">No content</text>
+<rect x="172" y="288" width="152" height="52" rx="4"></rect><text x="248" y="310" text-anchor="middle">200</text><text x="248" y="331" text-anchor="middle">With content</text>
+</svg>
+<figcaption>The “yes” arrow means the tag matches; that makes the “none match” condition false.</figcaption>
+</figure>
+</section>
+<section class="practice">
+<h2>Complete with less support</h2>
+<p>The client now holds <code>"r7"</code>, but the server has <code>"r8"</code>. The same GET carries <code>If-None-Match: "r7"</code>. Complete: comparison → condition → response. Try without following the arrows.</p>
+<details><summary>A hint</summary><p>The header name requires that no tag match. What difference does the server's change make?</p></details>
+<details><summary>Check and revise your reasoning</summary><p>No match → true condition → within this scope, 200 with content. If you chose 304 because a stored copy exists, you missed comparing the current tag. Having a copy is not enough.</p></details>
+</section>
+<section class="practice">
+<h2>Transfer to a write</h2>
+<p>A PUT sends <code>If-None-Match: *</code> to create <code>/notes/42</code>. A representation already exists. Predict the response and justify why the GET rule does not apply.</p>
+<details><summary>Compare against the criteria</summary><p>The wildcard matches when a representation exists. The condition is false; for PUT, the response is 412 and the operation is not applied. 304 is the GET/HEAD branch. Your justification should include existence, condition and method; just saying “412” does not show the mechanism.</p></details>
+<p>Tomorrow, without consulting: explain why a match can yield 304 in one case and 412 in another. Invent an input that follows the other GET branch.</p>
+</section>
+<footer>
+<h2>Check the sources</h2>
+<p><a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.2">RFC 9110, §13.1.2</a> (June 2022) defines the condition and response by method; <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.5">§15.4.5</a> describes 304. Sections accessed on 2026-11-03.</p>
+<p>Worked example, fading support and transfer. Answers for the learner to compare; no automatic grading. <strong>Learning not measured.</strong></p>
+</footer>
+</main>

@@ -14,10 +14,12 @@ deploys, specs, main-branch commits), without reading conversations. Also a plac
 | Local state | `<repo>/.agentic/board/state/` | CLI JSON (export in `state/export/`); outside git |
 | Configuration | `<repo>/.agentic/board/config.json` (optional, versioned) | project name, branch, specs pattern, verification/deploy notes, production health and SHA |
 | Sync | `sync-plan` + ArtifactData tool | only the orchestrator sends local JSON to the artifact database and imports page requests |
-| Exact instructions | `assets/board/README.md` | commands, configuration, capabilities, seeding, sync sequence |
+| Exact instructions | `assets/board/README.md` | commands, configuration and selecting the Artifact branch |
+| Artifact/ArtifactData | `assets/board/artifact-sync.md` | authorized publishing, capabilities, seeding and syncing |
 
-This file describes flow. Board README owns commands, formats and sync sequence: read it before
-starting and follow it if these disagree.
+This file describes flow. Board README owns commands and formats: read it before starting and
+follow it if these disagree. **Artifact/ArtifactData**: authorized publishing, seeding and the
+sync sequence are in `assets/board/artifact-sync.md`.
 
 **Without a board** (`assets/board/` absent, no Artifact tool, or human declines): say
 “continuing without a published board” and perform only steps 1, 2, 3, 9. CLI remains the record;
@@ -28,8 +30,9 @@ transitions in commit messages; put this exact arrangement in `AGENTS.md`.
 
 ## Steps
 
-1. **Read** `assets/board/README.md`.
-2. **Copy into repo** `scrum.mjs`, `scrum.sh`, `hook.sh`, `scrum.test.mjs`, `board.html`, `README.md` into
+1. **Read** `assets/board/README.md`. **Artifact/ArtifactData**: before authorized publishing,
+   seeding or syncing, also read `assets/board/artifact-sync.md` in full.
+2. **Copy into repo** `scrum.mjs`, `scrum.sh`, `hook.sh`, `scrum.test.mjs`, `board.html`, `README.md`, `artifact-sync.md` into
    `<repo>/.agentic/board/`; verify `.gitignore` has `.agentic/board/state/` (adopt mode: add
    only with approval); `chmod +x .agentic/board/*.sh` (zip/shared-folder copies often lose
    executable bits and agents invoke `.sh` directly; git records 100755); run
@@ -41,7 +44,7 @@ transitions in commit messages; put this exact arrangement in `AGENTS.md`.
    those notes (README format), otherwise omit; `readyz`, `production_cmd` only with production,
    and the human chooses its command (knows permitted reads and methods). Never invent servers
    or commands. Verify `scrum.sh export` has no `warnings`.
-4. **Publish page** per README (load `artifact-capabilities`, exact capabilities, icon). Store
+4. **Publish page** per `assets/board/artifact-sync.md` (load `artifact-capabilities`, exact capabilities, icon). Store
    URL in `AGENTS.md`.
 5. **Seed** CLI with one `integrated` item per completed phase (`item add --id setup-pN
    --title … --status integrated`) and main decisions via `decision add` +
@@ -50,7 +53,7 @@ transitions in commit messages; put this exact arrangement in `AGENTS.md`.
    `request add --title "<missing action>" --status waiting-for-human`; each delegated decision
    becomes `decision add --question … --recommendation "<what was applied> (delegated — review)"`,
    open until confirmed. Backlog items arrive in phase 9.
-6. **Send and prove** (README “Seed”): `scrum.sh sync-plan` with all 7 documents `=0` (absent
+6. **Send and prove** (“Seed” in `assets/board/artifact-sync.md`): `scrum.sh sync-plan` with all 7 documents `=0` (absent
    from artifact); ArtifactData `batch` using its `writes` (no `if_version`); read back
    `state/items` with `get`, confirm seeded items, then run `sync-plan`'s `confirm`. If
    ArtifactData is deferred, load it with ToolSearch first. Without readback, “synced” is a
@@ -58,13 +61,13 @@ transitions in commit messages; put this exact arrangement in `AGENTS.md`.
 7. **Who syncs**: only the orchestrator, the session with the artifact data tool, sends to the
    artifact. Subagents, workflow agents and jobs write only through the CLI. Every agent records
    transitions and a heartbeat at every transition and at least every 30 min while working.
-   The orchestrator follows README's 4 “Sync” steps at that cadence: list `state` and the
+   The orchestrator follows the 4 “Sync” steps in `assets/board/artifact-sync.md` at that cadence: list `state` and the
    `new-requests` inbox, `sync-plan --inbox`, `batch`, `confirm` (URL from `AGENTS.md`). Always
    include the inbox in step 1: page requests reach the board at the next orchestrator sync.
    Without ArtifactData, record through the CLI; the next orchestrator with the tool sends
    pending data. Include this rule in every launched agent's brief (“Board” block in
    agentic-feature's `agent-brief.template.md`). No scheduled task or cron: unattended
-   ArtifactData may await human approval and fail to write (README “Why not scheduled”).
+   ArtifactData may await human approval and fail to write (“Why not scheduled” in `assets/board/artifact-sync.md`).
 8. **Connect runners** (if project has one): call `hook.sh start|heartbeat|end` at runner
    transitions per README. Interactive agents heartbeat through CLI.
 9. **Write in `AGENTS.md`** (“Where to record things”): CLI (`.agentic/board/scrum.sh`), each

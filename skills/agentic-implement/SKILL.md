@@ -1,14 +1,16 @@
 ---
 name: agentic-implement
 description: >-
-  Use whenever you are the agent writing code for a task with a brief: a subagent or job
-  launched by agentic-fix or agentic-feature, “implement this brief”, “do lane N”,
-  “execute this task”. Read only what you need, state assumptions, write the red test first,
-  make the smallest change in the surrounding code's style, prove green, commit per cause and hand off
-  with a status. Scope and plan come from the brief: deciding them belongs to agentic-feature and agentic-fix.
+  Implements a scoped task whose brief already fixes the expected behaviour, allowed files and
+  acceptance checks, including delegated implementation lanes. Use when executing that brief; use
+  agentic-feature to decide feature scope and agentic-fix to diagnose an unscoped defect.
 ---
 
 # agentic-implement
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 From brief to commit with proof. The brief has already decided what: the files, expected behavior and
 its proving test. You decide how, within it. For a short task
@@ -17,10 +19,9 @@ report or request, with the symptom, expected behavior and success criterion alr
 
 Repo rules override this skill: `AGENTS.md`, the area brief and the project's testing and Git rules.
 
-The siblings `<agentic-design>`, `<agentic-code-review>` and `<agentic-architecture>` are the first
-folder with `SKILL.md` among: `$AGENTIC_DESIGN_DIR`, `$AGENTIC_CODE_REVIEW_DIR` or
-`$AGENTIC_ARCHITECTURE_DIR`, if set; the folder beside this skill (the usual case); the agent's
-skills folder; the `agentic-skills` plugin.
+The siblings `<agentic-design>` (`$AGENTIC_DESIGN_DIR`), `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`)
+and `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`) follow the common reference; paths,
+prefixes and order are not repeated here.
 
 ## 1. Read only what you need
 

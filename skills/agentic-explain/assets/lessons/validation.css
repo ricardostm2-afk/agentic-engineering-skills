@@ -1,0 +1,12 @@
+main { max-width: 1040px; margin: auto; padding: var(--space-6) var(--space-4); }
+header { max-width: 65ch; margin-bottom: var(--space-6); }
+section { margin-bottom: var(--space-7); }
+.worked { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-6); align-items: start; }
+figure { margin: 0; }
+figcaption { margin-top: var(--space-4); }
+.practice { max-width: 68ch; }
+footer { margin-top: var(--space-6); }
+@media (max-width: 760px) {
+  .worked { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  figure { max-width: 340px; }
+}

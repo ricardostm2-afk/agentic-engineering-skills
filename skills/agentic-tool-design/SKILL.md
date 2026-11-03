@@ -1,10 +1,17 @@
 ---
 name: agentic-tool-design
 description: >-
-  Design or change MCP/CLI/API tools for agents: boundaries, schemas, discovery, identity, evidence, effects and lifecycle. Use when defining tool contracts or fixing their composition; does not replace the project's implementation and review process.
+  Designs or revises MCP, CLI or API tool contracts for agents: boundaries, schemas, discovery,
+  evidence, effects and resource lifecycle. Use for tool-interface decisions; use agentic-feature
+  or agentic-fix to coordinate implementation, and agentic-analysis-optimization for measured
+  pipeline cost.
 ---
 
 # Tool design for agents
+
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
 
 Design the boundary from the question the person needs answered, not the available library. Adapted from the REA skill and design guide, under MIT; [origin and updates](references/origin.md). Does not depend on REA.
 

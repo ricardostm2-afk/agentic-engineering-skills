@@ -1,0 +1,10 @@
+main { max-width: 760px; margin: auto; padding: var(--space-6) var(--space-4); }
+header { max-width: 68ch; margin-bottom: var(--space-6); }
+section { margin-bottom: var(--space-7); }
+#interaction-slot { min-height: 620px; }
+.interaction-frame { display: block; width: 100%; min-height: 620px; border: 1px solid var(--line); border-radius: var(--radius-panel); background: var(--panel); }
+.is-hidden { display: none; }
+footer { border-top: 1px solid var(--line); padding-top: var(--space-4); }
+@media (min-width: 600px) {
+  #interaction-slot, .interaction-frame { min-height: 540px; }
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; media-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; child-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; navigate-to 'none'; webrtc 'block'; object-src 'none';">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root { color-scheme: light dark; font: 16px system-ui, sans-serif; }
+body { margin: 0; padding: 1rem; line-height: 1.5; color: CanvasText; background: Canvas; }
+main { max-width: 42rem; margin: 0 auto; }
+label, output, button { display: block; }
+label { margin-bottom: .75rem; }
+input { width: 100%; min-height: 2.75rem; }
+output { min-height: 2.75rem; margin-bottom: .75rem; }
+button, select { min-height: 2.75rem; padding: .5rem .8rem; font: inherit; }
+#feedback { min-height: 3rem; }
+</style>
+</head>
+<body>
+<main>
+<h1>Test a duration</h1>
+<p>The limit in this example is 60 units. Make your prediction before observing.</p>
+<label for="duration">Wait duration: <output id="duration-value">60</output></label>
+<input id="duration" type="range" min="0" max="100" value="60" step="10" aria-describedby="rule">
+<p id="rule">Above 60, the request is rejected; up to 60, it is accepted.</p>
+<label for="prediction">Predict the branch:
+<select id="prediction">
+<option value="accepted">accepted</option>
+<option value="rejected">rejected</option>
+</select>
+</label>
+<button id="run" type="button">Observe result</button>
+<p id="feedback" role="status" aria-live="polite">Predict the branch and observe the case.</p>
+</main>
+<script>
+const duration = document.getElementById("duration");
+const value = document.getElementById("duration-value");
+const feedback = document.getElementById("feedback");
+const prediction = document.getElementById("prediction");
+const limit = 60;
+function send(kind, payload) {
+  parent.postMessage({version: 1, kind, ...payload}, "*");
+}
+function update() {
+  value.textContent = duration.value;
+  send("state", {state: {variable: Number(duration.value), outcome: "pending"}});
+}
+duration.addEventListener("input", update);
+document.getElementById("run").addEventListener("click", () => {
+  const variable = Number(duration.value);
+  const predicted = prediction.value;
+  const observed = variable > limit ? "rejected" : "accepted";
+  const explanation = variable > limit
+    ? "The duration exceeds the limit; the rejection condition is true."
+    : "The duration does not exceed the limit; the rejection condition is false.";
+  const comparison = predicted === observed ? "The prediction matched the result." : "The prediction did not match the result; explain the difference.";
+  feedback.textContent = `${observed === "rejected" ? "Rejected" : "Accepted"}. ${comparison} ${explanation}`;
+  send("result", {result: {variable, prediction: predicted, observed, feedback: `${comparison} ${explanation}`}});
+});
+send("ready", {});
+update();
+</script>
+</body>
+</html>

@@ -1,11 +1,9 @@
 ---
 name: agentic-fix
 description: >-
-  Use to fix existing behavior that is wrong, even without the word “bug”: “it is broken”,
-  “fix this”, “it does not work”, “it errors”, a human report with a screen or step, a red test,
-  an incident, “debug this”. Reproduce with a red test, find the root cause when unknown, search
-  for the defect class, fix the minimum across all instances, prove red then green and review
-  with fresh context. New functionality or behavior that does not exist yet belongs to agentic-feature.
+  Diagnoses and fixes broken existing behaviour: errors, failing tests, regressions and reported
+  bugs. Reproduces the defect and verifies the fix. Use agentic-feature for behaviour that does not
+  exist yet; use agentic-ci-audit to audit the test or CI system itself.
 ---
 
 # agentic-fix
@@ -73,12 +71,19 @@ node <agentic-code-review>/scripts/validate-report.mjs <report.md>   # 0 = confo
   responses, rounds, unreviewed diff, your recommendation). Never silently add a round.
 <!-- card:end -->
 
+Host differences, installations, tool substitutes and sibling resolution follow
+`<agentic-project>/references/host-compatibility.md`; find that sibling through
+`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
+
+The siblings `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`), `<agentic-design>` (`$AGENTIC_DESIGN_DIR`)
+and `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`) follow the same reference; paths, prefixes and
+order are not repeated here.
+
 Repo rules override this skill: read `AGENTS.md`/`CLAUDE.md` (tests, Git, areas, sensitive zones, integration).
 
-`<skill>` is this `SKILL.md`'s folder. Siblings `<agentic-implement>`, `<agentic-code-review>` and
-`<agentic-design>` are the first folder with `SKILL.md` among: `$AGENTIC_IMPLEMENT_DIR`,
-`$AGENTIC_CODE_REVIEW_DIR` or `$AGENTIC_DESIGN_DIR`, if set; the neighboring folder
-(`<skill>/../<name>`, usual case); the agent's skills folder; the `agentic-skills` plugin.
+`<skill>` is this `SKILL.md`'s folder. Resolve siblings through the single reference
+`<agentic-project>/references/host-compatibility.md>`; an explicit variable wins over the adjacent
+folder, project folders, global roots and plugin. Without a Skill tool, read the found `SKILL.md`.
 
 ## Who does what
 

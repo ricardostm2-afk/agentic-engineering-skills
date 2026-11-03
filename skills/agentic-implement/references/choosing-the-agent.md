@@ -123,8 +123,9 @@ names: preloading includes only `SKILL.md`, not references. Without a script:
   and effort it accepts; without a launcher,
   `codex exec -m <model> -c model_reasoning_effort="<effort>" -C <worktree> - < <brief>`. The job
   commits only with writable `.git`: session approval for Git commands, or unrestricted sandbox,
-  only with human OK. Without that, or without `codex`, the work goes to Claude and the `agent:`
-  line says why.
+  only with human OK. If Codex, its launcher or the sandbox cannot meet the brief, state `blocked:`
+  and ask for an explicit decision: a sequential route from the same provider or a different
+  provider. Never switch to Claude automatically; record the decision on the `agent:` line.
 
 **Job without subagents** (launcher disables Codex multiagents, or the agent lacks that tool): the
 brief says to load `agentic-implement` and, from another skill, only the writer's steps (3 to 5 of

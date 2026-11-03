@@ -89,7 +89,7 @@
       "targetPath": "skills/agentic-ci-audit/SKILL.md",
       "mode": "adapted",
       "reason": "Generic English adaptation: removes REA-local commands and contracts while preserving method and distinguishing scope.",
-      "targetSha256": "a94a0bbde21474b56181bc1d6f293c55f68ed3cde7fd35201fd8c88dcdc3b314"
+      "targetSha256": "6a3563c790f79c72ff3c0d51868cc464d550845c2fb9abfff29989bc4c4dd362"
     },
     {
       "upstream": "rea",
@@ -98,7 +98,7 @@
       "targetPath": "skills/agentic-analysis-optimization/SKILL.md",
       "mode": "adapted",
       "reason": "Generic English adaptation: removes REA-local commands and contracts while preserving method and distinguishing scope.",
-      "targetSha256": "41414b201eb3d0f3b6b6e0dbadb4d1b120f33d552c0859c672f6307901b94ef5"
+      "targetSha256": "894d44e0a910f5ece8487f9bfe308d06d3e1c9718d48138851f74b75c5fe7039"
     },
     {
       "upstream": "rea",
@@ -107,7 +107,7 @@
       "targetPath": "skills/agentic-tool-design/SKILL.md",
       "mode": "adapted",
       "reason": "Generic English adaptation: removes REA-local commands and contracts while preserving method and distinguishing scope.",
-      "targetSha256": "dccb78c31c0ae9d23da345f9400a924d08c39152820cbedadd257e0f61944a33"
+      "targetSha256": "a53766a7eb94e06e53ab4c1349011172000976b57460a6e8a16391e6674b7968"
     },
     {
       "upstream": "rea",
@@ -152,7 +152,7 @@
       "targetPath": "skills/agentic-architecture/SKILL.md",
       "mode": "adapted",
       "reason": "English adaptation of improve-codebase-architecture: six steps with completion criteria, measured proof for each candidate in a declared history window (commits per candidate, coupling, co-change, deletion test, file:line and a command for every number), an agentic-design-compliant visual report published with Artifact, a one-question-at-a-time grill and execution through agentic-feature. Frontmatter has name and description only; requests trigger the skill. The agentic-implement sibling supplies the refactor recipe linked by deepening.md.",
-      "targetSha256": "ad3a7ecbcdd2d58bf84054fd8fa0bf42b2b7595d31681154d6d24f7e5a45c09c"
+      "targetSha256": "a5d643ecf77f37aadb54984416763038efa20f16b6b7afdcc699d144eaf095f7"
     },
     {
       "upstream": "mattpocock",
@@ -215,7 +215,7 @@
       "targetPath": "skills/agentic-fix/SKILL.md",
       "mode": "adapted",
       "reason": "Only step 3's red cycle comes from diagnosing-bugs: a command failing on this defect before any hypothesis. The rest is original: orchestrator/writer separation, defect class, safeguards, fresh-context review and the escaped-defect step.",
-      "targetSha256": "1786f74bf95e379178fcdb0c593c55f6556759fdcf3cd35b0e0c35ef9ce39aa2"
+      "targetSha256": "3a71f4bdeff10225c10afe0189ffd2f0cb933a989caa2b080a8366d30612b976"
     },
     {
       "upstream": "mattpocock",
@@ -242,7 +242,7 @@
       "targetPath": "skills/agentic-implement/SKILL.md",
       "mode": "adapted",
       "reason": "Only step 3 (test first, vertical slices, public seam) comes from tdd. The closed brief as input, project preferences, commit per cause and status handoff are original.",
-      "targetSha256": "617320acced6b2b08fc53a455e41bac88a649ca62c2b9ea2d76874dc3f75159d"
+      "targetSha256": "f4508ed23a6acc7d1ad3e0e7a60588280c7fd5d3a0b8c02fb17e334630744f65"
     },
     {
       "upstream": "mattpocock",
