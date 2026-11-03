@@ -1,13 +1,12 @@
-# Retro: <feature> · <data>
+# Retro: <feature> · <date>
 
-<!-- 3–5 linhas no total. Factos, não sentimentos. Grava no quadro (sem quadro: na mensagem
-     final). Se a lição é reutilizável, propõe onde a guardar no projeto (e se pode virar verificação
-     automática). -->
+<!-- 3–5 lines total. Facts, not feelings. Save on board (without board: final message). For
+reusable lesson propose project location and whether it can become automatic check. -->
 
-- **Correu bem**: <o que repetir, com o porquê>
-- **Atrasou**: <o que custou tempo, com a causa medida (ex.: 40 min à espera de BD de teste)>
-- **Lição**: <regra aplicável a outras features, numa frase>
-- **Ação**: <mudança concreta (verificação nova, linha no AGENTS.md ou no REVIEW.md, comando de arranque), ou «nenhuma»>
-- **Camada**: <só se algo escapou (revertido, incidente, reportado pelo humano) ou uma classe se repetiu: que camada o devia ter apanhado (`tipo: escapou`) ou o apanhou (`tipo: repetido`), o que lhe faltava, e a linha de lição escrita; senão apaga a linha>
-- **Pré-existentes**: <só se a revisão os viu: ficheiro:linha · classe, numa linha (não vão para o backlog); senão apaga a linha>
-- **Números**: via <via> · <n> tarefas · <k> faixas · revisão: a linha `Revisão:` de <sha do commit de integração> · radar: <entradas novas ou mudadas, ou «nada»>
+- **Went well**: <what to repeat and why>
+- **Delayed**: <time cost with measured cause, e.g. 40 min waiting for test database>
+- **Lesson**: <one-sentence rule applicable to other features>
+- **Action**: <concrete new check, AGENTS.md/REVIEW.md line, startup command, or none>
+- **Layer**: <only escaped defect (revert, incident, human report) or repeated class: layer that should have caught it (type: escaped) or did (type: repeated), missing information, written lesson line; otherwise delete>
+- **Pre-existing**: <only if seen in review: file:line · class on one line, outside backlog; otherwise delete>
+- **Numbers**: track <track> · <n> tasks · <k> lanes · review: Review: line of <integration-sha> · radar: <new/changed entries or nothing>

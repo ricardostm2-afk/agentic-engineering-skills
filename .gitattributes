@@ -1,3 +1,3 @@
-# LF em todo o lado: os scripts .sh e os hashes de UPSTREAMS.json dependem dos bytes.
+# LF everywhere: .sh scripts and UPSTREAMS.json hashes depend on the bytes.
 * text=auto eol=lf
 *.ps1 text eol=lf

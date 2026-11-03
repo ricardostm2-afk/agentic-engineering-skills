@@ -1,234 +1,227 @@
 ---
 name: agentic-fix
 description: >-
-  Usa-a para corrigir o que já existe e está errado, mesmo sem dizer «bug»: «está partido»,
-  «corrige isto», «não funciona», «dá erro», um report do humano com um ecrã ou um passo, um teste
-  vermelho, um incidente, «fix this», «debug this». Reproduz com um teste vermelho, encontra a
-  causa raiz quando é desconhecida, procura a classe do defeito, corrige o mínimo em todas as
-  instâncias, prova com vermelho e depois verde e revê com contexto novo. Funcionalidade nova, ou
-  comportamento que ainda não existe, é da agentic-feature.
+  Use to fix existing behavior that is wrong, even without the word “bug”: “it is broken”,
+  “fix this”, “it does not work”, “it errors”, a human report with a screen or step, a red test,
+  an incident, “debug this”. Reproduce with a red test, find the root cause when unknown, search
+  for the defect class, fix the minimum across all instances, prove red then green and review
+  with fresh context. New functionality or behavior that does not exist yet belongs to agentic-feature.
 ---
 
 # agentic-fix
 
-Corrigir o que existe e está errado, com prova. O comportamento já existe: o defeito é a distância
-entre o que ele faz e o que devia fazer. Uma funcionalidade nova é da `agentic-feature`.
+Fix existing wrong behavior, with proof. The behavior already exists: the defect is the distance
+between what it does and what it should do. New functionality belongs to `agentic-feature`.
 
-<!-- cartao:inicio — copiado das fontes que cita; atualiza-o quando elas mudarem -->
-## Cartão
+<!-- card:start — copied from the cited sources; update when they change -->
+## Card
 
-Fontes: `<agentic-implement>/references/escolher-o-agente.md` (nível §1, modelo §2); `<agentic-code-review>/SKILL.md` (revisão passos 5 e 6).
+Sources: `<agentic-implement>/references/choosing-the-agent.md` (level §1, model §2); `<agentic-code-review>/SKILL.md` (review steps 5 and 6).
 
-Passo 1 — Feito quando consegues escrever numa frase o **sintoma** (o que acontece) e o **esperado** (o que devia acontecer).
-Passo 2 — Feito quando o agente está lançado com um brief que um agente sem esta conversa cumpriria sem perguntar nada; numa curta, quando disseste o nível e começaste o passo 3.
-Passo 3 — Feito quando há **um** comando, já corrido e com o output mostrado sem segredos, que fica vermelho com este defeito e só com ele.
-Passo 4 — Feito quando escreves a causa raiz numa frase e a classe numa linha: `N instâncias: ficheiro:linha, …`, ou `só esta`, com o comando de pesquisa que o mostra.
-Passo 5 — Feito quando o agente entrega `concluido` com o commit, o vermelho e depois o verde, e a classe tratada; ou `bloqueado` ou `spec-em-conflito` com o porquê.
-Passo 6 — Feito quando não há Importante aberto.
-Passo 7 — Feito quando o commit está onde as regras do repo mandam e o humano sabe onde.
-Passo 8 — Feito quando a linha de lição está commitada nesse sítio (ou, sem ele, na mensagem final), ou quando dizes numa linha porque o defeito não escapou.
+Step 1 — Done when you can state the **symptom** (what happens) and **expected behavior** (what should happen) in one sentence.
+Step 2 — Done when the agent is launched with a brief an agent without this conversation could follow without questions; for a short task, when you stated the level and started step 3.
+Step 3 — Done when there is **one** command, already run with output shown without secrets, that goes red for this defect and only this defect.
+Step 4 — Done when you write the root cause in one sentence and the class in one line: `N instances: file:line, …`, or `only this one`, with the search command proving it.
+Step 5 — Done when the agent returns `done` with the commit, red then green, and the class addressed; or `blocked` or `spec-conflict` with the reason.
+Step 6 — Done when no Important remains open.
+Step 7 — Done when the commit is where repo rules require and the human knows where.
+Step 8 — Done when the lesson line is committed there (or, without a location, in the final message), or you state in one line why the defect did not escape.
 
-**Nível**
+**Level**
 
-1. **Causa por descobrir?** Um defeito cuja causa ainda não se conhece, ou uma corrida a
-   diagnosticar. Sim: complexa.
-2. **Desenho que só aparece no código?** O contrato, o esquema ou o módulo só se decidem com uma
-   experiência dentro do código. Sim: complexa.
-3. **Passos por enumerar?** Um refactor tão acoplado que o brief não consegue escrever os passos.
-   Sim: complexa.
-4. **Já falhou?** Um agente falhou esta tarefa uma vez no nível bem-definida. Sim: complexa, e o
-   brief novo leva a premissa que o agente devolveu (passo 5 da `agentic-implement`).
+1. **Unknown cause?** A defect whose cause is still unknown, or a race to diagnose. Yes: complex.
+2. **Design that only shows in the code?** The contract, schema or module can only be decided
+   through an experiment in the code. Yes: complex.
+3. **Steps not enumerable?** A refactor so coupled that the brief cannot list the steps.
+   Yes: complex.
+4. **Already failed?** An agent failed this task once at the well-defined level. Yes: complex,
+   and the new brief carries the premise the agent returned (step 5 of `agentic-implement`).
 
-Passou nas quatro: **bem-definida**. Desenho novo, lógica delicada (dinheiro, concorrência, regras
-de acesso) ou várias áreas não fazem a tarefa complexa quando o brief já os decidiu. Exemplos: um
-rótulo; um arredondamento; uma faixa com spec e tarefas; a correção de um Importante que o
-orquestrador reproduziu e cuja regra escreveu.
+Passed all four: **well-defined**. New design, delicate logic (money, concurrency, access rules)
+or multiple areas do not make the task complex when the brief has already decided them. Examples:
+a label; rounding; a lane with a spec and tasks; fixing an Important the orchestrator reproduced
+and wrote a rule for.
 
-- Zona sensível (tenant, sessão, faturação, dados pessoais) não sobe o nível: o brief leva os
-  invariantes e os testes de recusa, e a zona pesa no nível da revisão (`agentic-code-review`).
+- A sensitive zone (tenant, session, billing, personal data) does not raise the level: the brief
+  carries invariants and refusal tests, and the zone affects the review level (`agentic-code-review`).
 
-Escreve no brief a linha `nível:` com estes rótulos; a guarda do lançamento lê-a:
+Write the brief's `level:` line with these labels; the launch guard reads it:
 
-- `nível: bem-definida — decisões fechadas: <quais>`;
-- `nível: complexa — <rótulo>: <detalhe>`, com o rótulo igual a uma das quatro perguntas, em
-  minúsculas e sem «?»: `causa por descobrir`, `desenho que só aparece no código`,
-  `passos por enumerar`, `já falhou`;
-- o humano forçou o nível: `nível: <nível> — forçado pelo humano: <as palavras dele>`.
+- `level: well-defined — decisions closed: <which>`;
+- `level: complex — <label>: <detail>`, using one of the four questions as the label, lowercase
+  without “?”: `unknown cause`, `design that only shows in the code`, `steps not enumerable`,
+  `already failed`;
+- the human forced the level: `level: <level> — forced by the human: <their words>`.
 
-**Modelo** (nomes de exemplo; o projeto escolhe os seus)
+**Model** (example model names; the project picks its own)
 
-| Nível | Claude | Codex |
+| Level | Claude | Codex |
 |---|---|---|
-| bem-definida | Sonnet 5.5, esforço xhigh | gpt-6.1-sol, esforço medium |
-| complexa | Opus 5.5, esforço xhigh | gpt-6.1-sol, esforço max |
+| well-defined | Sonnet 5.5, effort xhigh | gpt-6.1-sol, effort medium |
+| complex | Opus 5.5, effort xhigh | gpt-6.1-sol, effort max |
 
-**Revisão**
+**Review**
 
 ```bash
-node <agentic-code-review>/scripts/validar-relatorio.mjs <relatorio.md>   # 0 = conforme; 1 = lista do que falha
+node <agentic-code-review>/scripts/validate-report.mjs <report.md>   # 0 = conforming; 1 = failure list
 ```
 
-- Limite de rondas pelo nível (1 na Rápida pedida, 2 na Padrão, 3 na Completa). Da 2.ª em diante:
-  só o diff novo, sem repetir achados fechados, e só as lentes com Importantes abertos, juntas.
+- Round limit by level (1 for requested Quick, 2 for Standard, 3 for Complete). From round 2 onward:
+  only the new diff, without repeating closed findings, and only lenses with open Important findings, together.
 
-- **No limite, com um Importante aberto, pára e vai ao humano** com um resumo (achados abertos,
-  respostas, rondas, diff por rever, a tua recomendação). Nunca uma ronda extra em silêncio.
-<!-- cartao:fim -->
+- **At the limit, with an open Important, stop and go to the human** with a summary (open findings,
+  responses, rounds, unreviewed diff, your recommendation). Never silently add a round.
+<!-- card:end -->
 
-As regras do repo ganham a esta skill: lê `AGENTS.md`/`CLAUDE.md` (testes, git, áreas, zonas
-sensíveis, integração).
+Repo rules override this skill: read `AGENTS.md`/`CLAUDE.md` (tests, Git, areas, sensitive zones, integration).
 
-`<skill>` é a pasta deste `SKILL.md`. As irmãs `<agentic-implement>`, `<agentic-code-review>` e
-`<agentic-design>` são a primeira pasta com `SKILL.md` entre: `$AGENTIC_IMPLEMENT_DIR`,
-`$AGENTIC_CODE_REVIEW_DIR` ou `$AGENTIC_DESIGN_DIR`, se definida; a pasta ao lado desta
-(`<skill>/../<nome>`, o caso normal); a pasta de skills do agente; o plugin `agentic-skills`.
+`<skill>` is this `SKILL.md`'s folder. Siblings `<agentic-implement>`, `<agentic-code-review>` and
+`<agentic-design>` are the first folder with `SKILL.md` among: `$AGENTIC_IMPLEMENT_DIR`,
+`$AGENTIC_CODE_REVIEW_DIR` or `$AGENTIC_DESIGN_DIR`, if set; the neighboring folder
+(`<skill>/../<name>`, usual case); the agent's skills folder; the `agentic-skills` plugin.
 
-## Quem faz o quê
+## Who does what
 
-- **Orquestrador** (a sessão que recebeu o report): passos 1, 2, 6, 7 e 8.
-- **Agente da correção** (subagente Claude ou job Codex, lançado no passo 2): passos 3 a 5, com a
-  `agentic-implement` carregada. Se és esse agente, o brief di-lo; começa no passo 3.
-- Numa correção curta (`<agentic-implement>/references/escolher-o-agente.md` §1), ou sem
-  ferramenta de agentes, és tu o agente: fazes os passos todos, por ordem, sem brief.
+- **Orchestrator** (the session receiving the report): steps 1, 2, 6, 7 and 8.
+- **Fix agent** (Claude subagent or Codex job, launched in step 2): steps 3 to 5, with
+  `agentic-implement` loaded. If you are that agent, the brief says so; start at step 3.
+- For a short fix (`<agentic-implement>/references/choosing-the-agent.md` §1), or without an agent
+  tool, you are the agent: perform all steps in order without a brief.
 
-## Passo 1: o report
+## Step 1: the report
 
-Lê o report e o ecrã ou passo que ele aponta. Trata só o que o humano apontou: o que encontrares à
-volta vai numa linha da mensagem final. Num report de interface, o âmbito é o ecrã apontado: os
-outros ecrãs com o mesmo padrão vão nessa linha, e alargar é decisão do humano, sem pergunta tua.
+Read the report and its referenced screen or step. Address only what the human pointed out:
+anything found nearby goes in a line of the final message. For an interface report, scope is the
+specified screen: other screens with the same pattern go in that line; expanding scope is the
+human's decision, without a question from you.
 
-Report **ambíguo** (não dá para reproduzir sem adivinhar o que está errado ou o que devia
-acontecer): faz **uma** pergunta, com a tua recomendação, e espera. Report claro: avança.
+**Ambiguous** report (cannot reproduce without guessing what is wrong or should happen): ask
+**one** question with your recommendation and wait. Clear report: proceed.
 
-Feito quando consegues escrever numa frase o **sintoma** (o que acontece) e o **esperado** (o que
-devia acontecer).
+Done when you can state the **symptom** (what happens) and **expected behavior** (what should happen)
+in one sentence.
 
-## Passo 2: o brief e o agente
+## Step 2: the brief and agent
 
-Escolhe primeiro o nível, pelo §1 de `<agentic-implement>/references/escolher-o-agente.md`. Numa
-**curta** não há brief nem agente: dizes o nível numa linha e fazes tu os passos 3 a 5, com a
-`agentic-implement`. Nas outras:
+Choose level first, using §1 of `<agentic-implement>/references/choosing-the-agent.md`. A **short**
+task has no brief or agent: state the level in one line and perform steps 3 to 5 yourself with
+`agentic-implement`. Otherwise:
 
-1. Preenche `assets/brief-correcao.template.md`: sintoma, esperado, onde se vê, área, ficheiros
-   prováveis, zona sensível (sim ou não), a ordem do humano (ou «nenhuma») e o critério de
-   sucesso.
-2. Escolhe o modelo e o agente (Claude ou Codex) pelo mesmo ficheiro e escreve o nível no brief.
-3. Lança o agente num worktree próprio, com o brief e a ordem «carrega a `agentic-implement` e faz
-   os passos 3 a 5 da `agentic-fix`», no modelo e esforço escolhidos. Claude: subagente. Codex: job
-   com `$agentic-implement` e `$agentic-fix` no pedido.
+1. Fill `assets/fix-brief.template.md`: symptom, expected behavior, where visible, area, likely
+   files, sensitive zone (yes or no), human order (or “none”) and success criterion.
+2. Choose model and agent (Claude or Codex) using the same file and write the level in the brief.
+3. Launch the agent in its own worktree, with the brief and “load `agentic-implement` and perform
+   steps 3 to 5 of `agentic-fix`”, using the chosen model and effort. Claude: subagent. Codex: job
+   with `$agentic-implement` and `$agentic-fix` in the request.
 
-Feito quando o agente está lançado com um brief que um agente sem esta conversa cumpriria sem
-perguntar nada; numa curta, quando disseste o nível e começaste o passo 3.
+Done when the agent is launched with a brief an agent without this conversation could follow without
+questions; for a short task, when you stated the level and started step 3.
 
-## Passo 3: reproduzir (agente)
+## Step 3: reproduce (agent)
 
-Constrói um ciclo **vermelho** antes de ler código para teorizar: um comando que percorre o caminho
-real do defeito e falha com o sintoma do report. Por ordem de preferência:
+Build a **red** loop before reading code to theorize: a command following the defect's real path
+and failing with the reported symptom. In preference order:
 
-1. teste no ponto de entrada que chega ao defeito (unitário, integração ou ponta a ponta);
-2. script HTTP contra o servidor de desenvolvimento;
-3. comando com uma fixture, a comparar a saída com uma referência boa;
-4. browser headless que conduz a interface e verifica o DOM, a consola ou a rede;
-5. um traço real capturado (pedido, payload, log), repetido isoladamente;
-6. um harness mínimo que chama o caminho do defeito.
+1. test at the entry point reaching the defect (unit, integration or end-to-end);
+2. HTTP script against the development server;
+3. command with a fixture, comparing output against a good reference;
+4. headless browser driving the interface and checking DOM, console or network;
+5. a real captured trace (request, payload, log), replayed in isolation;
+6. a minimal harness calling the defect's path.
 
-Num defeito visual, a prova é uma captura do ecrã que mostra o defeito, mais o teste que o
-apanhar quando o houver; quanto capturar, antes e depois, diz `<agentic-design>/references/prova.md`
-§2.
+For a visual defect, proof is a screenshot showing the defect plus a test catching it when
+available; how much to capture before and after: `<agentic-design>/references/proof.md` §2.
 
-Aperta o ciclo até ficar **apertado**: segundos e não minutos, determinístico (hora, seed e rede
-fixas), com a asserção no sintoma exato e não em «não rebentou». Defeito intermitente: sobe a taxa
-de reprodução (repetir, paralelizar, estreitar janelas) até ser depurável.
+Tighten the loop until it is **tight**: seconds rather than minutes, deterministic (fixed time,
+seed and network), asserting the exact symptom rather than “did not crash”. For an intermittent
+defect, raise the reproduction rate (repeat, parallelize, narrow windows) until debuggable.
 
-Sem ciclo possível: devolve `bloqueado: <o que falta>`, com o que tentaste e o que pedes (acesso
-ao ambiente, um artefacto capturado sem segredos, ou instrumentação temporária).
+No possible loop: return `blocked: <what is missing>`, with what you tried and what you request
+(environment access, a captured artifact without secrets, or temporary instrumentation).
 
-Feito quando há **um** comando, já corrido e com o output mostrado sem segredos, que fica
-vermelho com este defeito e só com ele.
+Done when there is **one** command, already run with output shown without secrets, that goes red
+for this defect and only this defect.
 
-## Passo 4: causa e classe (agente)
+## Step 4: cause and class (agent)
 
-- **Causa conhecida** (o vermelho aponta para a linha): segue para a classe.
-- **Causa por descobrir**: segue `references/diagnostico.md` (minimizar, hipóteses falsificáveis,
-  instrumentar uma de cada vez, e a evidência do git, dos PRs e dos logs).
+- **Known cause** (red points to the line): proceed to the class.
+- **Unknown cause**: follow `references/diagnosis.md` (minimize, falsifiable hypotheses, instrument
+  one at a time, evidence from Git, PRs and logs).
 
-Depois procura a **classe**: as outras instâncias do mesmo defeito (o mesmo padrão noutros
-ficheiros) e os usos indiretos do que vais mudar (quem chama, enums, constantes, wrappers, nomes
-montados em runtime, outros serviços). Cada instância entra na correção; cada uso indireto entra na
-verificação. Num report de interface, a classe fica no ecrã apontado (passo 1).
+Then search the **class**: other instances of the same defect (same pattern in other files) and
+indirect uses of what you will change (callers, enums, constants, wrappers, runtime-built names,
+other services). Every instance enters the fix; every indirect use enters verification. In an
+interface report, the class stays within the specified screen (step 1).
 
-Um defeito que já voltou depois de uma correção, ou cuja classe se espalha por muitos sítios, é
-**estrutural**: a causa raiz é o mecanismo que o produz (o modelo de dados, o contrato, o
-componente, o gerador), e mais um ajuste no sintoma (outra regra proibida, outro parâmetro, mais
-texto num prompt) não conta como correção.
+A defect that returned after a fix, or whose class spreads across many places, is **structural**:
+the root cause is the producing mechanism (data model, contract, component, generator); another
+symptom adjustment (another forbidden rule, parameter, more prompt text) does not count as a fix.
 
-Feito quando escreves a causa raiz numa frase e a classe numa linha: `N instâncias: ficheiro:linha,
-…`, ou `só esta`, com o comando de pesquisa que o mostra.
+Done when you write the root cause in one sentence and the class in one line: `N instances:
+file:line, …`, or `only this one`, with the search command proving it.
 
-## Passo 5: corrigir e pôr verde (agente)
+## Step 5: fix and turn green (agent)
 
-Segue os passos 3 a 8 da `agentic-implement`, com o que é próprio de uma correção:
+Follow steps 3 to 8 of `agentic-implement`, with fix-specific requirements:
 
-- O teste vermelho é o do passo 3, no ponto de entrada que apanha o padrão real. Se o único teste
-  possível é raso demais para o apanhar, regista-o no handoff: a arquitetura impede fixar o defeito.
-- A mudança mínima corrige todas as instâncias da classe e mais nada.
-- **Salvaguardas** (killswitch, flag marcada como permanente, caminho de mitigação, guarda de
-  segurança): se a correção mexe numa, para antes de a mudar e pergunta. Num subagente ou job,
-  devolve `estado: bloqueado: <a pergunta>` ao orquestrador, que a leva ao humano.
-- Verde: o teste novo, o ciclo do passo 3 contra o cenário original (não só o minimizado) e os
-  testes da área.
-- Limpeza: a instrumentação temporária sai (marcada com um prefixo único, apaga-se com um grep) e
-  os protótipos descartáveis também.
-- O corpo do commit leva a causa raiz e `Testado:` (comandos e resultado); o risco e o desfazer
-  vão no commit de integração (passo 7).
+- The red test is step 3's, at the entry point catching the real pattern. If the only possible
+  test is too shallow to catch it, record it in the handoff: architecture prevents pinning the defect.
+- The smallest change fixes every class instance and nothing else.
+- **Safeguards** (killswitch, flag marked permanent, mitigation path, security guard): if the fix
+  touches one, stop before changing it and ask. In a subagent or job, return
+  `status: blocked: <the question>` to the orchestrator, who takes it to the human.
+- Green: the new test, step 3's loop against the original scenario (not only the minimized one),
+  and area tests.
+- Cleanup: remove temporary instrumentation (marked with a unique prefix, removed with a grep)
+  and disposable prototypes.
+- The commit body carries root cause and `Tested:` (commands and result); risk and undo go in
+  the integration commit (step 7).
 
-Feito quando o agente entrega `concluido` com o commit, o vermelho e depois o verde, e a classe
-tratada; ou `bloqueado` ou `spec-em-conflito` com o porquê.
+Done when the agent returns `done` with the commit, red then green, and the class addressed;
+or `blocked` or `spec-conflict` with the reason.
 
-## Passo 6: revisão (orquestrador)
+## Step 6: review (orchestrator)
 
-- **Zona sensível** (as do `REVIEW.md` do repo; sem ele: autenticação, permissões, dados de
-  terceiros, dinheiro, migrações): painel da `agentic-code-review`.
-- **Fora dela**: pede-a à `agentic-code-review` como «Rápida (pedida)»: um revisor de **contexto
-  novo**, que não escreveu o código, com uma só lente, correção, e 1 ronda
-  (`<agentic-code-review>/assets/brief-revisor.template.md`). Lê o diff contra o brief (sintoma,
-  esperado e classe) e procura o que a correção parte. Se a `agentic-code-review` conferir pelo
-  diff um nível mais alto (uma correção grande, um caminho sempre alto), vale o dela.
+- **Sensitive zone** (those in the repo's `REVIEW.md`; without it: authentication, permissions,
+  third-party data, money, migrations): `agentic-code-review` panel.
+- **Outside it**: request “Quick (requested)” from `agentic-code-review`: one **fresh-context**
+  reviewer who did not write the code, with one lens, correctness, and 1 round
+  (`<agentic-code-review>/assets/reviewer-brief.template.md`). Read the diff against the brief
+  (symptom, expected behavior and class), looking for what the fix breaks. If `agentic-code-review`
+  checks the diff and assigns a higher level (large fix, always-high path), its level applies.
 
-Os revisores contam para o teto de 8 agentes da `agentic-code-review`.
+Reviewers count toward `agentic-code-review`'s ceiling of 8 agents.
 
-Cada Importante volta ao agente, que o reproduz antes de o corrigir; o que não reproduz não se
-corrige.
+Each Important returns to the agent, who reproduces before fixing it; do not fix what cannot be reproduced.
 
-Feito quando não há Importante aberto.
+Done when no Important remains open.
 
-## Passo 7: integrar (orquestrador)
+## Step 7: integrate (orchestrator)
 
-Integra pelas regras do repo (ramo, merge, bateria, deploy). A correção chega à integração com a
-prova do passo 5 e a revisão do passo 6 fechada. O commit de integração leva `Risco:`,
-`Como desfazer:` e `Revisão:`, como diz `<agentic-code-review>/references/painel-e-rondas.md` §10.
+Integrate following repo rules (branch, merge, verification suite, deploy). The fix reaches integration
+with step 5's proof and step 6's review closed. The integration commit carries `Risk:`, `How to undo:`
+and `Review:`, as `<agentic-code-review>/references/panel-and-rounds.md` §10 specifies.
 
-Feito quando o commit está onde as regras do repo mandam e o humano sabe onde.
+Done when the commit is where repo rules require and the human knows where.
 
-## Passo 8: se escapou (orquestrador)
+## Step 8: if it escaped (orchestrator)
 
-O defeito **escapou** quando chegou a produção, foi revertido ou foi reportado pelo humano depois
-de entregue. Nesse caso, o teste do passo 3 fica como regressão permanente e o caso entra na
-avaliação da revisão: uma linha de lição, no sítio e no formato de
-`<agentic-code-review>/references/aprendizagem.md` («Onde fica»), que começa pelo `REVIEW.md` do
-repo.
+The defect **escaped** when it reached production, was reverted or was reported by the human after
+delivery. In that case, step 3's test remains as a permanent regression and the case enters review
+evaluation: one lesson line, at the location and in the format of
+`<agentic-code-review>/references/learning.md` (“Where it lives”), starting with the repo's `REVIEW.md`.
 
-Feito quando a linha de lição está commitada nesse sítio (ou, sem ele, na mensagem final), ou
-quando dizes numa linha porque o defeito não escapou.
+Done when the lesson line is committed there (or, without a location, in the final message), or
+you state in one line why the defect did not escape.
 
-## Mensagem final ao humano
+## Final message to the human
 
-Cinco linhas: **Corrigido** (sintoma e causa raiz) · **Classe** (quantas instâncias) · **Prova**
-(o comando, vermelho e depois verde) · **Ficou de fora** (o que viste à volta) · **Precisa de ti**.
+Five lines: **Fixed** (symptom and root cause) · **Class** (instance count) · **Proof** (command,
+red then green) · **Left out** (what you saw nearby) · **Needs you**.
 
-## Noutros agentes
+## In other agents
 
-No Codex: `$agentic-fix` e `$agentic-implement`. Sem ferramenta de subagentes, faz os passos em
-sequência, sem worktrees; o revisor de contexto novo do passo 6 é uma sessão nova, e sem ela a
-revisão declara-se «não independente», como na `agentic-code-review` («Noutros agentes»). Origem
-do método e licenças: `references/origem.md`.
+In Codex: `$agentic-fix` and `$agentic-implement`. Without a subagent tool, perform steps sequentially,
+without worktrees; step 6's fresh-context reviewer is a new session; without one, declare review
+“not independent”, as in `agentic-code-review` (“In other agents”). Method origin and licenses:
+`references/origin.md`.

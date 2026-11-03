@@ -4,13 +4,13 @@
     "name": "agentic-skills contributors"
   },
   "metadata": {
-    "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Text in European Portuguese."
+    "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Skills in English; generated text follows the project's AGENTS.md language, defaulting to English."
   },
   "plugins": [
     {
       "name": "agentic-skills",
       "source": "./",
-      "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Text in European Portuguese.",
+      "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Skills in English; generated text follows the project's AGENTS.md language, defaulting to English.",
       "category": "workflow",
       "homepage": "https://github.com/ricardostm2-afk/agentic-engineering-skills",
       "repository": "https://github.com/ricardostm2-afk/agentic-engineering-skills",
@@ -25,7 +25,7 @@
         "ci",
         "tool-design",
         "spec-kit",
-        "portuguese",
+        "english",
         "explain",
         "visualization"
       ]

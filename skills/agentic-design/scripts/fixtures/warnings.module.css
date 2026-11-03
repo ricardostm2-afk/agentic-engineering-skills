@@ -1,0 +1,21 @@
+.card {
+  border-radius: 1.5rem;
+  color: #334155;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+.background {
+  animation: breathe 4s ease-in-out infinite;
+}
+.list {
+  backdrop-filter: blur(12px);
+}
+.alert {
+  border-left: 4px solid var(--notice);
+}
+.secondary-button {
+  border: 1px solid var(--brand);
+  background: transparent;
+}

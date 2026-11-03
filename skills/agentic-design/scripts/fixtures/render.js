@@ -1,13 +1,13 @@
-// HTML gerado no servidor, num template string: é interface como um .html.
-export function renderizarAcao(acao) {
+// Server-generated HTML in a template string: UI just like an .html file.
+export function renderAction(action) {
   return `
     <style>
-      .nota { font-size: 10px; }
+      .note { font-size: 10px; }
     </style>
-    <section class="acao">
-      <h2>🚀 ${acao.titulo}</h2>
-      <p>Desbloqueie todo o potencial da sua equipa</p>
-      <small style="font-size: 9px">Atualizado agora</small>
-      <button type="submit">Guardar</button>
+    <section class="action">
+      <h2>🚀 ${action.title}</h2>
+      <p>Unlock your team's full potential</p>
+      <small style="font-size: 9px">Updated now</small>
+      <button type="submit">Save</button>
     </section>`;
 }

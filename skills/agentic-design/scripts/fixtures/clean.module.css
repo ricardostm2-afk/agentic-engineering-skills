@@ -1,0 +1,95 @@
+/* A comment with ✨ and font-size: 9px and linear-gradient(#6366f1, #a855f7): does not count. */
+:root {
+  --brand-colour: #2563eb;
+  --brand-gradient: linear-gradient(90deg, #1d4ed8, #2563eb);
+  --radius: 8px;
+}
+.list {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-fg);
+  background: var(--color-panel);
+}
+.row {
+  font: 600 13px/20px var(--font);
+  border-radius: var(--radius);
+}
+.avatar {
+  border-radius: 999px;
+}
+.pill {
+  border-radius: 24px;
+}
+.dialog {
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--color-fg) 20%, transparent);
+}
+.menu {
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-fg) 16%, transparent);
+}
+.label {
+  text-transform: uppercase;
+}
+.hero {
+  background: var(--color-panel);
+  border-radius: 12px;
+}
+.strip {
+  background-image: linear-gradient(to bottom, transparent, var(--color-panel));
+}
+.button {
+  transition: background-color 150ms ease;
+}
+@media (hover: hover) {
+  .row:hover {
+    transform: translateX(2px);
+  }
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+.sidebar {
+  backdrop-filter: blur(20px);
+}
+blockquote {
+  border-left: 3px solid var(--color-fg);
+}
+.nav-item.active {
+  border-left: 2px solid var(--brand-colour);
+}
+.button:focus-visible {
+  border: 2px solid var(--brand-colour);
+  background: transparent;
+}
+.field {
+  border: 1px solid var(--color-fg);
+  background: transparent;
+}
+@media (forced-colors: active) {
+  .button {
+    border: 1px solid ButtonText;
+    background: transparent;
+  }
+}
+.side-menu:hover .label {
+  transform: translateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:hover {
+    transform: none !important;
+  }
+}
+.topbar[data-scrolled="true"]::before {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+@media (forced-colors: active) {
+  .notice {
+    border-left: 3px solid CanvasText;
+  }
+}
+@media print {
+  .footer {
+    font-size: 8pt;
+  }
+}

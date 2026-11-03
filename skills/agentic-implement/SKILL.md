@@ -1,144 +1,136 @@
 ---
 name: agentic-implement
 description: >-
-  Usa-a sempre que fores o agente que escreve o código de uma tarefa com brief: subagente ou job
-  lançado pela agentic-fix ou pela agentic-feature, «implementa este brief», «faz a faixa N»,
-  «executa esta tarefa». Lê só o necessário, diz as suposições, escreve o teste vermelho primeiro,
-  faz a mudança mínima ao jeito do código à volta, prova com verde, faz commit por causa e entrega
-  com estado. O âmbito e o plano vêm do brief: decidi-los é da agentic-feature e da agentic-fix.
+  Use whenever you are the agent writing code for a task with a brief: a subagent or job
+  launched by agentic-fix or agentic-feature, “implement this brief”, “do lane N”,
+  “execute this task”. Read only what you need, state assumptions, write the red test first,
+  make the smallest change in the surrounding code's style, prove green, commit per cause and hand off
+  with a status. Scope and plan come from the brief: deciding them belongs to agentic-feature and agentic-fix.
 ---
 
 # agentic-implement
 
-Do brief ao commit com prova. O brief já decidiu o quê: os ficheiros, o comportamento esperado e o
-teste que o prova. Tu decides o como, dentro dele. Numa tarefa curta
-(`references/escolher-o-agente.md` §1), quem orquestra usa esta skill sem brief: o brief é o
-report ou o pedido, com o sintoma, o esperado e o critério de sucesso que já escreveu.
+From brief to commit with proof. The brief has already decided what: the files, expected behavior and
+its proving test. You decide how, within it. For a short task
+(`references/choosing-the-agent.md` §1), the orchestrator uses this skill without a brief: the brief is the
+report or request, with the symptom, expected behavior and success criterion already written.
 
-As regras do repo ganham a esta skill: `AGENTS.md`, o brief da área e as regras de testes e de git
-do projeto.
+Repo rules override this skill: `AGENTS.md`, the area brief and the project's testing and Git rules.
 
-As irmãs `<agentic-design>`, `<agentic-code-review>` e `<agentic-architecture>` são a primeira
-pasta com `SKILL.md` entre: `$AGENTIC_DESIGN_DIR`, `$AGENTIC_CODE_REVIEW_DIR` ou
-`$AGENTIC_ARCHITECTURE_DIR`, se definida; a pasta ao lado da desta skill (o caso normal); a pasta
-de skills do agente; o plugin `agentic-skills`.
+The siblings `<agentic-design>`, `<agentic-code-review>` and `<agentic-architecture>` are the first
+folder with `SKILL.md` among: `$AGENTIC_DESIGN_DIR`, `$AGENTIC_CODE_REVIEW_DIR` or
+`$AGENTIC_ARCHITECTURE_DIR`, if set; the folder beside this skill (the usual case); the agent's
+skills folder; the `agentic-skills` plugin.
 
-## 1. Ler só o necessário
+## 1. Read only what you need
 
-Lê o brief inteiro, o `AGENTS.md`, o brief da área que o brief nomeia, os ficheiros que vais mudar
-e quem os chama. Lê mais só quando uma pergunta concreta o pede.
+Read the whole brief, `AGENTS.md`, the area brief named by the brief, the files you will change and
+their callers. Read more only when a concrete question calls for it.
 
-Feito quando consegues nomear o ponto de entrada que o teste vai exercitar e cada ficheiro que vais
-mudar.
+Done when you can name the entry point the test will exercise and every file you will change.
 
-## 2. Pensar antes de escrever
+## 2. Think before writing
 
-Antes de mudar código, escreve em poucas linhas:
+Before changing code, write a few lines:
 
-- as **suposições** que fazes;
-- o **critério de sucesso** como comando: `<comando>` fica verde;
-- o **plano**, em passos, cada um com a sua verificação.
+- your **assumptions**;
+- the **success criterion** as a command: `<command>` goes green;
+- the **plan**, in steps, each with its verification.
 
-Se o brief admite duas leituras que dão comportamentos diferentes, ou pede algo que o código
-desmente, devolve `bloqueado: <a pergunta exata>` com a tua recomendação: escolher em silêncio uma
-das leituras é o defeito que este passo evita. Uma dúvida só de tamanho (fazer mais ou menos do
-que a tarefa pede) não pára: segue a regra do brief, se a tiver; senão faz a leitura menor e
-reversível e regista-a no handoff. Se vês uma solução mais simples do que a pedida, di-lo no
-handoff e faz a pedida.
+If the brief admits two readings with different behaviors, or asks for something the code contradicts,
+return `blocked: <the exact question>` with your recommendation: silently choosing a reading is the
+defect this step prevents. A question only about size (doing more or less than requested) does not
+stop you: follow the brief's rule if it has one; otherwise choose the smaller, reversible reading and
+record it in the handoff. If you see a simpler solution than requested, mention it in the handoff and
+implement the requested one.
 
-Feito quando o critério de sucesso é um comando que podes correr.
+Done when the success criterion is a command you can run.
 
-## 3. Teste primeiro
+## 3. Test first
 
-Escreve um teste que **falha na base**, na costura pública mais próxima do comportamento (o ponto
-de entrada que um utilizador ou outro módulo usa), e não nos internos. O valor esperado vem de uma
-fonte independente (o brief, um exemplo trabalhado, a spec), nunca do mesmo cálculo que o código
-faz. Corre-o e vê-o vermelho pela razão certa. Costura, interface e módulo, aqui e no brief, têm o
-sentido de `<agentic-architecture>/references/vocabulario.md`.
+Write a test that **fails on the base**, at the nearest public seam to the behavior (the entry point
+a user or another module uses), rather than the internals. The expected value comes from an independent
+source (the brief, a worked example, the spec), never the same calculation the code performs. Run it
+and see it red for the right reason. Seam, interface and module, here and in the brief, mean what
+`<agentic-architecture>/references/vocabulary.md` defines.
 
-Trabalha em **cortes verticais**: um teste, a implementação mínima que o põe verde, depois o
-seguinte. O que é um bom teste, os maus a evitar, os tempos limite e os processos filhos, e como
-provar um vermelho forçado: `references/testes.md`. Numa tarefa de refactor (a estrutura muda, o
-comportamento não), não há vermelho novo: segue «Refactor» de `references/testes.md`, que tem o seu
-critério de feito.
+Work in **vertical slices**: one test, the minimum implementation to turn it green, then the next.
+Good tests, bad ones to avoid, timeouts and child processes, and proving a forced red:
+`references/tests.md`. In a refactor task (structure changes, behavior does not), there is no new red:
+follow “Refactor” in `references/tests.md`, with its own completion criterion.
 
-Feito quando o teste corre vermelho e a falha mostra o comportamento em falta, e não um erro de
-setup.
+Done when the test runs red and the failure shows the missing behavior rather than a setup error.
 
-## 4. Mudança mínima
+## 4. Smallest change
 
-Escreve o mínimo que põe o teste verde, ao jeito do código à volta: os mesmos nomes, idiomas,
-padrões e densidade de comentários. Cada linha mudada responde ao brief. Remove o que as tuas
-mudanças deixaram sem uso; o código morto que já lá estava fica, e menciona-o no handoff.
+Write the minimum that turns the test green, in the surrounding code's style: the same naming,
+idioms, patterns and comment density. Every changed line answers the brief. Remove what your changes
+left unused; leave pre-existing dead code and mention it in the handoff.
 
-Feito quando cada linha do diff se explica pelo brief.
+Done when the brief explains every line of the diff.
 
-## 5. Verde com prova
+## 5. Green with proof
 
-Corre o teste novo, os testes da área e o typecheck, com os comandos do brief ou do `AGENTS.md`.
-Guarda cada comando e o seu resultado. Um teste saltado, uma base de dados em falta ou um setup que
-devolve vazio contam como **vermelho**. Mede o código de saída do próprio comando, sem pipe. As
-regras de prova do projeto, quando existem, ganham a esta lista.
+Run the new test, the area tests and typecheck, using the brief's or `AGENTS.md`'s commands.
+Save each command and result. A skipped test, missing database or setup returning empty counts as
+**red**. Measure the command's own exit code, without a pipe. Project proof rules, when present,
+override this list.
 
-**Duas falhas no mesmo gate.** Se duas tentativas falham o mesmo gate (o mesmo teste, o
-typecheck, um hook) pela mesma razão, não tentes a terceira com a mesma ideia. Escreve numa frase
-a premissa que as duas partilham, o que ambas davam por certo, e procura no código, no teste e no
-brief o que a desmente. Se ela cai e a abordagem nova cabe no brief, segue e di-lo no handoff; se
-não cabe, ou não encontras a premissa, devolve `bloqueado: premissa <a frase> — <o que viste>`,
-com a tua recomendação.
+**Two failures at the same gate.** If two attempts fail the same gate (the same test, typecheck,
+a hook) for the same reason, do not try a third with the same idea. Write one sentence stating the
+premise both share, what both took for granted, and look in code, test and brief for what disproves
+it. If it falls and the new approach fits the brief, proceed and say so in the handoff; if it does
+not fit, or you cannot find the premise, return `blocked: premise <the sentence> — <what you saw>`,
+with your recommendation.
 
-**Código, spec ou teste.** Um vermelho que não sai pode ser do código, da spec ou do teste.
-Antes de devolver `spec-em-conflito`, escreve as três hipóteses, cada uma com a prova que a
-confirma ou desmente: o código (a linha que faz outra coisa), a spec (a frase ambígua, a que
-contradiz outra, ou o código que a desmente) e o teste (a asserção que não segue a spec, ou o setup
-que não chega ao caminho). O código errado corrige-se. Um teste teu que está errado corrige-se e
-diz-se no handoff. A spec e os testes do projeto (um oráculo, uma guarda) não se mudam para ficar
-verde: aí é `spec-em-conflito`, com as três hipóteses e as provas.
+**Code, spec or test.** A persistent red can come from code, spec or test. Before returning
+`spec-conflict`, write all three hypotheses, each with evidence confirming or disproving it: code
+(the line doing something else), spec (the ambiguous sentence, one contradicting another, or code
+contradicting it), and test (the assertion not following the spec, or setup not reaching the path).
+Fix wrong code. Fix your own wrong test and say so in the handoff. Do not change the spec or project
+tests (an oracle, a guard) to make green: that is `spec-conflict`, with all three hypotheses and proof.
 
-Feito quando tens, para cada comando, o output verde guardado.
+Done when you have saved green output for each command.
 
-## 6. Os gostos do utilizador
+## 6. User preferences
 
-Aplica ao que tocaste os gostos do projeto, cada um na sua fonte:
+Apply the project's preferences to what you touched, each from its source:
 
-- código e texto do produto: `references/gostos.md`;
-- interface: o design system do projeto (o `AGENTS.md` diz qual) e
-  `<agentic-design>/references/ui-sem-slop.md`, nas secções do modo «construir»
+- code and product text: `references/preferences.md`;
+- interface: the project's design system (`AGENTS.md` says which) and
+  `<agentic-design>/references/ui-without-slop.md`, in the “build” mode sections
   (`<agentic-design>/SKILL.md` §5);
-- o que é só deste projeto (vocabulário, stack): o `AGENTS.md`, que ganha aos outros dois.
+- project-specific matters (vocabulary, stack): `AGENTS.md`, which overrides both.
 
-Feito quando o diff cumpre cada gosto destas fontes que se aplica ao que mudaste.
+Done when the diff meets every applicable preference from these sources.
 
-## 7. Commit por causa
+## 7. Commit per cause
 
-Um commit por causa, com `git add <caminhos>`. A mensagem diz o porquê e a prova. Corre os hooks
-do repo e corrige o que reprovarem. Segue as regras de git do `AGENTS.md` (trailers, ramos,
-comandos proibidos).
+One commit per cause, with `git add <paths>`. The message says why and gives proof. Run repo hooks
+and fix their failures. Follow `AGENTS.md`'s Git rules (trailers, branches, prohibited commands).
 
-Os commits ficam no teu ramo; quem orquestra faz o push e integra, depois da revisão. Push, deploy
-ou acesso à produção, só quando a linha `ordem do humano:` do brief o pede, e só nessa tarefa. É a
-mesma regra para um subagente Claude e para um job Codex. Quando o lançador do job regista a ordem
-e a junta ao prompt num bloco próprio, vale a ordem desse bloco, e só ela. Nunca `--no-verify`,
-nunca reescrever o histórico (rebase, amend de um commit já partilhado, force-push).
+Commits stay on your branch; the orchestrator pushes and integrates after review. Push, deploy or
+production access only when the brief's `human order:` line requests it, and only for that task.
+This is the same rule for a Claude subagent and a Codex job. When the job launcher records the order
+and adds it to the prompt in a dedicated block, only that block's order counts. Never `--no-verify`,
+never rewrite history (rebase, amending an already shared commit, force-push).
 
-Feito quando `git status --short` só mostra o que não é teu e `git show --stat` bate com a
-mensagem.
+Done when `git status --short` shows only work that is not yours and `git show --stat` matches the message.
 
-## 8. Entregar
+## 8. Deliver
 
-A última mensagem é o handoff: SHAs completos da base e do HEAD, ficheiros, comandos e
-resultados, o que saltou e porquê, limitações e o que ficou por fazer; se o brief traz o formato
-do relatório, segue-o. A última linha é o estado,
-no formato de saídas do `AGENTS.md`; sem ele: `estado: concluido`, `estado: bloqueado: <motivo>`
-ou `estado: spec-em-conflito: <o quê>` (depois de «Código, spec ou teste», passo 5).
+The final message is the handoff: full base and HEAD SHAs, files, commands and results, what was
+skipped and why, limitations and unfinished work; follow the brief's report format when provided.
+The last line is the status, in `AGENTS.md`'s output format; without it: `status: done`,
+`status: blocked: <reason>` or `status: spec-conflict: <what>` (after “Code, spec or test”, step 5).
 
-Bloqueado a meio: commita o que está verde e entrega com o bloqueio; um teste vermelho nunca entra
-num commit para marcar o que falta.
+Blocked midway: commit what is green and hand off with the blocker; never commit a red test to
+mark missing work.
 
-Feito quando a última linha é o estado.
+Done when the last line is the status.
 
-## Noutros agentes
+## In other agents
 
-No Codex: `$agentic-implement`, ou o brief diz «carrega a agentic-implement». Quem lança o agente
-(a `agentic-fix`, a `agentic-feature`) escolhe o nível, o modelo e o agente por
-`references/escolher-o-agente.md`. Origem do método e licenças: `references/origem.md`.
+In Codex: `$agentic-implement`, or the brief says “load agentic-implement”. The launcher
+(`agentic-fix`, `agentic-feature`) chooses level, model and agent using
+`references/choosing-the-agent.md`. Method origin and licenses: `references/origin.md`.

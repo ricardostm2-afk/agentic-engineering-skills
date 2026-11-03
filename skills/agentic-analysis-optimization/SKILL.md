@@ -1,52 +1,52 @@
 ---
 name: agentic-analysis-optimization
-description: Otimizar pipelines de análise e ferramentas de agentes quando há custos demonstrados de latência, CPU, memória, subprocessos ou contexto; desenhar cache, reutilização e consultas preservando correção e evidência. Auditoria de suites e CI pertence à agentic-ci-audit; não é uma otimização genérica por intuição.
+description: Optimize analysis pipelines and agent tools when latency, CPU, memory, subprocess or context costs are demonstrated; design caching, reuse and queries while preserving correctness and evidence. Suite and CI audits belong to agentic-ci-audit; not generic optimization by intuition.
 ---
 
-# Otimização de análises
+# Analysis optimization
 
-Encontrar trabalho desnecessário concreto, corrigi-lo no seu dono e comparar investigações concluídas equivalentes. Decidir, com medições, não alterar uma implementação também é um resultado útil.
+Find concrete unnecessary work, fix it at its owner and compare equivalent completed investigations. Deciding through measurement to leave an implementation unchanged is also a useful outcome.
 
-Adaptada de REA, sob MIT; ver [origem e atualização](references/origem.md). Não requer REA. Ler [o caso Kuna](references/kuna-case-study.md) quando um exemplo medido ajudar a escolher reutilização; os números são históricos, não uma promessa para outro provider ou projeto.
+Adapted from REA, under MIT; see [origin and updates](references/origin.md). Does not require REA. Read [the Kuna case](references/kuna-case-study.md) when a measured example helps choose reuse; the numbers are historical, not a promise for another provider or project.
 
-## Fixar tarefa e oráculo
+## Pin the task and oracle
 
-Ler os contratos e comandos atuais do projeto. A skill não concede autorização para executar alvos, instalar ferramentas, publicar ou integrar.
+Read the project's current contracts and commands. This skill does not grant authorization to execute targets, install tools, publish or integrate.
 
-Descrever a tarefa completa do utilizador: factos e relações necessários, detalhe, acesso a fontes e incógnitas relevantes. Escolher um artefacto real representativo e um caso pequeno/vazio. Registar revisão, digest do alvo, identidade/versão do produtor, opções, host e entrypoint. Isolar alterações sem perturbar trabalho alheio.
+Describe the user's complete task: required facts and relationships, detail, source access and relevant unknowns. Choose a representative real artifact and a small/empty case. Record revision, target digest, producer identity/version, options, host and entrypoint. Isolate changes without disturbing others' work.
 
-Estabelecer um oráculo independente: expectativas de uma fixture construída a partir de fontes, bytes mapeados independentemente ou produtor real com verificação da interpretação. Dois wrappers do mesmo decoder errado não provam correção. Preservar identidade, alternativas com a mesma chave, relações não resolvidas, cobertura e ligação às fontes. Um resultado vazio só prova ausência dentro do âmbito realmente examinado.
+Establish an independent oracle: expectations from a fixture built from sources, independently mapped bytes or a real producer with interpretation checks. Two wrappers around the same wrong decoder do not prove correctness. Preserve identity, same-key alternatives, unresolved relationships, coverage and source linkage. An empty result proves absence only within the scope actually examined.
 
-## Encontrar o primeiro trabalho desnecessário
+## Find the first unnecessary work
 
-Seguir uma tarefa pública CLI/MCP/API até ao produtor. Medir admissão/identidade, análise, descodificação, lookup, projeção, serialização, retenção e cleanup onde forem relevantes. Incluir descoberta de catálogo e chamadas adicionais que pesem na conclusão da tarefa.
+Follow a public CLI/MCP/API task to the producer. Measure admission/identity, analysis, decoding, lookup, projection, serialization, retention and cleanup where relevant. Include catalog discovery and extra calls that affect task completion.
 
-| Custo observado | Correção candidata | Condição a demonstrar |
+| Observed cost | Candidate fix | Condition to demonstrate |
 | --- | --- | --- |
-| Varrimentos repetidos de factos validados | Reusar ordenação/lookup existente | Identidade/ordem estabelecidas e todas as alternativas retidas |
-| Trabalho equivalente no produtor | Partilhar resultado ou trabalho em curso | Inputs, frescura, duração e resultado por consumidor explícitos |
-| Relatório completo para poucos factos | Antecipar seleção/projeção | Factos/evidência completos continuam acessíveis e cobertura é declarada |
-| Buffers temporários grandes | Descodificar incrementalmente | Documento admitido integralmente validado; retenção também contabilizada |
-| Muitas leituras homogéneas | Partilhar admissão ou fazer batch | Identidade, ordem necessária e falha individual preservadas |
+| Repeated scans of validated facts | Reuse existing ordering/lookup | Identity/order established and all alternatives retained |
+| Equivalent producer work | Share result or in-flight work | Inputs, freshness, lifetime and per-consumer result explicit |
+| Full report for a few facts | Move selection/projection earlier | Full facts/evidence remain accessible and coverage is declared |
+| Large temporary buffers | Decode incrementally | Entire admitted document validated; retention also accounted for |
+| Many homogeneous reads | Share admission or batch | Identity, required ordering and individual failure preserved |
 
-Uma cache, índice, endpoint batch ou camada de orquestração precisa de trabalho removido e custo de manutenção identificados. Projetar depois de materializar tudo pode reduzir output sem melhorar tempo nem memória. Corrigir factos ausentes/errados antes de comparar velocidades contra um workflow mais completo.
+A cache, index, batch endpoint or orchestration layer needs identified removed work and maintenance cost. Projecting after materializing everything may reduce output without improving time or memory. Fix missing/wrong facts before comparing speeds against a more complete workflow.
 
-## Uma interpretação, duração de reutilização explícita
+## One interpretation, explicit reuse lifetime
 
-Validar e normalizar no produtor; consumidores consultam essa representação, em vez de reconstituir relações a partir do relatório bruto. Separar identidade de formatação.
+Validate and normalize at the producer; consumers query that representation rather than reconstructing relationships from the raw report. Separate identity from formatting.
 
-Para cada cache: chave, dono, invalidação, tamanho retido e duração. Incluir bytes do alvo, conteúdo/versão do produtor, opções, arquitetura/mapeamento e schema/parser quando afetem o resultado. Revalidar estado vivo antes de chamar atual a uma observação guardada. Recusas só se guardam quando determinísticas para essa chave; falhas transitórias/parciais/canceladas têm política de retry própria.
+For every cache: key, owner, invalidation, retained size and lifetime. Include target bytes, producer content/version, options, architecture/mapping and schema/parser when they affect results. Revalidate live state before calling a stored observation current. Cache rejections only when deterministic for that key; transient/partial/cancelled failures need their own retry policy.
 
-Um consumidor cancelado não invalida um par bem-sucedido. Preservar falha do produtor e motivo por consumidor. Manter ownership e contabilização enquanto o trabalho/cleanup não terminarem; uma falha de cleanup não apaga observações concluídas. Exercitar invalidação, consumidores concorrentes, cancelamento do último, fecho e retry de cleanup quando esses caminhos mudam.
+A cancelled consumer does not invalidate a successful peer. Preserve producer failure and per-consumer reason. Maintain ownership and accounting until work/cleanup finish; a cleanup failure does not erase completed observations. Exercise invalidation, concurrent consumers, cancellation of the last consumer, closure and cleanup retries when those paths change.
 
-Limitar a família de processos e o estado retido, não apenas o heap do pai ou número de workers. Contar expansão de descodificação/serialização antes da alocação. Escolher limites pelo host e workload; parar antes de OOM e verificar cleanup apenas dos recursos próprios. Um trabalho parado por um limite está incompleto; streaming não autoriza retenção ilimitada nem sucesso parcial disfarçado.
+Bound the process family and retained state, not just parent heap or worker count. Count decoding/serialization expansion before allocation. Choose limits for the host and workload; stop before OOM and verify cleanup only of owned resources. Work stopped by a limit is incomplete; streaming does not authorize unbounded retention or disguised partial success.
 
-## Comparar conclusões equivalentes
+## Compare equivalent completions
 
-Executar o workflow público real antes/depois com inputs, resultados, cobertura e semântica de evidência equivalentes. Incluir casos pequenos, distinguir sessões frias, caches do runtime e do sistema operativo; alternar/repetir quando a variância muda a decisão. Um engine falso não qualifica o provider real.
+Run the real public workflow before/after with equivalent inputs, results, coverage and evidence semantics. Include small cases, distinguish cold sessions, runtime caches and OS caches; alternate/repeat when variance changes the decision. A fake engine does not qualify the real provider.
 
-Reportar resultado, tempos por fase, tempo total/CPU, pico da família de processos e método de contabilização, paragens por limites e cleanup. RSS somado pode contar memória partilhada mais de uma vez. Verificar saída do payload e do profiler; reter tentativas falhadas e custos não medidos.
+Report results, phase timings, total time/CPU, process-family peak and accounting method, limit stops and cleanup. Summed RSS may count shared memory more than once. Check payload and profiler exit statuses; retain failed attempts and unmeasured costs.
 
-Para alegar redução de tokens, contar descoberta/schemas, argumentos, respostas, retries e continuações necessários para concluir a tarefa. Separar estimativas de tokenizer de uso real do modelo. JSON menor não prova menos tokens nem melhor investigação.
+To claim token reduction, count discovery/schemas, arguments, responses, retries and continuations needed to complete the task. Separate tokenizer estimates from actual model usage. Smaller JSON proves neither fewer tokens nor a better investigation.
 
-Fechar com gargalo, mudança no dono, semântica preservada, checks executados, medições e limites. Distinguir experiência local de código integrado/publicado. Parar quando o gargalo demonstrado estiver resolvido ou o benefício seguinte for especulativo.
+Close with the bottleneck, change at its owner, preserved semantics, checks run, measurements and limits. Distinguish local experiment from integrated/published code. Stop when the demonstrated bottleneck is resolved or further benefit is speculative.

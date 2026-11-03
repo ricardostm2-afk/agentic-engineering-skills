@@ -1,11 +1,11 @@
 <!--
-Modelo da skill agentic-project. As regras vivem em AGENTS.md (fonte única, lida por todos os
-agentes); aqui só o import e o que for específico do Claude Code. Apaga este comentário.
+agentic-project template. Rules live in AGENTS.md (single source, read by every agent);
+keep only the import and Claude Code specifics here. Remove this comment.
 -->
 @AGENTS.md
 
-## Só para o Claude Code
-- Para uma feature nova usa a skill `agentic-feature`; para retomar o arranque do projeto,
-  `agentic-project`.
-- Subagentes de implementação recebem um brief fechado e trabalham num worktree próprio.
-{{Skills ou comandos do projeto (ex.: /ship, /deploy) e quando usar cada um.}}
+## Claude Code only
+- For a new feature use `agentic-feature`; to resume project setup, use `agentic-project`.
+- Implementation subagents receive a closed brief and work in their own worktree.
+- Project documents follow the language declared in `AGENTS.md`, or English by default.
+{{Project skills or commands (e.g. /ship, /deploy) and when to use each.}}

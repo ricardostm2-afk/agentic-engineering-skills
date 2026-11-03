@@ -13,11 +13,9 @@ Codex, Cursor, Gemini CLI, GitHub Copilot and OpenCode.
 - **Free.** MIT licensed. The few pieces adapted from other open-source projects keep their licences
   and credits (see [CREDITS.md](CREDITS.md)).
 
-> **Language.** The skills themselves (the method, the prompts, the templates) are written in European
-> Portuguese, and so is the text they have agents produce (specs, `AGENTS.md`, reports) unless your
-> project's `AGENTS.md` declares another language, which the skills read first. This README, the
-> manifests and the licence are in English. Translations of the skills are welcome. The installers
-> print Portuguese messages.
+> **Language.** The skills, prompts, templates and installers are in English. The text agents produce
+> (specs, `AGENTS.md`, reports and pages) follows the language declared in the project's `AGENTS.md`,
+> with English as the default.
 
 ## Try it in two minutes
 
@@ -35,30 +33,30 @@ Open a new session in any repository and start with something that only reads:
 - "review this branch": `agentic-code-review` reviews the branch against its base with independent
   lenses and reports each finding with `file:line`.
 
-You can ask in English; what the skills write (reports, specs, pages) is in European Portuguese unless your
-project's `AGENTS.md` declares another language. When you want to build: "set up this repo for agents"
+What the skills write (reports, specs, pages) follows your project's `AGENTS.md` language, with English
+as the default. When you want to build: "set up this repo for agents"
 (`agentic-project`), then "build this feature" (`agentic-feature`).
 
 ## What is inside
 
 | Skill | What it does | Ask for it with | Origin |
 |---|---|---|---|
-| `agentic-project` | Prepares a project (new or existing) for agents working in parallel and safely. Ten phases: prerequisites checked, decisions recorded, architecture chosen with dated research, a git protocol for agents (short branches, one worktree per agent, hooks, an area map), Spec Kit, `AGENTS.md` and `CLAUDE.md`, a small scrum board, the first backlog and a `REVIEW.md` that says what counts as a failure in this project | «quero começar um projeto: …», «prepara este repo para agentes», "set up this repo for agents" | original |
-| `agentic-feature` | Takes a feature from request to integration. Risk triage (Standard, Complete, Too big; fixes go to `agentic-fix`), reading the code, research on what is current, a grill on what only the human can decide, real UI variants through `agentic-design`, a spec, one brief per lane for Claude or Codex agents using `agentic-implement`, independent review through `agentic-code-review` and measured proof | «quero desenvolver a feature …», «pega na próxima do backlog», "build this feature" | original |
-| `agentic-design` | Owns the UI method. Questions about the screen, 2–3 structurally different variants with screenshots, building inside the project's design system, blocking rules against the generic "AI look" (B1–B24) with a mechanical detector, and proof in the browser with an honest status. It carries no brand: looks come from each project's `DESIGN.md` | «faz variantes deste ecrã», «revê a UI», "redesign this screen" | original; the interaction mechanisms in `references/mecanismos.md` are rewritten from [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) |
-| `agentic-fix` | Fixes what exists and is wrong. One question only if the report is ambiguous, a red test that reproduces it, root-cause diagnosis, the whole class of the defect fixed, red then green, review with fresh context, and the defect that escaped becomes an evaluation case | «está partido», «corrige isto», "fix this" | original; the red-first diagnosis adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `agentic-project` | Prepares a project (new or existing) for agents working in parallel and safely. Ten phases: prerequisites checked, decisions recorded, architecture chosen with dated research, a git protocol for agents (short branches, one worktree per agent, hooks, an area map), Spec Kit, `AGENTS.md` and `CLAUDE.md`, a small scrum board, the first backlog and a `REVIEW.md` that says what counts as a failure in this project | "start a project: …", "prepare this repo for agents", "set up this repo for agents" | original |
+| `agentic-feature` | Takes a feature from request to integration. Risk triage (Standard, Complete, Too big; fixes go to `agentic-fix`), reading the code, research on what is current, a grill on what only the human can decide, real UI variants through `agentic-design`, a spec, one brief per lane for Claude or Codex agents using `agentic-implement`, independent review through `agentic-code-review` and measured proof | "develop this feature …", "take the next backlog item", "build this feature" | original |
+| `agentic-design` | Owns the UI method. Questions about the screen, 2–3 structurally different variants with screenshots, building inside the project's design system, blocking rules against the generic "AI look" (B1–B24) with a mechanical detector, and proof in the browser with an honest status. It carries no brand: looks come from each project's `DESIGN.md` | "make variants of this screen", "review the UI", "redesign this screen" | original; the interaction mechanisms in `references/mechanisms.md` are rewritten from [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) |
+| `agentic-fix` | Fixes what exists and is wrong. One question only if the report is ambiguous, a red test that reproduces it, root-cause diagnosis, the whole class of the defect fixed, red then green, review with fresh context, and the defect that escaped becomes an evaluation case | "this is broken", "fix this" | original; the red-first diagnosis adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `agentic-implement` | The skill of the agent that writes the code (Claude or Codex). From a closed brief to a commit: read only what is needed, state assumptions, failing test first, minimal change in the style of the surrounding code, green with evidence, one commit per cause, hand-off with a status line | loaded by the briefs that `agentic-feature` and `agentic-fix` write | original; the test-first discipline adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `agentic-code-review` | Reviews a diff, a branch or a PR, alone or called by `agentic-feature`. Level by risk, a panel of independent lenses in a throw-away worktree, consolidation, confirmation of the serious findings, a report whose first line is validated by a script, limited rounds, and lessons and evaluation cases to measure the reviewer | «revê este ramo», «code review», "review this branch" | original |
-| `agentic-architecture` | Improves the architecture of code that already exists: shallow modules where the code changes most, with measured proof, a visual report, a grill on the chosen candidate and execution through `agentic-feature`. Carries the vocabulary of modules and seams the other skills use | «melhora a arquitetura», «módulos rasos», "improve the codebase architecture" | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `agentic-explain` | Explains code, or any other topic from sources it reads, at the level of whoever asks. Three calibration questions (the goal, familiarity with concepts found in the material, the depth), three profiles (functional with metaphors; intermediate with parts and a glossary; advanced with details, risks and sync or async calls), and one page with the explanation beside 3D views chosen from a catalogue (graph, layers, sequence, states, timeline) or a free three.js scene in a fixed frame, generated from a template and validated data. It only reads: in code, debugging goes to `agentic-fix`, changes to `agentic-architecture` or `agentic-feature` | «explica isto», «como funciona X», "explain this" | original |
-| `agentic-ci-audit` | Audits which regressions the CI checks really catch and which work can leave without losing that protection (test discovery, false greens, fixtures, caches, cost) | «audita o CI» | [morluto/rea](https://github.com/morluto/rea) |
-| `agentic-tool-design` | Designs tools for agents and their contracts: identity, coverage, effects and lifecycle | «desenha esta ferramenta para agentes» | [morluto/rea](https://github.com/morluto/rea) |
-| `agentic-analysis-optimization` | Improves methods and costs of analysis and production bottlenecks: reuse, cancellation, resources, and how to measure them | «otimiza esta análise» | [morluto/rea](https://github.com/morluto/rea) |
+| `agentic-code-review` | Reviews a diff, a branch or a PR, alone or called by `agentic-feature`. Level by risk, a panel of independent lenses in a throw-away worktree, consolidation, confirmation of the serious findings, a report whose first line is validated by a script, limited rounds, and lessons and evaluation cases to measure the reviewer | "review this branch", "code review" | original |
+| `agentic-architecture` | Improves the architecture of code that already exists: shallow modules where the code changes most, with measured proof, a visual report, a grill on the chosen candidate and execution through `agentic-feature`. Carries the vocabulary of modules and seams the other skills use | "improve the architecture", "shallow modules", "improve the codebase architecture" | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `agentic-explain` | Explains code, or any other topic from sources it reads, at the level of whoever asks. Three calibration questions (the goal, familiarity with concepts found in the material, the depth), three profiles (functional with metaphors; intermediate with parts and a glossary; advanced with details, risks and sync or async calls), and one page with the explanation beside 3D views chosen from a catalogue (graph, layers, sequence, states, timeline) or a free three.js scene in a fixed frame, generated from a template and validated data. It only reads: in code, debugging goes to `agentic-fix`, changes to `agentic-architecture` or `agentic-feature` | "explain this", "how does X work" | original |
+| `agentic-ci-audit` | Audits which regressions the CI checks really catch and which work can leave without losing that protection (test discovery, false greens, fixtures, caches, cost) | "audit the CI" | [morluto/rea](https://github.com/morluto/rea) |
+| `agentic-tool-design` | Designs tools for agents and their contracts: identity, coverage, effects and lifecycle | "design this tool for agents" | [morluto/rea](https://github.com/morluto/rea) |
+| `agentic-analysis-optimization` | Improves methods and costs of analysis and production bottlenecks: reuse, cancellation, resources, and how to measure them | "optimize this analysis" | [morluto/rea](https://github.com/morluto/rea) |
 
-Rows with a link adapt material from another open-source project, in Portuguese: the whole skill, or for
+Rows with a link adapt material from another open-source project, in English: the whole skill, or for
 `agentic-fix` and `agentic-implement` only the files that [UPSTREAMS.json](UPSTREAMS.json) lists, and for `agentic-design` only the
 interaction mechanisms ([CREDITS.md](CREDITS.md)). Each one
-keeps its own `references/origem.md` and licence file. Everything else is original to this repository.
+keeps its own `references/origin.md` and licence file. Everything else is original to this repository.
 
 ## How they fit together
 
@@ -88,7 +86,7 @@ copies or as links.
 Requirements: **git** and **Node.js >= 20** (the skills' scripts and the tests are Node). Optional:
 the GitHub CLI (`gh`), `gitleaks` (the pre-commit hook skips secret scanning without it), and `uv` with
 Spec Kit 1.2.0 (without it the skills use a lighter spec).
-`bash skills/agentic-project/scripts/verificar-ambiente.sh` shows what is missing (exit 0 = the
+`bash skills/agentic-project/scripts/check-environment.sh` shows what is missing (exit 0 = the
 essentials are there).
 
 ### Claude Code (recommended): plugin
@@ -120,10 +118,10 @@ list every skill twice.
 git clone https://github.com/ricardostm2-afk/agentic-engineering-skills.git ~/agentic-skills
 cd ~/agentic-skills
 ./install.sh                     # dry run: shows what it would do, per agent
-./install.sh --aplicar --ligar   # installs as links to the clone (update with git pull)
+./install.sh --apply --link   # installs as links to the clone (update with git pull)
 ~~~
 
-With the Claude Code plugin already installed, add `--agente codex` (or the agents you use): by default the
+With the Claude Code plugin already installed, add `--agent codex` (or the agents you use): by default the
 installer also installs into `~/.claude/skills` when that folder exists, and Claude Code would then list
 every skill twice.
 
@@ -133,24 +131,24 @@ every skill twice.
 git clone https://github.com/ricardostm2-afk/agentic-engineering-skills.git $HOME\agentic-skills
 cd $HOME\agentic-skills
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1            # dry run
-powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Aplicar -Ligar
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Apply -Link
 ~~~
 
 Written to run in Windows PowerShell 5.1 and in PowerShell 7 (`pwsh`); it was verified on PowerShell 7 only.
-With `-Ligar` it creates directory junctions, which do not need administrator rights. Inside WSL you can
+With `-Link` it creates directory junctions, which do not need administrator rights. Inside WSL you can
 use `install.sh` instead.
 
-Both installers are a **dry run by default**; nothing changes until you add `--aplicar` (`-Aplicar`).
+Both installers are a **dry run by default**; nothing changes until you add `--apply` (`-Apply`).
 
 | `install.sh` | `install.ps1` | Effect |
 |---|---|---|
 | (none) | (none) | dry run; nothing changes |
-| `--aplicar` | `-Aplicar` | install |
-| `--agente claude\|codex\|codex-legado\|cursor\|gemini\|copilot\|opencode\|todos` | `-Agente …` | choose agents (repeatable or comma-separated). By default: the agents whose config folder exists (`~/.claude`, `~/.codex`, `~/.cursor`, `~/.gemini`, `~/.copilot`, `~/.config/opencode`). `codex-legado` is opt-in and not part of `todos` |
-| `--projeto <repo>` | `-Projeto <repo>` | install into that repository's skill folders instead of the user's |
-| `--ligar` | `-Ligar` | links to the clone instead of copies |
-| `--forcar` | `-Forcar` | replace a skill that already exists; the previous one moves to `~/.agentic-skills-backups/<date>/` |
-| `--agentes` | `-Agentes` | optional, Claude Code only: also copy the four agent definitions to `~/.claude/agents/` (`<repo>/.claude/agents/` with `--projeto`) and print an excerpt for your `CLAUDE.md`. It never overwrites a file that exists (not even with `--forcar`) and never edits your `CLAUDE.md`. See [Agents and models per task](#agents-and-models-per-task-optional) |
+| `--apply` | `-Apply` | install |
+| `--agent claude\|codex\|codex-legacy\|cursor\|gemini\|copilot\|opencode\|all` | `-Agent …` | choose agents (repeatable or comma-separated). By default: the agents whose config folder exists (`~/.claude`, `~/.codex`, `~/.cursor`, `~/.gemini`, `~/.copilot`, `~/.config/opencode`). `codex-legacy` is opt-in and not part of `all` |
+| `--project <repo>` | `-Project <repo>` | install into that repository's skill folders instead of the user's |
+| `--link` | `-Link` | links to the clone instead of copies |
+| `--force` | `-Force` | replace a skill that already exists; the previous one moves to `~/.agentic-skills-backups/<date>/` |
+| `--agents` | `-Agents` | optional, Claude Code only: also copy the four agent definitions to `~/.claude/agents/` (`<repo>/.claude/agents/` with `--project`) and print an excerpt for your `CLAUDE.md`. It never overwrites a file that exists (not even with `--force`) and never edits your `CLAUDE.md`. See [Agents and models per task](#agents-and-models-per-task-optional) |
 
 Where the skills go (the locations each agent documents, read in 2026-10):
 
@@ -158,20 +156,20 @@ Where the skills go (the locations each agent documents, read in 2026-10):
 |---|---|---|
 | Claude Code | `~/.claude/skills/` (or `$CLAUDE_CONFIG_DIR/skills/`) | `<repo>/.claude/skills/` |
 | Codex, Cursor, Gemini CLI, Copilot, OpenCode | `~/.agents/skills/` (one shared folder, one install for all) | `<repo>/.agents/skills/` |
-| Older Codex (`codex-legado`) | `~/.codex/skills/` | not applicable |
+| Older Codex (`codex-legacy`) | `~/.codex/skills/` | not applicable |
 
 Claude Code does not read `.agents/skills/` and Codex does not read `.claude/skills/`, hence two
-destinations. Without `--forcar` the installer never overwrites: a different skill that is already there
-(or a link when you ask for copies, and vice versa) stays as it is and `--aplicar` exits with code 1.
+destinations. Without `--force` the installer never overwrites: a different skill that is already there
+(or a link when you ask for copies, and vice versa) stays as it is and `--apply` exits with code 1.
 OpenCode, Cursor and Copilot in VS Code also read `~/.claude/skills/`: keep both folders at the same
-version (`--forcar` in both, or `--ligar`).
+version (`--force` in both, or `--link`).
 
 ### Other agents
 
 **Codex.** User skills live in `~/.agents/skills` (repository skills in `.agents/skills`), per the
-[Codex documentation](https://developers.openai.com/codex/skills). Use `install.sh --agente codex`, or copy
+[Codex documentation](https://developers.openai.com/codex/skills). Use `install.sh --agent codex`, or copy
 the eleven folders of `skills/` there. Invoke a skill with `$agentic-feature`. Codex versions that still read
-`~/.codex/skills` can be served with `--agente codex-legado`. `codex plugin marketplace add` and
+`~/.codex/skills` can be served with `--agent codex-legacy`. `codex plugin marketplace add` and
 `copilot plugin marketplace add` read `.claude-plugin/marketplace.json`; the install step after that was
 not verified, so prefer the installer.
 
@@ -231,63 +229,62 @@ Code) or `$agentic-feature` (Codex). A first session usually looks like this:
 4. Want a second opinion on a branch? Ask for `agentic-code-review`.
 
 Preferences every agent should follow (language, code and product-text tastes) have defaults in
-`skills/agentic-implement/references/gostos.md`. Put yours in your project's `AGENTS.md`, which wins over the
-skills: an edit to `gostos.md` only lasts in a clone or fork installed with `--ligar`, because a plugin update
-or `--forcar` replaces it.
+`skills/agentic-implement/references/preferences.md`. Put yours in your project's `AGENTS.md`, which wins over the
+skills: an edit to `preferences.md` only lasts in a clone or fork installed with `--link`, because a plugin update
+or `--force` replaces it.
 
 ## Agents and models per task (optional)
 
 Claude Code runs subagents. One you define in `~/.claude/agents` has a closed list of tools and starts
 with less context than the built-in `general-purpose` one. This repository ships four, as plain files you
-own and edit, in `skills/agentic-implement/assets/agentes/`:
+own and edit, in `skills/agentic-implement/assets/agents/`:
 
 | Agent | For | Tools | Default |
 |---|---|---|---|
-| `implementador` | code and tests for one lane of a closed brief; loads `agentic-implement` | Read, Edit, Write, Bash, Grep, Glob | `sonnet`, `xhigh` |
-| `implementador-ui` | the same for a UI lane; also loads `agentic-design` | the same | `sonnet`, `xhigh` |
-| `pesquisador` | read-only research, inventory or diagnosis | Read, Grep, Glob, WebFetch, WebSearch, Bash | `sonnet`, `xhigh` |
-| `revisor` | read-only review with fresh context, working from the brief of `agentic-code-review` | Read, Grep, Glob, Bash | `opus`, `medium` |
+| `implementer` | code and tests for one lane of a closed brief; loads `agentic-implement` | Read, Edit, Write, Bash, Grep, Glob | `sonnet`, `xhigh` |
+| `implementer-ui` | the same for a UI lane; also loads `agentic-design` | the same | `sonnet`, `xhigh` |
+| `researcher` | read-only research, inventory or diagnosis | Read, Grep, Glob, WebFetch, WebSearch, Bash | `sonnet`, `xhigh` |
+| `reviewer` | read-only review with fresh context, working from the brief of `agentic-code-review` | Read, Grep, Glob, Bash | `opus`, `medium` |
 
 The model and the effort in each file are a default for one task level, written next to a comment that
 says so: change those two lines to what your provider offers. The levels (short, well-defined, complex)
-and how to pick one are in `skills/agentic-implement/references/escolher-o-agente.md`. Beside the agents,
-`excerto-claude-md.md` is a short rule for your own `CLAUDE.md`: the strongest model orchestrates, each
+and how to pick one are in `skills/agentic-implement/references/choosing-the-agent.md`. Beside the agents,
+`claude-md-excerpt.md` is a short rule for your own `CLAUDE.md`: the strongest model orchestrates, each
 agent gets the model and effort of its task's level, and agents are launched by their defined type and
-not as `general-purpose`. It points to `escolher-o-agente.md` instead of repeating it. Everything in that
-folder is in Portuguese; `LEIA-ME.md` there explains how to change the models and the tools.
+not as `general-purpose`. It points to `choosing-the-agent.md` instead of repeating it. Everything in that
+folder is in English; `README.md` there explains how to change the models and the tools.
 
 The installers copy the agents only when you ask, and never edit your `CLAUDE.md`:
 
 ~~~bash
-./install.sh --agente claude --agentes            # dry run: lists the four files and prints the CLAUDE.md excerpt
-./install.sh --aplicar --agente claude --agentes  # copies them to ~/.claude/agents
+./install.sh --agent claude --agents            # dry run: lists the four files and prints the CLAUDE.md excerpt
+./install.sh --apply --agent claude --agents  # copies them to ~/.claude/agents
 ~~~
 
-(`-Agentes` in `install.ps1`; `--projeto <repo>` copies to `<repo>/.claude/agents`.) A file that is already
-there stays as it is, even with `--forcar`. The agents are always copied, never linked, because they are
+(`-Agents` in `install.ps1`; `--project <repo>` copies to `<repo>/.claude/agents`.) A file that is already
+there stays as it is, even with `--force`. The agents are always copied, never linked, because they are
 yours to edit. The excerpt is printed for you to paste where you want it.
 
 ## A memory system for Claude Code (optional)
 
-`memoria/` holds a guide, `GUIA.md` (in Portuguese), and an empty folder to copy, `memoria/modelo/`, for
+`memory/` holds a guide, `GUIDE.md`, and an empty folder to copy, `memory/template/`, for
 Claude Code's auto memory: a short `MEMORY.md` index that loads in every session, one sub-index per
 topic, and one fact per file with the frontmatter Claude Code uses (`name`, `description`,
 `metadata.type`) and `[[links]]` between related memories. The guide says when a memory moves up to the
-index or down to a sub-index, what must never go in (secrets, health data, personal data), and how to keep
+index or down to a sub-index, what must never go in (secrets, sensitive data, personal data), and how to keep
 the folder in a private git repository and point Claude Code at it with `autoMemoryDirectory`, so the
 same memory follows you to any PC. That setting applies to all the projects of your account: they share
 one folder, and the guide warns about it before it explains the steps. No memory is included and nothing
-installs the folder for you: copy `memoria/modelo` when you want it.
+installs the folder for you: copy `memory/template` when you want it.
 
 ## Limits
 
 - **Opinionated and not light.** The process is built for work that deserves a spec, a test and a review.
   The skills define a short path for small changes, but for a one-line edit just ask the agent directly.
-- **Portuguese text.** See the note at the top. The detector, the validators and the scripts are language
-  neutral.
+- **Language.** Agent output follows the project's `AGENTS.md`, defaulting to English. See the note above.
 - **Claude Code first.** Questions, sub-agents, worktrees and the web research use Claude Code tools. In
   the other agents the skills fall back (questions in the chat, lanes in sequence, no web board); each
-  `SKILL.md` has a "Noutros agentes" section that lists the changes. The scrum board falls back to
+  `SKILL.md` has an "In other agents" section that lists the changes. The scrum board falls back to
   `docs/backlog.md` when the Artifact tool is not there.
 - **Agents act.** The skills tell agents to run git, tests, scripts and to create worktrees. Everything is
   plain text: read it, and try it on a branch you can throw away first.
@@ -333,8 +330,8 @@ Claude Code's own validator; `tests/skills.test.mjs` checks it too, and that eve
 
 - Plugin: `claude plugin marketplace update agentic-skills` then `claude plugin update agentic-skills@agentic-skills`.
   The manifest has a `version`; bump it when you release, or installed copies will not update.
-- Links made with `--ligar`: `git pull` and you are done. Copies: `git pull` and
-  `./install.sh --aplicar --forcar` (the previous ones go to `~/.agentic-skills-backups/`).
+- Links made with `--link`: `git pull` and you are done. Copies: `git pull` and
+  `./install.sh --apply --force` (the previous ones go to `~/.agentic-skills-backups/`).
 - Uninstall: `claude plugin uninstall agentic-skills@agentic-skills`, or delete the eleven skill folders from
   the destinations above. The four agent files, if you copied them, are in `~/.claude/agents/`.
 

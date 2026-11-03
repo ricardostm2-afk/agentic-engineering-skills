@@ -1,47 +1,47 @@
 ---
 name: agentic-ci-audit
-description: Auditar suites e pipelines de CI para descobrir falsos verdes, falhas de descoberta, fixtures desatualizadas, caches incorretas e custos medidos. Usar numa auditoria de testes/CI ou otimização da suite; não substitui os testes normais de uma feature nem o diagnóstico de uma falha isolada.
+description: Audit test suites and CI pipelines to find false greens, discovery failures, stale fixtures, incorrect caches and measured costs. Use for a test/CI audit or suite optimization; does not replace normal feature tests or diagnosis of an isolated failure.
 ---
 
-# Auditoria de CI e testes
+# CI and test audit
 
-Determinar que regressões os checks realmente detetam e que trabalho pode sair sem perder essa proteção. Uma conclusão válida pode ser uma correção provada, uma recomendação ou deixar tudo como está.
+Determine which regressions checks actually detect and which work can be removed without losing that protection. A valid conclusion may be a proven fix, a recommendation or leaving everything as it is.
 
-Adaptada de REA, sob MIT. Consultar [origem e atualização](references/origem.md) para a revisão fixada, licença e diferenças locais. Não precisa de REA, MCP ou de um provider nativo.
+Adapted from REA, under MIT. See [origin and updates](references/origin.md) for the pinned revision, license and local differences. Does not require REA, MCP or a native provider.
 
-## Fixar o que foi executado
+## Pin what ran
 
-Ler as regras do projeto, a contribuição e os comandos atuais. Investigar não autoriza editar, publicar issues, fazer push ou integrar. Usar uma cópia/worktree isolada para mutações de controlo e preservar o trabalho alheio.
+Read project rules, contribution guidance and current commands. Investigation does not authorize editing, publishing issues, pushing or integrating. Use an isolated copy/worktree for control mutations and preserve others' work.
 
-Registar SHA da árvore e do workflow, alterações locais, comando, ferramenta, host, identidade dos testes, instrumentação e pré-requisitos. Uma execução antiga prova apenas a revisão executada; não atualizar a atribuição porque main avançou.
+Record tree and workflow SHAs, local changes, command, tool, host, test identities, instrumentation and prerequisites. An old run proves only the revision it ran; do not change its attribution because main advanced.
 
-Seguir o percurso completo: triggers, seletores de paths, matriz, dependências de jobs, actions reutilizáveis, scripts, descoberta de testes, subprocessos, relatórios e agregador final. Grafos de imports podem omitir scripts, dados gerados e registos dinâmicos. Verificar seleção positiva e negativa; um ficheiro ou relatório obrigatório ausente tem de falhar. Repetições intencionais por plataforma são cobertura, não necessariamente duplicação.
+Follow the entire path: triggers, path selectors, matrix, job dependencies, reusable actions, scripts, test discovery, subprocesses, reports and final aggregator. Import graphs can miss scripts, generated data and dynamic registrations. Check positive and negative selection; a missing required file or report must fail. Intentional repetition across platforms is coverage, not necessarily duplication.
 
-Usar tempos/falhas existentes para escolher famílias suspeitas. Executar a menor baseline que responde à pergunta; reservar a suite completa para uma auditoria ampla ou incerteza que os focados não resolvem. Não repetir uma suite inalterada por cada edição de documentação.
+Use existing timings/failures to choose suspect families. Run the smallest baseline that answers the question; reserve the full suite for a broad audit or uncertainty focused tests cannot resolve. Do not repeat an unchanged suite for every documentation edit.
 
-## Provar o defeito ou a proteção
+## Prove the defect or protection
 
-Para cada candidato, identificar comportamento esperado, produtor e consumidores. Construir uma reprodução pequena que chegue ao comportamento alegado:
+For each candidate, identify expected behavior, producer and consumers. Build a small reproduction that reaches the claimed behavior:
 
-- **Fixture divergente:** confrontar admissões, versões, respostas de protocolo e entrypoints reais. Preservar fixtures deliberadamente inválidas e a recusa que pretendem testar; procurar as outras instâncias da família.
-- **Verde suspeito:** injetar uma falha controlada ou perturbar a implementação numa cópia isolada. O teste/gate existente tem de a detetar. Um mock que se confirma a si próprio, um módulo abandonado ou um exit code perdido pode fabricar verde. Repor as mutações no fim.
-- **Setup partilhado ou poda:** mapear cada asserção distinta ao cenário retido, incluindo identidade, permissões, cancelamento, cleanup, limites e concorrência relevante. Menos casos ou um oráculo mais fraco não são aceleração.
-- **Integração externa:** separar produtor falso, fronteira real e serviço/engine real. Um browser simulado ou driver falso não prova o provider instalado. Distinguir skips permitidos de pré-requisitos obrigatórios não satisfeitos.
+- **Divergent fixture:** compare admission assumptions, versions, protocol responses and real entrypoints. Preserve deliberately invalid fixtures and the rejection they are meant to test; look for other instances in the family.
+- **Suspicious green:** inject a controlled failure or perturb the implementation in an isolated copy. The existing test/gate must detect it. A self-confirming mock, abandoned module or lost exit code can manufacture green. Restore mutations at the end.
+- **Shared setup or pruning:** map every distinct assertion to the retained scenario, including identity, permissions, cancellation, cleanup, limits and relevant concurrency. Fewer cases or a weaker oracle are not acceleration.
+- **External integration:** separate fake producer, real boundary and real service/engine. A simulated browser or fake driver does not prove the installed provider. Distinguish allowed skips from unmet mandatory prerequisites.
 
-Classificar como defeito reproduzido, custo demonstrado, hipótese ou evidência indisponível. Guardar comando/saída/estado de saída, resultado esperado, âmbito e explicações concorrentes. Uma falha na baseline pode ser pré-existente e ainda relevante para a auditoria; não a atribuir ao PR só por semelhança.
+Classify as reproduced defect, demonstrated cost, hypothesis or unavailable evidence. Keep command/output/exit status, expected result, scope and competing explanations. A baseline failure may be pre-existing and still relevant to the audit; do not attribute it to the PR merely by similarity.
 
-Repetir apenas para testar uma hipótese transitória concreta, conservando a primeira falha. Uma tentativa verde não estabelece causa nem correção.
+Repeat only to test a specific transient hypothesis, keeping the first failure. One green attempt establishes neither cause nor correction.
 
-## Medir e corrigir sem enfraquecer o gate
+## Measure and fix without weakening the gate
 
-Para cache, artefactos, agendamento, logs ou lentidão, ler [medição e CI](references/measurement-and-ci.md). Comparar trabalho equivalente concluído: testes, asserções, cobertura e saídas, além do tempo. Separar setup/build, execução, instrumentação, dependências e espera do runner.
+For caches, artifacts, scheduling, logs or slowness, read [measurement and CI](references/measurement-and-ci.md). Compare equivalent completed work: tests, assertions, coverage and outputs, as well as time. Separate setup/build, execution, instrumentation, dependencies and runner waits.
 
-Remover preparação comprovadamente duplicada ou trabalho repetido antes de reduzir cobertura. Resultados guardados não validam automaticamente estado vivo do host, permissões, providers ou serviços. Ler a documentação da versão instalada antes de mudar configuração de Turbo ou outro executor.
+Remove demonstrably duplicated preparation or repeated work before reducing coverage. Stored results do not automatically validate live host state, permissions, providers or services. Read documentation for the installed version before changing Turbo or another executor's configuration.
 
-Se editar estiver autorizado, corrigir no produtor responsável e acrescentar regressão RED na baseline pelo motivo certo. Verificar os consumidores, caminhos negativos e invalidação/descoberta afetados. Não suprimir falhas, aplicar retries gerais ou subir timeouts apenas para obter verde; uma mudança destes controlos exige uma razão demonstrada e deteção de falhas preservada.
+If editing is authorized, fix the responsible producer and add a regression that is RED on the baseline for the right reason. Verify consumers, negative paths and affected invalidation/discovery. Do not suppress failures, apply blanket retries or raise timeouts just to get green; changing these controls requires a demonstrated reason and preserved failure detection.
 
-## Entregar e parar
+## Deliver and stop
 
-Por achado: revisão exata, reprodução, consequência, correção proposta e limites da prova. Para desempenho: workload, medições comparáveis e custos não medidos, não apenas uma percentagem. Mostrar o exit code do comando medido e do profiler/agregador, contagens, skips e relatórios obrigatórios.
+For each finding: exact revision, reproduction, consequence, proposed fix and proof limits. For performance: workload, comparable measurements and unmeasured costs, not just a percentage. Show the exit code of the measured command and profiler/aggregator, counts, skips and required reports.
 
-Os registos públicos e a integração seguem a autorização e o processo do projeto. Parar quando o âmbito autorizado estiver verificado ou o benefício adicional for especulativo; não transformar incertezas genuínas numa sequência ilimitada de otimizações.
+Public records and integration follow project authorization and process. Stop when the authorized scope is verified or further benefit is speculative; do not turn real uncertainties into an unlimited sequence of optimizations.

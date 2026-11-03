@@ -1,5 +1,4 @@
-// Testes do install.sh (node --test tests/*.test.mjs, a partir da raiz do repo). Herméticos: cada teste usa um HOME temporário e
-// corre o script com o bash do sistema (no macOS, o 3.2).
+// Hermetic install.sh tests: a temporary HOME and the system Bash (3.2 on macOS).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
@@ -8,375 +7,356 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const RAIZ = realpathSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
-const SCRIPT = path.join(RAIZ, "install.sh");
+const ROOT = realpathSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
+const SCRIPT = path.join(ROOT, "install.sh");
 const BASH = existsSync("/bin/bash") ? "/bin/bash" : "bash";
-const ADAPTADAS = ["agentic-architecture", "agentic-ci-audit", "agentic-tool-design", "agentic-analysis-optimization"];
+const ADAPTED = ["agentic-architecture", "agentic-ci-audit", "agentic-tool-design", "agentic-analysis-optimization"];
 
-function casa(t, pastas = []) {
-  const home = mkdtempSync(path.join(tmpdir(), "install-teste-"));
+function sandbox(t, folders = []) {
+  const home = mkdtempSync(path.join(tmpdir(), "install-test-"));
   t.after(() => rmSync(home, { recursive: true, force: true }));
-  for (const p of pastas) mkdirSync(path.join(home, p), { recursive: true });
+  for (const p of folders) mkdirSync(path.join(home, p), { recursive: true });
   const env = { ...process.env, HOME: home };
   delete env.CLAUDE_CONFIG_DIR;
-  const corre = (...args) => correScript(SCRIPT, ...args);
-  const correScript = (script, ...args) => {
+  const run = (...args) => runScript(SCRIPT, ...args);
+  const runScript = (script, ...args) => {
     const r = spawnSync(BASH, [script, ...args], { env, encoding: "utf8" });
     return { status: r.status, out: r.stdout + r.stderr };
   };
-  return { home, corre, correScript };
+  return { home, run, runScript };
 }
 
-test("sem agentes detetados sai 2 e diz como escolher", (t) => {
-  const { corre } = casa(t);
-  const r = corre();
+test("no detected agents exits 2 and explains how to choose", (t) => {
+  const r = sandbox(t).run();
   assert.equal(r.status, 2);
-  assert.match(r.out, /nenhum agente detetado/);
+  assert.match(r.out, /no agents detected/);
 });
 
-test("simulação deteta os agentes pelas pastas e não cria nada", (t) => {
-  const { home, corre } = casa(t, [".claude", ".codex", ".cursor"]);
-  const r = corre();
+test("dry run detects agents by their folders and creates nothing", (t) => {
+  const { home, run } = sandbox(t, [".claude", ".codex", ".cursor"]);
+  const r = run();
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /SIMULAÇÃO/);
+  assert.match(r.out, /DRY RUN/);
   assert.match(r.out, /^claude → ~\/\.claude\/skills$/m);
   assert.match(r.out, /^codex, cursor → ~\/\.agents\/skills$/m);
-  assert.match(r.out, /copiaria\s+agentic-feature/);
-  assert.match(r.out, /copiaria\s+agentic-design/);
-  assert.match(r.out, /copiaria\s+agentic-code-review/);
-  for (const nome of ADAPTADAS) assert.match(r.out, new RegExp(`^\\s+copiaria\\s+${nome}$`, "m"));
+  for (const name of ["agentic-feature", "agentic-design", "agentic-code-review", ...ADAPTED]) assert.match(r.out, new RegExp(`^\\s+would copy\\s+${name}$`, "m"));
   assert.ok(!existsSync(path.join(home, ".claude", "skills")));
   assert.ok(!existsSync(path.join(home, ".agents")));
 });
 
-test("--aplicar preserva as onze skills e todos os recursos no Claude e Codex", (t) => {
-  const { home, corre } = casa(t);
-  const resultado = corre("--aplicar", "--agente", "claude,codex");
-  assert.equal(resultado.status, 0, resultado.out);
-  // Todas as pastas de skills/: uma skill nova que fique fora do SKILLS do install.sh faz falhar aqui.
-  const esperadas = readdirSync(path.join(RAIZ, "skills")).filter((nome) => existsSync(path.join(RAIZ, "skills", nome, "SKILL.md"))).sort();
-  const conferir = (origem, destino) => {
-    const entradas = readdirSync(origem, { withFileTypes: true });
-    assert.deepEqual(readdirSync(destino).sort(), entradas.map((entrada) => entrada.name).sort(), destino);
-    for (const entrada of entradas) {
-      const fonte = path.join(origem, entrada.name);
-      const copia = path.join(destino, entrada.name);
-      if (entrada.isDirectory()) conferir(fonte, copia);
-      else assert.deepEqual(readFileSync(copia), readFileSync(fonte), copia);
+test("--apply preserves all eleven skills and resources in Claude and Codex", (t) => {
+  const { home, run } = sandbox(t);
+  const result = run("--apply", "--agent", "claude,codex");
+  assert.equal(result.status, 0, result.out);
+  // All skills/ folders: a new skill omitted from install.sh must fail here.
+  const expected = readdirSync(path.join(ROOT, "skills")).filter((name) => existsSync(path.join(ROOT, "skills", name, "SKILL.md"))).sort();
+  const compare = (source, destination) => {
+    const entries = readdirSync(source, { withFileTypes: true });
+    assert.deepEqual(readdirSync(destination).sort(), entries.map((entry) => entry.name).sort(), destination);
+    for (const entry of entries) {
+      const src = path.join(source, entry.name);
+      const copy = path.join(destination, entry.name);
+      if (entry.isDirectory()) compare(src, copy);
+      else assert.deepEqual(readFileSync(copy), readFileSync(src), copy);
     }
   };
-  for (const pasta of [".claude", ".agents"]) {
-    const destino = path.join(home, pasta, "skills");
-    assert.deepEqual(readdirSync(destino).sort(), esperadas, destino);
-    for (const nome of ADAPTADAS) {
-      const origem = path.join(RAIZ, "skills", nome);
-      assert.ok(existsSync(path.join(origem, "licenses", "LICENSE")), `${nome} sem licença`);
-      assert.ok(existsSync(path.join(origem, "references", "origem.md")), `${nome} sem origem`);
-      conferir(origem, path.join(destino, nome));
+  for (const folder of [".claude", ".agents"]) {
+    const destination = path.join(home, folder, "skills");
+    assert.deepEqual(readdirSync(destination).sort(), expected, destination);
+    for (const name of ADAPTED) {
+      const source = path.join(ROOT, "skills", name);
+      assert.ok(existsSync(path.join(source, "licenses", "LICENSE")), `${name}: missing license`);
+      assert.ok(existsSync(path.join(source, "references", "origin.md")), `${name}: missing origin`);
+      compare(source, path.join(destination, name));
     }
+    assert.ok(statSync(path.join(destination, "agentic-project", "scripts", "prepare-repo.sh")).mode & 0o111, "script lacks executable bit");
   }
-  for (const pasta of [".claude", ".agents"]) {
-    assert.ok(statSync(path.join(home, pasta, "skills", "agentic-project", "scripts", "preparar-repo.sh")).mode & 0o111, "script sem execução");
-  }
-  const repetido = corre("--aplicar", "--agente", "claude,codex");
-  assert.equal(repetido.status, 0, repetido.out);
-  assert.match(repetido.out, /feito: 0 instalada\(s\), 0 por instalar/);
+  const again = run("--apply", "--agent", "claude,codex");
+  assert.equal(again.status, 0, again.out);
+  assert.match(again.out, /done: 0 installed, 0 pending/);
 });
 
-test("--aplicar copia, repõe o bit de execução e a 2.ª corrida não muda nada", (t) => {
-  const { home, corre } = casa(t, [".codex"]);
-  const r = corre("--aplicar");
+test("--apply copies, restores executable bits and is idempotent", (t) => {
+  const { home, run } = sandbox(t, [".codex"]);
+  const r = run("--apply");
   assert.equal(r.status, 0, r.out);
   const s = path.join(home, ".agents", "skills", "agentic-project");
   assert.ok(existsSync(path.join(s, "SKILL.md")));
-  assert.ok(existsSync(path.join(home, ".agents", "skills", "agentic-code-review", "scripts", "validar-relatorio.mjs")));
-  assert.ok(statSync(path.join(s, "scripts", "preparar-repo.sh")).mode & 0o111, "sem bit de execução");
-  const de_novo = corre("--aplicar");
-  assert.equal(de_novo.status, 0, de_novo.out);
-  assert.match(de_novo.out, /igual, mantida\s+agentic-project/);
+  assert.ok(existsSync(path.join(home, ".agents", "skills", "agentic-code-review", "scripts", "validate-report.mjs")));
+  assert.ok(statSync(path.join(s, "scripts", "prepare-repo.sh")).mode & 0o111, "missing executable bit");
+  const again = run("--apply");
+  assert.equal(again.status, 0, again.out);
+  assert.match(again.out, /identical, kept\s+agentic-project/);
 });
 
-test("nunca sobrescreve sem --forcar; com --forcar guarda a anterior", (t) => {
-  const { home, corre } = casa(t);
-  const alheia = path.join(home, ".claude", "skills", "agentic-feature");
-  mkdirSync(alheia, { recursive: true });
-  writeFileSync(path.join(alheia, "SKILL.md"), "minha versão\n");
-  const r = corre("--aplicar", "--agente", "claude");
+test("never overwrites without --force; --force backs up the previous version", (t) => {
+  const { home, run } = sandbox(t);
+  const existing = path.join(home, ".claude", "skills", "agentic-feature");
+  mkdirSync(existing, { recursive: true });
+  writeFileSync(path.join(existing, "SKILL.md"), "my version\n");
+  const r = run("--apply", "--agent", "claude");
   assert.equal(r.status, 1, r.out);
-  assert.match(r.out, /existe, mantida\s+agentic-feature/);
-  assert.equal(readFileSync(path.join(alheia, "SKILL.md"), "utf8"), "minha versão\n");
-  const f = corre("--aplicar", "--agente", "claude", "--forcar");
+  assert.match(r.out, /exists, kept\s+agentic-feature/);
+  assert.equal(readFileSync(path.join(existing, "SKILL.md"), "utf8"), "my version\n");
+  const f = run("--apply", "--agent", "claude", "--force");
   assert.equal(f.status, 0, f.out);
-  assert.match(f.out, /substituída\s+agentic-feature/);
-  const copias = path.join(home, ".agentic-skills-backups");
-  const carimbo = readdirSync(copias)[0];
-  const sub = readdirSync(path.join(copias, carimbo))[0];
-  assert.equal(readFileSync(path.join(copias, carimbo, sub, "agentic-feature", "SKILL.md"), "utf8"), "minha versão\n");
+  assert.match(f.out, /replaced\s+agentic-feature/);
+  const backups = path.join(home, ".agentic-skills-backups");
+  const stamp = readdirSync(backups)[0];
+  const sub = readdirSync(path.join(backups, stamp))[0];
+  assert.equal(readFileSync(path.join(backups, stamp, sub, "agentic-feature", "SKILL.md"), "utf8"), "my version\n");
 });
 
-test("--ligar cria ligações para o repo; repetir mantém-nas", (t) => {
-  const { home, corre } = casa(t);
-  const r = corre("--aplicar", "--ligar", "--agente", "gemini,claude");
+test("--link links to the clone and repeated installation keeps the links", (t) => {
+  const { home, run } = sandbox(t);
+  const r = run("--apply", "--link", "--agent", "gemini,claude");
   assert.equal(r.status, 0, r.out);
   for (const d of [".agents/skills", ".claude/skills"]) {
     const l = path.join(home, d, "agentic-project");
-    assert.ok(lstatSync(l).isSymbolicLink(), `${d} não é ligação`);
-    assert.equal(readlinkSync(l), path.join(RAIZ, "skills", "agentic-project"));
+    assert.ok(lstatSync(l).isSymbolicLink(), `${d} is not a link`);
+    assert.equal(readlinkSync(l), path.join(ROOT, "skills", "agentic-project"));
   }
-  const de_novo = corre("--aplicar", "--ligar", "--agente", "todos");
-  assert.equal(de_novo.status, 0, de_novo.out);
-  assert.match(de_novo.out, /já ligada, mantida\s+agentic-feature/);
-  assert.equal(de_novo.out.match(/→ ~\/\.agents\/skills$/gm).length, 1, "a pasta partilhada aparece uma só vez");
-  assert.match(de_novo.out, /^codex, cursor, gemini, copilot, opencode → ~\/\.agents\/skills$/m);
+  const again = run("--apply", "--link", "--agent", "all");
+  assert.equal(again.status, 0, again.out);
+  assert.match(again.out, /already linked, kept\s+agentic-feature/);
+  assert.equal(again.out.match(/→ ~\/\.agents\/skills$/gm).length, 1, "shared folder listed once");
+  assert.match(again.out, /^codex, cursor, gemini, copilot, opencode → ~\/\.agents\/skills$/m);
 });
 
-test("--projeto instala nas pastas do repositório e não no HOME", (t) => {
-  const { home, corre } = casa(t, [".claude"]);
+test("--project installs into repository folders rather than HOME", (t) => {
+  const { home, run } = sandbox(t, [".claude"]);
   const repo = path.join(home, "repo");
   mkdirSync(repo);
-  const r = corre("--aplicar", "--projeto", repo, "--agente", "claude,copilot");
+  const r = run("--apply", "--project", repo, "--agent", "claude,copilot");
   assert.equal(r.status, 0, r.out);
   assert.ok(existsSync(path.join(repo, ".claude", "skills", "agentic-feature", "SKILL.md")));
   assert.ok(existsSync(path.join(repo, ".agents", "skills", "agentic-feature", "SKILL.md")));
   assert.ok(!existsSync(path.join(home, ".claude", "skills")));
 });
 
-test("ligações para o repo: sem --ligar ficam pendentes; --forcar troca-as por cópias", (t) => {
-  const { home, corre } = casa(t);
-  assert.equal(corre("--aplicar", "--ligar", "--agente", "codex").status, 0);
+test("links without --link remain pending; --force replaces them with copies", (t) => {
+  const { home, run } = sandbox(t);
+  assert.equal(run("--apply", "--link", "--agent", "codex").status, 0);
   const l = path.join(home, ".agents", "skills", "agentic-project");
-  const r = corre("--aplicar", "--agente", "codex");
+  const r = run("--apply", "--agent", "codex");
   assert.equal(r.status, 1, r.out);
-  assert.match(r.out, /existe, mantida\s+agentic-project \(é uma ligação para este repo; --forcar troca-a por uma cópia\)/);
-  const f = corre("--aplicar", "--forcar", "--agente", "codex");
+  assert.match(r.out, /exists, kept\s+agentic-project \(a link to this clone; --force replaces it with a copy\)/);
+  const f = run("--apply", "--force", "--agent", "codex");
   assert.equal(f.status, 0, f.out);
-  assert.ok(!lstatSync(l).isSymbolicLink(), "continua a ser ligação");
+  assert.ok(!lstatSync(l).isSymbolicLink(), "still a link");
   assert.ok(existsSync(path.join(l, "SKILL.md")));
 });
 
-test("--ligar sobre cópias iguais diz que é uma cópia, não que é diferente", (t) => {
-  const { corre } = casa(t);
-  assert.equal(corre("--aplicar", "--agente", "codex").status, 0);
-  const r = corre("--aplicar", "--ligar", "--agente", "codex");
+test("--link over identical copies calls them copies rather than different content", (t) => {
+  const { run } = sandbox(t);
+  assert.equal(run("--apply", "--agent", "codex").status, 0);
+  const r = run("--apply", "--link", "--agent", "codex");
   assert.equal(r.status, 1, r.out);
-  assert.match(r.out, /existe, mantida\s+agentic-feature \(é uma cópia igual; --forcar troca-a por uma ligação\)/);
-  assert.doesNotMatch(r.out, /é diferente/);
+  assert.match(r.out, /exists, kept\s+agentic-feature \(an identical copy; --force replaces it with a link\)/);
+  assert.doesNotMatch(r.out, /different/);
 });
 
-test("o mesmo clone por um caminho com ligação conta como o mesmo repo", (t) => {
-  const { home, corre, correScript } = casa(t);
-  const atalho = path.join(home, "atalho-clone");
-  symlinkSync(RAIZ, atalho);
-  const a = correScript(path.join(atalho, "install.sh"), "--aplicar", "--ligar", "--agente", "claude");
+test("a clone reached through a symbolic link counts as the same repository", (t) => {
+  const { home, run, runScript } = sandbox(t);
+  const shortcut = path.join(home, "clone-shortcut");
+  symlinkSync(ROOT, shortcut);
+  const a = runScript(path.join(shortcut, "install.sh"), "--apply", "--link", "--agent", "claude");
   assert.equal(a.status, 0, a.out);
-  const b = corre("--aplicar", "--ligar", "--agente", "claude");
+  const b = run("--apply", "--link", "--agent", "claude");
   assert.equal(b.status, 0, b.out);
-  assert.match(b.out, /já ligada, mantida\s+agentic-project/);
+  assert.match(b.out, /already linked, kept\s+agentic-project/);
 });
 
-test("uma pasta nova e outra antiga: avisa que ficam em versões diferentes", (t) => {
-  const { home, corre } = casa(t, [".claude", ".config/opencode"]);
-  const antiga = path.join(home, ".claude", "skills", "agentic-feature");
-  mkdirSync(antiga, { recursive: true });
-  writeFileSync(path.join(antiga, "SKILL.md"), "versão antiga\n");
-  const r = corre("--aplicar");
+test("one new folder and one old folder: warns about different versions", (t) => {
+  const { home, run } = sandbox(t, [".claude", ".config/opencode"]);
+  const old = path.join(home, ".claude", "skills", "agentic-feature");
+  mkdirSync(old, { recursive: true });
+  writeFileSync(path.join(old, "SKILL.md"), "old version\n");
+  const r = run("--apply");
   assert.equal(r.status, 1, r.out);
-  assert.match(r.out, /escolhe ao acaso a cópia/);
-  assert.match(r.out, /atenção: uma pasta fica com a versão nova e outra com a que já lá estava/);
+  assert.match(r.out, /randomly picks the copy/);
+  assert.match(r.out, /notice: one folder gets the new version and another keeps the existing version/);
 });
 
-// As vias de instalação do README que listam skills (o ciclo `gh skill` e o ciclo do Gemini CLI)
-// têm de levar as mesmas que o SKILLS do install.sh: uma skill nova que fique fora de uma via
-// deixa quem instala por ela sem as irmãs que a agentic-feature manda carregar.
-const skillsDoInstall = () => readFileSync(SCRIPT, "utf8").match(/^SKILLS="([^"]+)"/m)[1].split(/\s+/).sort();
-
-// As skills do `for skill in … ; do` da secção `### <titulo>` do README ([] se a secção ou o ciclo faltam).
-function skillsDoCiclo(readme, titulo) {
-  const inicio = readme.search(new RegExp(`^### .*${titulo}`, "m"));
-  if (inicio < 0) return [];
-  const resto = readme.slice(inicio + 4);
-  const fim = resto.search(/^### /m);
-  const secao = fim < 0 ? resto : resto.slice(0, fim);
-  const ciclo = /for skill in ([^;]*); do/.exec(secao.replace(/\\\n/g, " "));
-  return ciclo ? ciclo[1].split(/\s+/).filter(Boolean).sort() : [];
+// README routes listing skills must carry every sibling required by agentic-feature.
+const installerSkills = () => readFileSync(SCRIPT, "utf8").match(/^SKILLS="([^"]+)"/m)[1].split(/\s+/).sort();
+function loopSkills(readme, title) {
+  const start = readme.search(new RegExp(`^### .*${title}`, "m"));
+  if (start < 0) return [];
+  const rest = readme.slice(start + 4);
+  const end = rest.search(/^### /m);
+  const section = end < 0 ? rest : rest.slice(0, end);
+  const loop = /for skill in ([^;]*); do/.exec(section.replace(/\\\n/g, " "));
+  return loop ? loop[1].split(/\s+/).filter(Boolean).sort() : [];
 }
 
-test("README: o ciclo do gh skill e o do Gemini CLI levam as mesmas skills que o SKILLS do install.sh", () => {
-  const readme = readFileSync(path.join(RAIZ, "README.md"), "utf8");
-  const esperadas = skillsDoInstall();
-  assert.deepEqual(esperadas, [...["agentic-project","agentic-feature","agentic-design","agentic-implement","agentic-fix","agentic-code-review","agentic-architecture","agentic-explain","agentic-analysis-optimization","agentic-ci-audit","agentic-tool-design"]].sort(), "o SKILLS do install.sh devia ter as onze");
-  assert.deepEqual(skillsDoCiclo(readme, "`gh skill`"), esperadas, "gh skill");
-  assert.deepEqual(skillsDoCiclo(readme, "Gemini CLI"), esperadas, "Gemini CLI");
+test("README gh skill and Gemini CLI loops match install.sh SKILLS", () => {
+  const readme = readFileSync(path.join(ROOT, "README.md"), "utf8");
+  const expected = installerSkills();
+  assert.deepEqual(expected, ["agentic-project", "agentic-feature", "agentic-design", "agentic-implement", "agentic-fix", "agentic-code-review", "agentic-architecture", "agentic-explain", "agentic-analysis-optimization", "agentic-ci-audit", "agentic-tool-design"].sort(), "install.sh must list eleven skills");
+  assert.deepEqual(loopSkills(readme, "`gh skill`"), expected, "gh skill");
+  assert.deepEqual(loopSkills(readme, "Gemini CLI"), expected, "Gemini CLI");
 });
 
-test("o leitor das vias do README não passa em vazio (controlo)", () => {
-  assert.deepEqual(skillsDoCiclo("### Outra\n\nfor skill in a b; do\n", "Gemini CLI"), []);
-  assert.deepEqual(skillsDoCiclo("### Gemini CLI\n\ngemini skills install x --path skills/a\n", "Gemini CLI"), []);
-  assert.deepEqual(skillsDoCiclo("### Gemini CLI\n\nfor skill in b \\\n  a; do\n  x\ndone\n### Fim\n", "Gemini CLI"), ["a", "b"]);
+test("README route parser does not pass empty inputs (control)", () => {
+  assert.deepEqual(loopSkills("### Other\n\nfor skill in a b; do\n", "Gemini CLI"), []);
+  assert.deepEqual(loopSkills("### Gemini CLI\n\ngemini skills install x --path skills/a\n", "Gemini CLI"), []);
+  assert.deepEqual(loopSkills("### Gemini CLI\n\nfor skill in b \\\n  a; do\n  x\ndone\n### End\n", "Gemini CLI"), ["a", "b"]);
 });
 
-// --- --agentes: os agentes definidos do Claude Code (opcional, nunca sobrescreve, nunca edita o CLAUDE.md)
+// Optional Claude Code definitions: never overwrite or edit CLAUDE.md.
+const AGENTS_SOURCE = path.join(ROOT, "skills", "agentic-implement", "assets", "agents");
+const FOUR_AGENTS = ["implementer", "implementer-ui", "researcher", "reviewer"];
 
-const FONTE_AGENTES = path.join(RAIZ, "skills", "agentic-implement", "assets", "agentes");
-const QUATRO_AGENTES = ["implementador", "implementador-ui", "pesquisador", "revisor"];
-
-test("--agentes, na simulação, diz o que copiaria, mostra o excerto do CLAUDE.md e não cria nada", (t) => {
-  const { home, corre } = casa(t, [".claude"]);
-  const r = corre("--agente", "claude", "--agentes");
+test("--agents dry run lists copies and the whole CLAUDE.md excerpt, creating nothing", (t) => {
+  const { home, run } = sandbox(t, [".claude"]);
+  const r = run("--agent", "claude", "--agents");
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /^claude \(agentes\) → ~\/\.claude\/agents$/m);
-  for (const a of QUATRO_AGENTES) assert.match(r.out, new RegExp(`^\\s+copiaria\\s+${a}$`, "m"), a);
-  assert.match(r.out, /Excerto para o teu CLAUDE\.md \(o instalador não o edita/);
-  assert.ok(r.out.includes(readFileSync(path.join(FONTE_AGENTES, "excerto-claude-md.md"), "utf8")), "o excerto vem inteiro");
-  assert.match(r.out, /^agentes: 4 por copiar, 0 já lá estão\.$/m);
+  assert.match(r.out, /^claude \(agents\) → ~\/\.claude\/agents$/m);
+  for (const a of FOUR_AGENTS) assert.match(r.out, new RegExp(`^\\s+would copy\\s+${a}$`, "m"), a);
+  assert.match(r.out, /Excerpt for your CLAUDE\.md \(the installer never edits it/);
+  assert.ok(r.out.includes(readFileSync(path.join(AGENTS_SOURCE, "claude-md-excerpt.md"), "utf8")), "complete excerpt");
+  assert.match(r.out, /^agents: 4 to copy, 0 already present\.$/m);
   assert.ok(!existsSync(path.join(home, ".claude", "agents")));
   assert.ok(!existsSync(path.join(home, ".claude", "skills")));
 });
 
-test("sem --agentes o instalador não toca nos agentes nem mostra o excerto", (t) => {
-  const { home, corre } = casa(t);
-  const r = corre("--aplicar", "--agente", "claude");
+test("without --agents no agent files or excerpt are touched", (t) => {
+  const { home, run } = sandbox(t);
+  const r = run("--apply", "--agent", "claude");
   assert.equal(r.status, 0, r.out);
-  assert.doesNotMatch(r.out, /agentes\)|Excerto|implementador/);
+  assert.doesNotMatch(r.out, /agents\)|Excerpt|implementer/);
   assert.ok(!existsSync(path.join(home, ".claude", "agents")));
 });
 
-test("--aplicar --agentes copia os quatro agentes, e só eles, para ~/.claude/agents sem editar o CLAUDE.md", (t) => {
-  const { home, corre } = casa(t, [".claude"]);
+test("--apply --agents copies exactly four definitions without editing CLAUDE.md", (t) => {
+  const { home, run } = sandbox(t, [".claude"]);
   const claudeMd = path.join(home, ".claude", "CLAUDE.md");
-  writeFileSync(claudeMd, "# As minhas regras\n\nnão mexas.\n");
-  const antes = statSync(claudeMd);
-  const r = corre("--aplicar", "--agente", "claude", "--agentes");
+  writeFileSync(claudeMd, "# My rules\n\nkeep them.\n");
+  const before = statSync(claudeMd);
+  const r = run("--apply", "--agent", "claude", "--agents");
   assert.equal(r.status, 0, r.out);
-  assert.deepEqual(readdirSync(path.join(home, ".claude", "agents")).sort(), QUATRO_AGENTES.map((a) => `${a}.md`).sort(), "o LEIA-ME e o excerto não são agentes");
-  for (const a of QUATRO_AGENTES) {
-    assert.equal(readFileSync(path.join(home, ".claude", "agents", `${a}.md`), "utf8"), readFileSync(path.join(FONTE_AGENTES, `${a}.md`), "utf8"), a);
-    assert.match(r.out, new RegExp(`^\\s+copiado\\s+${a}$`, "m"), a);
+  assert.deepEqual(readdirSync(path.join(home, ".claude", "agents")).sort(), FOUR_AGENTS.map((a) => `${a}.md`).sort(), "README and excerpt are not agents");
+  for (const a of FOUR_AGENTS) {
+    assert.equal(readFileSync(path.join(home, ".claude", "agents", `${a}.md`), "utf8"), readFileSync(path.join(AGENTS_SOURCE, `${a}.md`), "utf8"), a);
+    assert.match(r.out, new RegExp(`^\\s+copied\\s+${a}$`, "m"), a);
   }
-  assert.match(r.out, /^agentes: 4 copiado\(s\), 0 mantido\(s\)\.$/m);
-  assert.equal(readFileSync(claudeMd, "utf8"), "# As minhas regras\n\nnão mexas.\n", "o CLAUDE.md do utilizador fica como estava");
-  assert.equal(statSync(claudeMd).mtimeMs, antes.mtimeMs);
+  assert.match(r.out, /^agents: 4 copied, 0 kept\.$/m);
+  assert.equal(readFileSync(claudeMd, "utf8"), "# My rules\n\nkeep them.\n");
+  assert.equal(statSync(claudeMd).mtimeMs, before.mtimeMs);
   assert.deepEqual(readdirSync(path.join(home, ".claude")).filter((f) => /^CLAUDE/.test(f)), ["CLAUDE.md"]);
 });
 
-test("--agentes não cria um CLAUDE.md que não exista", (t) => {
-  const { home, corre } = casa(t, [".claude"]);
-  const r = corre("--aplicar", "--agente", "claude", "--agentes");
-  assert.equal(r.status, 0, r.out);
+test("--agents never creates a missing CLAUDE.md", (t) => {
+  const { home, run } = sandbox(t, [".claude"]);
+  assert.equal(run("--apply", "--agent", "claude", "--agents").status, 0);
   assert.ok(!existsSync(path.join(home, ".claude", "CLAUDE.md")));
   assert.ok(!existsSync(path.join(home, "CLAUDE.md")));
 });
 
-test("--agentes nunca sobrescreve: um agente do utilizador fica como está, também com --forcar", (t) => {
-  const { home, corre } = casa(t, [".claude/agents"]);
-  const meu = path.join(home, ".claude", "agents", "revisor.md");
-  writeFileSync(meu, "o meu revisor\n");
-  const r = corre("--aplicar", "--agente", "claude", "--agentes");
+test("--agents keeps user definitions even with --force", (t) => {
+  const { home, run } = sandbox(t, [".claude/agents"]);
+  const mine = path.join(home, ".claude", "agents", "reviewer.md");
+  writeFileSync(mine, "my reviewer\n");
+  const r = run("--apply", "--agent", "claude", "--agents");
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /^\s+existe, mantido\s+revisor \(é diferente; não se sobrescreve/m);
-  assert.match(r.out, /^\s+copiado\s+implementador$/m);
-  assert.match(r.out, /^agentes: 3 copiado\(s\), 1 mantido\(s\)\.$/m);
-  assert.equal(readFileSync(meu, "utf8"), "o meu revisor\n");
-  const forcado = corre("--aplicar", "--agente", "claude", "--agentes", "--forcar");
-  assert.equal(forcado.status, 0, forcado.out);
-  assert.equal(readFileSync(meu, "utf8"), "o meu revisor\n", "nem o --forcar substitui um agente");
-  assert.match(forcado.out, /^\s+igual, mantido\s+implementador$/m, "os que já eram iguais dizem-no");
-  assert.match(forcado.out, /^agentes: 0 copiado\(s\), 4 mantido\(s\)\.$/m);
-  const copias = path.join(home, ".agentic-skills-backups");
-  assert.ok(!existsSync(copias) || !readdirSync(copias, { recursive: true }).some((f) => /agents/.test(f)), "nada de agentes vai para as cópias de segurança");
+  assert.match(r.out, /^\s+exists, kept\s+reviewer \(different; never overwritten/m);
+  assert.match(r.out, /^\s+copied\s+implementer$/m);
+  assert.match(r.out, /^agents: 3 copied, 1 kept\.$/m);
+  assert.equal(readFileSync(mine, "utf8"), "my reviewer\n");
+  const forced = run("--apply", "--agent", "claude", "--agents", "--force");
+  assert.equal(forced.status, 0, forced.out);
+  assert.equal(readFileSync(mine, "utf8"), "my reviewer\n");
+  assert.match(forced.out, /^\s+identical, kept\s+implementer$/m);
+  assert.match(forced.out, /^agents: 0 copied, 4 kept\.$/m);
+  const backups = path.join(home, ".agentic-skills-backups");
+  assert.ok(!existsSync(backups) || !readdirSync(backups, { recursive: true }).some((f) => /agents/.test(f)), "no agent backups");
 });
 
-test("--agentes: um agente que seja uma ligação do utilizador também não é tocado", (t) => {
-  const { home, corre } = casa(t, [".claude/agents"]);
-  const alvo = path.join(home, "meu-pesquisador.md");
-  writeFileSync(alvo, "meu\n");
-  symlinkSync(alvo, path.join(home, ".claude", "agents", "pesquisador.md"));
-  const r = corre("--aplicar", "--agente", "claude", "--agentes");
+test("--agents also leaves a user's symbolic link untouched", (t) => {
+  const { home, run } = sandbox(t, [".claude/agents"]);
+  const target = path.join(home, "my-researcher.md");
+  writeFileSync(target, "mine\n");
+  symlinkSync(target, path.join(home, ".claude", "agents", "researcher.md"));
+  const r = run("--apply", "--agent", "claude", "--agents");
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /existe, mantido\s+pesquisador/);
-  assert.equal(readFileSync(alvo, "utf8"), "meu\n");
-  assert.ok(lstatSync(path.join(home, ".claude", "agents", "pesquisador.md")).isSymbolicLink());
+  assert.match(r.out, /exists, kept\s+researcher/);
+  assert.equal(readFileSync(target, "utf8"), "mine\n");
+  assert.ok(lstatSync(path.join(home, ".claude", "agents", "researcher.md")).isSymbolicLink());
 });
 
-test("--agentes com --projeto copia para <repo>/.claude/agents; com --ligar os agentes continuam a ser cópias", (t) => {
-  const { home, corre } = casa(t, [".claude"]);
+test("--agents --project copies into the repo; --link still copies agent definitions", (t) => {
+  const { home, run } = sandbox(t, [".claude"]);
   const repo = path.join(home, "repo");
   mkdirSync(repo);
-  const r = corre("--aplicar", "--ligar", "--projeto", repo, "--agente", "claude", "--agentes");
+  const r = run("--apply", "--link", "--project", repo, "--agent", "claude", "--agents");
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /^claude \(agentes\) → ~\/repo\/\.claude\/agents$/m);
-  for (const a of QUATRO_AGENTES) {
+  assert.match(r.out, /^claude \(agents\) → ~\/repo\/\.claude\/agents$/m);
+  for (const a of FOUR_AGENTS) {
     const f = path.join(repo, ".claude", "agents", `${a}.md`);
-    assert.ok(!lstatSync(f).isSymbolicLink(), `${a}: os agentes são para editar, por isso copiam-se`);
-    assert.equal(readFileSync(f, "utf8"), readFileSync(path.join(FONTE_AGENTES, `${a}.md`), "utf8"));
+    assert.ok(!lstatSync(f).isSymbolicLink(), `${a}: definitions are copies for editing`);
+    assert.equal(readFileSync(f, "utf8"), readFileSync(path.join(AGENTS_SOURCE, `${a}.md`), "utf8"));
   }
-  assert.ok(lstatSync(path.join(repo, ".claude", "skills", "agentic-project")).isSymbolicLink(), "as skills ficam ligadas");
+  assert.ok(lstatSync(path.join(repo, ".claude", "skills", "agentic-project")).isSymbolicLink());
   assert.ok(!existsSync(path.join(home, ".claude", "agents")));
 });
 
-test("--agentes usa o CLAUDE_CONFIG_DIR quando existe", (t) => {
-  const { home } = casa(t);
-  const config = path.join(home, "config-claude");
+test("--agents respects CLAUDE_CONFIG_DIR", (t) => {
+  const { home } = sandbox(t);
+  const config = path.join(home, "claude-config");
   mkdirSync(config);
-  const r = spawnSync(BASH, [SCRIPT, "--aplicar", "--agente", "claude", "--agentes"], { env: { ...process.env, HOME: home, CLAUDE_CONFIG_DIR: config }, encoding: "utf8" });
+  const r = spawnSync(BASH, [SCRIPT, "--apply", "--agent", "claude", "--agents"], { env: { ...process.env, HOME: home, CLAUDE_CONFIG_DIR: config }, encoding: "utf8" });
   assert.equal(r.status, 0, r.stdout + r.stderr);
-  assert.ok(existsSync(path.join(config, "agents", "revisor.md")));
+  assert.ok(existsSync(path.join(config, "agents", "reviewer.md")));
   assert.ok(!existsSync(path.join(home, ".claude")));
 });
 
-test("--agentes sem o Claude Code entre os agentes sai 2, diz porquê e não copia nada", (t) => {
-  const { home, corre } = casa(t, [".codex"]);
-  for (const args of [["--agente", "codex", "--agentes"], ["--aplicar", "--agentes"]]) {
-    const r = corre(...args);
+test("--agents without Claude exits 2, explains why and copies nothing", (t) => {
+  const { home, run } = sandbox(t, [".codex"]);
+  for (const args of [["--agent", "codex", "--agents"], ["--apply", "--agents"]]) {
+    const r = run(...args);
     assert.equal(r.status, 2, r.out);
-    assert.match(r.out, /--agentes copia para a pasta de agentes do Claude Code; junta --agente claude/);
+    assert.match(r.out, /--agents copies into Claude Code's agents folder; add --agent claude/);
   }
   assert.ok(!existsSync(path.join(home, ".claude")));
   assert.ok(!existsSync(path.join(home, ".agents")));
 });
 
-test("o AGENTES_LISTA do install.sh é a lista dos agentes da pasta, e o --help fala do --agentes", (t) => {
-  const instalador = readFileSync(SCRIPT, "utf8");
-  assert.equal(/^AGENTES_LISTA="([^"]+)"$/m.exec(instalador)[1], QUATRO_AGENTES.join(" "));
-  const comFrontmatter = readdirSync(FONTE_AGENTES).filter((f) => f.endsWith(".md") && readFileSync(path.join(FONTE_AGENTES, f), "utf8").startsWith("---\n")).map((f) => f.replace(/\.md$/, ""));
-  assert.deepEqual(comFrontmatter.sort(), [...QUATRO_AGENTES].sort());
-  const { corre } = casa(t);
-  const ajuda = corre("--help");
-  assert.equal(ajuda.status, 0, ajuda.out);
-  assert.match(ajuda.out, /\[--agentes\]/);
-  assert.match(ajuda.out, /^\s*--agentes\s+opcional, só Claude Code/m);
-  assert.match(ajuda.out, /O instalador nunca edita o CLAUDE\.md/);
+test("install.sh AGENTS_LIST matches the definition files and --help documents --agents", (t) => {
+  const installer = readFileSync(SCRIPT, "utf8");
+  assert.equal(/^AGENTS_LIST="([^"]+)"$/m.exec(installer)[1], FOUR_AGENTS.join(" "));
+  const withFrontmatter = readdirSync(AGENTS_SOURCE).filter((f) => f.endsWith(".md") && readFileSync(path.join(AGENTS_SOURCE, f), "utf8").startsWith("---\n")).map((f) => f.replace(/\.md$/, ""));
+  assert.deepEqual(withFrontmatter.sort(), [...FOUR_AGENTS].sort());
+  const help = sandbox(t).run("--help");
+  assert.equal(help.status, 0, help.out);
+  assert.match(help.out, /\[--agents\]/);
+  assert.match(help.out, /^\s*--agents\s+optional, Claude Code/m);
+  assert.match(help.out, /The installer never edits CLAUDE\.md/);
 });
 
-// codex-legado: o Codex antigo lê ~/.codex/skills. Só a pedido, e não entra em «todos».
-test("codex-legado instala em ~/.codex/skills, só a pedido", (t) => {
-  const { home, corre } = casa(t);
-  const r = corre("--aplicar", "--agente", "codex-legado");
+test("codex-legacy installs into ~/.codex/skills only when requested", (t) => {
+  const { home, run } = sandbox(t);
+  const r = run("--apply", "--agent", "codex-legacy");
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /^codex-legado → ~\/\.codex\/skills$/m);
-  for (const nome of ["agentic-project", "agentic-feature", "agentic-code-review"]) {
-    assert.ok(existsSync(path.join(home, ".codex", "skills", nome, "SKILL.md")), nome);
-  }
-  assert.ok(!existsSync(path.join(home, ".agents")), "o Codex atual não é tocado");
+  assert.match(r.out, /^codex-legacy → ~\/\.codex\/skills$/m);
+  for (const name of ["agentic-project", "agentic-feature", "agentic-code-review"]) assert.ok(existsSync(path.join(home, ".codex", "skills", name, "SKILL.md")), name);
+  assert.ok(!existsSync(path.join(home, ".agents")));
 });
 
-test("codex-legado não entra em «todos» nem na deteção; --projeto recusa-o", (t) => {
-  const { corre } = casa(t, [".codex"]);
-  const todos = corre("--agente", "todos");
-  assert.equal(todos.status, 0, todos.out);
-  assert.doesNotMatch(todos.out, /codex-legado|\.codex\/skills/);
-  const detetado = corre();
-  assert.doesNotMatch(detetado.out, /codex-legado/);
-  const repo = casa(t).home;
-  const projeto = corre("--agente", "codex-legado", "--projeto", repo);
-  assert.equal(projeto.status, 2, projeto.out);
-  assert.match(projeto.out, /codex-legado só existe no âmbito do utilizador/);
+test("codex-legacy is excluded from all and detection; --project rejects it", (t) => {
+  const { run } = sandbox(t, [".codex"]);
+  const all = run("--agent", "all");
+  assert.equal(all.status, 0, all.out);
+  assert.doesNotMatch(all.out, /codex-legacy|\.codex\/skills/);
+  assert.doesNotMatch(run().out, /codex-legacy/);
+  const project = run("--agent", "codex-legacy", "--project", sandbox(t).home);
+  assert.equal(project.status, 2, project.out);
+  assert.match(project.out, /codex-legacy only supports user scope/);
 });
 
-test("--help diz os agentes, inclui o codex-legado e sai 0", (t) => {
-  const { corre } = casa(t);
-  const r = corre("--help");
+test("--help lists agents including codex-legacy and exits 0", (t) => {
+  const r = sandbox(t).run("--help");
   assert.equal(r.status, 0, r.out);
-  assert.match(r.out, /codex-legado/);
-  assert.match(r.out, /^Uso: \.\/install\.sh/m);
+  assert.match(r.out, /codex-legacy/);
+  assert.match(r.out, /^Usage: \.\/install\.sh/m);
 });

@@ -1,92 +1,91 @@
-# Instruções para agentes: `AGENTS.md` e `CLAUDE.md` (fase 6)
+# Agent instructions: `AGENTS.md` and `CLAUDE.md` (phase 6)
 
-`AGENTS.md` é lido por qualquer agente (Codex, Claude, outros) em cada sessão, antes de fazer
-seja o que for. Cada linha custa contexto em todas as sessões; uma linha inútil dilui as úteis.
-Por isso é curto, operacional e escrito para agentes.
+Every agent (Codex, Claude, others) reads `AGENTS.md` at each session before doing anything.
+Every line costs context in every session; useless lines dilute useful ones. Keep it short,
+operational and written for agents.
 
-## Princípios
+## Principles
 
-- **Fonte única**: `AGENTS.md` tem as regras. `CLAUDE.md` só importa `AGENTS.md` (`@AGENTS.md`) e
-  acrescenta o que for específico do Claude Code. Dois ficheiros com regras divergem.
-- **Orçamento ~4 KB** (`wc -c AGENTS.md`); até ~5 KB se as regras do projeto o exigirem, com
-  apontadores em vez de texto. O que não cabe vai para um doc e fica um ponteiro: «antes de mexer
-  em X, lê `docs/Y.md`». O ponteiro diz **quando** ler, não só onde está. O modelo deixa margem
-  para as regras do projeto: o texto fixo dele (sem o comentário inicial nem os `{{…}}`) fica
-  ≤ ~3 200 B, e o teste do repo das skills mede-o.
-- **Para agentes, não para humanos**: o que fazer, comandos exatos, onde está cada coisa, o que é
-  proibido e porquê. Sem história do projeto, sem marketing, sem prosa motivacional.
-- **Nada que um `grep` descubra**: não listes ficheiros nem funções; diz onde procurar.
-- **Cada regra dura com o porquê numa linha.** Um agente que percebe a razão aplica-a a casos
-  que a regra não previu; uma regra sem razão é contornada no primeiro caso estranho.
-- **Comandos testados**: cada comando escrito no `AGENTS.md` foi corrido nesta sessão e funciona.
-- **Regra mecânica vira verificação automática** (hook, lint, teste), não frase. O `AGENTS.md`
-  guarda o que precisa de julgamento.
-- **Cada regra num só sítio.** Os princípios do projeto vivem na constituição; o porquê das
-  decisões em `docs/decisoes.md`/ADRs; o processo em `docs/metodologia.md`. O `AGENTS.md` aponta
-  para eles («antes de tocar em dados pessoais, lê a constituição, princípio II») em vez de os
-  copiar. Exceção: as regras duras (o que nunca se faz) ficam escritas no `AGENTS.md`, porque são
-  as que um agente tem de ver mesmo sem abrir mais nada.
+- **Single source**: `AGENTS.md` holds the rules. `CLAUDE.md` only imports `AGENTS.md`
+  (`@AGENTS.md`) and adds Claude Code specifics. Two rule files diverge.
+- **Budget ~4 KB** (`wc -c AGENTS.md`); up to ~5 KB if project rules require it, using pointers
+  instead of text. Move overflow to a doc with a pointer: “before changing X, read `docs/Y.md`”.
+  The pointer says **when** to read, not just where. The template leaves room for project
+  rules: its fixed text (excluding the opening comment and `{{…}}`) stays ≤ ~3,200 B, measured
+  by the skills repo test.
+- **For agents, not humans**: actions, exact commands, locations, prohibitions and reasons.
+  No project history, marketing or motivational prose.
+- **Nothing a `grep` can discover**: do not list files or functions; say where to look.
+- **Each hard rule has a one-line reason.** An agent understanding why can apply the rule to
+  unforeseen cases; a rule without a reason gets bypassed at the first unusual case.
+- **Tested commands**: every command in `AGENTS.md` ran in this session and works.
+- **Mechanical rules become automatic checks** (hook, lint, test), not sentences. Keep rules
+  needing judgment in `AGENTS.md`.
+- **Each rule in one place.** Project principles live in the constitution; decision reasons
+  in `docs/decisions.md`/ADRs; process in `docs/methodology.md`. `AGENTS.md` points to them
+  (“before touching personal data, read constitution principle II”) instead of copying them.
+  Exception: hard rules (what never happens) stay in `AGENTS.md` because agents must see them
+  without opening anything else.
 
-## Secções fixas (modelo em `assets/AGENTS.template.md`)
+## Fixed sections (template in `assets/AGENTS.template.md`)
 
-1. **Missão** — 2 linhas: o que o produto faz e para quem, e uma linha de não-objetivos (ou o
-   ponteiro para «Fora de âmbito» em `docs/decisoes.md`).
-2. **Comandos** — instalar, correr localmente, typecheck, lint, testes (todos e por área),
-   bateria completa, e o que fazer antes de push.
-3. **Mapa do código** — pastas de topo → área (a fonte é `.agentic/areas.json`), e ponteiros
-   para `ARCHITECTURE.md`, `GLOSSARIO.md`, ADRs, constituição.
-4. **Fluxo de trabalho** — o protocolo: features entram pela skill `agentic-feature` e a revisão
-   de código faz-se com a `agentic-code-review`, que lê o `REVIEW.md`; ramos
-   `agente/<id>-<tema>`; um worktree por agente; verificações da área; integração em `main`;
-   quadro atualizado em cada transição e, enquanto se trabalha, pelo menos de 30 em 30 min;
-   se há UI, as regras (`.agentic/ui-sem-slop.md`), as exceções de marca aprovadas
-   (`docs/decisoes.md`) e o detetor sem bloqueios nas linhas alteradas antes da revisão; ao
-   humano só o que é dele, com recomendação; tecnologia confirmada em fonte primária datada antes
-   de recomendada. Ponteiro para `docs/metodologia.md`.
-5. **Regras duras** — o que nunca se faz e porquê (segredos, dados pessoais, ações
-   irreversíveis, `--no-verify`, force-push, editar migrações aplicadas…).
-6. **Onde registar** — quadro (como chamar o CLI), decisões (`docs/decisoes.md`), ADRs, radar
-   (`docs/radar.md`, criado na fase 3), lições (`docs/licoes.md`, criado na fase 8).
+1. **Mission** — 2 lines: what the product does and for whom, and one line of non-goals (or a
+   pointer to “Out of scope” in `docs/decisions.md`).
+2. **Commands** — install, run locally, typecheck, lint, tests (all and by area), full
+   verification, and what to do before push.
+3. **Code map** — top-level folders → area (source: `.agentic/areas.json`), and pointers to
+   `ARCHITECTURE.md`, `GLOSSARY.md`, ADRs, constitution.
+4. **Workflow** — protocol: features enter through `agentic-feature`; code review uses
+   `agentic-code-review`, reading `REVIEW.md`; `agent/<id>-<topic>` branches; one worktree per
+   agent; area checks; merging into `main`; board updated at every transition and at least
+   every 30 min while working; with UI, rules (`.agentic/ui-without-slop.md`), approved brand
+   exceptions (`docs/decisions.md`) and no detector blockers on changed lines before review;
+   human decisions only, with a recommendation; technology checked in dated primary sources
+   before recommending. Pointer to `docs/methodology.md`. Replies and project documents use
+   the language declared in `AGENTS.md`, or English by default.
+5. **Hard rules** — what never happens and why (secrets, personal data, irreversible actions,
+   `--no-verify`, force-push, editing applied migrations…).
+6. **Where to record things** — board (CLI invocation), decisions (`docs/decisions.md`), ADRs,
+   radar (`docs/radar.md`, created in phase 3), lessons (`docs/lessons.md`, created in phase 8).
 
-Escreve-o na fase 6 já com os ponteiros para o que as fases 7–9 vão criar (quadro,
-`docs/metodologia.md`, `docs/licoes.md`, `docs/backlog.md`), marcados `(fase N)`. Assim o
-ficheiro nasce com a forma final e não é reescrito três vezes; as marcas saem quando a fase
-correspondente cria o artefacto, e o Fecho confirma que não sobrou nenhuma.
+In phase 6 include pointers to what phases 7–9 will create (board, `docs/methodology.md`,
+`docs/lessons.md`, `docs/backlog.md`), marked `(phase N)`. This gives the file its final shape
+without rewriting it three times; remove each marker when its phase creates the artifact,
+and verify none remain at Closing.
 
 ## `REVIEW.md`
 
-É o que a `agentic-code-review` lê antes de cada revisão: o que é falhar neste repo, os caminhos
-a saltar e os achados repetidos; o processo da revisão e o modelo não são dele. Modelo em
-`<agentic-code-review>/assets/REVIEW.template.md`; como o escrever, mantê-lo curto e fazê-lo
-crescer: `<agentic-code-review>/references/review-md.md`; como avaliar o revisor quando ele muda
-(as linhas de `docs/licoes.md` e os casos limpos): `<agentic-code-review>/references/aprendizagem.md`.
+`agentic-code-review` reads it before every review: what failure means in this repo, paths to
+skip, repeated findings; it does not choose the review process or AI model. Template:
+`<agentic-code-review>/assets/REVIEW.template.md`; how to write it, keep it short and grow it:
+`<agentic-code-review>/references/review-md.md`; how to evaluate the reviewer when it changes
+(`docs/lessons.md` lines and clean cases): `<agentic-code-review>/references/learning.md`.
 
-- **Quem**: o agente escreve-o a partir das decisões, das áreas `risco: alto` e das lições; o
-  humano aprova «O que é falhar aqui», porque é ele o dono.
-- **Orçamento** ~3 KB. Não repete o `AGENTS.md` nem as regras que um hook, lint ou teste já
-  verifica.
-- **Ponteiro** no `AGENTS.md` (Fluxo de trabalho): a revisão é a da skill `agentic-code-review`,
-  que lê o `REVIEW.md`.
+- **Who**: the agent writes it from decisions, `risk: high` areas and lessons; the human
+  approves “What failure means here” because they own it.
+- **Budget** ~3 KB. Do not repeat `AGENTS.md` or rules already checked by hooks, lint or tests.
+- **Pointer** in `AGENTS.md` (Workflow): review uses `agentic-code-review`, reading `REVIEW.md`.
 
-## Modo adotar
+## Adopt mode
 
-Se `AGENTS.md`, `CLAUDE.md` ou `REVIEW.md` já existem: não reescrevas. Lê-os, identifica o que
-falta das secções acima e o que contradiz as decisões, e mostra ao humano um diff proposto.
-Preserva as regras do projeto: elas ganham às desta skill. Se o `CLAUDE.md` existente tem regras e não
-existe `AGENTS.md`, propõe mover as regras para `AGENTS.md` e deixar no `CLAUDE.md` só o import.
+If `AGENTS.md`, `CLAUDE.md` or `REVIEW.md` exists, do not rewrite it. Read it, identify missing
+sections and contradictions with decisions, and show the human a proposed diff. Preserve
+project rules: they take precedence over this skill. If existing `CLAUDE.md` holds rules and
+there is no `AGENTS.md`, propose moving rules to `AGENTS.md` and leaving only the import in
+`CLAUDE.md`.
 
-## Verificação antes de dar a fase por feita
+## Verification before closing the phase
 
-- `wc -c AGENTS.md` ≤ ~4000 (até ~5 KB se as regras do projeto o exigirem, com apontadores em
-  vez de texto); `wc -c REVIEW.md` ≤ ~3000, sem `{{` por preencher, e «O que é falhar
-  aqui» aprovado pelo humano (ou delegado, com a decisão em `docs/decisoes.md`).
-- Cada comando da secção Comandos foi corrido e passou (mostra a saída resumida). Os que dependem
-  de uma decisão aprovada e ainda não instalada (projeto novo sem código, ou um typecheck que o
-  modo adotar decidiu acrescentar) ficam marcados `(a criar na 1.ª feature)` ou
-  `(a criar: D-NNN)`, para nenhum agente os tomar como verificados.
-- Cada caminho referido existe (`ls`), exceto os marcados `(fase N)`, que se verificam no Fecho.
-- Teste de leitura a frio: com uma ferramenta de subagentes, dá a um subagente só o `AGENTS.md`
-  e pergunta-lhe «como corro os testes da área X?», «o que faço antes de push?», «onde registo
-  uma decisão?». Sem subagentes, responde tu às três citando a linha do `AGENTS.md` que responde
-  a cada uma (se tiveres de ir buscar a resposta à conversa ou a outro ficheiro sem ponteiro,
-  falhou). Se falhar, o `AGENTS.md` está incompleto.
+- `wc -c AGENTS.md` ≤ ~4000 (up to ~5 KB if project rules require it, using pointers instead of
+  text); `wc -c REVIEW.md` ≤ ~3000, no unfilled `{{`, and “What failure means here” approved by
+  the human (or delegated, recorded in `docs/decisions.md`).
+- Every Commands entry ran and passed (show summarized output). Mark commands depending on an
+  approved decision not yet installed (a new project without code, a typecheck adopt mode
+  decided to add) as `(to create in the first feature)` or `(to create: D-NNN)` so no agent
+  takes them as verified.
+- Every referenced path exists (`ls`), except `(phase N)` paths checked at Closing.
+- Cold reading test: with subagent tools, give a subagent only `AGENTS.md` and ask “How do I
+  run area X's tests?”, “What do I do before push?”, “Where do I record a decision?”. Without
+  subagents, answer these yourself, citing the `AGENTS.md` line answering each (if you need
+  the conversation or another file without a pointer, it failed). A failure means `AGENTS.md`
+  is incomplete.

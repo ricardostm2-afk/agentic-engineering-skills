@@ -1,46 +1,46 @@
 ---
 name: agentic-tool-design
 description: >-
-  Desenhar ou alterar ferramentas MCP/CLI/API para agentes: fronteiras, schemas, descoberta, identidade, evidência, efeitos e ciclo de vida. Usar ao definir contratos de ferramentas ou corrigir a sua composição; não substitui o processo de implementação e revisão do projeto.
+  Design or change MCP/CLI/API tools for agents: boundaries, schemas, discovery, identity, evidence, effects and lifecycle. Use when defining tool contracts or fixing their composition; does not replace the project's implementation and review process.
 ---
 
-# Desenho de ferramentas para agentes
+# Tool design for agents
 
-Desenhar a fronteira a partir da pergunta que a pessoa precisa de responder, não da biblioteca disponível. Adaptada da skill e do guia de desenho REA, sob MIT; [origem e atualização](references/origem.md). Não depende de REA.
+Design the boundary from the question the person needs answered, not the available library. Adapted from the REA skill and design guide, under MIT; [origin and updates](references/origin.md). Does not depend on REA.
 
-Ler o contrato canónico atual, os consumidores e a ferramenta mais próxima. Código, documentação e catálogo ligado podem pertencer a versões distintas; confirmar os schemas realmente disponíveis. Seguir as regras do projeto e a autorização existente para implementação, configuração e efeitos externos.
+Read the current canonical contract, consumers and closest tool. Code, documentation and connected catalog may belong to different versions; confirm the schemas actually available. Follow project rules and existing authorization for implementation, configuration and external effects.
 
-## Escolher uma fronteira
+## Choose a boundary
 
-Estender uma ferramenta quando intenção e contrato coincidem; criar outra para resultado ou autoridade materialmente distintos. Uma ferramenta não precisa de agrupar descoberta, execução e mutação sem relação só para reduzir o catálogo.
+Extend a tool when intent and contract match; create another for materially different results or authority. A tool need not bundle unrelated discovery, execution and mutation just to shrink the catalog.
 
-| Forma | Pergunta respondida |
+| Shape | Question answered |
 | --- | --- |
-| Inspecionar | Que factos existem sobre este objeto identificado? |
-| Pesquisar/listar | Que candidatos correspondem e como continuo a página? |
-| Traçar | Que relações sustentam esta conclusão e onde ficam os caminhos não resolvidos? |
-| Comparar | O que difere entre estes dois artefactos/estados explicitamente emparelhados? |
-| Observar/capturar | Que ações e efeitos ocorreram neste alvo durante este ciclo de vida? |
-| Compor um workflow | Que resultado recorrente junta várias fontes sem esconder escolhas ou incerteza? |
+| Inspect | What facts exist about this identified object? |
+| Search/list | Which candidates match and how do I continue to the next page? |
+| Trace | Which relationships support this conclusion and where are the unresolved paths? |
+| Compare | What differs between these two explicitly paired artifacts/states? |
+| Observe/capture | Which actions and effects occurred on this target during this lifecycle? |
+| Compose a workflow | Which recurring result combines several sources without hiding choices or uncertainty? |
 
-As formas não impõem prefixos. Preferir primitivas reutilizáveis; juntar um workflow quando o uso repetido demonstrar um resultado que pode ser composto com segurança. Uma interpretação específica do negócio não pertence a um decoder genérico. Batching só vale se conservar identidade, ordem necessária e falhas individuais.
+Shapes do not impose prefixes. Prefer reusable primitives; add a workflow when repeated use demonstrates a result that can be safely composed. A business-specific interpretation does not belong in a generic decoder. Batching is worthwhile only if it preserves identity, required ordering and individual failures.
 
-Comandos e scripts normais podem bastar para compor experiências. Uma linguagem de orquestração, replay ou prepare/execute precisa de necessidade demonstrada; um plano não prova execução.
+Normal commands and scripts may suffice to compose experiments. An orchestration language, replay or prepare/execute needs a demonstrated need; a plan does not prove execution.
 
-## Definir input e resposta
+## Define input and response
 
-Explicitar identidade do alvo, escolhas de ação/output e campos obrigatórios; retirar opções ignoradas. Entregar factos úteis inline, fontes/localizações, identidade do produtor, cobertura, inferências e incógnitas. Não exigir consultas extra só para descobrir o que significa a resposta.
+Make target identity, action/output choices and required fields explicit; remove ignored options. Deliver useful facts inline, sources/locations, producer identity, coverage, inferences and unknowns. Do not require extra queries just to discover what the response means.
 
-Para respostas grandes, fornecer sumários/seleção/paginação estável com acesso à evidência completa. Definir a que universo se aplicam contagens e limites. Cobertura ausente é desconhecida, não ausência de factos; um inventário completo não torna todos os providers disponíveis. Distinguir relações observadas, derivadas e inferidas.
+For large responses, provide summaries/selection/stable pagination with access to full evidence. Define the universe to which counts and limits apply. Missing coverage is unknown, not an absence of facts; a complete inventory does not make all providers available. Distinguish observed, derived and inferred relationships.
 
-Declarar efeitos de processo, ficheiros, rede, UI e mutação. Uma análise estática não observou runtime; anexar a um processo não transfere automaticamente a propriedade dele. A estrutura do contrato deve conservar alvo e lifecycle que o utilizador realmente escolheu, sem alargar silenciosamente o âmbito.
+Declare process, file, network, UI and mutation effects. Static analysis did not observe runtime; attaching to a process does not automatically transfer ownership of it. Contract structure must preserve the target and lifecycle the user actually chose, without silently expanding scope.
 
-Ler [contratos e recursos](references/contracts.md) se houver providers, recursos partilhados, cancelamento ou cleanup.
+Read [contracts and resources](references/contracts.md) when providers, shared resources, cancellation or cleanup are involved.
 
-## Provar e entregar
+## Prove and deliver
 
-Apresentar fronteira proposta, input/resultado, efeitos, alternativa existente mais próxima e abordagem de verificação. Implementar apenas no âmbito autorizado e pelo processo do projeto.
+Present the proposed boundary, input/result, effects, closest existing alternative and verification approach. Implement only within the authorized scope and through the project's process.
 
-Testar o entrypoint público com um caso normal e as fronteiras alteradas: alvo errado/inacessível, resultado vazio vs parcial, página seguinte, input inválido, falha do produtor, cancelamento e cleanup. Um teste que confirma o próprio mock não prova o contrato do produtor. Manter prova real quando se alegam capacidades de um provider real.
+Test the public entrypoint with a normal case and changed boundaries: wrong/inaccessible target, empty vs partial result, next page, invalid input, producer failure, cancellation and cleanup. A test confirming its own mock does not prove the producer contract. Keep real evidence when claiming real provider capabilities.
 
-Entregar exemplos de chamadas/resultados, contrato de erro, disponibilidade e limites. Medir a tarefa concluída para alegar melhoria de custo/usabilidade: tamanho serializado por si só não prova tokens poupados, menor latência ou melhores decisões.
+Deliver example calls/results, error contract, availability and limits. Measure the completed task to claim cost/usability improvements: serialized size alone does not prove saved tokens, lower latency or better decisions.

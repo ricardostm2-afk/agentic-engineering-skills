@@ -1,441 +1,445 @@
 ---
 name: agentic-project
-description: Usa sempre que o utilizador quiser começar, arrancar, montar ou preparar um projeto ou repositório para trabalho com agentes de IA, mesmo sem dizer «agentic» — «novo projeto», «arrancar projeto», «quero começar uma app», «montar isto do zero», «preparar o repo para agentes», «cria o ambiente para os agentes», «prepara o setup de agentes», «retoma o arranque do projeto», «start a project», «bootstrap a new app», «set up this repo for agents», «set up the agent environment». Numa sessão leva um projeto novo ou existente de pré-requisitos, entrevista e arquitetura até repo com protocolo de agentes (worktrees, hooks, áreas), Spec Kit, AGENTS.md/CLAUDE.md, quadro scrum e backlog inicial. Para desenvolver uma feature num projeto já preparado, usa agentic-feature.
+description: Use whenever the user wants to start, bootstrap, set up or prepare a project or repository for AI agents, even without saying “agentic” — “new project”, “start a project”, “I want to start an app”, “build this from scratch”, “prepare the repo for agents”, “create the agent environment”, “prepare the agent setup”, “resume project setup”, “bootstrap a new app”, “set up this repo for agents”, “set up the agent environment”. In one session, take a new or existing project from prerequisites, interview and architecture to a repo with an agent protocol (worktrees, hooks, areas), Spec Kit, AGENTS.md/CLAUDE.md, a scrum board and an initial backlog. To develop a feature in a prepared project, use agentic-feature.
 ---
 
 # agentic-project
 
-Objetivo: sair desta sessão com o projeto pronto para agentes trabalharem em paralelo e com
-segurança — pré-requisitos vistos, decisões registadas, arquitetura escolhida, repo com protocolo
-de agentes, Spec Kit, instruções para agentes, quadro publicado e o primeiro lote de features no
-backlog. Cada fase deixa um artefacto no repo, para que outra sessão (ou outro agente) consiga
-retomar sem esta conversa.
+Goal: leave this session with the project ready for agents to work in parallel and safely —
+prerequisites checked, decisions recorded, architecture chosen, a repo with an agent protocol,
+Spec Kit, agent instructions, a published board and the first batch of features in the backlog.
+Each phase leaves an artifact in the repo so another session (or another agent) can resume
+without this conversation.
 
-Os caminhos `scripts/`, `references/` e `assets/` são relativos à pasta desta skill, aqui
-chamada `<skill>` (a pasta deste `SKILL.md`: por exemplo `~/.claude/skills/agentic-project/` no
-Claude Code, `~/.agents/skills/agentic-project/` no Codex, ou dentro de um plugin). Os scripts
-correm-se com o repo do projeto como diretório atual, por isso chama-os pelo caminho completo
-(`bash <skill>/scripts/…`).
+Paths under `scripts/`, `references/` and `assets/` are relative to this skill's folder, called
+`<skill>` here (the folder containing this `SKILL.md`: for example
+`~/.claude/skills/agentic-project/` in Claude Code, `~/.agents/skills/agentic-project/` in Codex,
+or inside a plugin). Run scripts with the project repo as the current directory, so invoke
+them by their full path (`bash <skill>/scripts/…`).
 
-A skill irmã `agentic-feature`, aqui `<agentic-feature>`, é a primeira destas pastas que tiver
-`SKILL.md`:
-1. `$AGENTIC_FEATURE_DIR`, se estiver definida;
-2. a pasta ao lado desta, `<skill>/../agentic-feature` (o caso normal: as duas instalam-se
-   juntas, também no plugin);
-3. as pastas de skills dos agentes: `$CLAUDE_CONFIG_DIR/skills/`, `~/.claude/skills/`,
+The sibling skill `agentic-feature`, called `<agentic-feature>` here, is the first of these
+folders containing `SKILL.md`:
+1. `$AGENTIC_FEATURE_DIR`, if set;
+2. the adjacent folder, `<skill>/../agentic-feature` (the normal case: both are installed
+   together, including in the plugin);
+3. agent skill folders: `$CLAUDE_CONFIG_DIR/skills/`, `~/.claude/skills/`,
    `~/.agents/skills/`, `~/.codex/skills/`, `~/.config/agents/skills/`, `~/.cursor/skills/`,
-   `~/.gemini/skills/`, `~/.copilot/skills/`, `~/.config/opencode/skills/`, e no projeto
-   `.claude/skills/` e `.agents/skills/` (ou outra pasta de skills do agente);
-4. o plugin `agentic-skills` do Claude Code: `<installPath>/skills/agentic-feature`, com o
-   `installPath` de `agentic-skills@agentic-skills` em `~/.claude/plugins/installed_plugins.json`
-   (a versão instalada; outras pastas da cache podem ser versões antigas).
+   `~/.gemini/skills/`, `~/.copilot/skills/`, `~/.config/opencode/skills/`, and project folders
+   `.claude/skills/` and `.agents/skills/` (or another skill folder used by the agent);
+4. the Claude Code `agentic-skills` plugin: `<installPath>/skills/agentic-feature`, using the
+   `installPath` of `agentic-skills@agentic-skills` in `~/.claude/plugins/installed_plugins.json`
+   (the installed version; other cache folders may contain older versions).
 
-A irmã `agentic-design`, aqui `<agentic-design>`, procura-se pela mesma ordem, com
-`$AGENTIC_DESIGN_DIR` em primeiro; é a dona do método de UI e traz as regras (`ui-sem-slop.md`) e o
-detetor de «estética de IA» que a fase 4 copia para `.agentic/`. Os scripts já fazem esta procura;
-passa-lhes `AGENTIC_DESIGN_DIR` só se a encontraste noutro sítio. A irmã `agentic-code-review`,
-aqui `<agentic-code-review>`, procura-se pela mesma ordem, com `$AGENTIC_CODE_REVIEW_DIR` em
-primeiro; é a da revisão de código (a agentic-feature chama-a no passo 6) e tem o modelo do
-`REVIEW.md`. A irmã `agentic-architecture`, aqui `<agentic-architecture>`, procura-se pela mesma
-ordem, com `$AGENTIC_ARCHITECTURE_DIR` em primeiro; é a de melhorar a arquitetura de código que já
-existe e tem o vocabulário de módulos e costuras. Instaladas como plugin do Claude Code, as irmãs
-chamam-se `agentic-skills:agentic-feature`, `agentic-skills:agentic-design`,
-`agentic-skills:agentic-code-review` e `agentic-skills:agentic-architecture` na ferramenta Skill.
+Find the sibling `agentic-design`, called `<agentic-design>` here, in the same order, with
+`$AGENTIC_DESIGN_DIR` first; it owns the UI method and supplies the rules (`ui-without-slop.md`)
+and the AI aesthetic detector that phase 4 copies into `.agentic/`. The scripts already search
+these locations; pass `AGENTIC_DESIGN_DIR` only if you found it elsewhere. Find the sibling
+`agentic-code-review`, called `<agentic-code-review>`, in the same order, with
+`$AGENTIC_CODE_REVIEW_DIR` first; it handles code review (agentic-feature calls it at step 6)
+and supplies the `REVIEW.md` template. Find the sibling `agentic-architecture`, called
+`<agentic-architecture>`, in the same order, with `$AGENTIC_ARCHITECTURE_DIR` first; it improves
+existing code architecture and supplies the vocabulary of modules and seams. Installed as a
+Claude Code plugin, these siblings are named `agentic-skills:agentic-feature`,
+`agentic-skills:agentic-design`, `agentic-skills:agentic-code-review` and
+`agentic-skills:agentic-architecture` in the Skill tool.
 
-## Arranque: mostra o plano e retoma se já houver trabalho
+## Getting started: show the plan and resume existing work
 
-1. A 1.ª mensagem leva o plano numa linha (0 contexto → 1 pré-requisitos → 2 entrevista →
-   3 arquitetura → 4 git → 5 Spec Kit → 6 AGENTS.md → 7 quadro → 8 metodologia → 9 backlog), o
-   modo, e a 1.ª ação ou pergunta **no mesmo turno**: não peças licença para começar (a tabela
-   abaixo mostra-se a quem a pedir). Repete a linha «Fase N/9: <nome>» ao começar cada fase, para
-   o humano saber sempre onde está.
-2. Se o repo já tem artefactos desta skill (`docs/decisoes.md`, `ARCHITECTURE.md`,
-   `.agentic/areas.json`, `docs/radar.md`, `AGENTS.md`, `.specify/`), confere cada um contra o
-   «Termina quando» **atual** da sua fase (podem ter sido feitos por uma versão anterior desta
-   skill: ADR da stack sem a tabela com fontes nem `Rever em`, pre-commit sem o detetor de UI,
-   `AGENTS.md` sem radar nem regra de UI). Mostra a lista do que falta por fase e retoma na
-   primeira fase incompleta. Não refaças o que está completo; completa o resto (uma ADR aceite
-   completa-se ou substitui-se, `references/arquitetura.md` §6; um hook existente muda-se com
-   diff e OK).
+1. The first message includes the plan on one line (0 context → 1 prerequisites → 2 interview →
+   3 architecture → 4 git → 5 Spec Kit → 6 AGENTS.md → 7 board → 8 methodology → 9 backlog), the
+   mode, and the first action or question **in the same turn**: do not ask permission to start
+   (show the table below to anyone who asks). Repeat “Phase N/9: <name>” at the start of each
+   phase so the human always knows where things stand.
+2. If the repo already has artifacts from this skill (`docs/decisions.md`, `ARCHITECTURE.md`,
+   `.agentic/areas.json`, `docs/radar.md`, `AGENTS.md`, `.specify/`), check each against its
+   phase's **current** “Done when” (an earlier version of this skill may have created them:
+   a stack ADR without the source table or `Review on`, a pre-commit without the UI detector,
+   an `AGENTS.md` without radar or a UI rule). Show what is missing by phase and resume at the
+   first incomplete phase. Do not redo completed work; complete the rest (supplement or
+   supersede an accepted ADR, `references/architecture.md` §6; change an existing hook with
+   a diff and approval).
 
-| Fase | Nome | Artefacto no repo |
+| Phase | Name | Artifact in the repo |
 |---|---|---|
-| 0 | Contexto e modo (novo/adotar) | `docs/decisoes.md` iniciado (secção Contexto) |
-| 1 | Pré-requisitos | `docs/pre-requisitos.md` |
-| 2 | Entrevista do projeto | `docs/decisoes.md` + `GLOSSARIO.md` |
-| 3 | Arquitetura | `ARCHITECTURE.md` + `docs/adr/` + `docs/radar.md` |
-| 4 | Ambiente git para agentes | hooks, `.gitignore`, `.agentic/areas.json` |
-| 5 | Spec Kit + constituição | `.specify/memory/constitution.md` |
-| 6 | Instruções para agentes | `AGENTS.md` + `CLAUDE.md` + `REVIEW.md` |
-| 7 | Quadro scrum | `.agentic/quadro/` + quadro publicado (ou `docs/backlog.md`) + `AGENTS.md` |
-| 8 | Metodologia | `docs/metodologia.md` + `docs/licoes.md` |
-| 9 | Backlog inicial | 3–8 itens `backlog` no quadro (ou `docs/backlog.md`) |
+| 0 | Context and mode (new/adopt) | Start `docs/decisions.md` (Context section) |
+| 1 | Prerequisites | `docs/prerequisites.md` |
+| 2 | Project interview | `docs/decisions.md` + `GLOSSARY.md` |
+| 3 | Architecture | `ARCHITECTURE.md` + `docs/adr/` + `docs/radar.md` |
+| 4 | Git environment for agents | hooks, `.gitignore`, `.agentic/areas.json` |
+| 5 | Spec Kit + constitution | `.specify/memory/constitution.md` |
+| 6 | Agent instructions | `AGENTS.md` + `CLAUDE.md` + `REVIEW.md` |
+| 7 | Scrum board | `.agentic/board/` + published board (or `docs/backlog.md`) + `AGENTS.md` |
+| 8 | Methodology | `docs/methodology.md` + `docs/lessons.md` |
+| 9 | Initial backlog | 3–8 `backlog` items on the board (or `docs/backlog.md`) |
 
-## Regras para todas as fases
+## Rules for every phase
 
-**Perguntas ao humano.** O humano decide produto, dinheiro e o que é irreversível; tu descobres
-os factos. Por isso:
-- Antes de perguntar, procura a resposta no contexto dado, no código e nos docs. Só pergunta o
-  que lá não está.
-- Uma pergunta de cada vez quando uma depende da outra. Cada pergunta leva opções concretas, a
-  tua **recomendação** e o porquê numa linha. Até 4 perguntas independentes entre si vão juntas:
-  numa chamada de AskUserQuestion, se existir; sem ela, numeradas numa só mensagem.
-- «Escolhe tu» ou «segue as recomendações» é resposta válida para todas as pendentes: aplica as
-  tuas recomendações e regista cada uma como **decisão delegada** em `docs/decisoes.md` (assim o
-  humano pode revê-las depois sem reler a conversa).
+**Questions for the human.** The human decides product, money and irreversible actions; you
+find the facts. Therefore:
+- Before asking, look for the answer in the supplied context, code and docs. Ask only what
+  is not there.
+- One question at a time when one depends on another. Each question includes concrete options,
+  your **recommendation** and a one-line reason. Group up to 4 independent questions: in one
+  AskUserQuestion call if available; otherwise number them in a single message.
+- “You choose” or “follow the recommendations” is a valid answer to every pending question:
+  apply your recommendations and record each as a **delegated decision** in `docs/decisions.md`
+  (so the human can review them later without rereading the conversation).
 
-**Escolhas por omissão** (o humano já as fez; aplica-as salvo indicação em contrário e regista
-qualquer exceção em `docs/decisoes.md`):
-- Trunk-based: `main` sempre pronto para produção, ramos curtos (< 24 h), nada fica sem push.
-- UI escolhe-se entre 2–3 **variantes reais** (maquetas ou protótipos), nunca entre descrições.
-- UI sem «estética de IA» (pastilhas pastel, cartões dentro de cartões, gradientes roxos, emojis
-  como ícones, texto pequeno…): o trabalho de UI segue a `agentic-design`
-  (`<agentic-design>/references/ui-sem-slop.md`) e corre o detetor dela,
-  `<agentic-design>/scripts/detetar-slop.mjs` (cópias versionadas em `.agentic/`
-  num projeto com UI), também no pre-commit. Bloqueia o que a alteração acrescenta ou muda; o
-  slop que já lá estava fica numa linha do relatório, sem ir para o backlog (fases 2, 4 e 6).
-- Tecnologia de agora, não de memória: a fase 3 e cada feature pesquisam o que há de mais atual
-  em fontes primárias e datadas, e o que se aprende fica em `docs/radar.md`.
-- O esforço escala com o risco: mudar um texto não leva spec; dados, permissões e pagamentos levam.
-- «Feito» só com evidência medida (comando + saída), nunca declarado.
-- Nada irreversível ou externo sem OK explícito do humano: deploy de produção, apagar dados,
-  pagar, publicar, criar contas, criar repositório remoto, mexer em DNS.
-- Segredos nunca no código nem no chat: o humano põe-nos num `.env` local ou no gestor de
-  segredos; tu só referes o nome da variável.
-- Dados pessoais reais nunca nos prompts de agentes nem em fixtures.
+**Defaults** (the human has already chosen these; apply them unless instructed otherwise,
+and record any exception in `docs/decisions.md`):
+- Trunk-based: `main` always ready for production, short branches (< 24 h), nothing left unpushed.
+- Choose UI from 2–3 **real variants** (mockups or prototypes), never descriptions.
+- UI without an AI aesthetic (pastel pills, cards inside cards, purple gradients, emoji icons,
+  tiny text…): UI work follows `agentic-design`
+  (`<agentic-design>/references/ui-without-slop.md`) and runs its detector,
+  `<agentic-design>/scripts/detect-slop.mjs` (versioned copies in `.agentic/` in a project
+  with UI), including at pre-commit. Block what the change adds or modifies; existing slop
+  gets one report line, without going into the backlog (phases 2, 4 and 6).
+- Current technology, never memory: phase 3 and every feature research current options using
+  dated primary sources, recording what is learned in `docs/radar.md`.
+- Effort scales with risk: changing text needs no spec; data, permissions and payments do.
+- “Done” requires measured evidence (command + output), never a declaration.
+- No irreversible or external action without explicit human approval: production deployment,
+  deleting data, paying, publishing, creating accounts or a remote repository, changing DNS.
+- Secrets never go into code or chat: the human puts them in a local `.env` or secret manager;
+  you refer only to the variable name.
+- Real personal data never goes into agent prompts or fixtures.
+- Project documents follow the language declared in the project's `AGENTS.md`, or English
+  when no language is declared.
 
-**Skills de terceiros.** Algumas fases usam skills de outros autores. Antes da fase 2, lê
-`references/mapa-de-skills.md`: diz como cada uma se invoca de facto (ferramenta Skill, ler o
-SKILL.md, ou só o utilizador com `/nome`) e o que fazer quando não está instalada. Nunca digas
-«vou invocar /grill-me» — essas só o utilizador as pode chamar; tu lês o método e aplica-lo.
+**Third-party skills.** Some phases use skills by other authors. Before phase 2, read
+`references/skills-map.md`: it explains how each is actually invoked (Skill tool, reading its
+SKILL.md, or user-only `/name`) and what to do when it is not installed. Never say “I will
+invoke /grill-me” — only the user can call those; read the method and apply it yourself.
 
-**Modo adotar** (repo já existente com código): nada se destrói nem se reescreve. As fases 1, 3 e
-4 viram auditoria (o que existe, o que falta, proposta); qualquer alteração a `AGENTS.md`,
-`CLAUDE.md`, hooks ou configuração existente é mostrada como diff e só se aplica com OK. As
-regras que o repo já tem (`AGENTS.md`, `CLAUDE.md`, CONTRIBUTING) valem desde a fase 0, também
-para os teus commits; se uma colide com uma escolha por omissão, vale a do repo até o humano
-decidir na fase 2.
+**Adopt mode** (an existing repo with code): destroy or rewrite nothing. Phases 1, 3 and 4
+become an audit (what exists, what is missing, proposal); show changes to existing `AGENTS.md`,
+`CLAUDE.md`, hooks or configuration as a diff and apply them only with approval. Existing repo
+rules (`AGENTS.md`, `CLAUDE.md`, CONTRIBUTING) apply from phase 0, including to your commits;
+if one conflicts with a default, the repo rule prevails until the human decides in phase 2.
 
-**Escala.** O esforço escala com o projeto, como nas features. Projeto pequeno (um utilizador-tipo,
-sem dados sensíveis nem pagamentos, ou um repo de poucas centenas de linhas): faz as fases 1 e 2
-numa só entrevista (as perguntas da fase 1 entram na 1.ª ronda), só as dimensões que mudam
-alguma coisa, e ADR só para o que cumpre as três condições de `references/arquitetura.md` §6
-(pode não haver nenhum). A pesquisa da fase 3 também encurta: 2 opções, tetos da coluna «via
-curta» de `references/pesquisa-arquitetura.md`, sem subagentes, e esqueleto só se a recomendada
-é nova para o projeto ou para o humano. As fases e os artefactos mantêm-se, mais curtos; diz ao
-humano numa linha que escolheste a via curta.
+**Scale.** Effort scales with the project, as it does with features. For a small project (one
+user type, no sensitive data or payments, or a repo of a few hundred lines), combine phases 1
+and 2 in one interview (phase 1 questions go into the first round), cover only dimensions that
+change something, and write ADRs only for decisions meeting all three conditions in
+`references/architecture.md` §6 (there may be none). Phase 3 research also shrinks: 2 options,
+the “short route” limits in `references/architecture-research.md`, no subagents, and a skeleton
+only if the recommendation is new to the project or human. Keep every phase and artifact,
+but shorter; tell the human in one line that you chose the short route.
 
-**Commits.** No fim de cada fase, commit só dos ficheiros dessa fase (`git add <caminhos>`, nunca
-`git add -A` às cegas), mensagem com o porquê. Push quando houver remoto; criar o remoto
-(`gh repo create`, privado por omissão) só com OK do humano.
+**Commits.** At the end of each phase, commit only its files (`git add <paths>`, never blind
+`git add -A`), explaining why in the message. Push when a remote exists; create a remote
+(`gh repo create`, private by default) only with human approval.
 
-## Noutros agentes
+## In other agents
 
-Esta skill nasceu no Claude Code; noutro agente (Codex, Cursor, Gemini CLI, Copilot, OpenCode…)
-o método é o mesmo e muda só a ferramenta. Quando uma das de baixo não existe, usa a troca e
-diz-a numa linha ao humano:
-- **AskUserQuestion** → perguntas no chat: até 4 independentes, numeradas, numa só mensagem,
-  cada uma com 2–4 opções concretas e a tua recomendação primeiro (com o porquê numa linha); as
-  dependentes, uma de cada vez.
-- **Ferramenta Skill e plugins** (`mattpocock-skills:*`) → se a skill estiver instalada neste
-  agente (procura `<nome>/SKILL.md` nas pastas de skills do ponto 3 acima e em
-  `~/.claude/plugins/cache`), lê o SKILL.md dela e aplica o método; senão usa o método resumido em
-  `references/` (`mapa-de-skills.md`).
-- **Agent, Workflow e subagentes** → os subagentes do próprio agente; sem eles, faz tu o trabalho
-  em sequência.
-- **Artifact e ArtifactData** → segue «Sem quadro» de `references/quadro.md`:
-  o quadro vive em `docs/backlog.md`, gerado com `scrum.sh markdown > docs/backlog.md` e lido
-  como página no editor ou no alojamento git (o `quadro.html` fora do Artifact abre sem dados);
-  regenera-se em cada transição e entra no commit no fim de cada sessão. Se o repo já tem um
-  quadro publicado, grava só no CLI: o próximo agente Claude envia.
-- **WebSearch/WebFetch** → a ferramenta web do agente; sem nenhuma, escreve «não confirmado (sem
-  web)» e deixa o item pendente em `docs/pre-requisitos.md`.
-- **Spec Kit** (fase 5): o init corre sempre com `--integration claude` (os caminhos desta skill
-  contam com `.claude/skills/speckit-*`); para os agentes que leem `.agents/skills/` (Codex,
-  Cursor, Gemini, Copilot, OpenCode), junta `specify integration install codex`, como na fase 5.
-- **Sandbox e git** (Codex com a sandbox `workspace-write`, a de omissão): `.git` fica só de
-  leitura e `../` fora da área de escrita, por isso `git commit`, `git worktree add ../…` e
-  `git config` (o `core.hooksPath` da fase 4) pedem aprovação, e falham sem ela (`codex exec`,
-  aprovações desligadas). Na fase 1, na pergunta das autorizações, pede ao humano que aprove os
-  comandos git para a sessão ou que a abra com permissões totais (`codex --sandbox
-  danger-full-access`, só com OK dele). Sem isso, cada commit pede aprovação e as faixas correm
-  em sequência num só ramo (`<agentic-feature>/references/implementacao.md` §4).
-- **Permissões** (`.claude/settings.local.json`, `update-config`) → o mecanismo de aprovação do
-  próprio agente; regista a resposta em `docs/decisoes.md` como acima.
+This skill began in Claude Code; in another agent (Codex, Cursor, Gemini CLI, Copilot,
+OpenCode…), the method stays the same and only the tool changes. When a tool below is missing,
+use the replacement and tell the human in one line:
+- **AskUserQuestion** → chat questions: up to 4 independent numbered questions in one message,
+  each with 2–4 concrete options and your recommendation first (one-line reason); dependent
+  questions one at a time.
+- **Skill tool and plugins** (`mattpocock-skills:*`) → if the skill is installed in this agent
+  (look for `<name>/SKILL.md` in the agent skill folders in point 3 above and in
+  `~/.claude/plugins/cache`), read its SKILL.md and apply its method; otherwise use the method
+  summarized in `references/` (`skills-map.md`).
+- **Agent, Workflow and subagents** → the agent's own subagents; without them, work sequentially
+  yourself.
+- **Artifact and ArtifactData** → follow “Without a board” in `references/board.md`: the board
+  lives in `docs/backlog.md`, generated with `scrum.sh markdown > docs/backlog.md` and read as
+  a page in the editor or git hosting (outside Artifact, `board.html` opens without data);
+  regenerate at every transition and commit it at the end of each session. If the repo already
+  has a published board, write only through the CLI: the next orchestrator with the artifact
+  data tool sends it.
+- **WebSearch/WebFetch** → the agent's web tool; without one, write “not confirmed (no web)”
+  and leave the item pending in `docs/prerequisites.md`.
+- **Spec Kit** (phase 5): always initialize with `--integration claude` (this skill's paths
+  rely on `.claude/skills/speckit-*`); for agents reading `.agents/skills/` (Codex, Cursor,
+  Gemini, Copilot, OpenCode), add `specify integration install codex`, as in phase 5.
+- **Sandbox and git** (Codex with the default `workspace-write` sandbox): `.git` is read-only
+  and `../` is outside the writable area, so `git commit`, `git worktree add ../…` and
+  `git config` (phase 4's `core.hooksPath`) require approval and fail without it (`codex exec`,
+  approvals disabled). In phase 1's authorization question, ask the human to approve git
+  commands for the session or open it with full permissions (`codex --sandbox
+  danger-full-access`, only with their approval). Otherwise every commit needs approval and
+  lanes run sequentially on one branch (`<agentic-feature>/references/implementation.md` §4).
+- **Permissions** (`.claude/settings.local.json`, `update-config`) → the agent's own approval
+  mechanism; record the answer in `docs/decisions.md` as above.
 
-## Fase 0 — Contexto e modo
+## Phase 0 — Context and mode
 
-0. Decide **onde** fica o projeto antes de olhar para o que lá está. A pasta atual só serve se
-   for claramente a deste projeto. Se é a home, uma pasta com vários projetos (`~/projetos`,
-   `~/code`…), o repo de outro produto, ou o pedido é um projeto novo e a pasta já tem código
-   alheio, faz UMA pergunta com recomendação: «crio em `<pasta-mãe>/<slug>`?». Com resposta,
-   `mkdir -p <pasta>` (reversível) e usa-a como `<repo>` em todos os comandos (`git -C <repo>`,
-   `--dir <repo>` nos scripts). Nunca faças `git init` em `$HOME` nem numa pasta que contém
-   outros repos. Diz numa linha que o `CLAUDE.md` do repo novo só se carrega numa sessão aberta
-   lá; esta sessão continua a funcionar com caminhos completos.
-1. Lê o contexto que o humano deu (argumentos da skill, mensagem, ficheiros apontados). Se não
-   deu nenhum, faz uma só pergunta aberta: «Descreve o projeto em 2–3 frases: o quê, para quem,
-   e o que já existe.»
-2. Inspeciona a pasta: `git status`, `git log --oneline -5`, árvore de topo, `README*`,
-   `AGENTS.md`, `CLAUDE.md`, `.specify/`, `.agentic/`, manifestos de stack (`package.json`,
-   `pyproject.toml`, `go.mod`, `Cargo.toml`…), `docs/`, CI existente.
-3. Decide o modo: **novo** (pasta vazia ou só docs) ou **adotar** (há código). Diz qual e porquê
-   numa linha. Se a pasta ainda não é um repositório git e o `git` existe, faz já
-   `git init -b main`: é reversível e permite um commit por fase desde o início.
-4. Cria `docs/decisoes.md` a partir de `assets/decisoes.template.md` (ou, em modo adotar, junta a
-   secção Contexto ao ficheiro de decisões que já exista) com: o que é o projeto, modo, stack
-   detetado, o que já existe.
+0. Decide **where** the project belongs before inspecting its contents. The current folder is
+   suitable only if it clearly belongs to this project. If it is the home folder, a folder
+   holding several projects (`~/projects`, `~/code`…), another product's repo, or the request
+   is for a new project and the folder already contains unrelated code, ask ONE question with
+   a recommendation: “create it in `<parent-folder>/<slug>`?” After the answer,
+   `mkdir -p <folder>` (reversible) and use it as `<repo>` in every command (`git -C <repo>`,
+   `--dir <repo>` in scripts). Never `git init` in `$HOME` or in a folder containing other
+   repos. Explain in one line that the new repo's `CLAUDE.md` loads only in a session opened
+   there; this session keeps using full paths.
+1. Read the human's context (skill arguments, message, referenced files). If none was supplied,
+   ask a single open question: “Describe the project in 2–3 sentences: what, for whom, and what
+   already exists.”
+2. Inspect the folder: `git status`, `git log --oneline -5`, top-level tree, `README*`,
+   `AGENTS.md`, `CLAUDE.md`, `.specify/`, `.agentic/`, stack manifests (`package.json`,
+   `pyproject.toml`, `go.mod`, `Cargo.toml`…), `docs/`, existing CI.
+3. Choose the mode: **new** (empty folder or docs only) or **adopt** (code exists). Say which
+   and why in one line. If the folder is not yet a git repo and `git` exists, run
+   `git init -b main` now: reversible, and allows a commit per phase from the start.
+4. Create `docs/decisions.md` from `assets/decisions.template.md` (or, in adopt mode, add the
+   Context section to the existing decision file) with: what the project is, mode, detected
+   stack, what already exists.
 
-Termina quando o modo está decidido e a secção Contexto está escrita.
+Done when the mode is decided and the Context section is written.
 
-## Fase 1 — Pré-requisitos
+## Phase 1 — Prerequisites
 
-1. Corre `bash <skill>/scripts/verificar-ambiente.sh`. Mostra a tabela. Se faltar algo, propõe os
-   comandos de instalação e só os corres com OK (instalar mexe na máquina do humano). Saída 1 =
-   falta uma essencial (`git` ou `node>=20`): resolve-a antes de continuar. Recomendadas em
-   falta não bloqueiam; cada fase diz o que fazer sem elas. Exceção: num projeto com UI, a
-   `agentic-design` em falta é pendente com dono (sem ela não há regras nem detetor de UI).
-   Na mesma pergunta, propõe as autorizações de uma vez (forma e ficheiro em
-   `references/pre-requisitos.md` §6): a pesquisa web (`WebSearch` e `WebFetch`, em
-   `.claude/settings.local.json`, fora do git; com a skill `update-config` se existir), porque a
-   pesquisa das fases e das features faz-se sempre e sem isto cada página pede autorização; e
-   descarregar dependências para o esqueleto da fase 3, que corre código de terceiros; e, num
-   agente com sandbox que deixa `.git` só de leitura (Codex), os comandos git («Noutros agentes»,
-   Sandbox e git). Só com OK; regista a resposta em `docs/decisoes.md`. Sem OK ou sem rede, as fases seguem com
-   «não confirmado» e o item fica pendente.
-2. Lê `references/pre-requisitos.md` e percorre a checklist. Responde tu ao que o contexto já
-   responde; pergunta o resto ao humano, pela ordem de impacto.
-3. Escreve `docs/pre-requisitos.md`: tabela item → estado (ok / pendente / n.a.) → dono → nota, e
-   uma lista «Só o humano pode fazer» (contas, segredos, DNS, faturação). Cada decisão tomada
-   aqui (para quem é, região, teto de custo…) entra logo em `docs/decisoes.md`, no formato do
-   modelo; a fase 2 não a volta a perguntar.
+1. Run `bash <skill>/scripts/check-environment.sh`. Show the table. If anything is missing,
+   propose installation commands and run them only with approval (installation changes the
+   human's machine). Exit 1 = an essential tool is missing (`git` or `node>=20`): resolve this
+   before continuing. Missing recommended tools do not block; each phase provides a fallback.
+   Exception: in a project with UI, missing `agentic-design` is a pending item with an owner
+   (without it there are no UI rules or detector).
+   In the same question, propose all authorizations together (format and file in
+   `references/prerequisites.md` §6): web research (`WebSearch` and `WebFetch` in
+   `.claude/settings.local.json`, outside git; using `update-config` if available), because
+   phase and feature research always runs and otherwise every page needs authorization;
+   dependency downloads for the phase 3 skeleton, which runs third-party code; and git commands
+   for an agent whose sandbox makes `.git` read-only (Codex: “In other agents”, Sandbox and
+   git). Only with approval; record the answer in `docs/decisions.md`. Without approval or
+   network access, phases continue with “not confirmed” and the item stays pending.
+2. Read `references/prerequisites.md` and work through its checklist. Answer anything already
+   covered by the context yourself; ask the human the rest in order of impact.
+3. Write `docs/prerequisites.md`: a table of item → status (ok / pending / n/a) → owner → note,
+   and an “Only the human can do this” list (accounts, secrets, DNS, billing). Record each
+   decision here (audience, region, cost ceiling…) immediately in `docs/decisions.md` using
+   the template format; phase 2 does not ask it again.
 
-Termina quando cada item tem estado e os pendentes têm dono.
+Done when every item has a status and every pending item has an owner.
 
-## Fase 2 — Entrevista do projeto
+## Phase 2 — Project interview
 
-Lê `references/grill-projeto.md` (banco de perguntas por dimensão, ordem e critério de paragem).
-Se `mattpocock-skills:grilling` estiver disponível, invoca-a com a ferramenta Skill e dá-lhe o
-contexto da fase 0; mantém as regras de perguntas acima (como as duas encaixam — rondas pela
-fronteira, até 4 perguntas por chamada — está na referência). Para o vocabulário do domínio, invoca
-`mattpocock-skills:domain-modeling` (ou aplica o método descrito na referência).
+Read `references/project-grill.md` (question bank by dimension, order and stopping criterion).
+If `mattpocock-skills:grilling` is available, invoke it with the Skill tool and supply phase 0's
+context; keep the question rules above (the reference explains how boundary rounds and up to
+4 questions per call fit together). For domain vocabulary, invoke
+`mattpocock-skills:domain-modeling` (or apply the method in the reference).
 
-Saída: `docs/decisoes.md` com cada decisão (quem decidiu, porquê, reversível?) e a lista «Fora de
-âmbito»; `GLOSSARIO.md` com os termos do domínio (sem detalhes de implementação).
+Output: `docs/decisions.md` with each decision (who decided, why, reversible?) and the “Out of
+scope” list; `GLOSSARY.md` with domain terms (no implementation details).
 
-Termina quando todas as dimensões da referência estão respondidas, delegadas ou marcadas como
-fora de âmbito, e nenhuma pergunta aberta muda a arquitetura.
+Done when every reference dimension is answered, delegated or out of scope, and no open question
+changes the architecture.
 
-## Fase 3 — Arquitetura
+## Phase 3 — Architecture
 
-Lê `references/arquitetura.md` e `references/pesquisa-arquitetura.md`. Antes de propor, descobre
-o estado atual de cada categoria e pesquisa cada opção na web, em fontes primárias e datadas
-(versão estável e suporte, custo com fonte, adequação a agentes medida num esqueleto quando é
-barato), dentro dos tetos desse ficheiro; versões e preços nunca de memória, e as forças já
-decididas pelo humano ganham à pesquisa. Propõe 2–3 opções com custo mensal (confirmado, ou
-marcado «estimativa»), esforço de operação, dependência de fornecedor e adequação a agentes, e
-uma recomendação. O humano escolhe (ou delega). Em modo adotar, ou com a stack já decidida na
-fase 2, não há opções do zero: audita a arquitetura existente (secção «Modo adotar» de
-`references/arquitetura.md`) e pesquisa versão e suporte de cada peça (secção «Modo adotar e
-stack já decidida» de `references/pesquisa-arquitetura.md`). Destaca as decisões difíceis de
-reverter; escreve ADR só para as que cumprem as três condições da referência (§6), as outras
-ficam em `docs/decisoes.md`.
+Read `references/architecture.md` and `references/architecture-research.md`. Before proposing,
+find the current state of each category and research every option on the web using dated
+primary sources (stable version and support, sourced cost, agent suitability measured in a
+skeleton when cheap), within that file's limits; never quote versions or prices from memory,
+and human decisions on constraints take precedence over research. Propose 2–3 options with
+monthly cost (confirmed or marked “estimate”), operating effort, vendor lock-in, agent
+suitability and a recommendation. The human chooses (or delegates). In adopt mode, or when
+phase 2 already chose the stack, do not offer options from scratch: audit the existing
+architecture (“Adopt mode” in `references/architecture.md`) and research each component's
+version and support (“Adopt mode and an already chosen stack” in
+`references/architecture-research.md`). Highlight decisions that are hard to reverse; write
+ADRs only for those meeting all three conditions in the reference (§6); record others in
+`docs/decisions.md`.
 
-Saída: `ARCHITECTURE.md` curto (módulos, fluxos de dados, mapa de áreas, onde correm as
-verificações) + a decisão da stack com a tabela da pesquisa (`docs/adr/NNNN-*.md`, ou
-`docs/decisoes.md` quando não há ADR) + `docs/radar.md` inicial a partir de
-`assets/radar.template.md` (alvos; em Adotar o que esta fase decidiu, com quem decidiu;
-promissoras em Avaliar; em Evitar só o que falha um critério obrigatório).
+Output: a short `ARCHITECTURE.md` (modules, data flows, area map, where checks run) + the stack
+decision with the research table (`docs/adr/NNNN-*.md`, or `docs/decisions.md` when there is no
+ADR) + initial `docs/radar.md` from `assets/radar.template.md` (targets; phase decisions in
+Adopt with who decided; promising options in Assess; Avoid only for failures of a mandatory
+criterion).
 
-Termina quando a opção está escolhida, cada pasta prevista do código tem área e verificação, e
-`docs/radar.md` tem os alvos preenchidos e cada entrada com fonte e data (ou «não confirmado (sem
-rede)», com o item pendente em `docs/pre-requisitos.md`).
+Done when the option is chosen, every planned code folder has an area and a check, and
+`docs/radar.md` has targets filled in and a source and date for each entry (or “not confirmed
+(no network)”, with a pending item in `docs/prerequisites.md`).
 
-## Fase 4 — Ambiente git para agentes
+## Phase 4 — Git environment for agents
 
-Lê `references/ambiente-git.md` (protocolo: ramos curtos, um worktree por agente, regras de
-commit, hooks, mapa de áreas).
+Read `references/git-environment.md` (protocol: short branches, one worktree per agent, commit
+rules, hooks, area map).
 
-1. `bash <skill>/scripts/preparar-repo.sh --dir <repo>` (simulação; num projeto com UI, junta
-   `--com-ui`). Mostra o que faria.
-2. `bash <skill>/scripts/preparar-repo.sh --aplicar --dir <repo>` (com `--com-ui` se há UI:
-   versiona `.agentic/detetar-slop.mjs` e `.agentic/ui-sem-slop.md`, sem perguntar). O script
-   nunca sobrescreve; cada «aviso» conta como pendente e a fase não fecha com pendentes por
-   resolver. Em modo adotar, trata cada «existe, mantido» e cada «aviso» como item de auditoria:
-   `--mostrar pre-commit` imprime o hook atual, para o diff que propões.
-3. Preenche `.agentic/areas.json` com o mapa da fase 3 (`risco`: `normal` ou `alto`). Num repo
-   com código, ajusta os hooks aos comandos rápidos reais do projeto; num projeto novo não há
-   nada a ajustar: os hooks já chamam `typecheck`/`lint`/`test` quando existirem, e a 1.ª feature
-   cria-os. Um `aviso` de hooks locais em `.git/hooks` espera pelo OK do humano antes de definir
-   `core.hooksPath`.
-4. Prova que os hooks funcionam: um commit de teste que deve falhar falha, o corrigido passa, e o
-   mesmo para o pre-push (como montar a prova sem código ainda: «Prova da fase» em
-   `references/ambiente-git.md`). Se o projeto tem UI, prova também o detetor de slop que o
-   pre-commit corre nos ficheiros de UI staged: um `.css` com `font-size: 10px` bloqueia, um
-   limpo passa, e mudar outra linha de um ficheiro que já tinha `10px` passa (sai
-   `pré-existente`). Mostra as saídas.
+1. `bash <skill>/scripts/prepare-repo.sh --dir <repo>` (dry run; add `--with-ui` for a project
+   with UI). Show what it would do.
+2. `bash <skill>/scripts/prepare-repo.sh --apply --dir <repo>` (with `--with-ui` when there is UI:
+   version `.agentic/detect-slop.mjs` and `.agentic/ui-without-slop.md`, without asking). The
+   script never overwrites; every “warning” is a pending item and the phase cannot close with
+   unresolved items. In adopt mode, treat every “exists, kept” and “warning” as an audit item:
+   `--show pre-commit` prints the current hook for the diff you propose.
+3. Fill in `.agentic/areas.json` using phase 3's map (`risk`: `high`, `medium` or `low`). In a
+   repo with code, adjust hooks to the project's real fast commands; in a new project there
+   is nothing to adjust: hooks already call `typecheck`/`lint`/`test` when available and the
+   first feature creates them. A local-hooks warning for `.git/hooks` waits for human approval
+   before setting `core.hooksPath`.
+4. Prove hooks work: a test commit expected to fail does fail, the corrected one passes, and
+   likewise for pre-push (how to prove this before code exists: “Phase proof” in
+   `references/git-environment.md`). If there is UI, also prove the pre-commit slop detector on
+   staged UI files: `.css` with `font-size: 10px` blocks, clean CSS passes, and changing another
+   line in a file that already had `10px` passes (reported as `Pre-existing`). Show the outputs.
 
-Termina quando os hooks estão ativos e provados e o script não deixa pendentes por resolver.
+Done when hooks are active and proven and the script leaves no unresolved pending items.
 
-## Fase 5 — Spec Kit + constituição
+## Phase 5 — Spec Kit + constitution
 
-1. `git status` tem de estar limpo (o passo seguinte reescreve ficheiros; precisas de ver o diff).
-2. `specify init --here --force --non-interactive --integration claude`. Cria `.specify/` e as
-   skills `speckit-*` em `.claude/skills/`. Se outro agente que lê `.agents/skills/` vai
-   trabalhar no repo (Codex, Cursor, Gemini, Copilot, OpenCode; esta sessão incluída, se não é o
-   Claude Code), junta `specify integration install codex`: cria `.agents/skills/speckit-*` e a
-   integração por omissão continua a ser a do Claude (`specify integration status` confirma).
-3. `git status` e `git diff`: repõe (`git checkout -- <ficheiro>`) qualquer ficheiro que o
-   projeto já tinha e que o init alterou (ex.: `.claude/settings.json`). Apaga
-   `speckit-taskstoissues/` em `.claude/skills/` e, se existir, em `.agents/skills/`
-   (descontinuada; evita que um agente a use); o manifesto em `.specify/integrations/` continua
-   a listá-la, por isso um novo `specify init` ou upgrade recria-a e tens de a apagar outra vez.
-   Faz commit de `.specify/` e das `speckit-*` de cada pasta (`.claude/skills/` e
-   `.agents/skills/`): cada agente que clonar o repo encontra as suas. O init sugere pôr `.claude/` no
-   `.gitignore` por causa de credenciais locais: ignora só `.claude/settings.local.json` (o
-   `.gitignore` base da fase 4 já o tem; num `.gitignore` antigo, acrescenta-o); as skills
-   commitam-se.
-4. Aplica `speckit-constitution` com princípios **deste** projeto, tirados de `docs/decisoes.md`
-   e de `ARCHITECTURE.md` (ex.: «dados de saúde nunca saem da UE», «cada rota nova tem teste de
-   autorização»), nunca genéricos. Invoca-a com a ferramenta Skill só se a sessão arrancou na raiz
-   deste repo e ela já existia; senão lê `.claude/skills/speckit-constitution/SKILL.md` **deste
-   repo** (ou `.agents/skills/speckit-constitution/SKILL.md`) e segue-o (as `speckit-*` da lista
-   da sessão podem ser as de outro repo).
+1. `git status` must be clean (the next step rewrites files; you need to see the diff).
+2. `specify init --here --force --non-interactive --integration claude`. Creates `.specify/`
+   and `speckit-*` skills in `.claude/skills/`. If another agent reading `.agents/skills/` will
+   work in the repo (Codex, Cursor, Gemini, Copilot, OpenCode; including this session if it is
+   not Claude Code), add `specify integration install codex`: creates
+   `.agents/skills/speckit-*`, keeping Claude as the default integration (`specify integration
+   status` confirms).
+3. `git status` and `git diff`: restore (`git checkout -- <file>`) any existing project file
+   changed by init (e.g. `.claude/settings.json`). Delete `speckit-taskstoissues/` in
+   `.claude/skills/` and, if present, `.agents/skills/` (discontinued; prevents agents using it);
+   the manifest in `.specify/integrations/` still lists it, so another `specify init` or upgrade
+   recreates it and you must delete it again. Commit `.specify/` and the `speckit-*` skills in
+   each folder (`.claude/skills/` and `.agents/skills/`): every agent cloning the repo finds its
+   own. Init suggests ignoring `.claude/` because of local credentials: ignore only
+   `.claude/settings.local.json` (phase 4's base `.gitignore` already does; add it to an older
+   `.gitignore`); commit the skills.
+4. Apply `speckit-constitution` with **this** project's principles from `docs/decisions.md` and
+   `ARCHITECTURE.md` (e.g. “customer data stays in the chosen region”, “every new route has an
+   authorization test”), never generic ones. Invoke it through the Skill tool only if the
+   session started in this repo's root and it already existed; otherwise read **this repo's**
+   `.claude/skills/speckit-constitution/SKILL.md` (or
+   `.agents/skills/speckit-constitution/SKILL.md`) and follow it (the session's listed
+   `speckit-*` skills may belong to another repo).
 
-Se o init sair ≠ 0 (versão do `specify` diferente da 1.2.0 que esta skill testou, flags que
-mudaram): `git status`, repõe o que o init alterou (`git checkout -- <ficheiros>`), apaga só o
-que ele criou (ficheiros por seguir que o `git status` mostra e não existiam antes), regista a
-falha em `docs/decisoes.md` e segue o caminho «sem `specify`» abaixo; o
-`verificar-ambiente.sh` mostra o comando para instalar a 1.2.0.
+If init exits ≠ 0 (`specify` differs from the tested 1.2.0, changed flags): `git status`, restore
+files changed by init (`git checkout -- <files>`), delete only what it created (untracked files
+shown by `git status` that did not exist before), record the failure in `docs/decisions.md` and
+follow “without `specify`” below; `check-environment.sh` shows how to install 1.2.0.
 
-Sem `specify` (e o humano não quer instalar): salta o init, escreve os princípios numa secção
-«Princípios» de `docs/decisoes.md` e regista que a agentic-feature usará a spec leve.
+Without `specify` (and the human does not want to install it): skip init, write the principles
+in a “Principles” section in `docs/decisions.md` and record that agentic-feature will use the
+light spec.
 
-Termina quando a constituição (ou a secção Princípios) existe e não tem marcadores por preencher.
+Done when the constitution (or Principles section) exists with no unfilled placeholders.
 
-## Fase 6 — Instruções para agentes
+## Phase 6 — Agent instructions
 
-Lê `references/agents-md.md`. Se `mattpocock-skills:writing-for-agents` existir, invoca-a. Escreve
-`AGENTS.md` a partir de `assets/AGENTS.template.md` e `CLAUDE.md` a partir de
-`assets/CLAUDE.template.md`, e `REVIEW.md` a partir de
-`<agentic-code-review>/assets/REVIEW.template.md`, como diz
-`<agentic-code-review>/references/review-md.md` (o que é falhar em cada área `risco: alto`,
-etiquetas, caminhos a saltar; o humano aprova «O que é falhar aqui»). Em modo adotar, mostra o
-diff contra os existentes antes de gravar; um `REVIEW.md` existente não se reescreve.
+Read `references/agents-md.md`. If `mattpocock-skills:writing-for-agents` exists, invoke it.
+Write `AGENTS.md` from `assets/AGENTS.template.md`, `CLAUDE.md` from `assets/CLAUDE.template.md`,
+and `REVIEW.md` from `<agentic-code-review>/assets/REVIEW.template.md`, following
+`<agentic-code-review>/references/review-md.md` (what failure means for each `risk: high` area,
+labels, paths to skip; the human approves “What failure means here”). In adopt mode, show the
+diff against existing files before writing; do not rewrite an existing `REVIEW.md`.
 
-O `AGENTS.md` nasce já com os ponteiros para o que as fases 7–9 criam (quadro, metodologia,
-lições, backlog), marcados `(fase N)`; cada fase retira a sua marca e o Fecho confirma que não
-sobrou nenhuma. Leva também, do modelo: a regra de UI (`ui-sem-slop.md` + detetor; só se o
-projeto tem UI, com o ponteiro para a decisão «Exceções de UI» da fase 2), o radar
-(`docs/radar.md`) e «confirma a API de dependência nos tipos ou docs da versão instalada».
+Create `AGENTS.md` with pointers to what phases 7–9 will create (board, methodology, lessons,
+backlog), marked `(phase N)`; each phase removes its marker and Closing checks none remain.
+Also include the template's UI rule (`ui-without-slop.md` + detector; only if there is UI, with
+a pointer to phase 2's “UI exceptions” decision), radar (`docs/radar.md`), and “check dependency
+APIs in the installed version's types or docs”.
 
-Termina quando `wc -c AGENTS.md` ≤ ~4000 (até ~5 KB se as regras do projeto o exigirem, com
-apontadores para docs em vez de texto), `wc -c REVIEW.md` ≤ ~3000 sem `{{` por preencher, «O que
-é falhar aqui» do `REVIEW.md` está aprovado pelo humano (ou delegado, com a decisão em
-`docs/decisoes.md`), cada comando lá escrito foi corrido com sucesso e cada caminho sem marca
-existe. Comandos que dependem de algo aprovado e ainda por criar (o primeiro código de um projeto
-novo, um typecheck que o modo adotar decidiu acrescentar) ficam marcados `(a criar na 1.ª
-feature)` ou `(a criar: D-NNN)`, para nenhum agente os tomar como verificados.
+Done when `wc -c AGENTS.md` ≤ ~4000 (up to ~5 KB if project rules require it, using doc pointers
+instead of text), `wc -c REVIEW.md` ≤ ~3000 with no unfilled `{{`, the human has approved “What
+failure means here” in `REVIEW.md` (or delegated it, recorded in `docs/decisions.md`), every
+listed command has run successfully and every unmarked path exists. Mark commands depending
+on something approved but not yet created (a new project's first code, a typecheck adopt mode
+decided to add) as `(to create in the first feature)` or `(to create: D-NNN)` so no agent treats
+them as verified.
 
-## Fase 7 — Quadro scrum
+## Phase 7 — Scrum board
 
-Lê `references/quadro.md` e segue-o: copiar o CLI, o gancho e os testes para `.agentic/quadro/`
-(testes verdes), escrever a `config.json` só com o que o projeto tem, publicar a página
-(`assets/quadro/quadro.html`, capabilities exatas do README), semear, enviar e ler de volta,
-e escrever as instruções no `AGENTS.md`, incluindo que cada agente Claude atualiza o quadro ele
-próprio em cada transição e, enquanto trabalha, pelo menos de 30 em 30 min (`agente sinal` +
-os 4 passos, com a caixa `pedidos-novos` no passo 1), que os agentes sem ArtifactData só gravam
-no CLI, e nunca uma tarefa agendada.
-Sem quadro publicado (falta a ferramenta Artifact ou `assets/quadro/`, ou o humano não quer),
-segue a secção «Sem quadro» da referência: o CLI regista e `docs/backlog.md` é a vista
-(`scrum.sh markdown`).
+Read `references/board.md` and follow it: copy the CLI, hook, page and tests into `.agentic/board/`
+(green tests), write `config.json` only with what the project has, publish the page
+(`assets/board/board.html`, exact README capabilities), seed, send and read back, and write
+instructions in `AGENTS.md`: every agent records transitions and a heartbeat through the CLI,
+at every transition and at least every 30 minutes while working. Only the orchestrator, the
+session with the artifact data tool, sends to the artifact. Subagents, workflow agents and jobs
+write only through the CLI. The orchestrator follows the 4 sync steps at that cadence, with
+the `new-requests` inbox in step 1. Never use a scheduled task for sync.
+Without a published board (Artifact tool or `assets/board/` missing, or the human declines),
+follow “Without a board” in the reference: the CLI records state and `docs/backlog.md` is the
+view (`scrum.sh markdown`).
 
-Termina quando: com quadro, o humano tem o link e um item semeado foi lido de volta do artefacto
-(`estado/itens`) antes de correr o `confirmar` do `plano-sync`; sem quadro, o `AGENTS.md` diz onde
-vive o backlog e como se regista cada transição, e o CLI (se instalado) responde a `scrum.sh ver itens`.
+Done when: with a board, the human has the link and a seeded item has been read back from the
+artifact (`state/items`) before running the `sync-plan`'s `confirm`; without a board,
+`AGENTS.md` says where the backlog lives and how to record every transition, and the CLI
+(if installed) responds to `scrum.sh show items`.
 
-## Fase 8 — Metodologia
+## Phase 8 — Methodology
 
-Lê `references/metodologia.md` e `references/mapa-de-skills.md`. Escreve `docs/metodologia.md`
-adaptado ao projeto: ciclo de trabalho (com a pesquisa do mais atual no início de cada feature, o
-detetor de slop na revisão de UI e o radar na entrega, antes do commit final), papéis, limite de
-WIP, definição de «feito», cadência, armadilhas, e a tabela «quando → skill → como se invoca» só com as
-skills instaladas aqui. Não repete regras: aponta para a constituição e para o `AGENTS.md`. Cria
-`docs/licoes.md` (só o cabeçalho e o formato de uma linha), para onde vão as lições das retros.
-Formato:
-`- <aaaa-mm-dd> · <área> · tipo: <escapou|repetido> · base <sha-base> · <sha-defeito>→<sha-correção> · esperado: <ficheiro:linha> · classe: <classe> · camada: <a que devia ter apanhado (escapou) ou a que apanhou (repetido)> · <o que aconteceu> → <a defesa>`
-A agentic-feature escreve uma linha `tipo: escapou` quando algo escapou (revertido, incidente,
-reportado pelo humano; `esperado` é o `ficheiro:linha` onde o revisor o devia ter acusado) e uma
-`tipo: repetido` quando a mesma classe aparece pela 2.ª vez numa revisão (`esperado` é a linha do
-achado). Só as `tipo: escapou` sobem a via na triagem. Essas linhas são o conjunto de avaliação do
-revisor (`<agentic-code-review>/references/aprendizagem.md`).
+Read `references/methodology.md` and `references/skills-map.md`. Write `docs/methodology.md`
+adapted to the project: work cycle (current research at the start of each feature, slop
+detector during UI review, radar at delivery before the final commit), roles, WIP limit,
+definition of done, cadence, pitfalls, and the “when → skill → how to invoke it” table with
+only skills installed here. Do not repeat rules: link to the constitution and `AGENTS.md`.
+Create `docs/lessons.md` (heading and one-line format only) for retrospective lessons.
+Format:
+`- <yyyy-mm-dd> · <area> · type: <escaped|repeated> · base <base-sha> · <defect-sha>→<fix-sha> · expected: <file:line> · class: <class> · layer: <should have caught it (escaped) or caught it (repeated)> · <what happened> → <defense>`
+agentic-feature writes a `type: escaped` line when something escaped (reverted, incident,
+human report; `expected` is the `file:line` where the reviewer should have flagged it) and a
+`type: repeated` line when the same class appears a second time in review (`expected` is the
+finding's line). Only `type: escaped` lines raise the triage route. These lines are the
+reviewer's evaluation set (`<agentic-code-review>/references/learning.md`).
 
-Termina quando `AGENTS.md` aponta para `docs/metodologia.md` e o ficheiro não contradiz as
-decisões.
+Done when `AGENTS.md` points to `docs/methodology.md` and the file does not contradict decisions.
 
-## Fase 9 — Backlog inicial
+## Phase 9 — Initial backlog
 
-1. Lê o método de fatias verticais do `to-tickets`
-   (a versão instalada está na cache: `find ~/.claude/plugins/cache -path
-   '*mattpocock*/to-tickets/SKILL.md' | sort | tail -1`; sem resultado, procura em
-   `~/.claude/plugins`); não o invoques, só o
-   utilizador o pode fazer. Usa dele o método (fatias, bloqueios, a pergunta ao humano), não o
-   formato de publicação: os itens vão para o quadro ou `docs/backlog.md`, não para ficheiros em
-   `.scratch/`. Sem o plugin, aplica: cada fatia atravessa todas as camadas
-   (dados → lógica → interface → testes), é demonstrável sozinha e cabe numa sessão.
-2. Parte o MVP em 3–8 features. Cada uma: título, o que entrega ao utilizador, bloqueada por,
-   critério de aceitação verificável (comando ou passo observável). Num projeto novo a primeira
-   é quase sempre o esqueleto que anda: a app mínima de ponta a ponta, a correr localmente com
-   um comando, com um teste, typecheck e hooks verdes — dá aos agentes seguintes um ciclo de
-   verificação real. Em modo adotar a app já anda: a primeira é o que falta ao ciclo de
-   verificação (comandos marcados «a criar» na fase 6) ou o prefactor que torna as seguintes
-   fáceis.
-3. Mostra a lista ao humano numa pergunta: «a granularidade e a ordem estão certas?» (recomenda a
-   tua). Ajusta.
-4. Escreve cada feature como item `backlog` com o CLI (`scrum.sh item add --id f01-<slug>
-   --titulo "<título>" --criterio "<aceitação verificável>" [--depende f00-…]`), sincroniza o
-   quadro e regenera `docs/backlog.md` (`scrum.sh markdown > docs/backlog.md`) se é aí que vive a
-   vista. Sem CLI, escreve `docs/backlog.md` à mão.
-5. Regista as fases 8 e 9 no quadro como as anteriores (`scrum.sh item add --id arranque-f8
-   --titulo "Metodologia" --estado integrado`, idem `arranque-f9`).
+1. Read `to-tickets`' vertical slicing method (find the installed version in the cache:
+   `find ~/.claude/plugins/cache -path '*mattpocock*/to-tickets/SKILL.md' | sort | tail -1`;
+   without a result, search `~/.claude/plugins`); do not invoke it, only the user can. Use its
+   method (slices, blockers, human question), not its publication format: items go into the
+   board or `docs/backlog.md`, not `.scratch/` files. Without the plugin, apply: each slice
+   crosses every layer (data → logic → interface → tests), can be demonstrated alone and fits
+   in one session.
+2. Split the MVP into 3–8 features. Each has a title, user outcome, blocked by, and verifiable
+   acceptance criterion (command or observable step). In a new project the first is almost
+   always the walking skeleton: a minimal end-to-end app running locally with one command,
+   one test, typecheck and green hooks — giving subsequent agents a real verification loop.
+   In adopt mode the app already runs: start with what is missing from verification (commands
+   marked “to create” in phase 6) or the prefactor that makes the next features easy.
+3. Show the human the list in one question: “Are the granularity and order right?” (recommend
+   yours). Adjust.
+4. Write each feature as a `backlog` item using the CLI (`scrum.sh item add --id f01-<slug>
+   --title "<title>" --criterion "<verifiable acceptance>" [--depends f00-…]`), sync the board,
+   and regenerate `docs/backlog.md` (`scrum.sh markdown > docs/backlog.md`) if that is the view.
+   Without a CLI, write `docs/backlog.md` manually.
+5. Record phases 8 and 9 on the board like the earlier phases (`scrum.sh item add --id setup-p8
+   --title "Methodology" --status integrated`, likewise `setup-p9`).
 
-Termina quando os itens estão no quadro (ou em `docs/backlog.md`) e `scrum.sh ver itens` os mostra.
+Done when items are on the board (or in `docs/backlog.md`) and `scrum.sh show items` shows them.
 
-## Fecho
+## Closing
 
-1. Confere o `AGENTS.md`: nenhuma marca `(fase N)` por resolver e cada caminho referido existe
-   (`ls`). Sincroniza o quadro uma última vez.
-2. Commit dos últimos artefactos; push se houver remoto (segundo a política do projeto).
-3. Mensagem final ao humano, no máximo 10 linhas: o que ficou pronto, link do quadro, e a lista
-   «Fica para ti» (contas, segredos, DNS, faturação, decisões delegadas a rever; as mesmas que
-   estão no quadro como «à espera do humano»).
-4. Acaba com UMA pergunta, recomendação «sim»: «arranco já a `f01-<slug>`?». Com sim, invoca
-   `agentic-feature` com a ferramenta Skill (sem ela, lê `<agentic-feature>/SKILL.md` e segue-o)
-   e passa-lhe o id do item (`f01-<slug>`), para ela retomar esse item do quadro em vez de criar
-   outro. Com não, deixa a linha «Próximo passo: invoca a agentic-feature com `f01-<slug>`», com
-   o comando da instalação em uso: `/agentic-skills:agentic-feature f01-<slug>` no plugin do
-   Claude Code, `/agentic-feature f01-<slug>` numa cópia, `$agentic-feature f01-<slug>` no Codex.
+1. Check `AGENTS.md`: no unresolved `(phase N)` markers and every referenced path exists
+   (`ls`). Sync the board one last time.
+2. Commit the final artifacts; push if there is a remote (according to project policy).
+3. Final human message, at most 10 lines: what is ready, board link, and the “Left for you”
+   list (accounts, secrets, DNS, billing, delegated decisions to review; the same items marked
+   “waiting for human” on the board).
+4. End with ONE question, recommendation “yes”: “Shall I start `f01-<slug>` now?” If yes, invoke
+   `agentic-feature` with the Skill tool (without it, read `<agentic-feature>/SKILL.md` and
+   follow it), passing the item id (`f01-<slug>`) so it resumes that board item instead of
+   creating another. If no, leave “Next step: invoke agentic-feature with `f01-<slug>`”, using
+   the installed invocation: `/agentic-skills:agentic-feature f01-<slug>` in the Claude Code
+   plugin, `/agentic-feature f01-<slug>` in a copy, `$agentic-feature f01-<slug>` in Codex.
 
-## Referências: quando ler cada uma
+## References: when to read each
 
-| Ficheiro | Lê quando |
+| File | Read when |
 |---|---|
-| `references/pre-requisitos.md` | fase 1 |
-| `references/grill-projeto.md` | fase 2 |
-| `references/arquitetura.md` | fase 3 |
-| `references/pesquisa-arquitetura.md` | fase 3, antes de propor as opções de stack; e ao rever uma escolha de stack |
-| `references/ambiente-git.md` | fase 4, ou quando um agente pergunta como usar ramos/worktrees |
-| `references/agents-md.md` | fase 6, ou ao rever um `AGENTS.md` existente |
-| `references/quadro.md` | fase 7, quando o quadro não sincroniza, ou ao escrever o brief de um agente (quem sincroniza) |
-| `assets/quadro/README.md` | fase 7 (comandos do CLI, configuração, capabilities, semear, os 4 passos de «Sincronizar» com `plano-sync`) |
-| `references/metodologia.md` | fase 8; também tem as armadilhas de código escrito por agentes |
-| `references/mapa-de-skills.md` | antes da fase 2, e sempre que fores invocar uma skill de terceiros |
-| `assets/decisoes.template.md` | fase 0 |
-| `assets/radar.template.md` | fim da fase 3, para criar `docs/radar.md` |
-| `<agentic-design>/references/ui-sem-slop.md` (outra skill) | fase 2 (dimensão UI) e fase 6 (regra de UI do `AGENTS.md`) |
-| `<agentic-architecture>/references/vocabulario.md` (outra skill) | fase 3 (§4 de `references/arquitetura.md`: módulos, interfaces e costuras) |
-| `<agentic-feature>/references/pesquisa-moderna.md` (outra skill) | fase 3 (fontes, regras e filtro «moderno sim, moda não») e fase 8 |
-| `assets/AGENTS.template.md`, `assets/CLAUDE.template.md`, `<agentic-code-review>/assets/REVIEW.template.md` e `<agentic-code-review>/references/review-md.md` (outra skill) | fase 6 |
-| `scripts/verificar-ambiente.sh` | fase 1 (saída 0 = essenciais OK; 1 = falta essencial) |
-| `scripts/preparar-repo.sh` | fase 4 (simulação por omissão; `--aplicar` para fazer; `--com-ui`; `--mostrar <ficheiro>`) |
-| `scripts/preparar-repo.test.mjs` | ao mudar o `preparar-repo.sh` ou o hook que ele gera: `node --test <skill>/scripts/*.test.mjs` (sem aspas: o glob entre aspas só existe no Node ≥ 21) |
+| `references/prerequisites.md` | phase 1 |
+| `references/project-grill.md` | phase 2 |
+| `references/architecture.md` | phase 3 |
+| `references/architecture-research.md` | phase 3 before proposing stack options; when reviewing a stack choice |
+| `references/git-environment.md` | phase 4, or when an agent asks how to use branches/worktrees |
+| `references/agents-md.md` | phase 6, or when reviewing an existing `AGENTS.md` |
+| `references/board.md` | phase 7, when board sync fails, or when writing an agent brief (who syncs) |
+| `assets/board/README.md` | phase 7 (CLI commands, configuration, capabilities, seeding, the 4 “Sync” steps with `sync-plan`) |
+| `references/methodology.md` | phase 8; also covers pitfalls of agent-written code |
+| `references/skills-map.md` | before phase 2 and whenever invoking a third-party skill |
+| `assets/decisions.template.md` | phase 0 |
+| `assets/radar.template.md` | end of phase 3 to create `docs/radar.md` |
+| `<agentic-design>/references/ui-without-slop.md` (another skill) | phase 2 (UI dimension) and phase 6 (`AGENTS.md` UI rule) |
+| `<agentic-architecture>/references/vocabulary.md` (another skill) | phase 3 (§4 of `references/architecture.md`: modules, interfaces and seams) |
+| `<agentic-feature>/references/current-research.md` (another skill) | phase 3 (sources, rules, “modern, not fashion” filter) and phase 8 |
+| `assets/AGENTS.template.md`, `assets/CLAUDE.template.md`, `<agentic-code-review>/assets/REVIEW.template.md` and `<agentic-code-review>/references/review-md.md` (another skill) | phase 6 |
+| `scripts/check-environment.sh` | phase 1 (exit 0 = essentials OK; 1 = essential missing) |
+| `scripts/prepare-repo.sh` | phase 4 (dry run by default; `--apply` to write; `--with-ui`; `--show <file>`) |
+| `scripts/prepare-repo.test.mjs` | when changing `prepare-repo.sh` or its generated hook: `node --test <skill>/scripts/*.test.mjs` (unquoted: quoted globs require Node ≥ 21) |

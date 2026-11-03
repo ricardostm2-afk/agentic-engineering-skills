@@ -1,102 +1,99 @@
 #!/usr/bin/env bash
-# install.sh: instala as onze skills do agentic-skills nos agentes.
+# install.sh: installs the eleven agentic-skills skills into coding agents.
 #
-# Por omissão é uma SIMULAÇÃO: mostra o que faria e não toca em nada. Só --aplicar instala.
+# DRY RUN by default: shows what it would do without changing anything. Only --apply installs.
 #
-# Uso: ./install.sh [--aplicar] [--agente A]... [--projeto PASTA] [--ligar] [--forcar] [--agentes]
-#   --aplicar        instala de facto
-#   --agente A       claude | codex | codex-legado | cursor | gemini | copilot | opencode | todos
-#                    (repetível, ou separado por vírgulas; por omissão, os agentes cuja pasta de
-#                    configuração existe: ~/.claude ~/.codex ~/.cursor ~/.gemini ~/.copilot
-#                    ~/.config/opencode). codex-legado (~/.codex/skills, Codex antigo) só se for
-#                    pedido e não entra em «todos»
-#   --projeto PASTA  instala nas pastas de skills desse repositório em vez das do utilizador
-#   --ligar          ligações simbólicas para este repo em vez de cópias (atualiza com git pull)
-#   --forcar         substitui uma skill que já exista; a anterior vai para
-#                    ~/.agentic-skills-backups/<data>/
-#   --agentes        opcional, só Claude Code: copia também os agentes definidos (implementador,
-#                    implementador-ui, pesquisador, revisor) para a pasta de agentes dele
-#                    (~/.claude/agents, ou <repo>/.claude/agents com --projeto), sem sobrescrever
-#                    nenhum ficheiro que já exista (nem com --forcar), e mostra o excerto para
-#                    colares no teu CLAUDE.md. O instalador nunca edita o CLAUDE.md
-#   -h, --help       esta ajuda
+# Usage: ./install.sh [--apply] [--agent A]... [--project FOLDER] [--link] [--force] [--agents]
+#   --apply          install
+#   --agent A        claude | codex | codex-legacy | cursor | gemini | copilot | opencode | all
+#                    (repeatable or comma-separated; defaults to agents whose config folder exists:
+#                    ~/.claude ~/.codex ~/.cursor ~/.gemini ~/.copilot ~/.config/opencode).
+#                    codex-legacy (~/.codex/skills, older Codex) is opt-in and excluded from all
+#   --project DIR    install into that repository's skill folders instead of the user's
+#   --link           symbolic links to this clone instead of copies (update with git pull)
+#   --force          replace an existing skill; back up the previous one to
+#                    ~/.agentic-skills-backups/<date>/
+#   --agents         optional, Claude Code only: also copy the defined agents (implementer,
+#                    implementer-ui, researcher, reviewer) into its agents folder
+#                    (~/.claude/agents, or <repo>/.claude/agents with --project), without overwriting
+#                    existing files (even with --force), and print an excerpt to paste into your
+#                    CLAUDE.md. The installer never edits CLAUDE.md
+#   -h, --help       show this help
 #
-# Destinos (os documentados por cada agente em 2026-10):
-#   claude                                utilizador: ~/.claude/skills  projeto: <repo>/.claude/skills
-#   codex-legado                          utilizador: ~/.codex/skills (não há âmbito de projeto)
+# Destinations (documented by each agent in 2026-10):
+#   claude                                user: ~/.claude/skills  project: <repo>/.claude/skills
+#   codex-legacy                          user: ~/.codex/skills (no project scope)
 #   codex, cursor, gemini, copilot, opencode
-#                                         utilizador: ~/.agents/skills  projeto: <repo>/.agents/skills
-# Os agentes que partilham uma pasta recebem uma só instalação. CLAUDE_CONFIG_DIR, se definida,
-# substitui ~/.claude.
-# Saída: 0 = feito (ou simulação); 1 = com --aplicar, ficou alguma skill por instalar; 2 = uso.
-# Os agentes definidos que já existam ficam como estão e não contam para o código de saída.
+#                                         user: ~/.agents/skills  project: <repo>/.agents/skills
+# Agents sharing a folder receive one installation. CLAUDE_CONFIG_DIR, when set, replaces ~/.claude.
+# Exit: 0 = done (or dry run); 1 = --apply left skills uninstalled; 2 = usage error.
+# Existing agent definitions are kept and do not affect the exit code.
 set -euo pipefail
 
-uso() { awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"; }
+usage() { awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"; }
 
-REPO="$(cd "$(dirname "$0")" && pwd -P)"  # caminho real: o mesmo clone por uma ligação conta como o mesmo
+REPO="$(cd "$(dirname "$0")" && pwd -P)"  # resolve links: one clone reached through a link is still the same clone
 SKILLS="agentic-project agentic-feature agentic-design agentic-implement agentic-fix agentic-code-review agentic-architecture agentic-explain agentic-analysis-optimization agentic-ci-audit agentic-tool-design"
-TODOS="claude codex cursor gemini copilot opencode"
-LEGADO="codex-legado"  # só a pedido: o Codex atual lê ~/.agents/skills
-# Os agentes definidos do Claude Code (--agentes) vivem como assets da agentic-implement.
-AGENTES_FONTE="agentic-implement/assets/agentes"
-AGENTES_LISTA="implementador implementador-ui pesquisador revisor"
+ALL="claude codex cursor gemini copilot opencode"
+LEGACY="codex-legacy"  # opt-in: current Codex reads ~/.agents/skills
+# Claude Code agent definitions (--agents) are agentic-implement assets.
+AGENTS_SOURCE="agentic-implement/assets/agents"
+AGENTS_LIST="implementer implementer-ui researcher reviewer"
 
-APLICAR=0
-COM_AGENTES=0
-LIGAR=0
-FORCAR=0
-PROJETO=""
-AGENTES=""
+APPLY=0
+WITH_AGENTS=0
+LINK=0
+FORCE=0
+PROJECT=""
+AGENTS=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --aplicar) APLICAR=1 ;;
-    --ligar) LIGAR=1 ;;
-    --forcar) FORCAR=1 ;;
-    --agentes) COM_AGENTES=1 ;;
-    --agente)
-      [ $# -ge 2 ] || { echo "install.sh: --agente precisa de um nome" >&2; exit 2; }
-      AGENTES="$AGENTES $(printf '%s' "$2" | tr ',' ' ')"; shift ;;
-    --agente=*) AGENTES="$AGENTES $(printf '%s' "${1#--agente=}" | tr ',' ' ')" ;;
-    --projeto)
-      [ $# -ge 2 ] || { echo "install.sh: --projeto precisa de uma pasta" >&2; exit 2; }
-      PROJETO="$2"; shift ;;
-    --projeto=*) PROJETO="${1#--projeto=}" ;;
-    -h|--help) uso; exit 0 ;;
-    *) echo "install.sh: opção desconhecida: $1 (vê --help)" >&2; exit 2 ;;
+    --apply) APPLY=1 ;;
+    --link) LINK=1 ;;
+    --force) FORCE=1 ;;
+    --agents) WITH_AGENTS=1 ;;
+    --agent)
+      [ $# -ge 2 ] || { echo "install.sh: --agent needs a name" >&2; exit 2; }
+      AGENTS="$AGENTS $(printf '%s' "$2" | tr ',' ' ')"; shift ;;
+    --agent=*) AGENTS="$AGENTS $(printf '%s' "${1#--agent=}" | tr ',' ' ')" ;;
+    --project)
+      [ $# -ge 2 ] || { echo "install.sh: --project needs a folder" >&2; exit 2; }
+      PROJECT="$2"; shift ;;
+    --project=*) PROJECT="${1#--project=}" ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "install.sh: unknown option: $1 (see --help)" >&2; exit 2 ;;
   esac
   shift
 done
 
 for s in $SKILLS; do
   if [ ! -f "$REPO/skills/$s/SKILL.md" ]; then
-    echo "install.sh: não encontro $REPO/skills/$s/SKILL.md; corre o script a partir do clone do repo" >&2
+    echo "install.sh: cannot find $REPO/skills/$s/SKILL.md; run the script from the repository clone" >&2
     exit 2
   fi
 done
 
-if [ "$COM_AGENTES" = 1 ]; then
-  for f in $AGENTES_LISTA excerto-claude-md; do
-    if [ ! -f "$REPO/skills/$AGENTES_FONTE/$f.md" ]; then
-      echo "install.sh: não encontro $REPO/skills/$AGENTES_FONTE/$f.md; corre o script a partir do clone do repo" >&2
+if [ "$WITH_AGENTS" = 1 ]; then
+  for f in $AGENTS_LIST claude-md-excerpt; do
+    if [ ! -f "$REPO/skills/$AGENTS_SOURCE/$f.md" ]; then
+      echo "install.sh: cannot find $REPO/skills/$AGENTS_SOURCE/$f.md; run the script from the repository clone" >&2
       exit 2
     fi
   done
 fi
 
-if [ -n "$PROJETO" ]; then
-  if [ ! -d "$PROJETO" ]; then echo "install.sh: --projeto: a pasta $PROJETO não existe" >&2; exit 2; fi
-  PROJETO="$(cd "$PROJETO" && pwd)"
+if [ -n "$PROJECT" ]; then
+  if [ ! -d "$PROJECT" ]; then echo "install.sh: --project: folder $PROJECT does not exist" >&2; exit 2; fi
+  PROJECT="$(cd "$PROJECT" && pwd)"
 fi
 
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 
-pasta_config() { # pasta_config <agente>: pasta cuja existência indica que o agente está presente
+config_folder() { # config_folder <agent>: the folder whose existence signals an installed agent
   case "$1" in
     claude) printf '%s' "$CLAUDE_DIR" ;;
-    codex) printf '%s' "$HOME/.codex" ;;
-    codex-legado) printf '%s' "$HOME/.codex" ;;
+    codex|codex-legacy) printf '%s' "$HOME/.codex" ;;
     cursor) printf '%s' "$HOME/.cursor" ;;
     gemini) printf '%s' "$HOME/.gemini" ;;
     copilot) printf '%s' "$HOME/.copilot" ;;
@@ -104,84 +101,84 @@ pasta_config() { # pasta_config <agente>: pasta cuja existência indica que o ag
   esac
 }
 
-destino() { # destino <agente>: pasta de skills onde instalar
-  if [ "$1" = codex-legado ]; then printf '%s' "$HOME/.codex/skills"; return; fi
+destination() { # destination <agent>: skill installation folder
+  if [ "$1" = codex-legacy ]; then printf '%s' "$HOME/.codex/skills"; return; fi
   if [ "$1" = claude ]; then
-    if [ -n "$PROJETO" ]; then printf '%s' "$PROJETO/.claude/skills"; else printf '%s' "$CLAUDE_DIR/skills"; fi
+    if [ -n "$PROJECT" ]; then printf '%s' "$PROJECT/.claude/skills"; else printf '%s' "$CLAUDE_DIR/skills"; fi
   else
-    if [ -n "$PROJETO" ]; then printf '%s' "$PROJETO/.agents/skills"; else printf '%s' "$HOME/.agents/skills"; fi
+    if [ -n "$PROJECT" ]; then printf '%s' "$PROJECT/.agents/skills"; else printf '%s' "$HOME/.agents/skills"; fi
   fi
 }
 
-destino_agentes() { # pasta de agentes do Claude Code
-  if [ -n "$PROJETO" ]; then printf '%s' "$PROJETO/.claude/agents"; else printf '%s' "$CLAUDE_DIR/agents"; fi
+agents_destination() { # Claude Code's agents folder
+  if [ -n "$PROJECT" ]; then printf '%s' "$PROJECT/.claude/agents"; else printf '%s' "$CLAUDE_DIR/agents"; fi
 }
 
-curto() { # mostra um caminho com ~ no lugar do HOME
+short_path() { # show ~ in place of HOME
   case "$1" in
     "$HOME"/*) printf '~/%s' "${1#"$HOME"/}" ;;
     *) printf '%s' "$1" ;;
   esac
 }
 
-# Lista final de agentes (sem repetidos, pela ordem de TODOS).
-pedidos=""
-for a in $AGENTES; do
+# Final agent list: deduplicated, in ALL then LEGACY order.
+requested=""
+for a in $AGENTS; do
   case "$a" in
-    todos) pedidos="$pedidos $TODOS" ;;
-    claude|codex|codex-legado|cursor|gemini|copilot|opencode) pedidos="$pedidos $a" ;;
-    *) echo "install.sh: agente desconhecido: $a (claude, codex, codex-legado, cursor, gemini, copilot, opencode, todos)" >&2; exit 2 ;;
+    all) requested="$requested $ALL" ;;
+    claude|codex|codex-legacy|cursor|gemini|copilot|opencode) requested="$requested $a" ;;
+    *) echo "install.sh: unknown agent: $a (claude, codex, codex-legacy, cursor, gemini, copilot, opencode, all)" >&2; exit 2 ;;
   esac
 done
-escolhidos=""
-if [ -n "$pedidos" ]; then
-  for a in $TODOS $LEGADO; do
-    case " $pedidos " in *" $a "*) escolhidos="$escolhidos $a" ;; esac
+selected=""
+if [ -n "$requested" ]; then
+  for a in $ALL $LEGACY; do
+    case " $requested " in *" $a "*) selected="$selected $a" ;; esac
   done
-  origem_lista="pedidos"
+  list_source="requested"
 else
-  for a in $TODOS; do
-    if [ -d "$(pasta_config "$a")" ]; then escolhidos="$escolhidos $a"; fi
+  for a in $ALL; do
+    if [ -d "$(config_folder "$a")" ]; then selected="$selected $a"; fi
   done
-  origem_lista="detetados"
-  if [ -z "$escolhidos" ]; then
-    echo "install.sh: nenhum agente detetado (procurei $(curto "$CLAUDE_DIR"), ~/.codex, ~/.cursor, ~/.gemini, ~/.copilot, ~/.config/opencode)." >&2
-    echo "install.sh: escolhe com --agente claude|codex|cursor|gemini|copilot|opencode|todos" >&2
+  list_source="detected"
+  if [ -z "$selected" ]; then
+    echo "install.sh: no agents detected (looked for $(short_path "$CLAUDE_DIR"), ~/.codex, ~/.cursor, ~/.gemini, ~/.copilot, ~/.config/opencode)." >&2
+    echo "install.sh: choose with --agent claude|codex|cursor|gemini|copilot|opencode|all" >&2
     exit 2
   fi
 fi
 
-if [ "$COM_AGENTES" = 1 ]; then
-  case " $escolhidos " in
+if [ "$WITH_AGENTS" = 1 ]; then
+  case " $selected " in
     *" claude "*) ;;
-    *) echo "install.sh: --agentes copia para a pasta de agentes do Claude Code; junta --agente claude" >&2; exit 2 ;;
+    *) echo "install.sh: --agents copies into Claude Code's agents folder; add --agent claude" >&2; exit 2 ;;
   esac
 fi
 
-if [ -n "$PROJETO" ]; then
-  case " $escolhidos " in
-    *" codex-legado "*) echo "install.sh: codex-legado só existe no âmbito do utilizador (~/.codex/skills); tira --projeto ou o agente" >&2; exit 2 ;;
+if [ -n "$PROJECT" ]; then
+  case " $selected " in
+    *" codex-legacy "*) echo "install.sh: codex-legacy only supports user scope (~/.codex/skills); remove --project or that agent" >&2; exit 2 ;;
   esac
 fi
 
-if [ "$APLICAR" = 1 ]; then modo="instalar"; else modo="SIMULAÇÃO (nada muda; junta --aplicar para instalar)"; fi
-if [ "$LIGAR" = 1 ]; then forma="ligações simbólicas para $(curto "$REPO")/skills"; else forma="cópias"; fi
-if [ -n "$PROJETO" ]; then ambito="projeto $(curto "$PROJETO")"; else ambito="utilizador"; fi
-echo "agentic-skills: $modo"
-echo "  âmbito: $ambito · forma: $forma · agentes $origem_lista:$escolhidos"
-if [ -n "$PROJETO" ] && [ "$LIGAR" = 1 ]; then
-  echo "  atenção: com --projeto, --ligar aponta para uma pasta desta máquina; não commites essas ligações"
+if [ "$APPLY" = 1 ]; then mode="install"; else mode="DRY RUN (nothing changes; add --apply to install)"; fi
+if [ "$LINK" = 1 ]; then form="symbolic links to $(short_path "$REPO")/skills"; else form="copies"; fi
+if [ -n "$PROJECT" ]; then scope="project $(short_path "$PROJECT")"; else scope="user"; fi
+echo "agentic-skills: $mode"
+echo "  scope: $scope · form: $form · $list_source agents:$selected"
+if [ -n "$PROJECT" ] && [ "$LINK" = 1 ]; then
+  echo "  notice: with --project, --link points to a folder on this machine; do not commit those links"
 fi
 
-CARIMBO="$(date +%Y%m%d-%H%M%S)"
-pendentes=0
-feitos=0
-novos=0      # instaladas ou substituídas (ou que o seriam, na simulação)
-destinos_feitos=""
+STAMP="$(date +%Y%m%d-%H%M%S)"
+pending=0
+installed=0
+new=0      # installed or replaced (or would be, in a dry run)
+handled_destinations=""
 
-instala_uma() { # instala_uma <origem> <destino>
+install_one() { # install_one <source> <destination>
   mkdir -p "$(dirname "$2")"
-  if [ "$LIGAR" = 1 ]; then
+  if [ "$LINK" = 1 ]; then
     ln -s "$1" "$2"
   else
     cp -R "$1" "$2"
@@ -189,124 +186,124 @@ instala_uma() { # instala_uma <origem> <destino>
   fi
 }
 
-for a in $escolhidos; do
-  d="$(destino "$a")"
-  case " $destinos_feitos " in
-    *" $d "*) continue ;;  # pasta partilhada, já tratada (o título lista todos os que a leem)
+for a in $selected; do
+  d="$(destination "$a")"
+  case " $handled_destinations " in
+    *" $d "*) continue ;;  # shared folder, already handled; the heading lists all readers
   esac
-  destinos_feitos="$destinos_feitos $d"
-  # Quem mais lê esta pasta, entre os escolhidos (para a linha de título).
-  quem=""
-  for b in $escolhidos; do
-    if [ "$(destino "$b")" = "$d" ]; then quem="${quem:+$quem, }$b"; fi
+  handled_destinations="$handled_destinations $d"
+  # Other selected agents reading this folder, for the heading.
+  readers=""
+  for b in $selected; do
+    if [ "$(destination "$b")" = "$d" ]; then readers="${readers:+$readers, }$b"; fi
   done
   echo
-  echo "$quem → $(curto "$d")"
+  echo "$readers → $(short_path "$d")"
   for s in $SKILLS; do
     src="$REPO/skills/$s"
     dst="$d/$s"
-    # Ligação para este repo (comparando caminhos reais, para um clone usado por uma ligação).
-    ligada_aqui=0
-    if [ -L "$dst" ] && [ -d "$dst" ] && [ "$(cd "$dst" && pwd -P)" = "$src" ]; then ligada_aqui=1; fi
-    if [ "$LIGAR" = 1 ] && [ "$ligada_aqui" = 1 ]; then
-      echo "  já ligada, mantida   $s"
+    # Compare real paths, so a clone reached through a link counts as the same clone.
+    linked_here=0
+    if [ -L "$dst" ] && [ -d "$dst" ] && [ "$(cd "$dst" && pwd -P)" = "$src" ]; then linked_here=1; fi
+    if [ "$LINK" = 1 ] && [ "$linked_here" = 1 ]; then
+      echo "  already linked, kept $s"
       continue
     fi
     if [ -e "$dst" ] || [ -L "$dst" ]; then
-      if [ "$LIGAR" = 0 ] && [ ! -L "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then
-        echo "  igual, mantida       $s"
+      if [ "$LINK" = 0 ] && [ ! -L "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then
+        echo "  identical, kept      $s"
         continue
       fi
-      if [ "$FORCAR" = 0 ]; then
-        if [ "$LIGAR" = 0 ] && [ "$ligada_aqui" = 1 ]; then
-          echo "  existe, mantida      $s (é uma ligação para este repo; --forcar troca-a por uma cópia)"
-        elif [ "$LIGAR" = 1 ] && [ ! -L "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then
-          echo "  existe, mantida      $s (é uma cópia igual; --forcar troca-a por uma ligação)"
+      if [ "$FORCE" = 0 ]; then
+        if [ "$LINK" = 0 ] && [ "$linked_here" = 1 ]; then
+          echo "  exists, kept         $s (a link to this clone; --force replaces it with a copy)"
+        elif [ "$LINK" = 1 ] && [ ! -L "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then
+          echo "  exists, kept         $s (an identical copy; --force replaces it with a link)"
         else
-          echo "  existe, mantida      $s (é diferente; --forcar substitui e guarda a atual)"
+          echo "  exists, kept         $s (different; --force replaces and backs up the current version)"
         fi
-        pendentes=$((pendentes + 1))
+        pending=$((pending + 1))
         continue
       fi
-      copia="$HOME/.agentic-skills-backups/$CARIMBO/$(printf '%s' "$d" | tr '/' '_')/$s"
-      if [ "$APLICAR" = 1 ]; then
-        mkdir -p "$(dirname "$copia")"
-        mv "$dst" "$copia"
-        instala_uma "$src" "$dst"
-        echo "  substituída          $s (a anterior está em $(curto "$copia"))"
-        feitos=$((feitos + 1))
+      backup="$HOME/.agentic-skills-backups/$STAMP/$(printf '%s' "$d" | tr '/' '_')/$s"
+      if [ "$APPLY" = 1 ]; then
+        mkdir -p "$(dirname "$backup")"
+        mv "$dst" "$backup"
+        install_one "$src" "$dst"
+        echo "  replaced             $s (previous version in $(short_path "$backup"))"
+        installed=$((installed + 1))
       else
-        echo "  substituiria         $s (a anterior iria para $(curto "$copia"))"
+        echo "  would replace        $s (previous version would go to $(short_path "$backup"))"
       fi
-      novos=$((novos + 1))
+      new=$((new + 1))
       continue
     fi
-    if [ "$APLICAR" = 1 ]; then
-      instala_uma "$src" "$dst"
-      if [ "$LIGAR" = 1 ]; then echo "  ligada               $s"; else echo "  copiada              $s"; fi
-      feitos=$((feitos + 1))
+    if [ "$APPLY" = 1 ]; then
+      install_one "$src" "$dst"
+      if [ "$LINK" = 1 ]; then echo "  linked               $s"; else echo "  copied               $s"; fi
+      installed=$((installed + 1))
     else
-      if [ "$LIGAR" = 1 ]; then echo "  ligaria              $s → $(curto "$src")"; else echo "  copiaria             $s"; fi
+      if [ "$LINK" = 1 ]; then echo "  would link           $s → $(short_path "$src")"; else echo "  would copy           $s"; fi
     fi
-    novos=$((novos + 1))
+    new=$((new + 1))
   done
 done
 
-# Agentes definidos (opcional): copiados sempre (são para editar), nunca sobrescritos.
-agentes_novos=0
-agentes_mantidos=0
-if [ "$COM_AGENTES" = 1 ]; then
-  da="$(destino_agentes)"
+# Optional agent definitions: always copied for editing, never overwritten.
+new_agents=0
+kept_agents=0
+if [ "$WITH_AGENTS" = 1 ]; then
+  da="$(agents_destination)"
   echo
-  echo "claude (agentes) → $(curto "$da")"
-  for f in $AGENTES_LISTA; do
-    src="$REPO/skills/$AGENTES_FONTE/$f.md"
+  echo "claude (agents) → $(short_path "$da")"
+  for f in $AGENTS_LIST; do
+    src="$REPO/skills/$AGENTS_SOURCE/$f.md"
     dst="$da/$f.md"
     if [ -e "$dst" ] || [ -L "$dst" ]; then
       if [ ! -L "$dst" ] && cmp -s "$src" "$dst"; then
-        echo "  igual, mantido       $f"
+        echo "  identical, kept      $f"
       else
-        echo "  existe, mantido      $f (é diferente; não se sobrescreve, nem com --forcar: compara à mão)"
+        echo "  exists, kept         $f (different; never overwritten, even with --force: compare by hand)"
       fi
-      agentes_mantidos=$((agentes_mantidos + 1))
+      kept_agents=$((kept_agents + 1))
       continue
     fi
-    if [ "$APLICAR" = 1 ]; then
+    if [ "$APPLY" = 1 ]; then
       mkdir -p "$da"
       cp "$src" "$dst"
-      echo "  copiado              $f"
+      echo "  copied               $f"
     else
-      echo "  copiaria             $f"
+      echo "  would copy           $f"
     fi
-    agentes_novos=$((agentes_novos + 1))
+    new_agents=$((new_agents + 1))
   done
   echo
-  echo "Excerto para o teu CLAUDE.md (o instalador não o edita: cola-o à mão onde quiseres):"
+  echo "Excerpt for your CLAUDE.md (the installer never edits it: paste it where you want):"
   echo "----------------------------------------------------------------"
-  cat "$REPO/skills/$AGENTES_FONTE/excerto-claude-md.md"
+  cat "$REPO/skills/$AGENTS_SOURCE/claude-md-excerpt.md"
   echo "----------------------------------------------------------------"
 fi
 
-# Cursor, OpenCode e o Copilot no VS Code também leem ~/.claude/skills.
-tem_claude=0; tem_agents=0
-for a in $escolhidos; do
-  if [ "$a" = claude ]; then tem_claude=1; else tem_agents=1; fi
+# Cursor, OpenCode and Copilot in VS Code also read ~/.claude/skills.
+has_claude=0; has_agents=0
+for a in $selected; do
+  if [ "$a" = claude ]; then has_claude=1; else has_agents=1; fi
 done
 echo
-if [ "$tem_claude" = 1 ] && [ "$tem_agents" = 1 ] && [ -z "$PROJETO" ]; then
-  echo "nota: OpenCode, Cursor e o Copilot no VS Code também leem ~/.claude/skills. O OpenCode"
-  echo "      (medido na 1.18) mostra uma entrada por skill, mas escolhe ao acaso a cópia de"
-  echo "      ~/.claude/skills ou de ~/.agents/skills: mantém as duas pastas na mesma versão."
-  if [ "$pendentes" -gt 0 ] && [ "$novos" -gt 0 ]; then
-    echo "atenção: uma pasta fica com a versão nova e outra com a que já lá estava; repete com"
-    echo "      --forcar para as alinhar (as anteriores vão para ~/.agentic-skills-backups/)."
+if [ "$has_claude" = 1 ] && [ "$has_agents" = 1 ] && [ -z "$PROJECT" ]; then
+  echo "note: OpenCode, Cursor and Copilot in VS Code also read ~/.claude/skills. OpenCode"
+  echo "      (measured in 1.18) lists each skill once, but randomly picks the copy from"
+  echo "      ~/.claude/skills or ~/.agents/skills: keep both folders at the same version."
+  if [ "$pending" -gt 0 ] && [ "$new" -gt 0 ]; then
+    echo "notice: one folder gets the new version and another keeps the existing version; repeat with"
+    echo "      --force to align them (previous versions go to ~/.agentic-skills-backups/)."
   fi
 fi
-if [ "$APLICAR" = 1 ]; then
-  echo "feito: $feitos instalada(s), $pendentes por instalar. Abre uma sessão nova do agente para as carregar."
-  if [ "$COM_AGENTES" = 1 ]; then echo "agentes: $agentes_novos copiado(s), $agentes_mantidos mantido(s)."; fi
-  if [ "$pendentes" -gt 0 ]; then exit 1; fi
+if [ "$APPLY" = 1 ]; then
+  echo "done: $installed installed, $pending pending. Open a new agent session to load them."
+  if [ "$WITH_AGENTS" = 1 ]; then echo "agents: $new_agents copied, $kept_agents kept."; fi
+  if [ "$pending" -gt 0 ]; then exit 1; fi
 else
-  echo "simulação: $pendentes por resolver. Para instalar, repete o mesmo comando com --aplicar."
-  if [ "$COM_AGENTES" = 1 ]; then echo "agentes: $agentes_novos por copiar, $agentes_mantidos já lá estão."; fi
+  echo "dry run: $pending unresolved. To install, repeat the same command with --apply."
+  if [ "$WITH_AGENTS" = 1 ]; then echo "agents: $new_agents to copy, $kept_agents already present."; fi
 fi

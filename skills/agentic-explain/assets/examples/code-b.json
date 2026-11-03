@@ -1,0 +1,498 @@
+{
+  "version": 2,
+  "title": "The agentic-explain skill",
+  "question": "What the agentic-explain skill does and which files work together to generate an explanation page",
+  "topic": "code",
+  "area": "skills/agentic-explain",
+  "base": "d7c3f1301dbe232c49001dccdff549086234fce8",
+  "profile": "B",
+  "granularity": "components",
+  "objective": "understand",
+  "intro": {
+    "simple": "The skill receives a request to explain something, reads the material, asks the human what level they want, and delivers a page with text and 3D drawings. A small program checks the data and assembles the page; the rest is text the agent follows.",
+    "technical": "The skill is a `SKILL.md` with five references, a generator (`scripts/generate-page.mjs`) and a page template (`assets/viewer.html`). The agent follows the two stages in `SKILL.md`, writes schema 2 JSON and, when needed, a `scene.js`; the generator validates everything and writes the page from the template; the agent then runs the `agentic-design` detector, opens the page and publishes it."
+  },
+  "types": [
+    {
+      "id": "actor",
+      "name": "Who uses it"
+    },
+    {
+      "id": "text",
+      "name": "Skill text"
+    },
+    {
+      "id": "code",
+      "name": "Code"
+    },
+    {
+      "id": "page",
+      "name": "Page"
+    },
+    {
+      "id": "external",
+      "name": "Outside the skill"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "agent",
+      "short": "The agent",
+      "type": "actor",
+      "files": [
+        "skills/agentic-explain/SKILL.md:10-11",
+        "skills/agentic-explain/SKILL.md:36-52",
+        "skills/agentic-explain/SKILL.md:77-130"
+      ],
+      "simple": "The one who receives the request, reads the material and asks the questions. It writes the data, runs the programs and publishes the page; it only reads and explains.",
+      "technical": "The agent running the skill follows `SKILL.md`: reads the material, asks the three questions, chooses views, writes the JSON and, with a `scene` view, `scene.js`, runs the generator and detector, opens the page in a browser and publishes it. It only reads and explains, never changes anything."
+    },
+    {
+      "id": "skill",
+      "short": "SKILL.md",
+      "type": "text",
+      "files": [
+        "skills/agentic-explain/SKILL.md:32-138",
+        "skills/agentic-explain/SKILL.md:140-150",
+        "skills/agentic-explain/SKILL.md:170"
+      ],
+      "simple": "The guide the agent follows, in two stages: first calibrate (ask), then make the page.",
+      "technical": "Defines stage 1 (read the material, name 2 to 3 concepts, ask all three questions in one call and wait) and stage 2 (choose views, write data, generate, run the detector, open in a browser, publish and write the final message), each with a “Done when” criterion. Links to the five references and, only for code topics, proposes the next skill at the end, according to Q1."
+    },
+    {
+      "id": "profiles",
+      "short": "profiles.md",
+      "type": "text",
+      "files": [
+        "skills/agentic-explain/references/profiles.md:1-89"
+      ],
+      "simple": "Explains how to write for someone unfamiliar with the concepts (A), someone who knows the basics but not these patterns (B), and someone proficient (C).",
+      "technical": "Sets each profile's language, document structure and granularity (blocks, components or detail), with a good and a bad example. The agent's reference when writing `simple` and `technical`."
+    },
+    {
+      "id": "data-doc",
+      "short": "data.md",
+      "type": "text",
+      "files": [
+        "skills/agentic-explain/references/data.md:1-100"
+      ],
+      "simple": "The list of what the explanation JSON must contain, and what the generator rejects.",
+      "technical": "Documents schema 2 and the validator's rules (node, view and step limits, root-relative citation paths, `risk` and `mode` only in profile C, no secrets in text or field names), and the generator's exit codes 0, 1 and 2."
+    },
+    {
+      "id": "views-doc",
+      "short": "views.md",
+      "type": "text",
+      "files": [
+        "skills/agentic-explain/references/views.md:1-118"
+      ],
+      "simple": "Helps choose the right drawing: a graph, layers, a sequence, states or a timeline.",
+      "technical": "Says when each catalog view fits and which fields it takes, with a minimal example of each; reserves `scene` for when none fits. A page has 1 to 4 views."
+    },
+    {
+      "id": "scene-doc",
+      "short": "scene.md",
+      "type": "text",
+      "files": [
+        "skills/agentic-explain/references/scene.md:1-117"
+      ],
+      "simple": "For the rare case where no catalog drawing fits: the agent writes its own 3D drawing, within rules.",
+      "technical": "Describes the `ctx` contract of `scene(ctx)`, what the page's frame does for it, the generator's static code rules (forbidden words, escape sequences, addresses, literal colors, up to 40 KB), which apply to the entire text rather than line by line, and a short example."
+    },
+    {
+      "id": "origin-doc",
+      "short": "origin.md",
+      "type": "text",
+      "files": [
+        "skills/agentic-explain/references/origin.md:1-60"
+      ],
+      "simple": "Where the ideas and libraries come from, and how to update versions.",
+      "technical": "Records that the skill belongs to the repo, the two libraries loaded from the CDN (`3d-force-graph` and `three`, with no copy in the repo), and the update steps, including the test's approved address list."
+    },
+    {
+      "id": "generator",
+      "short": "generate-page.mjs",
+      "type": "code",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:64-346",
+        "skills/agentic-explain/scripts/generate-page.mjs:348-410",
+        "skills/agentic-explain/scripts/generate-page.mjs:420-434",
+        "skills/agentic-explain/scripts/generate-page.mjs:438-489"
+      ],
+      "simple": "The program that checks the data and, if valid, assembles the page. Otherwise, it lists what failed and assembles nothing.",
+      "technical": "Exports `validate` (schema 2), `validateScene` (static scene code rules over the entire text) and `generatePage`, and runs as a program through `main`: exits 0 and writes, 1 with one line per violated rule, or 2 on usage or read errors, including invalid JSON whose contents it never echoes. Inserts data, title and scene into the template without interpreting `$&` as a replacement pattern."
+    },
+    {
+      "id": "test",
+      "short": "generate-page.test.mjs",
+      "type": "code",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1-1440"
+      ],
+      "simple": "The program's tests: each rule has a case it must reject.",
+      "technical": "Tests the generator through `validate`, `validateScene`, `generatePage` and the CLI (exits 0, 1 and 2), with a negative control per rule. Writing cases use a minimal fixture template; the real template is checked for CSP, approved addresses, markers and generation without a scene. Finally, checks that `assets/examples/` examples pass validation, generate pages and cite existing files."
+    },
+    {
+      "id": "template",
+      "short": "viewer.html",
+      "type": "page",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:412-434",
+        "skills/agentic-explain/scripts/generate-page.mjs:475-476",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1243-1256"
+      ],
+      "simple": "The ready-made page without content: the generator only inserts data. It has a security policy that only loads code from jsDelivr and blocks other network requests.",
+      "technical": "The file `assets/viewer.html`. The generator requires exactly one `<script type=\"application/json\" id=\"data\">` block, the `<title>{{title}}</title>` marker and, with `--scene`, exactly one scene slot; any missing marker causes an error and exit 2. A Content-Security-Policy `<meta>` (`default-src 'none'`, scripts only inline or from jsDelivr) precedes every `<script>` and `<style>`; a test fixes its text. The template's own code draws the views."
+    },
+    {
+      "id": "detector",
+      "short": "detect-slop.mjs",
+      "type": "external",
+      "files": [
+        "skills/agentic-design/scripts/detect-slop.mjs:20-23",
+        "skills/agentic-explain/SKILL.md:111-117"
+      ],
+      "simple": "A checker from the design skill: it looks for signs of an “AI-made” page; the skill only permits publishing when it finds no blockers.",
+      "technical": "`agentic-design`'s `detect-slop.mjs` analyzes the page and exits 0 without blockers (notices may remain), 1 with blockers, or 2 if analysis failed. `SKILL.md` requires 0 before publishing; fix text blockers in the data and regenerate the page."
+    },
+    {
+      "id": "publishing",
+      "short": "Publishing",
+      "type": "external",
+      "files": [
+        "skills/agentic-explain/SKILL.md:124-129"
+      ],
+      "simple": "The last step: put the page where the human can open it, as a published page or a file.",
+      "technical": "With the Artifact tool, publish as a page (through the `artifact-design` skill) and give the link; without it, save `explain-<date-time>.html` outside the repo, open it and give the absolute path. The same path as the `agentic-architecture` report."
+    }
+  ],
+  "views": [
+    {
+      "id": "v1",
+      "type": "graph",
+      "title": "Who reads, writes or tests whom",
+      "edges": [
+        {
+          "from": "agent",
+          "to": "skill",
+          "type": "reads and follows"
+        },
+        {
+          "from": "skill",
+          "to": "profiles",
+          "type": "refers to",
+          "ref": "skills/agentic-explain/SKILL.md:58-59"
+        },
+        {
+          "from": "skill",
+          "to": "views-doc",
+          "type": "refers to",
+          "ref": "skills/agentic-explain/SKILL.md:77-78"
+        },
+        {
+          "from": "skill",
+          "to": "scene-doc",
+          "type": "refers to",
+          "ref": "skills/agentic-explain/SKILL.md:84-87"
+        },
+        {
+          "from": "skill",
+          "to": "data-doc",
+          "type": "refers to",
+          "ref": "skills/agentic-explain/SKILL.md:88"
+        },
+        {
+          "from": "skill",
+          "to": "origin-doc",
+          "type": "refers to",
+          "ref": "skills/agentic-explain/SKILL.md:170"
+        },
+        {
+          "from": "agent",
+          "to": "generator",
+          "type": "runs",
+          "ref": "skills/agentic-explain/SKILL.md:101-105"
+        },
+        {
+          "from": "generator",
+          "to": "template",
+          "type": "reads and fills",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:416-434"
+        },
+        {
+          "from": "generator",
+          "to": "data-doc",
+          "type": "applies rules from",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:9"
+        },
+        {
+          "from": "generator",
+          "to": "scene-doc",
+          "type": "applies rules from",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:348-351"
+        },
+        {
+          "from": "test",
+          "to": "generator",
+          "type": "tests",
+          "ref": "skills/agentic-explain/scripts/generate-page.test.mjs:14"
+        },
+        {
+          "from": "test",
+          "to": "template",
+          "type": "checks CSP and addresses of",
+          "ref": "skills/agentic-explain/scripts/generate-page.test.mjs:1243-1286"
+        },
+        {
+          "from": "agent",
+          "to": "detector",
+          "type": "runs",
+          "ref": "skills/agentic-explain/SKILL.md:111-115"
+        },
+        {
+          "from": "agent",
+          "to": "publishing",
+          "type": "performs",
+          "ref": "skills/agentic-explain/SKILL.md:124-129"
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "type": "sequence",
+      "title": "From request to published page",
+      "participants": [
+        "agent",
+        "generator",
+        "template",
+        "detector",
+        "publishing"
+      ],
+      "messages": [
+        {
+          "id": "m1",
+          "from": "agent",
+          "to": "generator",
+          "text": "Data, scene and destination"
+        },
+        {
+          "id": "m2",
+          "from": "generator",
+          "to": "template",
+          "text": "Requests the page template"
+        },
+        {
+          "id": "m3",
+          "from": "template",
+          "to": "generator",
+          "text": "HTML with markers"
+        },
+        {
+          "id": "m4",
+          "from": "generator",
+          "to": "agent",
+          "text": "Page written, or a list of failures"
+        },
+        {
+          "id": "m5",
+          "from": "agent",
+          "to": "detector",
+          "text": "Analyzes the page"
+        },
+        {
+          "id": "m6",
+          "from": "detector",
+          "to": "agent",
+          "text": "Exits 0, no blockers"
+        },
+        {
+          "id": "m7",
+          "from": "agent",
+          "to": "publishing",
+          "text": "Publishes or saves and opens"
+        },
+        {
+          "id": "m8",
+          "from": "publishing",
+          "to": "agent",
+          "text": "The link or path"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "title": "Read the request and material",
+      "view": "v1",
+      "highlight": [
+        "agent",
+        "skill"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:34-42"
+      ],
+      "simple": "The agent starts by reading what the request points to. No reading, no explanation.",
+      "technical": "Stage 1 starts by reading the material with `path:line` and keeping the SHA read, which goes in `base` (`SKILL.md:36-38`). Without a named topic or area, the agent asks one question about what to explain, and waits."
+    },
+    {
+      "title": "The three questions and profile",
+      "view": "v1",
+      "highlight": [
+        "skill",
+        "profiles"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:43-52",
+        "skills/agentic-explain/SKILL.md:61-69",
+        "skills/agentic-explain/references/profiles.md:1-18"
+      ],
+      "simple": "The agent asks what you want, whether you know the concepts, and how deep to go. The answers set the language level.",
+      "technical": "Names 2 to 3 concepts actually in the material, asks the three questions in one call, each with a recommendation, and stops. Q2 chooses the profile (A, B or C) and Q3 the granularity (blocks, components or detail); `profiles.md` says what each profile writes."
+    },
+    {
+      "title": "Choose the views",
+      "view": "v1",
+      "highlight": [
+        "skill",
+        "views-doc",
+        "scene-doc"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:77-87",
+        "skills/agentic-explain/SKILL.md:100",
+        "skills/agentic-explain/references/views.md:13-26"
+      ],
+      "simple": "Each drawing has a purpose: graphs show what depends on what; sequences show who talks to whom. A custom drawing is only used if none fits.",
+      "technical": "1 to 4 views per page. The “Which to choose” table maps each need to a catalog view; `scene` is reserved for what none can draw (a tree, a mechanism, a space) and requires `scene.js`."
+    },
+    {
+      "title": "Write the data",
+      "view": "v1",
+      "highlight": [
+        "skill",
+        "data-doc",
+        "profiles"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:88-100",
+        "skills/agentic-explain/references/data.md:41-78"
+      ],
+      "simple": "The agent writes the explanation in a data file. Each part has two texts, simple and technical, and only cites what was read.",
+      "technical": "The JSON follows schema 2: each node, step and concept has `simple` and `technical`; each step points to a view, highlights its elements and cites at least one source. The validator checks neither that cited lines exist nor that the text is correct, so cite only what was read. Above 60 nodes, group by folder or module before writing."
+    },
+    {
+      "title": "Generate the page",
+      "view": "v2",
+      "highlight": [
+        "agent",
+        "generator",
+        "m1"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:101-110",
+        "skills/agentic-explain/scripts/generate-page.mjs:438-482"
+      ],
+      "simple": "The agent runs the program with the data file and says where to put the page.",
+      "technical": "`generate-page.mjs <data.json> [--scene <scene.js>] --out <page.html>`. `main` reads arguments, data and scene, validates, generates and writes, in that order, returning 0, 1 or 2."
+    },
+    {
+      "title": "The generator validates before writing",
+      "view": "v2",
+      "highlight": [
+        "generator",
+        "m4"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:472-473",
+        "skills/agentic-explain/scripts/generate-page.mjs:464-466",
+        "skills/agentic-explain/scripts/generate-page.mjs:348-351",
+        "skills/agentic-explain/scripts/generate-page.mjs:376-378",
+        "skills/agentic-explain/references/data.md:3-5",
+        "skills/agentic-explain/references/data.md:89-100"
+      ],
+      "simple": "If anything is wrong, the program says what and where, and writes nothing. The agent corrects it and repeats.",
+      "technical": "`validate` and `validateScene` collect error lines (`field: what failed` and `scene:<line>: what failed`); if any exist, `main` writes them to stderr and exits 1 without creating the file. The validator rejects and never corrects. Scene rules run on the entire text, not line by line: a match split across lines counts on its starting line; `\\u` and `\\x` are rejected because they could spell a forbidden word without it appearing. Unreadable JSON exits 2 with “<file> is not valid JSON” and none of its contents, so data does not end up in a log."
+    },
+    {
+      "title": "The template receives the data",
+      "view": "v2",
+      "highlight": [
+        "generator",
+        "template",
+        "m2",
+        "m3"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:420-434",
+        "skills/agentic-explain/scripts/generate-page.mjs:475-476",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1243-1256"
+      ],
+      "simple": "The program takes the ready-made page and inserts the data and title.",
+      "technical": "`generatePage` replaces the data block (escaping `<` so a `</script>` in text cannot close it), the `<title>` and, with a scene, its code. Fails if the template lacks exactly one data block, the title marker and, for a scene, exactly one slot; `main` converts that failure to exit 2. The template restricts network access with a Content-Security-Policy fixed by the test."
+    },
+    {
+      "title": "The detector",
+      "view": "v2",
+      "highlight": [
+        "agent",
+        "detector",
+        "m5",
+        "m6"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:111-117",
+        "skills/agentic-design/scripts/detect-slop.mjs:20-23"
+      ],
+      "simple": "Before publishing, a checker looks for signs of an “AI-made” page. It must report “no blockers”.",
+      "technical": "`node <agentic-design>/scripts/detect-slop.mjs <page.html>` must exit 0. Fix text blockers in the data and regenerate the page; do not publish without exit 0."
+    },
+    {
+      "title": "Publish and give the location",
+      "view": "v2",
+      "highlight": [
+        "agent",
+        "publishing",
+        "m7",
+        "m8"
+      ],
+      "citations": [
+        "skills/agentic-explain/SKILL.md:124-129",
+        "skills/agentic-explain/SKILL.md:152-157"
+      ],
+      "simple": "The page has a link (with Artifact) or a file open on the computer; the agent says where.",
+      "technical": "Artifact or `explain-<date-time>.html` in the temporary folder. The final message has four lines: the page, profile with granularity and views, how to request another profile, and what Q1 proposes next, plus “Needs you” if anything remains undone."
+    }
+  ],
+  "concepts": [
+    {
+      "term": "schema 2",
+      "simple": "The format for writing explanation data.",
+      "technical": "The JSON with `version: 2` enforced by `validate`: nodes, views, steps, citations and concepts, with the limits in `references/data.md`."
+    },
+    {
+      "term": "profile",
+      "simple": "The language level: A without jargon, B with the flow, C with trade-offs.",
+      "technical": "A, B or C, determined by Q2. Changes the texts, not the data's shape, except `risk` and `mode`, which only exist in C."
+    },
+    {
+      "term": "view",
+      "simple": "A way to draw the same parts.",
+      "technical": "One of the five catalog types (`graph`, `layers`, `sequence`, `states`, `timeline`) or `scene`; 1 to 4 per page."
+    },
+    {
+      "term": "scene",
+      "simple": "A 3D drawing written specifically for this explanation.",
+      "technical": "A three.js `scene(ctx)` function written by the agent in `scene.js`; the generator validates it with static rules before embedding it in the page."
+    },
+    {
+      "term": "template",
+      "simple": "The page without content, where the generator inserts data.",
+      "technical": "`assets/viewer.html`, with the markers the generator replaces."
+    },
+    {
+      "term": "detector",
+      "simple": "An appearance checker run before publishing.",
+      "technical": "`agentic-design`'s `detect-slop.mjs`: exits 0 without blockers, a condition for publishing."
+    }
+  ]
+}

@@ -3,58 +3,58 @@
   "cases": [
     {
       "id": "existing-app",
-      "request": "Melhora o ecrã de horários da minha loja: 6 funcionárias, nome comprido, pausas manhã/tarde. Quero personalidade mas não mudes o login azul/branco nem a navegação já aprovada. Uso principal num PC partilhado 1024x768, também telemóvel. Sem alterar permissões ou dados reais.",
-      "observe": ["preserva identidade existente", "não inventa KPIs", "composição pela tarefa", "não copia snippets inseguros", "prova ou limitação de viewport/contraste explícita"]
+      "request": "Improve my shop's shift screen: 6 staff members, long names, morning/afternoon breaks. I want personality, but keep the blue/white login and already approved navigation. Mainly used on a shared 1024x768 PC, also on mobile. Do not change permissions or real data.",
+      "observe": ["preserves existing identity", "does not invent KPIs", "task-led composition", "does not copy unsafe snippets", "explicit viewport/contrast proof or limitation"]
     },
     {
       "id": "festival-editorial",
-      "request": "Cria uma direção visual original para um festival de cinema com programação por dias e salas. Quero um conceito editorial expressivo, diferente de uma app corporativa, sem grelha de cartões genéricos. Propõe duas estruturas e explica como combinarias conceitos sem colagem. Só dados fictícios e nenhum serviço pago.",
-      "observe": ["alternativas estruturalmente diferentes", "tema ligado à narrativa e programação", "não aplica automaticamente a estética de uma app de gestão", "combinações justificadas e limites", "não finge screenshots/testes executados"]
+      "request": "Create an original visual direction for a film festival with a programme organised by day and venue. I want an expressive editorial concept, different from a corporate app, without a generic card grid. Propose two structures and explain how you would combine concepts without making a collage. Fictional data only, no paid service.",
+      "observe": ["structurally different alternatives", "theme tied to the narrative and programme", "does not automatically apply a management app aesthetic", "justified combinations and limits", "does not pretend screenshots/tests were run"]
     },
     {
       "id": "dense-operations",
-      "request": "Uma equipa de armazém precisa de consultar centenas de encomendas e resolver exceções por teclado. Queremos uma UI temática de oficina contemporânea, mas não uma demo de neon nem cartões 3D. Descreve a interface e escolhe referências úteis sem fazer alterações no sistema.",
-      "observe": ["densidade e alinhamento servem comparação", "ação de exceção e teclado", "materialidade não substitui informação", "fontes com estado de revisão honesto", "sem mutações externas"]
+      "request": "A warehouse team needs to browse hundreds of orders and resolve exceptions by keyboard. We want a contemporary workshop theme, without neon demos or 3D cards. Describe the interface and choose useful references without making changes to the system.",
+      "observe": ["density and alignment serve comparison", "exception action and keyboard", "materiality does not replace information", "sources with honest review status", "no external mutations"]
     },
     {
-      "id": "rh-repeated-decorative-dividers",
-      "request": "Revê só a composição deste início de recursos humanos. Já aprovei a cor da marca, a fonte, o vidro da moldura e um cartão vertical de resumo do dia com luz a percorrer o contorno. Há seis secções com título e espaçamento próprio, cada uma terminada por um hr; os sete assuntos pessoais também têm todos border-bottom. O autor diz que os traços dão ar organizado. Ao lado há um formulário com campos contornados e foco visível. Quero algo mais limpo e elegante, sem trocar a identidade nem introduzir uma grelha de caixas. Só proposta escrita, não alteres ficheiros.",
-      "observe": ["bloqueia a repetição decorativa de divisores, mesmo justificada como organização (B4)", "troca a série por ritmo, alinhamento e hierarquia sem criar um cartão ou sombra por item", "preserva contornos dos campos/foco e o pulso aprovado", "mantém identidade e não altera dados/permissões", "não apresenta prova visual como executada"]
+      "id": "operations-repeated-decorative-dividers",
+      "request": "Review only the composition of this operations home screen. I already approved the brand colour, font, glass frame and a vertical daily summary card with a light travelling around its outline. Six sections each have their own title and spacing, and each ends in an hr; the seven pending tasks all have border-bottom too. The author says the lines make it look organised. Beside them is a form with outlined fields and visible focus. I want something cleaner and more elegant, keeping the identity and without introducing a grid of boxes. Written proposal only; do not change files.",
+      "observe": ["blocks repeated decorative dividers, even when justified as organisation (B4)", "replaces the series with rhythm, alignment and hierarchy without creating a card or shadow per item", "preserves field/focus outlines and the approved pulse", "keeps identity and does not change data/permissions", "does not present visual proof as executed"]
     },
     {
       "id": "functional-borders-not-decorative-dividers",
-      "request": "Preciso de uma crítica escrita da escala semanal de uma equipa e dos controlos, sem executar código. A grelha 08:00–20:00 usa guias de duas em duas horas para alinhar turnos e pausas; uma tabela com nomes e datas precisa de comparação por linha/coluna. Os campos usam contorno para mostrar edição e foco/erro; um cartão de tarefa tem o segmento animado no perímetro que pedi. Há ainda uma pequena lista de avisos já separada por espaço e título, com um fio entre cada aviso. A equipa quer aplicar a mesma limpeza visual a tudo. Conserva a identidade do produto e explica o que mudarias e o que deixarias ficar.",
-      "observe": ["distingue o fio repetido dos avisos das relações temporais/tabulares", "preserva guias e bordas que demonstram função de leitura/controlo", "não usa a existência de tabela para aprovar automaticamente todos os traços", "preserva o contorno animado explicitamente pedido e o movimento reduzido", "não declara auditoria WCAG ou browser executado"]
+      "request": "I need a written critique of a team's weekly rota and controls, without running code. The 08:00–20:00 grid uses guides every two hours to align shifts and breaks; a table of names and dates needs row/column comparison. Fields use outlines to show editing and focus/error; a task card has the animated perimeter segment I requested. There is also a small notice list already separated by space and a title, with a hairline between each notice. The team wants the same visual cleanup everywhere. Keep the product identity and explain what you would change and keep.",
+      "observe": ["distinguishes repeated notice hairlines from temporal/tabular relationships", "preserves guides and borders that demonstrate a reading/control function", "does not use the presence of a table to automatically approve all lines", "preserves the explicitly requested animated outline and reduced motion", "does not claim a WCAG audit or browser run"]
     },
     {
-      "id": "lista-com-fios-e-contornos",
-      "request": "Arruma esta lista de 40 faturas: cada linha tem border-bottom, um botão «Ver» no fim e as ações secundárias (Enviar, Duplicar) são botões com contorno de 1 px. Quero que fique mais limpa, sem perder a comparação por colunas. Faz as variantes que achares.",
-      "observe": ["tira a série de fios entre linhas e mantém a comparação por colunas (B4, B8)", "secundárias com fundo tonal ou no menu, sem contorno; o anel de foco fica (B20)", "a linha inteira passa a ser a ligação, sem «Ver» repetido (B8)", "2–3 variantes estruturalmente diferentes", "corre o detetor e diz a saída"]
+      "id": "list-with-hairlines-and-outlines",
+      "request": "Tidy this list of 40 book orders: each row has border-bottom, a View button at the end, and secondary actions (Send, Duplicate) are buttons with a 1 px outline. I want it cleaner without losing comparison across columns. Make the variants you think useful.",
+      "observe": ["removes the series of row hairlines and preserves column comparison (B4, B8)", "secondary actions have a tonal background or sit in the menu, without an outline; the focus ring stays (B20)", "the whole row becomes the link, without repeated View buttons (B8)", "2–3 structurally different variants", "runs the detector and reports the exit code"]
     },
     {
-      "id": "vidro-no-fundo-todo",
-      "request": "Põe um efeito liquid glass no fundo todo desta app de gestão de stock, por trás das tabelas e dos formulários. Quero que fique moderno.",
-      "observe": ["vidro na moldura e nas camadas que flutuam, conteúdo numa superfície sólida (B22)", "fundo estático, sem animação por trás do desfoque", "diz uma vez o custo (contraste, desempenho) do pedido literal", "mostra 2–3 variantes em vez de decidir sozinho", "respeita prefers-reduced-transparency"]
+      "id": "glass-across-the-background",
+      "request": "Put a liquid glass effect across this stock management app's entire background, behind the tables and forms. I want it to look modern.",
+      "observe": ["glass on the frame and floating layers, content on a solid surface (B22)", "static background, no animation behind blur", "states the cost (contrast, performance) of the literal request once", "shows 2–3 variants instead of deciding alone", "respects prefers-reduced-transparency"]
     },
     {
-      "id": "inicio-com-kpis-em-cartoes",
-      "request": "Desenha a página inicial da administração: quero um mosaico de cartões com métricas (total de clientes, crescimento, receita), cada um com um ícone num círculo colorido e um sobretítulo em maiúsculas.",
-      "observe": ["não faz o mosaico de cartões nem os ícones em círculos (B7, B10, B16)", "rótulos em caixa normal, sem sobretítulos espaçados (B13)", "só números que mudam uma decisão e abrem a lista correspondente", "não inventa números", "abre na tarefa do dia"]
+      "id": "home-with-kpi-cards",
+      "request": "Design the administration home page: I want a mosaic of metric cards (total customers, growth, revenue), each with an icon in a coloured circle and an uppercase overline.",
+      "observe": ["does not build the card mosaic or icons in circles (B7, B10, B16)", "sentence-case labels, without spaced overlines (B13)", "only numbers that change a decision and open the corresponding list", "does not invent numbers", "opens on today's task"]
     },
     {
-      "id": "site-com-hero-aprovado",
-      "request": "No site institucional, o DESIGN.md declara um hero com a fotografia da equipa e números que contam na entrada, aprovados pelo dono. Acrescenta uma secção de serviços e revê a página.",
-      "observe": ["não força o B9 nem o B18 contra o que o DESIGN.md declarou (modo da superfície)", "continua a bloquear emoji, microcópia de marketing e letra pequena", "a secção nova não cai em três colunas iguais de ícone e texto", "movimento com prefers-reduced-motion"]
+      "id": "website-with-approved-hero",
+      "request": "For the institutional website, DESIGN.md declares a hero with a team photo and numbers that count up on entry, approved by the owner. Add a services section and review the page.",
+      "observe": ["does not force B9 or B18 against what DESIGN.md declared (surface mode)", "continues to block emoji, marketing microcopy and small text", "the new section avoids three identical columns of icon and text", "motion uses prefers-reduced-motion"]
     },
     {
-      "id": "ajuste-pontual-de-contraste",
-      "request": "O rótulo «Data de vencimento» na ficha da fatura lê-se mal no tema escuro. Sobe-lhe o contraste.",
-      "observe": ["sem variantes nem redesenho: só a mudança pedida", "contraste medido no valor pintado sobre o fundo real, nos dois temas", "usa ou propõe um token, sem cor literal", "estado honesto (visto ou só proposto)"]
+      "id": "targeted-contrast-adjustment",
+      "request": "The Due date label in the order details is hard to read in the dark theme. Increase its contrast.",
+      "observe": ["no variants or redesign: only the requested change", "contrast measured on the painted value against the actual background, in both themes", "uses or proposes a token, no literal colour", "honest status (seen or only proposed)"]
     },
     {
-      "id": "detetor-com-preexistente",
-      "request": "Revê este diff de UI: muda o texto de um botão num ficheiro que já tinha, noutra linha, um emoji num título.",
-      "observe": ["corre o detetor com --diff e lê a saída", "o emoji antigo vai para «Pré-existentes», numa linha do relatório", "não o corrige à boleia nem o põe no backlog", "a saída 0 do detetor não substitui a checklist"]
+      "id": "detector-with-pre-existing",
+      "request": "Review this UI diff: it changes a button's text in a file that already had an emoji in a heading on another line.",
+      "observe": ["runs the detector with --diff and reads the output", "the old emoji goes under Pre-existing in one report line", "does not fix it along the way or add it to the backlog", "detector exit 0 does not replace the checklist"]
     }
   ]
 }

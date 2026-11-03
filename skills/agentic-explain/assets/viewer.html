@@ -1,0 +1,2065 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net ; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<style>
+:root {
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --radius-s: 4px;
+  --radius: 8px;
+  --radius-l: 12px;
+  color-scheme: light;
+  --background: #ffffff;
+  --panel: #ffffff;
+  --shadow: 0 1px 2px rgb(20 24 31 / 0.08), 0 6px 20px rgb(20 24 31 / 0.09);
+  --surface: #eceef1;
+  --surface-2: #dcdfe4;
+  --ink: #1e1f22;
+  --ink-2: #4b4e54;
+  --action: #1e1f22;
+  --on-action: #ffffff;
+  --focus: #0a63a0;
+  --edge: #6a6f78;
+  --edge-dim: #c3c7cd;
+  --edge-highlight: #1e1f22;
+  --node-dim: #bdbdbd;
+  --plate: #e6e9ee;
+  --plate-2: #d6dae1;
+  --t-1: #8f6a00;
+  --t-2: #0072b2;
+  --t-3: #0a7f5f;
+  --t-4: #c2531b;
+  --t-5: #a33f7c;
+  --t-6: #5e5aa8;
+  --r-low: #0072b2;
+  --r-medium: #8f6a00;
+  --r-high: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: #15171b;
+    --panel: #1d2026;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 24px rgb(0 0 0 / 0.4);
+    --surface: #292d34;
+    --surface-2: #363b44;
+    --ink: #ecedf0;
+    --ink-2: #c3c7cd;
+    --action: #ecedf0;
+    --on-action: #15171b;
+    --focus: #6ab7ee;
+    --edge: #9a9ea8;
+    --edge-dim: #444850;
+    --edge-highlight: #ecedf0;
+    --node-dim: #50545c;
+    --plate: #272b33;
+    --plate-2: #323741;
+    --t-1: #e0b83a;
+    --t-2: #5bb3f0;
+    --t-3: #3dc9a0;
+    --t-4: #f08a5a;
+    --t-5: #e58bbe;
+    --t-6: #a9a3ee;
+    --r-low: #5bb3f0;
+    --r-medium: #e0b83a;
+    --r-high: #ff7b6b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #15171b;
+  --panel: #1d2026;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 24px rgb(0 0 0 / 0.4);
+  --surface: #292d34;
+  --surface-2: #363b44;
+  --ink: #ecedf0;
+  --ink-2: #c3c7cd;
+  --action: #ecedf0;
+  --on-action: #15171b;
+  --focus: #6ab7ee;
+  --edge: #9a9ea8;
+  --edge-dim: #444850;
+  --edge-highlight: #ecedf0;
+  --node-dim: #50545c;
+  --plate: #272b33;
+  --plate-2: #323741;
+  --t-1: #e0b83a;
+  --t-2: #5bb3f0;
+  --t-3: #3dc9a0;
+  --t-4: #f08a5a;
+  --t-5: #e58bbe;
+  --t-6: #a9a3ee;
+  --r-low: #5bb3f0;
+  --r-medium: #e0b83a;
+  --r-high: #ff7b6b;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+button { font: inherit; color: inherit; border: 0; background: none; padding: 0; margin: 0; cursor: pointer; text-align: left; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-s); }
+code.nb { white-space: nowrap; }
+code {
+  font-family: var(--mono);
+  font-size: 0.875em;
+  background: var(--surface);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-s);
+  overflow-wrap: anywhere;
+}
+h1 { font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+h2 { font-size: 1.25rem; line-height: 1.25; font-weight: 700; }
+h3 { font-size: 1rem; line-height: 1.3; font-weight: 700; }
+.text { max-width: 62ch; overflow-wrap: anywhere; }
+.text + .text { margin-top: 0.75rem; }
+
+/* ---- page grid: text on the left, sticky views on the right ---- */
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
+  column-gap: 3rem;
+  align-items: start;
+  padding: 1.5rem 2rem 2rem;
+  max-width: 100rem;
+}
+.text-column { min-width: 0; padding-bottom: 3rem; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+/* ---- Simple / Technical control: neutral tone, inverted when active ---- */
+.seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface); border-radius: var(--radius-l); }
+.seg button { min-height: 40px; padding: 0 1rem; border-radius: var(--radius); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--action); color: var(--on-action); }
+
+/* ---- buttons: one dominant action, the others tonal; none outlined ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 44px; padding: 0 1.1rem; border-radius: var(--radius);
+  background: var(--surface); color: var(--ink); font-weight: 600;
+}
+.btn[aria-pressed="true"], .btn-primary { background: var(--action); color: var(--on-action); }
+.btn-subtle { min-height: 40px; padding: 0 0.9rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .seg button, .node, .tab { transition: background-color 120ms, color 120ms; }
+}
+@media (hover: hover) {
+  .btn:not([aria-pressed="true"]):not(.btn-primary):hover { background: var(--surface-2); }
+  .seg button[aria-pressed="false"]:hover { background: var(--surface-2); }
+  .tab[aria-selected="false"]:hover { background: var(--surface-2); }
+  .node:not([aria-pressed="true"]):hover { background: var(--surface); }
+}
+
+/* ---- paths and addresses: wrap only after "/", never within a name ---- */
+.path { font-family: var(--mono); font-size: 0.8125rem; line-height: 1.45; }
+.sg { white-space: nowrap; }
+.refs { color: var(--ink-2); }
+
+/* ---- node row: the whole row is the button; step highlighting uses bold and a left marker ---- */
+.node {
+  position: relative; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.7rem;
+  width: 100%; padding: 0.4rem 0.75rem; border-radius: var(--radius); min-height: 36px;
+}
+.node .path, .node .label { order: 1; flex: 1 1 auto; min-width: 0; }
+.node .label { font-size: 0.9375rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.node .citation-refs { order: 3; flex: 1 0 100%; font-family: var(--mono); font-size: 0.8125rem; line-height: 1.45; color: var(--ink-2); overflow-wrap: anywhere; }
+.node .risk-tag { order: 2; flex: none; margin-left: auto; font-size: 0.875rem; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+.node[data-highlighted] .path { font-weight: 700; }
+.node[data-highlighted]::before { content: ""; position: absolute; left: 0; top: 0.3rem; bottom: 0.3rem; width: 3px; border-radius: 2px; background: var(--ink); }
+.node[aria-pressed="true"] { background: var(--action); color: var(--on-action); }
+.node[aria-pressed="true"] .refs, .node[aria-pressed="true"] .citation-refs, .node[aria-pressed="true"] .risk-tag { color: var(--on-action); }
+.node[aria-pressed="true"] .path { font-weight: 700; }
+.node[aria-pressed="true"]::before { display: none; }
+.node-list { display: grid; gap: 2px; }
+@media (pointer: coarse) { .node { min-height: 44px; } }
+
+/* ---- node index and glossary: collapsed after the introduction ---- */
+.index { margin-top: 1rem; }
+.index + .index { margin-top: 0.25rem; }
+.index summary { list-style: none; display: flex; align-items: center; column-gap: 0.6rem; min-height: 44px; padding: 0 0.75rem; border-radius: var(--radius); font-weight: 700; cursor: pointer; }
+.index summary::-webkit-details-marker { display: none; }
+.index summary::before { content: ""; width: 0.45rem; height: 0.45rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); margin-right: 0.15rem; }
+.index[open] summary::before { transform: rotate(45deg); }
+.index[open] summary { margin-bottom: 0.25rem; }
+@media (hover: hover) { .index summary:hover { background: var(--surface); } }
+.glossary { display: grid; gap: 0.9rem; padding: 0.25rem 0.75rem 0.5rem; }
+.glossary dt { font-weight: 700; }
+.glossary dd { max-width: 62ch; overflow-wrap: anywhere; }
+
+/* ---- key concepts (profile A): neutral blocks, without a border ---- */
+.concepts { display: grid; gap: 0.75rem; margin-top: 1.25rem; }
+.concept { padding: 0.9rem 1.1rem 1rem; background: var(--surface); border-radius: var(--radius-l); }
+.concept .caption { font-size: 0.9375rem; font-weight: 600; color: var(--ink-2); }
+.concept .term { font-size: 1.0625rem; font-weight: 700; line-height: 1.3; }
+.concept .text { margin-top: 0.35rem; }
+
+/* ---- document: one step at a time ---- */
+.document > h2 { margin-top: 1.75rem; font-size: 1.0625rem; overflow-wrap: anywhere; }
+.step { margin-top: 1.75rem; }
+.step-header { display: block; width: 100%; padding: 0.4rem 0; border-radius: var(--radius); }
+.step-header .n { display: flex; justify-content: space-between; column-gap: 1rem; font-size: 0.875rem; font-weight: 700; color: var(--ink-2); }
+.step-header .n .d-on { display: none; }
+.step-header .t { display: block; font-size: 1.1875rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.step-header[aria-pressed="true"] { background: var(--action); color: var(--on-action); padding: 0.55rem 0.75rem; margin-inline: -0.75rem; width: calc(100% + 1.5rem); }
+.step-header[aria-pressed="true"] .n { color: var(--on-action); }
+.step-header[aria-pressed="true"] .n .d-on { display: inline; }
+.step-header[aria-pressed="true"] .n .d-off { display: none; }
+@media (hover: hover) { .step-header[aria-pressed="false"]:hover .t { text-decoration: underline; text-underline-offset: 3px; } }
+.step .text { margin-top: 0.6rem; }
+.step .touches { margin: 1rem 0 0.35rem; font-weight: 700; font-size: 0.9375rem; }
+.step .node-block { margin: 1rem 0 0.25rem; }
+#content > .node-block, #node-block > .node-block { margin-top: 0.5rem; }
+.citation-list { display: grid; gap: 0.2rem; padding: 0 0.75rem; }
+.footer { margin-top: 2.25rem; font-size: 0.875rem; color: var(--ink-2); max-width: 62ch; overflow-wrap: anywhere; }
+.sources { margin-top: 2.25rem; }
+.sources h2 { font-size: 1.0625rem; }
+.sources ul { display: grid; gap: 0.9rem; margin-top: 0.6rem; }
+.sources li { display: grid; gap: 0.1rem; max-width: 62ch; }
+.sources .source-title { font-weight: 600; overflow-wrap: anywhere; }
+.sources .refs { font-size: 0.875rem; }
+
+/* ---- node block: raised block ---- */
+.node-block {
+  scroll-margin-top: 1rem; padding: 1.1rem 1.25rem 1.4rem;
+  background: var(--panel); border-radius: var(--radius-l); box-shadow: var(--shadow);
+}
+.node-block:focus, .node-block:focus-visible { outline: none; }
+.node-block .meta { display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem 0.75rem; font-size: 0.875rem; color: var(--ink-2); margin-bottom: 0.25rem; }
+.node-block .meta .meta-risk { font-weight: 700; color: var(--ink); }
+.node-block .meta .btn { margin-left: auto; color: var(--ink); font-size: 1rem; }
+.node-block .meta .btn-primary { order: -1; margin-left: 0; margin-right: auto; color: var(--on-action); }
+.node-block .node-title { font-size: 1.0625rem; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.node-block .node-title.path-heading { font-family: var(--mono); }
+.node-block .text { margin-top: 0.75rem; }
+.node-block section { margin-top: 1.5rem; }
+.node-block section > h3 { margin-bottom: 0.4rem; }
+.node-files { display: grid; gap: 0.2rem; }
+.edge-item { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 0.75rem; }
+.edge-item .node { flex: 1 1 0; min-width: 0; width: auto; padding-right: 0; }
+.edge-item .verb { flex: none; max-width: 45%; font-size: 0.9375rem; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.edge-item .ref { flex: 1 0 100%; font-family: var(--mono); font-size: 0.8125rem; color: var(--ink-2); padding: 0 0.75rem 0.4rem 0.75rem; overflow-wrap: anywhere; }
+.node-steps { display: grid; gap: 2px; }
+.node-steps button { display: block; width: 100%; padding: 0.45rem 0.75rem; min-height: 40px; border-radius: var(--radius); }
+.node-steps button[aria-pressed="true"] { background: var(--action); color: var(--on-action); }
+@media (hover: hover) { .node-steps button[aria-pressed="false"]:hover { background: var(--surface); } }
+
+/* ---- view column: tabs above the panel, the page's only raised block besides the open node ---- */
+.view-column {
+  position: sticky; top: 1.5rem; height: calc(100vh - 3rem); min-height: 28rem;
+  display: flex; flex-direction: column; gap: 0.6rem; min-width: 0;
+}
+.tabs { display: flex; flex-wrap: wrap; gap: 2px; padding: 3px; align-self: flex-start; max-width: 100%; background: var(--surface); border-radius: var(--radius-l); }
+.tab { min-height: 40px; padding: 0 1rem; border-radius: var(--radius); font-weight: 600; overflow-wrap: anywhere; }
+.tab[aria-selected="true"] { background: var(--action); color: var(--on-action); }
+/* On touch, tabs and panel buttons are 44 px like nodes (after their base rules, which have equal specificity). */
+@media (pointer: coarse) { .tab, .seg button, .btn-subtle { min-height: 44px; } }
+.view-panel {
+  flex: 1 1 auto; min-height: 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 1rem 1.1rem 1.1rem; background: var(--panel); border-radius: var(--radius-l); box-shadow: var(--shadow);
+}
+.panel-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+.panel-header h2 { font-size: 1.0625rem; overflow-wrap: anywhere; }
+.panel-actions { display: flex; gap: 0.4rem; margin-left: auto; }
+.bodies { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.view-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.1rem; font-size: 0.875rem; color: var(--ink); }
+.legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legend .dot { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--color); }
+.legend .dot.p1 { width: 0.5rem; height: 0.5rem; }
+.legend .dot.p3 { width: 1rem; height: 1rem; }
+.legend .dash { width: 1.5rem; border-top: 2px dashed currentColor; }
+.arrows { font-size: 0.875rem; color: var(--ink-2); max-width: 62ch; }
+.screen-area { position: relative; flex: 1 1 auto; min-height: 20rem; }
+.screen { position: absolute; inset: 0; overflow: hidden; }
+.screen canvas { display: block; width: 100%; height: 100%; }
+.label-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+/* The library briefly shows an English hint (10px) before showNavInfo(false) takes effect. */
+.screen .scene-nav-info { display: none !important; }
+.view-state { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-2); font-size: 0.9375rem; }
+.btn-touch { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 3; }
+.node-label { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 2; }
+.node-label span, .label-3d span {
+  display: block; white-space: nowrap;
+  font-size: 0.8125rem; line-height: 1.2; padding: 2px 6px; border-radius: var(--radius-s);
+  color: var(--ink);
+  text-shadow: 0 0 2px var(--panel), 0 0 2px var(--panel), 0 0 4px var(--panel), 0 0 4px var(--panel);
+}
+.label-3d span { white-space: normal; max-width: 9rem; text-align: center; overflow-wrap: anywhere; }
+.label-3d[data-long] span { max-width: 13rem; }
+.label-3d[data-narrow] span { max-width: 5.5rem; }
+.label-3d[data-medium] span { max-width: 8rem; }
+.label-3d[data-left] span { text-align: left; }
+.node-label[data-highlighted] span, .label-3d[data-highlighted] span, .label-3d[data-strong] span { font-weight: 700; }
+.node-label[data-selected] span, .label-3d[data-selected] span { background: var(--action); color: var(--on-action); font-weight: 700; text-shadow: none; }
+.no-view { padding: 0.5rem 0 1rem; max-width: 68ch; }
+.no-view .notice { font-weight: 700; font-size: 1.0625rem; }
+.no-view .text { margin-top: 0.25rem; }
+.no-view ul, .no-view ol { display: grid; gap: 0.3rem; margin-top: 0.75rem; }
+.no-view ol { padding-left: 1.4rem; list-style: decimal; }
+.no-view li { font-size: 0.9375rem; line-height: 1.45; }
+.no-view li .path { font-size: 0.8125rem; }
+.no-view .text-label { font-weight: 600; }
+/* In text mode, the column fits its contents and scrolls internally if taller than the screen. */
+.view-column[data-text] { height: auto; min-height: 0; max-height: calc(100vh - 3rem); }
+.view-column[data-text] .view-panel { overflow: auto; }
+.view-column[data-text] .bodies, .view-column[data-text] .view-body { flex: none; }
+
+@media (max-width: 56rem) {
+  .page { display: block; padding: 1.25rem 1rem 2rem; }
+  .text-column { padding-bottom: 0; }
+  h1 { font-size: 1.5rem; }
+  .view-column, .view-column[data-text] { position: static; height: auto; min-height: 0; max-height: none; margin-top: 2.5rem; }
+  .view-column[data-text] .view-panel { overflow: visible; }
+  .view-panel { flex: none; }
+  .bodies, .view-body { flex: none; }
+  .screen-area { flex: none; height: 26rem; min-height: 0; }
+  .node-block { padding: 1rem 1rem 1.25rem; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <main class="text-column" id="text-column">
+    <div class="header">
+      <h1 id="title"></h1>
+      <div class="seg" role="group" aria-label="Text level">
+        <button type="button" data-level="simple" aria-pressed="true">Simple</button>
+        <button type="button" data-level="technical" aria-pressed="false">Technical</button>
+      </div>
+    </div>
+    <div id="intro"></div>
+    <section class="concepts" id="concepts" aria-label="Key concepts" hidden></section>
+    <details class="index" id="index-details">
+      <summary id="index-summary"></summary>
+      <ul class="node-list" id="index"></ul>
+    </details>
+    <details class="index" id="glossary-details" hidden>
+      <summary id="glossary-summary"></summary>
+      <dl class="glossary" id="glossary"></dl>
+    </details>
+    <div id="content">
+      <section class="document" id="document" aria-labelledby="h-doc" tabindex="-1"></section>
+      <div id="node-block" hidden></div>
+    </div>
+    <p class="footer" id="footer"></p>
+  </main>
+  <aside class="view-column" id="view-column" aria-label="Views">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Views" hidden></div>
+    <section class="view-panel" id="view-panel">
+      <div class="panel-header">
+        <h2 id="panel-title"></h2>
+        <div class="panel-actions">
+          <button type="button" class="btn btn-subtle" id="b-flat" aria-pressed="false">Flat</button>
+          <button type="button" class="btn btn-subtle" id="b-frame">Frame</button>
+        </div>
+      </div>
+      <div class="bodies" id="bodies"></div>
+    </section>
+  </aside>
+</div>
+<script type="application/json" id="data">{}</script>
+<script id="scene-code"></script>
+<script>
+(function () {
+'use strict';
+/* All data text enters the page through textContent or createElement; no innerHTML with data. */
+const data = JSON.parse(document.getElementById('data').textContent);
+if (!Array.isArray(data.nodes) || !Array.isArray(data.steps) || !Array.isArray(data.views)) {
+  document.getElementById('title').textContent = 'Template without data';
+  document.getElementById('intro').textContent = 'This file is the template. Generate the page with generate-page.mjs from the explanation data.';
+  return;
+}
+
+/* The only external libraries, loaded only when a view uses them: the graph (3d-force-graph) only for graph views; three and its two addons for all other views, including scenes.
+   The graph is a single file with a checksum (SRI): the browser rejects it if jsDelivr serves different contents. The three modules have no integrity: jsDelivr's +esm files are generated by the service and their hash is not guaranteed. */
+const URLS = {
+  graph: 'https://cdn.jsdelivr.net/npm/3d-force-graph@1.80.1/dist/3d-force-graph.min.js',
+  graphSri: 'sha384-i98VDQKdpyVrtyuFn0fjUWJBLBmxnqHqOANcvYe9HLJUgT2wPixa4ZkLd7Dh3VEk',
+  three: 'https://cdn.jsdelivr.net/npm/three@0.186.1/+esm',
+  orbit: 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/controls/OrbitControls.js/+esm',
+  css2d: 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/renderers/CSS2DRenderer.js/+esm',
+};
+
+/* ---------- data and state ---------- */
+const params = new URLSearchParams(location.search);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const profile = data.profile;
+const gran = data.granularity;
+const concepts = Array.isArray(data.concepts) ? data.concepts : [];
+const sources = Array.isArray(data.sources) ? data.sources : [];
+const byId = new Map(data.nodes.map((n) => [n.id, n]));
+const typeName = Object.fromEntries(data.types.map((t) => [t.id, t.name]));
+const typeIndex = new Map(data.types.map((t, i) => [t.id, i + 1]));
+const N = data.steps.length;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const touch = matchMedia('(pointer: coarse)');
+const NODE_NAME = { blocks: 'block', components: 'component', detail: 'element' }[gran] || 'node';
+const NODE_LIST = { blocks: 'Blocks', components: 'Components', detail: 'Details' }[gran] || 'Nodes';
+const RISK_WORD = { low: 'low', medium: 'medium', high: 'high' };
+const MODE_WORD = { sync: 'synchronous', async: 'asynchronous' };
+const mono = data.topic === 'code' && gran !== 'blocks'; // file, module and function names
+const theme = params.get('theme');
+if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+
+/* ---------- what each view contains ---------- */
+const messageById = new Map();
+data.views.forEach((v) => { if (v.type === 'sequence') v.messages.forEach((m) => messageById.set(m.id, m)); });
+function viewNodes(v) {
+  switch (v.type) {
+    case 'graph': return v.nodes && v.nodes.length ? v.nodes : data.nodes.map((n) => n.id);
+    case 'layers': return v.layers.flatMap((c) => c.nodes);
+    case 'sequence': return v.participants;
+    case 'states': return v.states;
+    case 'timeline': return [...new Set(v.events.map((e) => e.node))];
+    default: return v.nodes || [];
+  }
+}
+// A view's edges (edges, messages or transitions), for neighbors and text.
+function viewEdges(v) {
+  if (v.type === 'graph' || v.type === 'layers') return (v.edges || []).map((l) => ({ from: l.from, to: l.to }));
+  if (v.type === 'sequence') return v.messages.map((m) => ({ from: m.from, to: m.to, id: m.id }));
+  if (v.type === 'states') return v.transitions.map((t) => ({ from: t.from, to: t.to }));
+  return [];
+}
+function viewNeighbors(v, id) {
+  const s = new Set();
+  viewEdges(v).forEach((a) => {
+    if (a.from === id || a.to === id) {
+      s.add(a.from); s.add(a.to);
+      if (a.id) s.add(a.id);
+    }
+  });
+  s.delete(id);
+  return s;
+}
+// What a step highlights: the view's elements and, for messages, their participants.
+function highlightedIds(p) {
+  const s = new Set(p.highlight);
+  p.highlight.forEach((id) => { const m = messageById.get(id); if (m) { s.add(m.from); s.add(m.to); } });
+  return s;
+}
+const stepNodes = (p) => [...new Set(p.highlight.flatMap((id) => (byId.has(id) ? [id] : messageById.has(id) ? [messageById.get(id).from, messageById.get(id).to] : [])))];
+const nodeSteps = (id) => data.steps.map((p, i) => (stepNodes(p).includes(id) ? i : -1)).filter((i) => i >= 0);
+// Each node's relationships across all views: what it does and what acts on it.
+const outgoing = new Map();
+const incoming = new Map();
+{
+  const seen = new Set();
+  const rel = (from, to, verb, mode, ref) => {
+    const k = `${from}\u0001${to}\u0001${verb}`;
+    if (seen.has(k)) return;
+    seen.add(k);
+    if (!outgoing.has(from)) outgoing.set(from, []);
+    if (!incoming.has(to)) incoming.set(to, []);
+    outgoing.get(from).push({ other: to, verb, mode, ref });
+    incoming.get(to).push({ other: from, verb, mode, ref });
+  };
+  data.views.forEach((v) => {
+    if (v.type === 'graph' || v.type === 'layers') (v.edges || []).forEach((l) => rel(l.from, l.to, l.type, l.mode, l.ref));
+    if (v.type === 'sequence') v.messages.forEach((m) => rel(m.from, m.to, m.text, m.mode));
+    if (v.type === 'states') v.transitions.forEach((t) => rel(t.from, t.to, t.event));
+  });
+}
+
+const views = data.views.map((def, i) => ({
+  def, i, id: def.id, type: def.type, ids: viewNodes(def), loadStatus: 'new', ctl: null, body: null, screen: null,
+  flat: params.get('flat') === '1', rotate: false,
+}));
+const viewById = (id) => views.find((v) => v.id === id) || null;
+const urlLevel = params.get('level');
+const state = {
+  level: urlLevel === 'technical' || urlLevel === 'simple' ? urlLevel : (profile === 'A' ? 'simple' : 'technical'),
+  node: byId.has(params.get('node')) ? params.get('node') : null,
+  step: null,
+  view: 0,
+};
+{
+  const p = parseInt(params.get('step'), 10);
+  if (p >= 1 && p <= N) state.step = p - 1;
+}
+const text = (o) => o[state.level];
+
+/* ---------- DOM pieces ---------- */
+function h(tag, attrs, ...children) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) if (v !== false && v != null) el.setAttribute(k, v === true ? '' : String(v));
+  for (const f of children.flat(Infinity)) if (f != null && f !== false) el.append(f);
+  return el;
+}
+// Only text between backticks becomes <code>; an unmatched backtick stays as text.
+function richText(s) {
+  const parts = String(s).split('`');
+  if (parts.length % 2 === 0) { const last = parts.pop(); parts[parts.length - 1] += '`' + last; }
+  const f = document.createDocumentFragment();
+  parts.forEach((p, i) => {
+    if (!p) return;
+    if (i % 2 === 0) f.append(p);
+    else f.append(h('code', { class: p.length <= 28 ? 'nb' : null }, p));
+  });
+  return f;
+}
+const withoutCode = (s) => String(s).replaceAll('`', '');
+const paragraphs = (s) => String(s).split(/\n{2,}/).map((t) => h('p', { class: 'text' }, richText(t.trim())));
+const pathOf = (c) => c.slice(0, c.lastIndexOf(':'));
+const linesOf = (c) => c.slice(c.lastIndexOf(':') + 1);
+const isUrl = (c) => String(c).startsWith('https:');
+function isHttps(u) { try { return new URL(u).protocol === 'https:'; } catch (e) { return false; } }
+
+// A path that only wraps after "/": each folder and file name is an unbreakable block.
+function pathNodes(filePath, refs = []) {
+  const parts = filePath.split('/');
+  const name = parts.pop();
+  const output = [];
+  parts.forEach((p) => { output.push(h('span', { class: 'sg' }, p + '/'), document.createElement('wbr')); });
+  output.push(h('span', { class: 'sg' }, name, refs.length ? h('span', { class: 'refs' }, ':' + refs[0]) : null));
+  refs.slice(1).forEach((r) => { output.push(', ', h('span', { class: 'sg refs' }, r)); });
+  return output;
+}
+// The same for an address: keep the "https:" part attached to the domain.
+function urlParts(u) {
+  const m = /^(https:\/\/)(.*)$/.exec(String(u));
+  const parts = (m ? m[2] : String(u)).split('/');
+  if (m) parts[0] = m[1] + parts[0];
+  const name = parts.pop();
+  const output = [];
+  parts.forEach((p) => { output.push(h('span', { class: 'sg' }, p + '/'), document.createElement('wbr')); });
+  output.push(h('span', { class: 'sg' }, name));
+  return output;
+}
+// Only link a validated https address; text always enters through textContent.
+function urlLink(u, children) {
+  return isHttps(u)
+    ? h('a', { class: 'path', href: u, target: '_blank', rel: 'noopener noreferrer' }, children)
+    : h('span', { class: 'path' }, children);
+}
+function displayDate(d) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d));
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : String(d);
+}
+
+// A `path:N-M` citation belongs to a node when it overlaps the lines of one of its `files`.
+const range = (c) => { const [a, b] = linesOf(c).split('-').map(Number); return [a, b ?? a]; };
+function belongsTo(c, n) {
+  if (isUrl(c)) return false;
+  const filePath = pathOf(c);
+  const [a, b] = range(c);
+  return (n.files || []).some((f) => {
+    if (pathOf(f) !== filePath) return false;
+    const [x, y] = range(f);
+    return a <= y && x <= b;
+  });
+}
+const nodeCitations = (p, id) => (p.citations || []).filter((c) => belongsTo(c, byId.get(id)));
+const otherCitations = (p) => (p.citations || []).filter((c) => !stepNodes(p).some((id) => belongsTo(c, byId.get(id))));
+
+// A node's name: as code (paths, modules, functions) or words.
+function nodeName(n) {
+  return mono
+    ? h('span', { class: 'path' }, n.short.includes('/') ? pathNodes(n.short) : n.short)
+    : h('span', { class: 'label' }, n.short);
+}
+function nodeLabel(n, cits) {
+  return [nodeName(n), cits.length && (gran !== 'blocks' || state.level === 'technical') ? h('span', { class: 'citation-refs' }, cits.join(', ')) : null];
+}
+// A node's name in running text (text-view lists).
+function nameElement(id) {
+  const n = byId.get(id);
+  return h('span', { class: mono ? 'path' : 'text-label' }, n.short);
+}
+function nodeElement(id, cits = []) {
+  const n = byId.get(id);
+  return h('button', { type: 'button', class: 'node', 'data-node': id, 'aria-pressed': 'false' },
+    nodeLabel(n, cits),
+    profile === 'C' && n.risk ? h('span', { class: 'risk-tag' }, 'risk ' + RISK_WORD[n.risk]) : null);
+}
+function edgeElements(id) {
+  const verb = (l) => l.verb + (profile === 'C' && l.mode ? ', ' + MODE_WORD[l.mode] : '');
+  const line = (l) => h('li', { class: 'edge-item' },
+    nodeElement(l.other),
+    h('span', { class: 'verb' }, verb(l)),
+    state.level === 'technical' && l.ref ? h('span', { class: 'ref' }, l.ref) : null);
+  const f = outgoing.get(id) || [], s = incoming.get(id) || [];
+  return [
+    f.length ? h('section', null, h('h3', null, `What this ${NODE_NAME} does`), h('ul', null, f.map(line))) : null,
+    s.length ? h('section', null, h('h3', null, 'What acts on it'), h('ul', null, s.map(line))) : null,
+  ];
+}
+// Spell out the type and risk: colors only appear beside the views.
+function nodeBlock(id, action) {
+  const n = byId.get(id);
+  const ps = nodeSteps(id);
+  const nodeTitle = h('h2', { id: 'node-title', class: 'node-title' + (mono ? ' path-heading' : '') }, mono && n.short.includes('/') ? pathNodes(n.short) : n.short);
+  return h('article', { class: 'node-block', tabindex: '-1', 'aria-labelledby': 'node-title' },
+    h('div', { class: 'meta' },
+      h('span', null, 'Type: ' + typeName[n.type].toLowerCase()),
+      profile === 'C' && n.risk ? h('span', { class: 'meta-risk' }, 'Risk ' + RISK_WORD[n.risk]) : null,
+      action),
+    nodeTitle,
+    paragraphs(text(n)),
+    n.files && n.files.length
+      ? h('section', null, h('h3', null, gran === 'blocks' ? 'Files in this block' : 'Where it is'),
+        h('ul', { class: 'node-files' }, n.files.map((f) => h('li', { class: 'path' }, pathNodes(pathOf(f), [linesOf(f)])))))
+      : null,
+    edgeElements(id),
+    ps.length
+      ? h('section', null, h('h3', null, 'Steps it appears in'),
+        h('ul', { class: 'node-steps' }, ps.map((i) => h('li', null,
+          h('button', { type: 'button', 'data-step': i, 'aria-pressed': 'false' }, `Step ${i + 1}: ${data.steps[i].title}`)))))
+      : null);
+}
+// An edge or message is asynchronous: the legend and hint mention dashes only when there is something to dash.
+const hasAsync = (def) => (def.edges || def.messages || []).some((l) => l.mode === 'async');
+function legendElement(v) {
+  const point = (color, extra) => h('span', { class: 'dot' + (extra ? ' ' + extra : ''), style: `--color: var(${color})`, 'aria-hidden': 'true' });
+  const isAsync = profile === 'C' && hasAsync(v.def);
+  const dash = isAsync ? h('li', null, h('span', { class: 'dash', 'aria-hidden': 'true' }), 'Dashed: asynchronous') : null;
+  if (profile === 'C') {
+    const r = [['low', 'p1'], ['medium', 'p2'], ['high', 'p3']];
+    return h('ul', { class: 'legend', 'aria-label': 'Risk' }, r.map(([k, p]) => h('li', null, point('--r-' + k, p), 'Risk ' + RISK_WORD[k])), dash);
+  }
+  const used = new Set(v.ids.map((id) => byId.get(id).type));
+  return h('ul', { class: 'legend', 'aria-label': 'Types' },
+    data.types.filter((t) => used.has(t.id)).map((t) => h('li', null, point('--t-' + typeIndex.get(t.id)), t.name)));
+}
+function sourcesElement() {
+  if (!sources.length) return null;
+  return h('section', { class: 'sources', 'aria-labelledby': 'h-sources' },
+    h('h2', { id: 'h-sources' }, 'Sources'),
+    h('ul', null, sources.map((f) => h('li', null,
+      h('span', { class: 'source-title' }, f.title),
+      urlLink(f.url, urlParts(f.url)),
+      h('span', { class: 'refs' }, 'read on ' + displayDate(f.read_at))))));
+}
+
+/* ---------- the document ---------- */
+let savedScroll = 0;
+// Node block location: null (closed), 'doc' (within its originating step) or 'outside' (replacing the document).
+let mode = null;
+let viewStep = null;
+
+function citationElement(c) {
+  if (isUrl(c)) {
+    const f = sources.find((x) => x.url === c);
+    return h('li', { class: 'path' }, urlLink(c, f ? f.title : urlParts(c)));
+  }
+  return h('li', { class: 'path' }, pathNodes(pathOf(c), [linesOf(c)]));
+}
+function stepElement(p, i) {
+  const unattached = otherCitations(p);
+  const stepIds = stepNodes(p);
+  return h('li', { class: 'step', 'data-step': i },
+    h('h3', null, h('button', { type: 'button', class: 'step-header', 'data-step': i, 'aria-pressed': 'false', 'aria-label': `Step ${i + 1} of ${N}: ${p.title}` },
+      h('span', { class: 'n', 'aria-hidden': 'true' },
+        h('span', null, `Step ${i + 1} of ${N}`), h('span', { class: 'd-off' }, 'Highlight in view'), h('span', { class: 'd-on' }, 'Highlighted in view')),
+      h('span', { class: 't', 'aria-hidden': 'true' }, p.title))),
+    paragraphs(text(p)),
+    stepIds.length ? h('div', { class: 'touches-block' },
+      h('p', { class: 'touches' }, 'Touches'),
+      h('ul', { class: 'node-list' }, stepIds.map((id) => h('li', null, nodeElement(id, nodeCitations(p, id)))))) : null,
+    unattached.length ? h('div', null,
+      h('p', { class: 'touches' }, 'Also cites'),
+      h('ul', { class: 'citation-list' }, unattached.map(citationElement))) : null);
+}
+function renderIntro() { $('#intro').replaceChildren(...paragraphs(text(data.intro))); }
+function renderConcepts() {
+  const target = $('#concepts');
+  target.hidden = profile !== 'A' || !concepts.length;
+  target.replaceChildren(...(profile === 'A' ? concepts.map((c) => h('aside', { class: 'concept', 'aria-label': 'Key concept: ' + c.term },
+    h('p', { class: 'caption' }, 'Key concept'), h('p', { class: 'term' }, c.term), paragraphs(text(c)))) : []));
+}
+function renderIndex() {
+  $('#index-summary').textContent = `${NODE_LIST} (${data.nodes.length})`;
+  $('#index').replaceChildren(...data.nodes.map((n) => h('li', null, nodeElement(n.id))));
+}
+function renderGlossary() {
+  const show = profile !== 'A' && concepts.length > 0;
+  $('#glossary-details').hidden = !show;
+  $('#glossary-summary').textContent = `Glossary (${concepts.length})`;
+  $('#glossary').replaceChildren(...(show ? concepts.flatMap((c) => [h('dt', null, c.term), h('dd', null, richText(text(c)))]) : []));
+}
+function renderDocument() {
+  $('#content').appendChild($('#node-block')); // keep the node block out of the document contents being replaced
+  $('#document').replaceChildren(...[h('h2', { id: 'h-doc' }, richText(data.question)), h('ol', null, data.steps.map(stepElement)), sourcesElement()].filter(Boolean));
+  placeBlock();
+}
+function renderFooter() {
+  const target = $('#footer');
+  target.hidden = data.topic === 'general' || !data.area;
+  target.replaceChildren(state.level === 'technical'
+    ? `Area read: ${data.area} · base ${String(data.base).slice(0, 12)}`
+    : `Explanation based on ${data.area}.`);
+}
+function renderBlock() {
+  const action = mode === 'outside'
+    ? h('button', { type: 'button', class: 'btn btn-primary', id: 'back' }, '← Back to document')
+    : h('button', { type: 'button', class: 'btn btn-subtle', id: 'close-node' }, 'Close');
+  $('#node-block').replaceChildren(nodeBlock(state.node, action));
+}
+function placeBlock() {
+  const v = $('#node-block');
+  if (state.node == null || !mode) { v.hidden = true; return; }
+  if (mode === 'doc') $(`.step[data-step="${viewStep}"] .touches-block`).insertAdjacentElement('afterend', v);
+  else $('#content').appendChild(v);
+  v.hidden = false;
+}
+function show() {
+  const outside = mode === 'outside' && state.node != null;
+  $('#intro').hidden = outside;
+  $('#concepts').hidden = outside || profile !== 'A' || !concepts.length;
+  $('#document').hidden = outside;
+}
+
+/* ---------- what each view highlights ---------- */
+// activeIds: null = nothing selected (all retain their colors); otherwise the ids (nodes and messages) to highlight.
+// With a step, its elements; with a node outside the step, or no step, the node and its neighbors (neighborhood).
+function focusFor(v) {
+  const empty = { activeIds: null, node: null, neighborhood: false };
+  const p = state.step != null ? data.steps[state.step] : null;
+  if (p && p.view === v.id) {
+    const real = highlightedIds(p);
+    if (state.node == null || real.has(state.node)) return { activeIds: real, node: state.node, neighborhood: false };
+  }
+  if (state.node != null && v.ids.includes(state.node)) {
+    const a = viewNeighbors(v.def, state.node);
+    a.add(state.node);
+    return { activeIds: a, node: state.node, neighborhood: true };
+  }
+  return empty;
+}
+// An edge (edge, transition) is active when it touches the open node or, in a step, both ends are highlighted.
+const activeEdge = (focus, from, to) => !!focus.activeIds
+  && ((focus.node != null && (from === focus.node || to === focus.node)) || (!focus.neighborhood && focus.activeIds.has(from) && focus.activeIds.has(to)));
+
+/* ---------- synchronization ---------- */
+function synchronize() {
+  const real = new Set(state.step == null ? [] : stepNodes(data.steps[state.step]));
+  $$('.node').forEach((b) => {
+    const id = b.dataset.node;
+    b.setAttribute('aria-pressed', String(id === state.node));
+    if (real.has(id)) b.setAttribute('data-highlighted', ''); else b.removeAttribute('data-highlighted');
+  });
+  $$('button[data-step]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === state.step)));
+  views.forEach((v) => { if (v.ctl) v.ctl.update(focusFor(v)); });
+}
+
+// Select a step's view tab; for a node, the first view containing it, if the current one does not.
+function stepView(i) { const v = viewById(data.steps[i].view); if (v) activateView(v.i); }
+function nodeView(id) {
+  if (views[state.view].ids.includes(id)) return;
+  const v = views.find((x) => x.ids.includes(id));
+  if (v) activateView(v.i);
+}
+
+// origin 'doc': from a step, opens in place and keeps it on screen. 'outside': from the index or view, replaces the document (and clears step highlighting).
+function openNode(id, { origin = mode || 'outside', stepIndex = viewStep, focus = true } = {}) {
+  if (origin === 'outside' && mode !== 'outside') savedScroll = window.scrollY;
+  state.node = id;
+  mode = origin;
+  if (mode === 'doc') { viewStep = stepIndex; state.step = stepIndex; } else { viewStep = null; state.step = null; }
+  renderBlock();
+  placeBlock();
+  show();
+  if (mode === 'doc') stepView(stepIndex); else nodeView(id);
+  synchronize();
+  const v = $('.node-block');
+  if (focus) v.focus({ preventScroll: true });
+  if (mode === 'doc') {
+    // Keep the step on screen: if its header is above or the block's end below, move the step header to the top.
+    const c = $(`.step-header[data-step="${viewStep}"]`).getBoundingClientRect();
+    if (c.top < 0 || v.getBoundingClientRect().bottom > window.innerHeight) window.scrollTo({ top: c.top + window.scrollY - 12, behavior: 'auto' });
+  } else window.scrollTo({ top: $('#node-block').getBoundingClientRect().top + window.scrollY - 16, behavior: 'auto' });
+}
+function closeNode() {
+  const previous = state.node, where = viewStep;
+  state.node = null; mode = null;
+  placeBlock(); show(); synchronize();
+  const back = $$(`.step[data-step="${where}"] .node`).find((b) => b.dataset.node === previous);
+  if (back) back.focus();
+}
+function goBack() {
+  state.node = null; mode = null;
+  placeBlock(); show(); synchronize();
+  window.scrollTo({ top: savedScroll, behavior: 'auto' });
+  $('#document').focus({ preventScroll: true });
+}
+function toggleStep(i) {
+  state.step = state.step === i ? null : i;
+  if (state.step != null) stepView(i);
+  synchronize();
+}
+function goToStep(i) {
+  state.step = i; state.node = null; mode = null;
+  placeBlock(); show();
+  stepView(i);
+  synchronize();
+  const target = $(`.step-header[data-step="${i}"]`);
+  target.scrollIntoView({ block: 'start' });
+  target.focus({ preventScroll: true });
+}
+
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('button');
+  if (!b) return;
+  if (b.classList.contains('node')) {
+    if (b.closest('.node-block')) openNode(b.dataset.node);
+    else if (b.closest('#document')) openNode(b.dataset.node, { origin: 'doc', stepIndex: Number(b.closest('.step').dataset.step) });
+    else openNode(b.dataset.node, { origin: 'outside' });
+  } else if (b.classList.contains('step-header')) toggleStep(Number(b.dataset.step));
+  else if (b.closest('.node-steps')) goToStep(Number(b.dataset.step));
+  else if (b.id === 'back') goBack();
+  else if (b.id === 'close-node') closeNode();
+});
+
+/* ---------- libraries, only when a view uses them ---------- */
+let threePromise = null;
+let graphPromise = null;
+function loadThree() {
+  if (!threePromise) {
+    threePromise = (async () => {
+      // Insert the import map before the first module; addons import the same three by address.
+      const map = h('script', { type: 'importmap' });
+      map.textContent = JSON.stringify({ imports: { three: URLS.three, 'three/addons/controls/OrbitControls.js': URLS.orbit, 'three/addons/renderers/CSS2DRenderer.js': URLS.css2d } });
+      document.head.appendChild(map);
+      const THREE = await import('three');
+      const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+      const { CSS2DRenderer, CSS2DObject } = await import('three/addons/renderers/CSS2DRenderer.js');
+      return { THREE, OrbitControls, CSS2DRenderer, CSS2DObject };
+    })();
+  }
+  return threePromise;
+}
+function loadGraph() {
+  if (!graphPromise) {
+    graphPromise = new Promise((res, rej) => {
+      if (typeof ForceGraph3D === 'function') { res(); return; }
+      const s = document.createElement('script');
+      s.src = URLS.graph;
+      s.integrity = URLS.graphSri;
+      s.crossOrigin = 'anonymous';
+      s.onload = () => res();
+      s.onerror = () => rej(new Error('the graph library did not load'));
+      document.head.appendChild(s);
+    });
+  }
+  return graphPromise;
+}
+function webglAvailable() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch (e) { return false; }
+}
+const noWebgl = params.get('no-webgl') === '1' || !webglAvailable();
+
+/* ---------- theme colors, read from tokens ---------- */
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function themeColors() {
+  const series = [1, 2, 3, 4].map((i) => css('--t-' + i));
+  return {
+    background: css('--panel'), ink: css('--ink'), muted: css('--ink-2'), line: css('--edge'), highlight: css('--edge-highlight'), neutral: css('--node-dim'),
+    series, risk: { low: css('--r-low'), medium: css('--r-medium'), high: css('--r-high') },
+  };
+}
+const nodeColor = (n) => (profile === 'C' && n.risk ? css('--r-' + n.risk) : css('--t-' + typeIndex.get(n.type)));
+const RISK_SCALE = { low: 0.75, medium: 1, high: 1.4 };
+const nodeScale = (n) => (profile === 'C' && n.risk ? RISK_SCALE[n.risk] : 1);
+const IDLE = 2000; // stop rendering 2 s after the last interaction
+const pixelRatio = () => Math.min(window.devicePixelRatio || 1, 2);
+
+/* ---------- three.js view frame: loop, pause, controls, highlighting, clicking and Frame ---------- */
+function createFrame(view, screen, L, builder) {
+  const { THREE, OrbitControls, CSS2DRenderer, CSS2DObject } = L;
+  const def = view.def;
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const render = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  render.setPixelRatio(pixelRatio());
+  const canvas = render.domElement;
+  screen.appendChild(canvas);
+  const labelRenderer = new CSS2DRenderer();
+  labelRenderer.domElement.className = 'label-layer';
+  screen.appendChild(labelRenderer.domElement);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.AmbientLight(new THREE.Color(1, 1, 1), 2.5));
+  const sun = new THREE.DirectionalLight(new THREE.Color(1, 1, 1), 1.1);
+  sun.position.set(4, 9, 12);
+  scene.add(sun);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 4000);
+  const controls = new OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.12;
+  controls.screenSpacePanning = true;
+
+  let colors = themeColors();
+  let focus = { activeIds: null, node: null, neighborhood: false };
+  let active = false, awake = false, rafId = 0, timer = 0, last = 0, lastFrame = 0;
+  let framesRendered = 0, interacted = false, hovered = null, low = null, tween = null, destroyed = false;
+  let flatActive = view.flat;
+  let moved = false;
+  const elements = new Map(); // id -> { objs: [Object3D] }
+  const labels = [];          // { obj, el, id, fixed }
+  const edges = [];          // { mat, active(focus) }
+  const animations = [];
+  const extras = [];           // points Frame must also keep visible (label margins)
+  let user = {};            // what the scene returned (onHighlight)
+  let drawing = { dir3D: V3(0.3, 0.25, 1), flatDirection: V3(0, 0, 1), defaultMode: 'highlight' };
+
+  /* -- loop with pause: render only on interaction or page action -- */
+  function draw() {
+    render.render(scene, camera);
+    labelRenderer.render(scene, camera);
+    framesRendered++;
+  }
+  function wake() {
+    last = performance.now();
+    if (!active || destroyed) return;
+    if (!awake) { awake = true; lastFrame = performance.now(); rafId = requestAnimationFrame(loop); }
+    if (!timer) timer = setTimeout(checkIdle, IDLE);
+  }
+  function checkIdle() {
+    timer = 0;
+    const remaining = IDLE - (performance.now() - last);
+    if (remaining > 30 && active) { timer = setTimeout(checkIdle, remaining); return; }
+    stop();
+  }
+  function stop() {
+    awake = false;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+    if (timer) { clearTimeout(timer); timer = 0; }
+  }
+  function loop(t) {
+    rafId = 0;
+    if (!awake || destroyed) return;
+    const dt = Math.min((t - lastFrame) / 1000, 0.1);
+    lastFrame = t;
+    if (tween) { tweenStep(t); last = performance.now(); }
+    if (!reducedMotion.matches) {
+      // Scene animations run while the view is awake; they do not keep it awake (it stops 2 s after the last interaction).
+      for (let i = animations.length - 1; i >= 0; i--) {
+        try { animations[i](dt); } catch (e) { animations.splice(i, 1); }
+      }
+    }
+    controls.update();
+    draw();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* -- camera: Frame using registered bounds, Flat mode, and movement between positions -- */
+  function box() {
+    const b = new THREE.Box3();
+    elements.forEach((el) => el.objs.forEach((o) => b.expandByObject(o)));
+    extras.forEach((p) => b.expandByPoint(p));
+    if (b.isEmpty()) b.set(V3(-1, -1, -1), V3(1, 1, 1));
+    return b;
+  }
+  function destination(right) {
+    const b = box();
+    const center = b.getCenter(new THREE.Vector3());
+    const f = right.clone().normalize();
+    const up = V3(0, 1, 0);
+    const dir_ = new THREE.Vector3().crossVectors(up, f);
+    if (dir_.lengthSq() < 1e-8) dir_.set(1, 0, 0);
+    dir_.normalize();
+    const u = new THREE.Vector3().crossVectors(f, dir_).normalize();
+    const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const tanH = tanV * Math.max(camera.aspect, 0.2);
+    let D = 0;
+    for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
+      const rel = V3(x, y, z).sub(center);
+      D = Math.max(D, Math.abs(rel.dot(dir_)) / tanH + rel.dot(f), Math.abs(rel.dot(u)) / tanV + rel.dot(f));
+    }
+    D = Math.max(D * 1.04, 4);
+    // Agent-scene labels sit beside elements, outside Frame's measured box: move the camera back until they fit (about 70 px per side).
+    if (view.type === 'scene' && labels.length) {
+      const cam2 = camera.clone();
+      const mx = (2 * 70) / Math.max(screen.clientWidth, 1), my = (2 * 24) / Math.max(screen.clientHeight, 1);
+      for (let k = 0; k < 16; k++) {
+        cam2.position.copy(center).addScaledVector(f, D);
+        cam2.lookAt(center);
+        cam2.updateMatrixWorld();
+        const outside = labels.some((r) => { const q = r.obj.position.clone().project(cam2); return Math.abs(q.x) > 1 - mx || Math.abs(q.y) > 1 - my; });
+        if (!outside) break;
+        D *= 1.07;
+      }
+    }
+    return { pos: center.clone().addScaledVector(f, D), target: center, D };
+  }
+  function moveTo(pos, target, ms) {
+    if (!ms || reducedMotion.matches) {
+      tween = null;
+      camera.position.copy(pos);
+      controls.target.copy(target);
+      camera.lookAt(target);
+      controls.update();
+      wake();
+      return;
+    }
+    tween = { t0: performance.now(), ms, p0: camera.position.clone(), a0: controls.target.clone(), p1: pos.clone(), a1: target.clone() };
+    wake();
+  }
+  function tweenStep(t) {
+    const k = Math.min(1, (t - tween.t0) / tween.ms);
+    const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    camera.position.lerpVectors(tween.p0, tween.p1, e);
+    controls.target.lerpVectors(tween.a0, tween.a1, e);
+    if (k >= 1) tween = null;
+  }
+  function currentDirection() {
+    const d = camera.position.clone().sub(controls.target);
+    return d.lengthSq() < 1e-6 ? drawing.dir3D.clone() : d;
+  }
+  function frame(ms, right) {
+    const target = destination(right || (flatActive ? drawing.flatDirection : currentDirection()));
+    controls.minDistance = target.D * 0.15;
+    controls.maxDistance = target.D * 6;
+    camera.near = Math.max(target.D / 200, 0.05);
+    camera.far = target.D * 40;
+    camera.updateProjectionMatrix();
+    moveTo(target.pos, target.target, ms);
+  }
+  function adjustFlatControls() {
+    controls.enableRotate = !flatActive;
+    controls.mouseButtons.LEFT = flatActive ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE;
+    controls.touches.ONE = flatActive ? THREE.TOUCH.PAN : THREE.TOUCH.ROTATE;
+  }
+  function setFlat(b) {
+    flatActive = b;
+    view.flat = b;
+    adjustFlatControls();
+    frame(450, b ? drawing.flatDirection : drawing.dir3D);
+  }
+
+  /* -- registering elements, labels and animations (also used by scenes) -- */
+  const materialOwner = new Map();
+  function element(id, obj) {
+    if (!view.ids.includes(id)) throw new Error(`element «${id}» does not belong to this view`);
+    if (!obj || !obj.isObject3D) throw new Error(`element «${id}» must be a three.js object`);
+    if (!obj.parent) scene.add(obj);
+    obj.traverse((o) => {
+      const ms = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];
+      ms.forEach((mt, i) => {
+        const owner = materialOwner.get(mt);
+        if (owner && owner !== id) { // a material shared by two elements would recolor both: give each its own
+          const c = mt.clone();
+          if (Array.isArray(o.material)) o.material[i] = c; else o.material = c;
+          materialOwner.set(c, id);
+        } else materialOwner.set(mt, id);
+      });
+    });
+    if (!elements.has(id)) elements.set(id, { objs: [] });
+    elements.get(id).objs.push(obj);
+    return obj;
+  }
+  const SPACING = { up: 'Bottom', low: 'Top', right: 'Left', left: 'Right' };
+  const CENTER = { up: [0.5, 1], low: [0.5, 0], right: [0, 0.5], left: [1, 0.5] };
+  function label(labelText, pos, { id = null, fixed = true, anchor = null, padding = 0, long = false, strong = false, narrow = false, medium = false, secondary = false, active = null } = {}) {
+    const sp = h('span', null, withoutCode(labelText));
+    const el = h('div', { class: 'label-3d', 'data-long': long, 'data-strong': strong, 'data-narrow': narrow, 'data-medium': medium, 'data-left': anchor === 'right' }, sp);
+    if (anchor && padding) sp.style['margin' + SPACING[anchor]] = padding + 'rem';
+    const o = new CSS2DObject(el);
+    if (anchor && o.center) o.center.set(CENTER[anchor][0], CENTER[anchor][1]);
+    o.position.copy(pos);
+    scene.add(o);
+    labels.push({ obj: o, el, id, fixed, secondary, active });
+    return o;
+  }
+  function animate(fn) { if (!reducedMotion.matches && typeof fn === 'function') animations.push(fn); }
+
+  /* -- catalog view pieces -- */
+  const mat = (color) => new THREE.MeshLambertMaterial({ color: color });
+  const add = (o) => { scene.add(o); return o; };
+  function cylinder(a, b, r, material) {
+    const d = new THREE.Vector3().subVectors(b, a);
+    const length = d.length();
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, Math.max(length, 1e-4), 8, 1), material);
+    m.position.copy(a).addScaledVector(d, 0.5);
+    m.quaternion.setFromUnitVectors(V3(0, 1, 0), d.normalize());
+    return m;
+  }
+  function tip(base, right, r, length, material) {
+    const c = new THREE.Mesh(new THREE.ConeGeometry(r, length, 14), material);
+    c.position.copy(base).addScaledVector(right, length / 2);
+    c.quaternion.setFromUnitVectors(V3(0, 1, 0), right.clone().normalize());
+    return c;
+  }
+  // A segmented line; when dashed, only the "on" segments of a 0.55 dash and a 0.4 gap.
+  function segments(pts, r, material, dashed) {
+    const g = new THREE.Group();
+    if (!dashed) {
+      for (let i = 1; i < pts.length; i++) g.add(cylinder(pts[i - 1], pts[i], r, material));
+      return g;
+    }
+    let on = true, remaining = 0.55;
+    for (let i = 1; i < pts.length; i++) {
+      let a = pts[i - 1].clone();
+      const b = pts[i];
+      let seg = a.distanceTo(b);
+      while (seg > 1e-6) {
+        const step = Math.min(seg, remaining);
+        const p = a.clone().lerp(b, step / seg);
+        if (on) g.add(cylinder(a, p, r, material));
+        a = p; seg -= step; remaining -= step;
+        if (remaining <= 1e-6) { on = !on; remaining = on ? 0.55 : 0.4; }
+      }
+    }
+    return g;
+  }
+  const edge = (material, active) => edges.push({ mat: material, active });
+  const extend = (p) => extras.push(p);
+  const m = {
+    THREE, V3, get colors() { return colors; }, mat, add, cylinder, tip, segments, edge, extend, element, label,
+    nodeColor: (n) => new THREE.Color(nodeColor(n)), scale: nodeScale,
+    // Vertical stretch (1 to 3.5) so a wide, short view fills a tall screen, such as a phone, instead of shrinking.
+    stretch(width, height) {
+      const w = screen.clientWidth, hh = screen.clientHeight;
+      if (!w || !hh) return 1;
+      return Math.min(3.5, Math.max(1, width / (height * (w / hh))));
+    },
+    // World units within "px" pixels when the view ("width" units, excluding padding) fills the screen: padding for a wide label at the edge.
+    // With "height" (the view's height in units), also consider vertical screen space: the tighter side wins.
+    padding(px, width, height = 0) {
+      const w = screen.clientWidth, hh = screen.clientHeight;
+      if (w <= 2 * px + 40) return px * 0.12;
+      const scale = Math.min((w - 2 * px) / width, height && hh ? hh / height : Infinity);
+      return px / scale;
+    },
+    // Screen width in pixels, so views measure themselves against their actual screen.
+    get width() { return screen.clientWidth || 640; },
+    get height() { return screen.clientHeight || 420; },
+    get touch() { return touch.matches; },
+    configure(o) { drawing = { ...drawing, ...o }; },
+  };
+
+  /* -- highlighting: elements, edges and labels -- */
+  const materialList = (o) => (Array.isArray(o.material) ? o.material : o.material ? [o.material] : []);
+  function paint(activeIds, colorMode) {
+    const real = new THREE.Color(colors.highlight), neutral = new THREE.Color(colors.neutral);
+    elements.forEach((el, id) => {
+      const on = !activeIds || activeIds.has(id);
+      el.objs.forEach((obj) => obj.traverse((o) => materialList(o).forEach((mt) => {
+        if (!mt.color) return;
+        if (!mt.userData.nat) mt.userData.nat = mt.color.clone();
+        mt.color.copy(!activeIds ? mt.userData.nat : on ? (colorMode === 'highlight' ? real : mt.userData.nat) : neutral);
+      })));
+    });
+  }
+  function paintEdges() {
+    const normal = new THREE.Color(colors.line), real = new THREE.Color(css('--edge-highlight')), dim = new THREE.Color(css('--edge-dim'));
+    edges.forEach((a) => a.mat.color.copy(!focus.activeIds ? normal : a.active(focus) ? real : dim));
+  }
+  function updateLabels() {
+    // Show all labels up to 12 elements; above that, only highlighted, open and hovered ones. Secondary labels (transition events) need a lower limit on narrow screens.
+    const limit = (sec) => (sec && screen.clientWidth < 520 ? 6 : 12);
+    const count = (sec) => labels.filter((r) => !r.fixed && r.secondary === sec).length;
+    const all = { false: count(false) <= limit(false), true: count(true) <= limit(true) };
+    labels.forEach((r) => {
+      const real = !!focus.activeIds && (r.active ? r.active(focus) : r.id != null && focus.activeIds.has(r.id));
+      const sel = r.id != null && r.id === focus.node;
+      const apt = r.id != null && r.id === hovered;
+      r.obj.visible = r.fixed || all[r.secondary] || real || sel || apt;
+      r.el.toggleAttribute('data-highlighted', real);
+      r.el.toggleAttribute('data-selected', sel);
+    });
+  }
+  function update(next) {
+    if (next) focus = next;
+    if (user.onHighlight) {
+      try { user.onHighlight(focus.activeIds ? [...focus.activeIds] : []); } catch (e) { /* custom highlighting failed: keep the previous state */ }
+    } else paint(focus.activeIds, drawing.defaultMode);
+    paintEdges();
+    updateLabels();
+    wake();
+  }
+
+  /* -- click and hover: raycast registered elements; on touch, pick the element nearest the finger -- */
+  const ray = new THREE.Raycaster();
+  const ptr = new THREE.Vector2();
+  function pick(ev, tolerance) {
+    const r = canvas.getBoundingClientRect();
+    ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ptr, camera);
+    let best = null, d = Infinity;
+    elements.forEach((el, id) => el.objs.forEach((o) => {
+      const hit = ray.intersectObject(o, true);
+      if (hit.length && hit[0].distance < d) { d = hit[0].distance; best = id; }
+    }));
+    if (best || !tolerance) return best;
+    let dpx = tolerance;
+    elements.forEach((el, id) => el.objs.forEach((o) => {
+      const c = new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3()).project(camera);
+      if (c.z > 1) return;
+      const dist = Math.hypot((c.x * 0.5 + 0.5) * r.width + r.left - ev.clientX, (-c.y * 0.5 + 0.5) * r.height + r.top - ev.clientY);
+      if (dist < dpx) { dpx = dist; best = id; }
+    }));
+    return best;
+  }
+  canvas.addEventListener('pointerdown', (e) => { low = { x: e.clientX, y: e.clientY, t: performance.now() }; wake(); });
+  canvas.addEventListener('pointerup', (e) => {
+    if (!low) return;
+    const mov = Math.hypot(e.clientX - low.x, e.clientY - low.y), dur = performance.now() - low.t;
+    low = null;
+    if (mov > 8 || dur > 700) return;
+    const id = pick(e, e.pointerType === 'touch' ? 30 : 0);
+    if (id) { interacted = true; if (m.onSelect) m.onSelect(id); }
+  });
+  canvas.addEventListener('pointercancel', () => { low = null; });
+  canvas.addEventListener('pointermove', (e) => {
+    wake();
+    if (e.pointerType !== 'mouse' || e.buttons) return;
+    const id = pick(e, 0);
+    if (id !== hovered) { hovered = id; canvas.style.cursor = id ? 'pointer' : ''; updateLabels(); }
+  });
+  canvas.addEventListener('pointerleave', () => { if (hovered) { hovered = null; canvas.style.cursor = ''; updateLabels(); } });
+  canvas.addEventListener('wheel', wake, { passive: true });
+  canvas.addEventListener('touchstart', wake, { passive: true });
+  controls.addEventListener('start', () => { interacted = true; });
+  controls.addEventListener('change', () => { moved = true; wake(); });
+
+  /* -- touch scrolling: with controls off, the view does not capture it -- */
+  function enableControls(on) {
+    controls.enabled = on;
+    const t = on ? 'none' : 'auto';
+    canvas.style.touchAction = t;
+    screen.style.touchAction = t;
+  }
+
+  /* -- size -- */
+  function measure() {
+    const w = screen.clientWidth, hh = screen.clientHeight;
+    if (!w || !hh) return false;
+    render.setSize(w, hh, false);
+    labelRenderer.setSize(w, hh);
+    camera.aspect = w / hh;
+    camera.updateProjectionMatrix();
+    return true;
+  }
+  // Determine narrow/wide format using the builders' width (m.width, falling back to 640 when hidden): the builder and observer compare the same measurement.
+  const narrow = () => m.width < 520;
+  let narrowAtBuild = false;
+  const observer = new ResizeObserver(() => {
+    if (!measure()) return;
+    // Crossed the wide/narrow boundary (for example, phone rotation or the screen just gained a size): catalog views use a different layout.
+    if (api.onResize && narrow() !== narrowAtBuild) { api.onResize(); return; }
+    if (!interacted) frame(0, flatActive ? drawing.flatDirection : undefined);
+    wake();
+  });
+
+  /* -- startup: build, check and frame -- */
+  const api = {
+    canvas, render, camera, controls, scene, elements, m,
+    framesRendered: () => framesRendered,
+    moved: () => moved,
+    update, wake, enableControls,
+    frame: (ms) => { interacted = false; frame(ms, flatActive ? drawing.flatDirection : undefined); },
+    setFlat,
+    show() { active = true; measure(); wake(); },
+    hide() { active = false; stop(); },
+    destroy() {
+      destroyed = true; active = false; stop(); observer.disconnect();
+      scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); materialList(o).forEach((mt) => mt.dispose()); });
+      controls.dispose(); render.dispose(); render.forceContextLoss();
+    },
+    init() {
+      colors = themeColors();
+      render.setClearColor(new THREE.Color(colors.background));
+      camera.position.copy(drawing.dir3D.clone().multiplyScalar(40));
+      controls.target.set(0, 0, 0);
+      const initial = camera.position.clone();
+      narrowAtBuild = narrow();
+      const r = builder(m, def, colors, api);
+      user = r && typeof r === 'object' ? r : {};
+      if (!camera.position.equals(initial)) drawing.dir3D = camera.position.clone().sub(controls.target); // the scene chose a viewpoint: keep its direction
+      adjustFlatControls();
+      measure();
+      frame(0, flatActive ? drawing.flatDirection : drawing.dir3D);
+      observer.observe(screen);
+    },
+    // The frame gives scenes the specified context. It does not isolate them: scenes run with the page's powers (see references/scene.md).
+    context() {
+      colors = themeColors();
+      return {
+        THREE, scene, camera, colors,
+        element: (id, obj) => element(id, obj),
+        label: (t, pos) => label(t, pos, { fixed: true }),
+        animate,
+        reducedMotion: reducedMotion.matches,
+        touch: touch.matches,
+      };
+    },
+    // After running the scene: every node in the view must be registered.
+    check() {
+      const missing = view.ids.filter((id) => !elements.has(id));
+      if (missing.length) throw new Error(`registration missing for ${missing.length === 1 ? 'node' : 'nodes'} ${missing.map((id) => '«' + withoutCode(byId.get(id).short) + '»').join(', ')}`);
+    },
+  };
+  screen.__frame = api; // browser checks read the camera and elements here (like __graph for graphs)
+  return api;
+}
+
+/* ---------- catalog views, drawn through the frame ---------- */
+const builders = {
+  layers(m, v) {
+    const { V3, THREE } = m;
+    const STEP = 4.6, DEPTH = 3.2;
+    const maxN = Math.max(...v.layers.map((c) => c.nodes.length));
+    const isNarrow = m.width < 520;
+    // The layer name area is measured in pixels (about 120): narrow screens need more world units.
+    const ZONE = isNarrow ? Math.min(11, (120 * (maxN * STEP + 2)) / Math.max(m.width - 120, 120)) : 6.6;
+    const width = ZONE + maxN * STEP + 0.8;
+    const DY = 6.2 * m.stretch(width + 1.2, (v.layers.length - 1) * 6.2 + 8);
+    const pos = new Map();
+    v.layers.forEach((c, k) => {
+      const y = -k * DY;
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(width, 0.3, DEPTH), m.mat(css(k % 2 ? '--plate-2' : '--plate')));
+      plate.position.set(0, y - 0.15, 0);
+      m.add(plate);
+      m.label(c.name, V3(-width / 2 + 0.5, y + 0.9, 0), { fixed: true, anchor: 'right', strong: true, narrow: true });
+      c.nodes.forEach((id, j) => {
+        const n = byId.get(id), e = m.scale(n);
+        const x = -width / 2 + ZONE + (j + 0.5) * STEP;
+        const hx = 1.4 * e, hy = 0.75 * e;
+        const block = new THREE.Mesh(new THREE.BoxGeometry(2 * hx, 2 * hy, 1.1), m.mat(m.nodeColor(n)));
+        block.position.set(x, y + hy, 0);
+        m.element(id, block);
+        const below = (c.nodes.length >= 3 || (isNarrow && c.nodes.length >= 2)) && j % 2 === 1; // with 3 or more in a row (2 on narrow screens), alternate names above and below to avoid overlap
+        m.label(n.short, below ? V3(x, y - 0.35, 0) : V3(x, y + 2 * hy + 0.2, 0), { id, fixed: false, anchor: below ? 'low' : 'up', medium: true });
+        pos.set(id, { x, y: y + hy, hx, hy });
+      });
+    });
+    (v.edges || []).forEach((l) => {
+      const a = pos.get(l.from), b = pos.get(l.to);
+      if (!a || !b) return;
+      const u = V3(b.x - a.x, b.y - a.y, 0).normalize();
+      const output = (p) => Math.min(p.hx / Math.max(Math.abs(u.x), 1e-6), p.hy / Math.max(Math.abs(u.y), 1e-6)) + 0.12;
+      const p0 = V3(a.x, a.y, 0.75).addScaledVector(u, output(a));
+      const p1 = V3(b.x, b.y, 0.75).addScaledVector(u, -output(b));
+      if (p0.distanceTo(p1) < 0.9) return;
+      const material = m.mat(m.colors.line);
+      const end = p1.clone().addScaledVector(u, -0.6);
+      const g = new THREE.Group();
+      g.add(m.segments([p0, end], 0.07, material, profile === 'C' && l.mode === 'async'), m.tip(end, u, 0.25, 0.6, material));
+      m.add(g);
+      m.edge(material, (f) => activeEdge(f, l.from, l.to));
+    });
+    const high = (v.layers.length - 1) * DY + 8;
+    const background = -(v.layers.length - 1) * DY - 1 - m.padding(m.touch ? 64 : 26, width + 1.2, high);
+    [-1, 1].forEach((s) => { m.extend(V3(s * (width / 2 + 0.6), 5.4, 0)); m.extend(V3(s * (width / 2 + 0.6), background, 0)); });
+    m.configure({ dir3D: V3(0.28, 0.22, 1), flatDirection: V3(0, 0, 1), defaultMode: 'natural' });
+  },
+
+  sequence(m, v) {
+    const { V3, THREE } = m;
+    const P = v.participants, M = v.messages;
+    const SX = 8.6, SY = 2.4 * m.stretch((P.length - 1) * 8.6 + 12, (M.length + 1) * 2.4 + 5);
+    const x = new Map(P.map((id, i) => [id, (i - (P.length - 1) / 2) * SX]));
+    const H = (M.length + 1) * SY + 1.2;
+    P.forEach((id) => {
+      const n = byId.get(id), e = m.scale(n), px = x.get(id);
+      const g = new THREE.Group();
+      const head = new THREE.Mesh(new THREE.BoxGeometry(2.8 * e, 1.1 * e, 1.1), m.mat(m.nodeColor(n)));
+      head.position.set(px, 0, 0);
+      g.add(head, m.cylinder(V3(px, -0.55 * e, 0), V3(px, -H, 0), 0.14, m.mat(m.colors.line)));
+      m.element(id, g);
+      // With 4 or more, alternate label heights (3 levels on narrow screens, where columns are close together).
+      const level = P.length > 3 ? P.indexOf(id) % (m.width < 520 ? 3 : 2) : 0;
+      m.label(n.short, V3(px, 0.55 * e, 0), { id, fixed: true, anchor: 'up', padding: [0.25, 2.2, 4.15][level], strong: true, medium: true });
+    });
+    M.forEach((msg, k) => {
+      const y = -(k + 1) * SY - 0.3;
+      const xa = x.get(msg.from), xb = x.get(msg.to);
+      const material = m.mat(m.colors.line);
+      const isAsync = profile === 'C' && msg.mode === 'async';
+      const g = new THREE.Group();
+      let point, anchor;
+      if (msg.from === msg.to) {
+        const pts = [V3(xa + 0.2, y, 0.2), V3(xa + 2.2, y, 0.2), V3(xa + 2.2, y - 0.9, 0.2), V3(xa + 0.9, y - 0.9, 0.2)];
+        g.add(m.segments(pts, 0.07, material, isAsync), m.tip(pts[3], V3(-1, 0, 0), 0.25, 0.6, material));
+        point = V3(xa + 2.5, y - 0.45, 0.2); anchor = 'right';
+      } else {
+        const s = Math.sign(xb - xa);
+        const p0 = V3(xa + s * 0.2, y, 0.2), end = V3(xb - s * 0.8, y, 0.2);
+        g.add(m.segments([p0, end], 0.07, material, isAsync), m.tip(end, V3(s, 0, 0), 0.25, 0.6, material));
+        point = V3((xa + xb) / 2, y + 0.12, 0.2); anchor = 'up';
+      }
+      m.add(g);
+      m.edge(material, (f) => f.activeIds.has(msg.id) || (f.node != null && (msg.from === f.node || msg.to === f.node)));
+      m.label(`${k + 1}. ${msg.text}`, point, { id: msg.id, fixed: false, anchor, long: true });
+    });
+    const xs = [...x.values()];
+    const side = m.padding(58, Math.max(...xs) - Math.min(...xs) + 2, H + 6);
+    const top = 3.2 + m.padding(P.length > 3 ? (m.width < 520 ? 84 : 58) : 34, Math.max(...xs) - Math.min(...xs) + 2, H + 6);
+    m.extend(V3(Math.min(...xs) - side, top, 0)); m.extend(V3(Math.max(...xs) + side, top, 0));
+    const base = -H - 0.6 - m.padding(m.touch ? 64 : 20, Math.max(...xs) - Math.min(...xs) + 2, H + 6);
+    m.extend(V3(Math.min(...xs) - side, base, 0)); m.extend(V3(Math.max(...xs) + side, base, 0));
+    m.configure({ dir3D: V3(0.22, 0.12, 1), flatDirection: V3(0, 0, 1), defaultMode: 'natural' });
+  },
+
+  states(m, v) {
+    const { V3, THREE } = m;
+    const S = v.states;
+    const R = Math.max(5.5, S.length * 1.3);
+    const pos = new Map(), ray = new Map();
+    S.forEach((id, i) => {
+      const a = (i / S.length) * Math.PI * 2 - Math.PI / 2;
+      const n = byId.get(id), e = m.scale(n), r = 0.9 * e;
+      const p = V3(R * Math.cos(a), 0, R * Math.sin(a));
+      pos.set(id, p); ray.set(id, r);
+      const g = new THREE.Group();
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), m.mat(m.nodeColor(n)));
+      sphere.position.copy(p);
+      g.add(sphere);
+      if (id === v.initial) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(r + 0.4, 0.07, 8, 40), m.mat(m.nodeColor(n)));
+        ring.rotation.x = Math.PI / 2;
+        ring.position.copy(p);
+        g.add(ring);
+      }
+      m.element(id, g);
+      m.label(id === v.initial ? `${n.short} (initial)` : n.short, p, { id, fixed: true, anchor: 'up', padding: 1.0, strong: true });
+    });
+    // Keep transition labels apart: each searches its curve for a point whose text box (world units, estimated from screen size) avoids labels already placed.
+    const pxPerUnit = Math.max(3, Math.min(m.width / (2 * R + 10), (m.height || 420) / (2 * R + 8)));
+    const placed = [];
+    const free = (p, text) => {
+      const w = (text.length * 7.4 + 14) / pxPerUnit, hh = 22 / pxPerUnit;
+      return placed.every((c) => Math.abs(c.p.x - p.x) > (c.w + w) / 2 || Math.abs(c.p.z - p.z) > (c.h + hh) / 2);
+    };
+    const place = (curve, text) => {
+      let chosen = curve.getPoint(0.5);
+      for (const k of [0.5, 0.36, 0.64, 0.26, 0.74]) {
+        const p = curve.getPoint(k);
+        if (free(p, text)) { chosen = p; break; }
+      }
+      placed.push({ p: chosen, w: (text.length * 7.4 + 14) / pxPerUnit, h: 22 / pxPerUnit });
+      return chosen;
+    };
+    v.transitions.forEach((t) => {
+      const a = pos.get(t.from), b = pos.get(t.to);
+      const material = m.mat(m.colors.line);
+      const g = new THREE.Group();
+      let point;
+      if (t.from === t.to) {
+        const outside = V3(a.x, 0, a.z).normalize();
+        const C = a.clone().addScaledVector(outside, ray.get(t.from) + 0.55), rr = 0.75, N = 28;
+        const fi = Math.atan2(a.z - C.z, a.x - C.x);
+        const endAngle = fi + Math.PI * 2 - 0.45;
+        const pts = [];
+        for (let i = 0; i <= N; i++) {
+          const th = fi + 0.45 + (i / N) * (endAngle - fi - 0.45);
+          pts.push(V3(C.x + rr * Math.cos(th), 0, C.z + rr * Math.sin(th)));
+        }
+        g.add(m.segments(pts, 0.07, material, false), m.tip(pts[N], V3(-Math.sin(endAngle), 0, Math.cos(endAngle)), 0.25, 0.55, material));
+        point = V3(C.x + outside.x * (rr + 0.9), 0, C.z + outside.z * (rr + 0.9));
+        placed.push({ p: point, w: (t.event.length * 7.4 + 14) / pxPerUnit, h: 22 / pxPerUnit });
+      } else {
+        const right = b.clone().sub(a);
+        const L = right.length();
+        right.normalize();
+        const p0 = a.clone().addScaledVector(right, ray.get(t.from) + 0.15);
+        const pf = b.clone().addScaledVector(right, -(ray.get(t.to) + 0.15));
+        const perp = V3(-right.z, 0, right.x);
+        const ctrl = p0.clone().add(pf).multiplyScalar(0.5).addScaledVector(perp, L * 0.22).add(V3(0, 0.8, 0));
+        const tan = pf.clone().sub(ctrl).normalize();
+        const end = pf.clone().addScaledVector(tan, -0.6);
+        const curve = new THREE.QuadraticBezierCurve3(p0, ctrl, end);
+        g.add(m.segments(curve.getPoints(30), 0.07, material, false), m.tip(end, tan, 0.25, 0.6, material));
+        point = place(curve, t.event);
+      }
+      m.add(g);
+      const active = (f) => activeEdge(f, t.from, t.to);
+      m.edge(material, active);
+      m.label(t.event, point, { fixed: false, anchor: 'up', padding: 0.1, long: true, secondary: true, active });
+    });
+    m.extend(V3(-R - 5, 0, -R - 4)); m.extend(V3(R + 5, 1.5, R + 4));
+    m.configure({ dir3D: V3(0, 0.85, 0.5), flatDirection: V3(0, 1, 0.0001), defaultMode: 'natural' });
+  },
+
+  'timeline'(m, v) {
+    const { V3, THREE } = m;
+    const E = v.events;
+    if (m.width < 520 && E.length >= 3) {
+      // On a tall, narrow screen, time runs top to bottom: dates left of the axis, names on the right.
+      const SY = 4.2, y0 = ((E.length - 1) / 2) * SY;
+      m.add(m.cylinder(V3(0, y0 + 2.5, 0), V3(0, -y0 - 2.5, 0), 0.09, m.mat(m.colors.line)));
+      E.forEach((ev, i) => {
+        const n = byId.get(ev.node), e = m.scale(n), y = y0 - i * SY;
+        const g = new THREE.Group();
+        const mark = new THREE.Mesh(new THREE.SphereGeometry(0.55 * e, 20, 14), m.mat(m.nodeColor(n)));
+        mark.position.set(0, y, 0);
+        g.add(mark);
+        m.element(ev.node, g);
+        m.label(ev.when, V3(-0.9 * e, y, 0), { id: ev.node, fixed: true, anchor: 'left', strong: true, medium: true });
+        m.label(n.short, V3(0.9 * e, y, 0), { id: ev.node, fixed: false, anchor: 'right', medium: true });
+      });
+      const high = 2 * y0 + 7;
+      const side = m.padding(130, 2, high), up = y0 + 3.5 + m.padding(12, 2, high), low = -y0 - 3.5 - m.padding(m.touch ? 64 : 12, 2, high);
+      [-1, 1].forEach((s) => { m.extend(V3(s * side, up, 0)); m.extend(V3(s * side, low, 0)); });
+      m.configure({ dir3D: V3(0.12, 0.1, 1), flatDirection: V3(0, 0, 1), defaultMode: 'natural' });
+      return;
+    }
+    const SX = 5.6;
+    const x0 = -((E.length - 1) / 2) * SX;
+    m.add(m.cylinder(V3(x0 - 3, 0, 0), V3(-x0 + 3, 0, 0), 0.09, m.mat(m.colors.line)));
+    E.forEach((ev, i) => {
+      const n = byId.get(ev.node), e = m.scale(n), x = x0 + i * SX;
+      const high = i % 2 ? 3.0 : 1.7;
+      const g = new THREE.Group();
+      const mark = new THREE.Mesh(new THREE.SphereGeometry(0.55 * e, 20, 14), m.mat(m.nodeColor(n)));
+      mark.position.set(x, 0, 0);
+      g.add(mark,
+        m.cylinder(V3(x, 0.5 * e, 0), V3(x, high - 0.3, 0), 0.05, m.mat(m.colors.line)),
+        m.cylinder(V3(x, -0.5 * e, 0), V3(x, -high + 0.3, 0), 0.05, m.mat(m.colors.line)));
+      m.element(ev.node, g);
+      m.label(ev.when, V3(x, high, 0), { id: ev.node, fixed: true, anchor: 'up', strong: true });
+      m.label(n.short, V3(x, -high, 0), { id: ev.node, fixed: false, anchor: 'low' });
+    });
+    const side = 3 + m.padding(50, -2 * x0 + 6, 12);
+    [-1, 1].forEach((s) => { m.extend(V3(s * (-x0 + side), 5, 0)); m.extend(V3(s * (-x0 + side), -5, 0)); });
+    m.configure({ dir3D: V3(0.15, 0.12, 1), flatDirection: V3(0, 0, 1), defaultMode: 'natural' });
+  },
+
+  // The agent's scene: the frame calls it only now, after three loads, and checks its registrations.
+  scene(m, v, colors, api) {
+    try {
+      if (typeof window.explainScene !== 'function') throw new Error('the page has no scene code');
+      const f = window.explainScene; // called without this: the scene does not receive the window
+      const r = f(api.context());
+      api.check();
+      return r;
+    } catch (e) {
+      const er = new Error(String(e && e.message ? e.message : e).slice(0, 240));
+      er.fromScene = true;
+      throw er;
+    }
+  },
+};
+
+/* ---------- graph view, using the 3d-force-graph library ---------- */
+function createGraph(view, screen) {
+  const def = view.def;
+  const idsV = view.ids;
+  let G = null;
+  let nodes = [];
+  let links = [];
+  let labels = new Map();
+  let values = new Map();
+  let visible = new Set();
+  let hoverId = null;
+  let interacted = false;
+  let awake = true;        // the library and label loops are running
+  let loopActive = false;
+  let engineStopped = false;    // the force simulation has settled
+  let lastInteraction = -Infinity;
+  let lastCamera = 0;
+  let timer = 0;
+  let ticks = 0;
+  let active = false;
+  let destroyed = false;
+  let focus = { activeIds: null, node: null, neighborhood: false };
+  let low = null;
+  const api = { onSelect: null };
+  const idOf = (x) => (typeof x === 'object' ? x.id : x);
+  const riskBase = { low: 5, medium: 9, high: 15 };
+
+  function load() {
+    nodes = idsV.map((id) => ({ id, short: byId.get(id).short }));
+    links = (def.edges || []).map((l) => ({ source: l.from, target: l.to, mode: l.mode }));
+    engineStopped = false;
+    G.graphData({ nodes: nodes, links: links });
+    labels.forEach((el) => el.remove());
+    labels = new Map();
+    nodes.forEach((n) => {
+      const el = h('div', { class: 'node-label', 'aria-hidden': 'true', hidden: true }, h('span', null, withoutCode(n.short)));
+      screen.appendChild(el);
+      labels.set(n.id, el);
+    });
+  }
+
+  function init() {
+    G = new ForceGraph3D(screen, { controlType: 'orbit', rendererConfig: { antialias: true, powerPreference: 'high-performance' } });
+    G.renderer().setPixelRatio(pixelRatio());
+    api.G = G;
+    screen.__graph = G; // browser checks read the renderer here
+    G.width(screen.clientWidth || 320).height(screen.clientHeight || 320)
+      .showNavInfo(false)
+      .numDimensions(view.flat ? 2 : 3)
+      .nodeRelSize(4).nodeResolution(touch.matches ? 10 : 16).nodeOpacity(1)
+      .nodeLabel(() => '') // use the page's labels; the library's HTML tooltip is unused
+      .linkOpacity(0.85).linkResolution(touch.matches ? 4 : 6)
+      .linkDirectionalArrowLength(5).linkDirectionalArrowRelPos(1)
+      .enableNodeDrag(false)
+      .warmupTicks(80).cooldownTicks(150).cooldownTime(4000)
+      .d3VelocityDecay(0.3)
+      .onNodeHover((n) => { hoverId = n ? n.id : null; screen.style.cursor = n ? 'pointer' : ''; })
+      .onEngineTick(() => { if (!interacted && ++ticks % 10 === 0) frame(null, 0); })
+      .onEngineStop(() => { engineStopped = true; if (!interacted) frame(null, 0); schedule(300); });
+    G.d3Force('link').distance(60);
+    G.d3Force('charge').strength(view.flat ? -110 : -170);
+    load();
+    G.controls().addEventListener('start', () => { interacted = true; });
+    G.controls().addEventListener('change', () => { lastCamera = performance.now(); });
+    adjustControls();
+    // Stop rendering when nothing moves; any interaction resumes it. A stopped loop loses clicks: resume on pointerdown.
+    ['pointerdown', 'wheel', 'touchstart', 'pointermove'].forEach((ev) => screen.addEventListener(ev, wake, { passive: true }));
+    // A tap or click without dragging selects the nearest node (with finger tolerance on touch).
+    screen.addEventListener('pointerdown', (e) => { low = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+    screen.addEventListener('pointercancel', () => { low = null; });
+    screen.addEventListener('pointerup', (e) => {
+      if (!low) return;
+      const mov = Math.hypot(e.clientX - low.x, e.clientY - low.y), dur = performance.now() - low.t;
+      low = null;
+      if (mov > 8 || dur > 700) return;
+      const id = pickNode(e, e.pointerType === 'touch' ? 30 : 0);
+      if (id) { interacted = true; if (api.onSelect) api.onSelect(id); }
+    });
+    update();
+    const tryFrame = () => frame(null, 0);
+    requestAnimationFrame(tryFrame);
+    setTimeout(tryFrame, 250);
+    new ResizeObserver(() => {
+      if (destroyed || !screen.clientWidth || !screen.clientHeight) return;
+      G.width(screen.clientWidth).height(screen.clientHeight);
+      if (!interacted) frame(null, 0);
+      wake();
+    }).observe(screen);
+    reducedMotion.addEventListener('change', () => update());
+    touch.addEventListener('change', () => update());
+  }
+
+  /* ---- pause rendering when nothing moves ---- */
+  function schedule(ms) {
+    if (!timer) timer = setTimeout(pause, ms);
+  }
+  function pause() {
+    timer = 0;
+    if (!G || destroyed || !awake || !engineStopped) return;
+    const now = performance.now();
+    const remaining = Math.max(IDLE - (now - lastInteraction), 300 - (now - lastCamera));
+    if (remaining > 40) { schedule(remaining); return; }
+    positionLabels();
+    G.pauseAnimation();
+    awake = false;
+  }
+  // Resume rendering on interaction, or when code changes the camera, highlighting or Flat/3D mode.
+  function wake() {
+    if (!G || !active || destroyed) return;
+    lastInteraction = performance.now();
+    if (!awake) { awake = true; G.resumeAnimation(); }
+    if (!loopActive) { loopActive = true; requestAnimationFrame(loop); }
+    schedule(IDLE);
+  }
+
+  function adjustControls() {
+    const c = G.controls();
+    if (!c) return;
+    c.enableRotate = !view.flat;
+    c.mouseButtons.LEFT = view.flat ? 2 : 0;
+    c.touches.ONE = view.flat ? 1 : 0;
+  }
+  // With a touch pointer, the view does not capture page scrolling until "Rotate and zoom".
+  function enableControls(on) {
+    if (!G) return;
+    G.controls().enabled = on;
+    const t = on ? 'none' : 'auto';
+    screen.style.touchAction = t;
+    G.renderer().domElement.style.touchAction = t;
+  }
+
+  // Asynchronous edges (profile C) are dashed: the library cannot dash lines, so shrink the line away and leave a row of stationary dots; with motion, the dots move.
+  const async = (l) => l.mode === 'async';
+  function update(next) {
+    if (next) focus = next;
+    if (!G) return;
+    const { activeIds, node, neighborhood } = focus;
+    const colors = {};
+    for (let i = 1; i <= 6; i++) colors['t-' + i] = css('--t-' + i);
+    ['low', 'medium', 'high'].forEach((k) => { colors['r-' + k] = css('--r-' + k); });
+    const dim = css('--node-dim');
+    const edgeNormal = css('--edge'), edgeHighlight = css('--edge-highlight'), edgeDim = css('--edge-dim');
+    const byRisk = (n) => profile === 'C' && n.risk;
+    const colorOf = (n) => (byRisk(n) ? colors['r-' + n.risk] : colors['t-' + typeIndex.get(n.type)]);
+    // In profile C, size indicates risk; in the others, highlighting.
+    const valueOf = (n) => {
+      if (byRisk(n)) return n.id === node ? Math.round(riskBase[n.risk] * 1.5) : riskBase[n.risk];
+      return n.id === node ? 16 : !activeIds ? 7 : activeIds.has(n.id) ? 10 : 5;
+    };
+    values = new Map(idsV.map((id) => [id, valueOf(byId.get(id))]));
+    const isLinkActive = (l) => activeEdge(focus, idOf(l.source), idOf(l.target));
+    const linkColor = (l) => (!activeIds ? edgeNormal : isLinkActive(l) ? edgeHighlight : edgeDim);
+    const motion = !reducedMotion.matches && !touch.matches;
+    G.backgroundColor(css('--panel'))
+      .nodeColor((n) => (!activeIds || activeIds.has(n.id) ? colorOf(byId.get(n.id)) : dim))
+      .nodeVal((n) => values.get(n.id))
+      .linkColor(linkColor)
+      .linkWidth((l) => (async(l) ? 0.04 : activeIds && isLinkActive(l) ? 1.8 : 0.7))
+      .linkDirectionalArrowColor(linkColor)
+      .linkDirectionalParticles((l) => (async(l) ? 8 : 0))
+      .linkDirectionalParticleWidth(1.8)
+      .linkDirectionalParticleSpeed(motion ? 0.006 : 0)
+      .linkDirectionalParticleColor(linkColor);
+    // Labels: all up to 12 elements; above that, only highlighted ones (plus hovered or open nodes).
+    visible = new Set(idsV.length <= 12 ? idsV : activeIds ? activeIds : []);
+    dims.clear();
+    labels.forEach((el, id) => {
+      if (id === node) el.setAttribute('data-selected', ''); else el.removeAttribute('data-selected');
+      if (activeIds && activeIds.has(id)) el.setAttribute('data-highlighted', ''); else el.removeAttribute('data-highlighted');
+    });
+    wake();
+  }
+
+  function frame(ids, ms) {
+    if (!G || destroyed) return;
+    const dur = reducedMotion.matches ? 0 : (ms ?? 0);
+    const filter = ids && ids.length ? (n) => ids.includes(n.id) : undefined;
+    G.zoomToFit(dur, ids && ids.length ? 70 : 40, filter);
+    if (dur) wake();
+  }
+
+  function setFlat(b) {
+    if (!G) return;
+    view.flat = b;
+    interacted = false;
+    G.numDimensions(b ? 2 : 3);
+    G.d3Force('charge').strength(b ? -110 : -170);
+    load();
+    adjustControls();
+    update();
+    if (b) G.camera().up.set(0, 1, 0);
+    G.cameraPosition({ x: 0, y: 0, z: 400 }, { x: 0, y: 0, z: 0 }, 0);
+    requestAnimationFrame(() => frame(null, 0));
+    setTimeout(() => frame(null, 0), 120);
+    wake();
+  }
+
+  // Each label takes the first position (below, above, right, left) that covers no other label or node.
+  const dims = new Map();
+  const dimensionsOf = (el, id) => {
+    let d = dims.get(id);
+    if (!d) { d = { w: el.offsetWidth, h: el.offsetHeight }; dims.set(id, d); }
+    return d;
+  };
+  const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  const discOverlaps = (d, c) => {
+    const nx = Math.max(c.x, Math.min(d.x, c.x + c.w)), ny = Math.max(c.y, Math.min(d.y, c.y + c.h));
+    return Math.hypot(d.x - nx, d.y - ny) < d.r + 2;
+  };
+  // A node's screen position, radius in pixels and whether it is in front of the camera.
+  function nodeInfo(n, cam, target, w, hh) {
+    const z = typeof n.z === 'number' ? n.z : 0;
+    const fx = target.x - cam.position.x, fy = target.y - cam.position.y, fz = target.z - cam.position.z;
+    const inFront = (n.x - cam.position.x) * fx + (n.y - cam.position.y) * fy + (z - cam.position.z) * fz > 0;
+    const p = G.graph2ScreenCoords(n.x, n.y, z);
+    const dist = Math.hypot(n.x - cam.position.x, n.y - cam.position.y, z - cam.position.z) || 1;
+    const r = (Math.cbrt(values.get(n.id) || 5) * 4 * (hh / 2)) / (0.4663 * dist);
+    return { x: p.x, y: p.y, r, inFront, inside: inFront && p.x > -30 && p.x < w + 30 && p.y > -30 && p.y < hh + 30 };
+  }
+  function pickNode(ev, tolerance) {
+    const cam = G.camera();
+    cam.updateMatrixWorld();
+    const target = G.controls().target, r = screen.getBoundingClientRect();
+    let best = null, d = Infinity;
+    nodes.forEach((n) => {
+      if (typeof n.x !== 'number') return;
+      const i = nodeInfo(n, cam, target, r.width, r.height);
+      if (!i.inFront) return;
+      const dist = Math.hypot(i.x + r.left - ev.clientX, i.y + r.top - ev.clientY);
+      if (dist <= Math.max(i.r + 4, tolerance) && dist < d) { d = dist; best = n.id; }
+    });
+    return best;
+  }
+  function positionLabels() {
+    const cam = G.camera();
+    cam.updateMatrixWorld();
+    const target = G.controls().target;
+    const w = screen.clientWidth, hh = screen.clientHeight;
+    const infos = [];
+    nodes.forEach((n) => {
+      const el = labels.get(n.id);
+      if (!el) return;
+      if (typeof n.x !== 'number') { el.hidden = true; return; }
+      const i = nodeInfo(n, cam, target, w, hh);
+      infos.push({ n, el, x: i.x, y: i.y, r: i.r, show: i.inside && (visible.has(n.id) || n.id === hoverId || n.id === focus.node) });
+    });
+    const discs = infos.filter((i) => i.x > -30 && i.x < w + 30 && i.y > -30 && i.y < hh + 30).map((i) => ({ x: i.x, y: i.y, r: i.r, id: i.n.id }));
+    const boxes = [];
+    const priority = (i) => (i.n.id === focus.node ? 3 : i.n.id === hoverId ? 2 : 1);
+    infos.filter((i) => i.show).sort((a, b) => priority(b) - priority(a)).forEach((i) => {
+      if (i.el.hidden) i.el.hidden = false;
+      const { w: lw, h: lh } = dimensionsOf(i.el, i.n.id);
+      const g = 6;
+      const cands = [
+        { x: i.x - lw / 2, y: i.y + i.r + g },
+        { x: i.x - lw / 2, y: i.y - i.r - g - lh },
+        { x: i.x + i.r + g, y: i.y - lh / 2 },
+        { x: i.x - i.r - g - lw, y: i.y - lh / 2 },
+      ].map((c) => ({ ...c, w: lw, h: lh }));
+      const fits = (c) => c.x >= 0 && c.y >= 0 && c.x + c.w <= w && c.y + c.h <= hh;
+      const free = (c) => fits(c) && !boxes.some((b) => overlap(c, b)) && !discs.some((d) => d.id !== i.n.id && discOverlaps(d, c));
+      const esc = cands.find(free) || cands.find((c) => fits(c) && !boxes.some((b) => overlap(c, b))) || cands.find(fits) || cands[0];
+      boxes.push(esc);
+      const t = `translate(${Math.round(esc.x)}px, ${Math.round(esc.y)}px)`;
+      if (i.el.style.transform !== t) i.el.style.transform = t;
+    });
+    infos.filter((i) => !i.show).forEach((i) => { if (!i.el.hidden) i.el.hidden = true; });
+  }
+  // Labels follow rendering: they stop and resume with it.
+  function loop() {
+    if (!G || !awake || destroyed) { loopActive = false; return; }
+    positionLabels();
+    requestAnimationFrame(loop);
+  }
+
+  init();
+  Object.assign(api, {
+    update, wake, frame: (ms) => { interacted = false; frame(null, ms); }, setFlat, enableControls,
+    show() { active = true; G.width(screen.clientWidth || 320).height(screen.clientHeight || 320); wake(); },
+    hide() { active = false; if (G) { if (timer) { clearTimeout(timer); timer = 0; } G.pauseAnimation(); awake = false; } },
+    destroy() { destroyed = true; active = false; if (timer) clearTimeout(timer); if (G) { G.pauseAnimation(); if (G._destructor) G._destructor(); } },
+  });
+  return api;
+}
+
+/* ---------- each view's text version: no WebGL, missing library or failed scene ---------- */
+function viewText(view, notice) {
+  const v = view.def;
+  const modeText = (md) => (profile === 'C' && md ? ', ' + MODE_WORD[md] : '');
+  const names = (ids) => ids.map((id, j) => [j ? ', ' : '', nameElement(id)]);
+  const edges = () => h('ul', null, (v.edges || []).map((l) => h('li', null,
+    nameElement(l.from), ' ', h('strong', null, l.type + modeText(l.mode)), ' ', nameElement(l.to))));
+  let intro, body;
+  if (v.type === 'layers') {
+    intro = 'Layers, top to bottom, and the edges between their elements:';
+    body = [h('ol', null, v.layers.map((c) => h('li', null, h('strong', null, c.name + ': '), names(c.nodes)))), edges()];
+  } else if (v.type === 'sequence') {
+    intro = 'Messages, in the order they happen:';
+    body = h('ol', null, v.messages.map((mg) => h('li', null, nameElement(mg.from), ' → ', nameElement(mg.to), ': ', mg.text + modeText(mg.mode))));
+  } else if (v.type === 'states') {
+    intro = 'Transitions between states, with the initial state first:';
+    body = [h('p', { class: 'text' }, h('strong', null, 'Initial: '), nameElement(v.initial)),
+      h('ul', null, v.transitions.map((t) => h('li', null, nameElement(t.from), ' → ', nameElement(t.to), ': ', t.event)))];
+  } else if (v.type === 'timeline') {
+    intro = 'Events, in order:';
+    body = h('ol', null, v.events.map((e) => h('li', null, h('strong', null, e.when + ': '), nameElement(e.node))));
+  } else if (v.type === 'scene') {
+    intro = 'The elements of this view:';
+    body = h('ul', null, v.nodes.map((id) => h('li', null, nameElement(id))));
+  } else {
+    intro = `The text and the ${NODE_LIST.toLowerCase()} list contain the same information. Edges, as text:`;
+    const connected = new Set((v.edges || []).flatMap((l) => [l.from, l.to]));
+    const unconnected = view.ids.filter((id) => !connected.has(id));
+    body = [edges(), unconnected.length ? h('p', { class: 'text' }, 'No edges: ', names(unconnected)) : null];
+  }
+  return h('div', { class: 'no-view' }, h('p', { class: 'notice' }, notice), h('p', { class: 'text' }, intro), body);
+}
+
+/* ---------- panel: tabs, one view at a time, touch ---------- */
+const HINT = {
+  graph: 'Each arrow points from the actor to what it acts on.',
+  layers: 'Each arrow points from the actor to what it acts on.',
+  sequence: 'Messages run top to bottom, in the order they happen.',
+  states: 'Each arrow is a transition, labeled with its trigger.',
+  'timeline': 'Events run from oldest to newest, in the order they happened.',
+};
+function hintText(v) {
+  const base = HINT[v.type] || '';
+  if (!base || profile !== 'C' || !hasAsync(v.def)) return base;
+  const motion = v.type === 'graph' && !reducedMotion.matches && !touch.matches;
+  return `${base} Asynchronous edges are dashed${motion ? ' and have particles' : ''}; the list always identifies each kind.`;
+}
+function renderPanel() {
+  const tabs = $('#tabs'), bodies = $('#bodies');
+  const multiple = views.length > 1;
+  tabs.hidden = !multiple;
+  $('#panel-title').hidden = multiple;
+  const panel = $('#view-panel');
+  if (multiple) panel.setAttribute('role', 'tabpanel');
+  views.forEach((v) => {
+    if (multiple) tabs.appendChild(h('button', { type: 'button', role: 'tab', class: 'tab', id: 'tab-' + v.i, 'aria-selected': 'false', 'aria-controls': 'view-panel', tabindex: '-1', 'data-view': v.i }, v.def.title));
+    v.screen = h('div', { class: 'screen', role: 'img', 'aria-label': `${v.def.title}: view with ${v.ids.length} elements; the document contains the same information as text` });
+    v.button = h('button', { type: 'button', class: 'btn btn-touch', 'data-touch': v.i, hidden: true }, 'Rotate and zoom');
+    v.hint = h('p', { class: 'arrows' }, hintText(v));
+    v.body = h('div', { class: 'view-body', 'data-view': v.i, hidden: true },
+      v.type === 'scene' ? null : legendElement(v), v.hint.textContent ? v.hint : null,
+      h('div', { class: 'screen-area' }, v.screen, v.button));
+    bodies.appendChild(v.body);
+  });
+}
+function selectFromView(id) { openNode(id, { origin: 'outside' }); }
+function applyTouch(v) {
+  if (!v.ctl) { v.button.hidden = true; return; }
+  v.ctl.enableControls(!touch.matches || v.rotate);
+  v.button.textContent = v.rotate ? 'Done' : 'Rotate and zoom';
+  v.button.hidden = !touch.matches || v !== views[state.view];
+}
+function updatePanel() {
+  const v = views[state.view];
+  const textMode = v.loadStatus === 'text';
+  $('#view-column').toggleAttribute('data-text', textMode);
+  $('#panel-title').textContent = v.def.title;
+  $('#b-flat').setAttribute('aria-pressed', String(v.flat));
+  $$('.panel-actions button').forEach((b) => { b.hidden = !v.ctl; });
+  views.forEach(applyTouch);
+  const panel = $('#view-panel');
+  if (views.length > 1) panel.setAttribute('aria-labelledby', 'tab-' + v.i);
+  else panel.setAttribute('aria-labelledby', 'panel-title');
+}
+function showText(v, notice) {
+  v.loadStatus = 'text';
+  v.body.setAttribute('data-text', '');
+  $('.screen-area', v.body).hidden = true;
+  $$('.legend, .arrows', v.body).forEach((e) => { e.hidden = true; });
+  v.body.appendChild(viewText(v, notice));
+}
+const NOTICE_3D = 'The 3D views could not open in this browser.';
+async function initView(v) {
+  v.loadStatus = 'opening';
+  v.body.setAttribute('aria-busy', 'true');
+  v.screen.replaceChildren(h('p', { class: 'view-state' }, 'Opening the view…'));
+  try {
+    if (noWebgl) throw new Error(NOTICE_3D);
+    if (v.type === 'graph') {
+      await loadGraph();
+      v.screen.replaceChildren();
+      v.ctl = createGraph(v, v.screen);
+    } else {
+      const L = await loadThree();
+      // three may arrive after a tab switch: a hidden screen measures 0 and would use the fallback width. Defer building until the tab opens (activateView returns here).
+      if (v.body.hidden) { v.loadStatus = 'new'; v.promise = null; return; }
+      v.screen.replaceChildren();
+      v.ctl = createFrame(v, v.screen, L, builders[v.type] || builders.scene);
+      v.ctl.init();
+    }
+    v.ctl.onSelect = selectFromView;
+    if (v.ctl.m) v.ctl.m.onSelect = selectFromView;
+    v.ctl.onResize = () => rebuild(v);
+    v.loadStatus = 'open';
+  } catch (e) {
+    if (v.ctl) { try { v.ctl.destroy(); } catch (e2) { /* already broken */ } v.ctl = null; }
+    v.screen.replaceChildren();
+    showText(v, e && e.fromScene ? `The scene did not render: ${e.message}` : NOTICE_3D);
+  } finally {
+    v.body.removeAttribute('aria-busy');
+  }
+}
+async function activateView(i) {
+  const v = views[i];
+  const before = views[state.view];
+  if (before !== v && before.ctl) { before.rotate = false; before.ctl.hide(); }
+  state.view = i;
+  views.forEach((x) => { x.body.hidden = x !== v; });
+  $$('.tab').forEach((a) => {
+    const active = Number(a.dataset.view) === i;
+    a.setAttribute('aria-selected', String(active));
+    a.tabIndex = active ? 0 : -1;
+  });
+  updatePanel();
+  if (v.loadStatus === 'new') { v.promise = initView(v); }
+  if (v.promise) await v.promise;
+  if (state.view !== i) return;
+  updatePanel();
+  if (v.ctl) { v.ctl.update(focusFor(v)); v.ctl.show(); }
+}
+// Tab keyboard controls: arrows, Home and End.
+$('#tabs').addEventListener('keydown', (ev) => {
+  const n = views.length;
+  const k = { ArrowRight: 1, ArrowLeft: -1 }[ev.key];
+  let i = state.view;
+  if (k) i = (i + k + n) % n; else if (ev.key === 'Home') i = 0; else if (ev.key === 'End') i = n - 1; else return;
+  ev.preventDefault();
+  activateView(i);
+  $('#tab-' + i).focus();
+});
+$('#tabs').addEventListener('click', (ev) => {
+  const b = ev.target.closest('.tab');
+  if (b) activateView(Number(b.dataset.view));
+});
+$('#bodies').addEventListener('click', (ev) => {
+  const b = ev.target.closest('.btn-touch');
+  if (!b) return;
+  const v = views[Number(b.dataset.touch)];
+  v.rotate = !v.rotate;
+  applyTouch(v);
+});
+$('#b-flat').addEventListener('click', () => {
+  const v = views[state.view];
+  if (!v.ctl) return;
+  const next = !v.flat;
+  $('#b-flat').setAttribute('aria-pressed', String(next));
+  v.ctl.setFlat(next);
+});
+$('#b-frame').addEventListener('click', () => { const v = views[state.view]; if (v.ctl) v.ctl.frame(450); });
+// Theme changed: recolor views (graphs live; rebuild the others).
+function rebuild(v) {
+  if (!v.ctl) return;
+  v.ctl.destroy(); v.ctl = null; v.screen.replaceChildren(); v.loadStatus = 'new'; v.promise = null;
+  if (v === views[state.view]) activateView(v.i);
+}
+function recolor() {
+  views.forEach((v) => {
+    if (!v.ctl) return;
+    if (v.type === 'graph') { v.ctl.update(focusFor(v)); return; }
+    rebuild(v);
+  });
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recolor);
+new MutationObserver(recolor).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+[reducedMotion, touch].forEach((md) => md.addEventListener('change', () => { views.forEach((v) => { v.hint.textContent = hintText(v); }); updatePanel(); }));
+
+/* ---------- startup ---------- */
+function renderAll() {
+  $('#title').textContent = data.title;
+  renderIntro();
+  renderConcepts();
+  renderIndex();
+  renderGlossary();
+  renderDocument();
+  renderFooter();
+  if (state.node != null) renderBlock();
+  placeBlock();
+  show();
+  synchronize();
+}
+$$('.seg button').forEach((b) => b.addEventListener('click', () => {
+  state.level = b.dataset.level;
+  $$('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  renderAll();
+}));
+$$('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.level === state.level)));
+renderPanel();
+// URL with node and step (?node=…&step=N): open within the step if the node belongs to it; otherwise replace the document.
+if (state.node != null) {
+  if (state.step != null && stepNodes(data.steps[state.step]).includes(state.node)) { mode = 'doc'; viewStep = state.step; }
+  else { mode = 'outside'; state.step = null; }
+}
+{
+  // Initial view: requested by ?view=, the step's, the one containing the open node, or the first step's.
+  const requested = viewById(params.get('view'));
+  const forNode = state.node != null ? views.find((x) => x.ids.includes(state.node)) : null;
+  const forStep = state.step != null ? viewById(data.steps[state.step].view) : viewById(data.steps[0].view);
+  state.view = (requested || (state.step != null ? forStep : null) || forNode || forStep || views[0]).i;
+}
+renderAll();
+activateView(state.view);
+if (mode === 'doc') $(`.step[data-step="${viewStep}"]`).scrollIntoView({ block: 'start' });
+else if (state.step != null) $(`.step[data-step="${state.step}"]`).scrollIntoView({ block: 'start' });
+})();
+</script>
+</body>
+</html>

@@ -18,25 +18,25 @@ checks it. For `agentic-fix` and `agentic-implement` it lists only the files ada
 
 | Source | Revision | Licence | Used in |
 |---|---|---|---|
-| [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) | `adbd2adde0a299a3956ea288fb444ec01891ca41` | MIT, Copyright (c) 2023 Uiverse.io | `agentic-design/references/mecanismos.md`: 34 interaction mechanisms from the gallery, rewritten as principles in our words, each linking to the example it was read from. The licence text is kept in `skills/agentic-design/licenses/LICENSE-uiverse-galaxy` (verified against the file at that commit). The linked examples have known defects, listed in the file |
+| [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) | `adbd2adde0a299a3956ea288fb444ec01891ca41` | MIT, Copyright (c) 2023 Uiverse.io | `agentic-design/references/mechanisms.md`: 34 interaction mechanisms from the gallery, rewritten as principles in our words, each linking to the example it was read from. The licence text is kept in `skills/agentic-design/licenses/LICENSE-uiverse-galaxy` (verified against the file at that commit). The linked examples have known defects, listed in the file |
 
 ## Ideas from other sources (nothing copied)
 
 | Source | What we took, in our words | Used in |
 |---|---|---|
 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills), revision `2c606141936f1eeef17fa3043a72095b4765b9c2` | think before writing, simplicity, surgical changes, a success criterion you can verify. It declares MIT in its plugin manifest but ships no licence file at that revision, so nothing is copied and no licence text is bundled | `agentic-implement`, `agentic-fix` |
-| Anthropic, [How the Claude Code team does code review](https://claude.dev/blog/solving-code-review-at-anthropic/) | layers of verification and review by agents; flag the class of a defect; fresh-context review; `Testado/Risco/Como desfazer` in the commit; what escaped becomes an evaluation case | `agentic-code-review`, `agentic-fix`, `agentic-feature` |
+| Anthropic, [How the Claude Code team does code review](https://claude.dev/blog/solving-code-review-at-anthropic/) | layers of verification and review by agents; flag the class of a defect; fresh-context review; `Tested/Risk/How to undo` in the commit; what escaped becomes an evaluation case | `agentic-code-review`, `agentic-fix`, `agentic-feature` |
 | OpenAI, [Maintaining software with the GPT-6 family](https://developers.openai.com/blog/maintaining-software-with-the-gpt-6-family) | maintenance with evidence from several sources, indirect uses, safeguards that escalate to the human, evaluating models and instructions | `agentic-code-review`, `agentic-fix` |
 | Microsoft Command Line, [Cheap code, precious trust: Code modernization at scale](https://commandline.microsoft.com/agentic-software-engineering-large-scale-code-migration-language-modernization-spec-driven-development/) (2026-10-26) | review a mechanical change by class instead of file by file; a differential test to prove a refactor behaves the same | `agentic-code-review`, `agentic-implement`, `agentic-architecture` |
 | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) by Robert C. Martin, revision `57a8bdd28` (no licence file, so only the ideas were read) | pin the behaviour before changing the structure; look in the added lines of a diff for what silences the type checker or the linter | `agentic-implement`, `agentic-code-review` |
 | [github/spec-kit](https://github.com/github/spec-kit) (MIT) | the spec-driven workflow `agentic-project` and `agentic-feature` can use when it is installed (v1.2.0); not bundled | `agentic-project`, `agentic-feature` |
-| Web platform facts | the dated snapshots `agentic-design/references/plataforma-web-2026-10.md` and `agentic-feature/references/instantaneo-2026-10.md` summarize [web.dev Baseline](https://web.dev/baseline), [webstatus.dev](https://webstatus.dev), MDN, W3C WCAG 2.2, the Interop project and the release notes of React, Next.js, Vite and TypeScript, with the dates they were read; they say when to stop trusting them | `agentic-design`, `agentic-feature` |
+| Web platform facts | the dated snapshots `agentic-design/references/web-platform-2026-10.md` and `agentic-feature/references/snapshot-2026-10.md` summarize [web.dev Baseline](https://web.dev/baseline), [webstatus.dev](https://webstatus.dev), MDN, W3C WCAG 2.2, the Interop project and the release notes of React, Next.js, Vite and TypeScript, with the dates they were read; they say when to stop trusting them | `agentic-design`, `agentic-feature` |
 
 ## Fetched at run time (not bundled)
 
 - The visual report of `agentic-architecture` loads Tailwind (`cdn.tailwindcss.com`) and Mermaid
   (`cdn.jsdelivr.net/npm/mermaid@11`) from public CDNs when you open it.
-- The board page in `agentic-project/assets/quadro/quadro.html` imports IBM Plex from Google Fonts.
+- The board page in `agentic-project/assets/board/board.html` imports IBM Plex from Google Fonts.
 - The page that `agentic-explain` generates loads two libraries from jsDelivr (`cdn.jsdelivr.net`) when you
   open it, with no copy in this repository: `3d-force-graph` 1.80.1, by vasturiano
   ([vasturiano/3d-force-graph](https://github.com/vasturiano/3d-force-graph)), MIT; and `three` 0.186.1, by the

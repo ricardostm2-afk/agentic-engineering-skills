@@ -1,7 +1,7 @@
 {
   "name": "agentic-skills",
   "private": true,
-  "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Text in European Portuguese.",
+  "description": "Eleven skills for agent-assisted software work: set a project up, deliver features, fix defects, write code with proof, review with fresh context, design UI without the AI look, improve architecture, explain code at the asker's level, audit CI, design tools and optimize analyses. Skills in English; generated text follows the project's AGENTS.md language, defaulting to English.",
   "license": "MIT",
   "engines": {
     "node": ">=20"
@@ -20,7 +20,7 @@
     "ci",
     "tool-design",
     "spec-kit",
-    "portuguese",
+    "english",
     "explain",
     "visualization"
   ]

@@ -1,59 +1,56 @@
-# Como escrever o `REVIEW.md`
+# Writing `REVIEW.md`
 
-Ideia adaptada de https://claude.dev/blog/solving-code-review-at-anthropic/. O `REVIEW.md` diz
-ao revisor o que é falhar **neste** repo. Sem ele, o revisor acusa o genérico (nomes, estilo,
-«podia ser mais simples») e falha o que importa ali. Modelo: `assets/REVIEW.template.md`.
+Adapted from https://claude.dev/blog/solving-code-review-at-anthropic/. `REVIEW.md` tells a reviewer
+what failure means in **this** repo. Without it reviewers flag generic matters (names, style,
+“could be simpler”) and miss what matters here. Template: `assets/REVIEW.template.md`.
 
-## Quem e onde
+## Who and where
 
-- Escrevem-no os donos do código (num projeto com um só humano: o agente propõe, o humano aprova
-  «O que é falhar aqui», porque é ele que sabe o que dói).
-- Os donos conferem que o revisor o segue: corre-se o revisor num caso conhecido
-  (`aprendizagem.md`) e vê-se se acusa o que o `REVIEW.md` diz.
-- Na raiz, ou onde o `AGENTS.md`/`CLAUDE.md` apontar («o que a revisão procura: `REVIEW.md`»).
-- Ganha ao brief do revisor e às regras por omissão desta skill no que é do repo (as secções
-  abaixo); o processo e o modelo não são dele.
+- Code owners write it (one-human project: agent proposes, human approves “What failure means
+  here”, because they know what hurts).
+- Owners check the reviewer follows it: run the reviewer on a known case (`learning.md`) and
+  see whether it flags what `REVIEW.md` says.
+- Root, or where `AGENTS.md`/`CLAUDE.md` points (“what review looks for: `REVIEW.md`”).
+- Overrides reviewer brief and this skill's defaults on repo-specific matters (sections below);
+  process and model do not belong here.
 
-## As secções
+## Sections
 
-1. **O que é falhar aqui**, uma linha por área: o que o utilizador ou o dono vê quando falha, e a
-   prova que o mostra. Os exemplos do artigo dão o tom: num doc, falhar é **mentir** (afirmar um
-   comando, caminho ou regra que a árvore não tem); numa configuração, é **encaminhar mal**; numa
-   guarda, é **deixar passar**; num teste, é **não conseguir falhar**. Inclui as decisões que
-   parecem defeito e não são (com o ponteiro para onde estão decididas).
-2. **Saltar**: gerados, lockfiles, fixtures grandes, pastas de evidência. Basta confirmar que
-   vieram do gerador (o comando que os confere); revê-se a fonte de que derivam. Diz também que
-   ferramenta é dona do estilo e da formatação (lint, formatador, hooks): não são achados.
-3. **Achados repetidos**: classe → o que procurar → prova. Começa «(nenhum ainda)».
-4. **Processo**, uma linha: a revisão segue a `agentic-code-review` (etiquetas, prova, formato do
-   relatório, rondas, teto) e o modelo é do utilizador. O `REVIEW.md` só diz o que é do repo.
+1. **What failure means here**, a line per area: what user or owner sees when it fails and proof.
+   The article's examples set the tone: a doc fails by **lying** (claiming a command, path or rule
+   absent from the tree); configuration by **misrouting**; a guard by **letting through**; a test
+   by **being unable to fail**. Include decisions that look like defects but are not, with pointers.
+2. **Skip**: generated files, lockfiles, large fixtures, evidence folders. Confirm generation
+   with its checking command; review the source. Name the tool owning style and formatting
+   (lint, formatter, hooks): these are not findings.
+3. **Repeated findings**: class → what to look for → proof. Start with “(none yet)”.
+4. **Process**, one line: review follows `agentic-code-review` (labels, proof, report format,
+   rounds, ceiling); model belongs to the user. `REVIEW.md` only supplies repo-specific rules.
 
-Opcionais, só se o projeto precisa: **Níveis** (os nomes, os caminhos de cada um e os sempre
-altos, o comando que classifica o diff) e **Lentes por zona** (que zona leva que lente, com as
-guardas e os comandos que a prova usa). Se existem, ganham a `niveis-de-risco.md` e à lista de
-lentes da `painel-e-rondas.md` §3; o modelo não se define aqui.
+Optional only if needed: **Levels** (names, paths for each, always-high paths, diff classifier
+command) and **Lenses by zone** (zones and lenses, guards and proof commands). If present they
+override `risk-levels.md` and `panel-and-rounds.md` §3's lens list; model is not defined here.
 
-## Manter curto
+## Keep it short
 
-- **~3 KB** (`wc -c REVIEW.md`). O que não cabe vai para o brief da área ou para um doc, e fica um
-  ponteiro com **quando** ler.
-- Não repete o `AGENTS.md` nem o que um hook, lint ou teste já verifica: uma regra que uma máquina
-  confere sem falsos positivos vale mais como verificação do que como texto.
-- O `AGENTS.md`/`CLAUDE.md` também é curto: stack, convenções, objetivos e **não-objetivos**,
-  comandos que se podem correr, e ponteiros. O revisor acusa as violações das convenções e as
-  linhas desses ficheiros que a mudança deixou desatualizadas (lente normas).
+- **~3 KB** (`wc -c REVIEW.md`). Overflow goes to an area brief or doc, with a pointer stating
+  **when** to read it.
+- Do not repeat `AGENTS.md` or what a hook, lint or test checks: a rule a machine checks without
+  false positives is worth more as a check than as prose.
+- `AGENTS.md`/`CLAUDE.md` is short too: stack, conventions, goals and **non-goals**, runnable commands,
+  pointers. Review flags convention violations and lines the change made stale (standards lens).
 
-## Como cresce
+## How it grows
 
-Pelos achados repetidos, não por intuição:
-- a 2.ª vez que a mesma classe aparece, ou vira verificação automática (guarda, lint, teste), ou
-  uma linha em «Achados repetidos» ou em «O que é falhar aqui»;
-- quando um defeito escapa à revisão, pergunta o que faltava ao revisor à frente dele e corrige
-  isso aqui (ou no brief), com a lição registada (`aprendizagem.md`);
-- uma mudança ao `REVIEW.md` é uma mudança ao revisor: corre os casos de avaliação antes de ficar.
+Through repeated findings, not intuition:
+- second occurrence of a class becomes either an automatic check (guard, lint, test), or a line
+  under “Repeated findings” or “What failure means here”;
+- when a defect escapes review, ask what information the reviewer lacked and fix that here
+  (or in brief), recording the lesson (`learning.md`);
+- a `REVIEW.md` change is a reviewer change: run evaluation cases before adoption.
 
-## Sem `REVIEW.md`
+## Without `REVIEW.md`
 
-A skill usa as regras por omissão (`niveis-de-risco.md`, `painel-e-rondas.md`) e, na mensagem
-final, sugere criar um a partir do modelo, com as áreas que a revisão viu. Não o cria sem OK do
-humano. Num `REVIEW.md` que já existe, nunca o reescreves: propões um diff.
+Use skill defaults (`risk-levels.md`, `panel-and-rounds.md`) and in the final message suggest
+creating one from the template with reviewed areas. Do not create without human OK. Never rewrite
+an existing `REVIEW.md`: propose a diff.

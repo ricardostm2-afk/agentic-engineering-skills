@@ -1,0 +1,270 @@
+{
+  "version": 2,
+  "title": "From address to page",
+  "question": "What happens between typing an address such as example.org in the browser and seeing the page",
+  "topic": "general",
+  "sources": [
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works",
+      "title": "How the web works (MDN)",
+      "read_at": "2026-10-31"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Glossary/DNS",
+      "title": "DNS (MDN glossary)",
+      "read_at": "2026-10-31"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name",
+      "title": "What is a Domain Name? (MDN)",
+      "read_at": "2026-10-31"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc1034.txt",
+      "title": "RFC 1034: Domain Names, Concepts and Facilities",
+      "read_at": "2026-10-31"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.txt",
+      "title": "RFC 9110: HTTP Semantics",
+      "read_at": "2026-10-31"
+    }
+  ],
+  "profile": "A",
+  "granularity": "blocks",
+  "objective": "understand",
+  "intro": {
+    "simple": "What happens when you type an address such as example.org and press Enter: before the page appears, the browser needs to find out which computer holds it. It asks the internet's address book, DNS, and only then asks that computer for the page.",
+    "technical": "The browser asks the resolver for the name's IP address. The resolver answers from its cache or follows delegations from the root to the zone's authoritative server, and caches each answer for its TTL. With the IP, the browser sends the HTTP request, and the server responds with `200 OK` and the page's files."
+  },
+  "types": [
+    {
+      "id": "yours",
+      "name": "On your computer"
+    },
+    {
+      "id": "addresses",
+      "name": "The address book (DNS)"
+    },
+    {
+      "id": "site",
+      "name": "The site's computer"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "browser",
+      "short": "Browser",
+      "type": "yours",
+      "simple": "The program where you type the address. It does not know which computer the site lives on, so it asks someone who does.",
+      "technical": "The HTTP client. It needs the server's IP address before sending the request: it asks the resolver, then opens the connection and requests the page. Finally, it assembles the received files and displays them."
+    },
+    {
+      "id": "resolver",
+      "short": "Resolver",
+      "type": "addresses",
+      "simple": "The one that finds the address for you. First it checks its notebook; only if the answer is missing does it ask others.",
+      "technical": "The program that receives the browser's request and checks its cache. Without the answer, it asks name servers and follows their directions until it reaches the one holding the data; it keeps each answer for the time (TTL) specified in it."
+    },
+    {
+      "id": "root",
+      "short": "Root",
+      "type": "addresses",
+      "simple": "The first one asked. It does not know the site's address, but knows who handles each address ending, such as .org.",
+      "technical": "The top of the name tree, the level with an empty label. A server at this level does not store every name: it points to whoever handles the level below (delegation)."
+    },
+    {
+      "id": "tld",
+      "short": "Name ending",
+      "type": "addresses",
+      "simple": "The one handling all addresses ending in .org. It does not know the address either: it knows who handles the name example.",
+      "technical": "The top-level domain (TLD) server, the last part of the name. It points to the servers for the requested name's zone, the next step down the tree."
+    },
+    {
+      "id": "authoritative",
+      "short": "Name server",
+      "type": "addresses",
+      "simple": "The one that actually holds example.org's address and gives the final answer.",
+      "technical": "The zone's authoritative server: it answers with its own data and marks the answer as authoritative so the requester can tell."
+    },
+    {
+      "id": "web",
+      "short": "Site server",
+      "type": "site",
+      "simple": "The computer storing the page. When it receives the request, it sends the page's files.",
+      "technical": "The HTTP server. It responds with status `200 OK` (successful request) and sends the files (HTML, CSS, JavaScript and others) in small packets."
+    }
+  ],
+  "views": [
+    {
+      "id": "v1",
+      "type": "sequence",
+      "title": "Who asks whom",
+      "participants": [
+        "browser",
+        "resolver",
+        "web"
+      ],
+      "messages": [
+        {
+          "id": "m1",
+          "from": "browser",
+          "to": "resolver",
+          "text": "Where does example.org live?"
+        },
+        {
+          "id": "m2",
+          "from": "resolver",
+          "to": "browser",
+          "text": "It lives at 192.0.2.172"
+        },
+        {
+          "id": "m3",
+          "from": "browser",
+          "to": "web",
+          "text": "Requests the page"
+        },
+        {
+          "id": "m4",
+          "from": "web",
+          "to": "browser",
+          "text": "200 OK and the files"
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "type": "scene",
+      "title": "The name tree",
+      "nodes": [
+        "resolver",
+        "root",
+        "tld",
+        "authoritative"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "title": "You type the address",
+      "view": "v1",
+      "highlight": [
+        "browser"
+      ],
+      "citations": [
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works"
+      ],
+      "simple": "You type example.org and press Enter. The browser has the name, but does not know which computer holds the page.",
+      "technical": "The first step MDN describes: the browser asks DNS for the actual address of the server hosting the site before requesting any page."
+    },
+    {
+      "title": "The browser asks the resolver",
+      "view": "v1",
+      "highlight": [
+        "browser",
+        "resolver",
+        "m1"
+      ],
+      "citations": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/DNS"
+      ],
+      "simple": "The browser asks: “Where does example.org live?” The resolver receives the question: it is the helper that knows how to do this search.",
+      "technical": "DNS translates an easy-to-remember name into a numeric address (MDN's example is 192.0.2.172); this request is called a DNS lookup."
+    },
+    {
+      "title": "The resolver checks its notebook first",
+      "view": "v2",
+      "highlight": [
+        "resolver"
+      ],
+      "citations": [
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simple": "If someone recently asked for the same address, the resolver already has the answer written down and replies immediately. It saves trips.",
+      "technical": "RFC 1034 says an important resolver goal is to avoid delays and load on name servers by answering from cached earlier results; each answer has a TTL specifying how long it can be kept."
+    },
+    {
+      "title": "Read an address from end to start",
+      "view": "v2",
+      "highlight": [
+        "root",
+        "tld",
+        "authoritative"
+      ],
+      "citations": [
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name",
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simple": "In example.org, .org is the last part, and that is where the search begins. Then comes example. Like an address: first the country, then the city, then the street.",
+      "technical": "MDN reads the name from right to left: first the TLD, then the labels. In RFC 1034, names form a tree ending at the root, and each level can hand the level below to other servers (delegation)."
+    },
+    {
+      "title": "Each server points to the next",
+      "view": "v2",
+      "highlight": [
+        "resolver",
+        "root",
+        "tld",
+        "authoritative"
+      ],
+      "citations": [
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simple": "No server knows everything. Each says “I do not know, but ask that one” until the one holding the address is reached.",
+      "technical": "In RFC 1034's algorithm, the resolver selects the best servers, asks, and, if the answer contains a better delegation, saves it and selects again; it stops when the answer resolves the question. The dot in the scene follows that order, with the resolver always asking."
+    },
+    {
+      "title": "The answer returns to the browser",
+      "view": "v1",
+      "highlight": [
+        "resolver",
+        "browser",
+        "m2"
+      ],
+      "citations": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/DNS",
+        "https://www.rfc-editor.org/rfc/rfc1034.txt"
+      ],
+      "simple": "The resolver gives the address to the browser and keeps it written down for a while, to avoid repeating the trip.",
+      "technical": "The resolver returns the IP address and caches the answer for as long as its TTL allows. With the IP, the browser knows which server to connect to."
+    },
+    {
+      "title": "The browser requests the page",
+      "view": "v1",
+      "highlight": [
+        "browser",
+        "web",
+        "m3",
+        "m4"
+      ],
+      "citations": [
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works",
+        "https://www.rfc-editor.org/rfc/rfc9110.txt"
+      ],
+      "simple": "Now the browser knows the address and asks the site's computer for the page. If the request is valid, it sends the files and the browser assembles the page.",
+      "technical": "The browser sends an HTTP request; RFC 9110 defines `200 (OK)` as a successful request. The server sends the files in packets, and the browser assembles them on screen."
+    }
+  ],
+  "concepts": [
+    {
+      "term": "DNS",
+      "simple": "The internet's address book: it links an easy-to-remember name to a numeric address.",
+      "technical": "The Domain Name System, a hierarchical, decentralized naming system associating domain names with resources such as IP addresses."
+    },
+    {
+      "term": "IP address",
+      "simple": "A computer's address on the internet, in numbers.",
+      "technical": "The numeric identifier of a computer connected to the network, such as the example's 192.0.2.172, in IPv4 or IPv6."
+    },
+    {
+      "term": "Name ending (TLD)",
+      "simple": "The last part of an address, such as .org or .net.",
+      "technical": "The Top-Level Domain: the rightmost part of the name, read first."
+    },
+    {
+      "term": "Cache and TTL",
+      "simple": "The notebook where the resolver writes down answers, and the deadline saying how long they remain valid.",
+      "technical": "An answer's TTL, in seconds, says how long the resolver can keep it before discarding it."
+    }
+  ]
+}

@@ -1,56 +1,56 @@
-# Grill do candidato
+# Grill the candidate
 
-Para o passo 5. O objetivo é chegar a um entendimento comum com o humano sobre o desenho do
-candidato escolhido, decisão a decisão, até não sobrar nada assumido em silêncio.
+For step 5. The goal is shared understanding with the human about the chosen candidate's
+design, decision by decision, until nothing remains silently assumed.
 
-## A árvore de decisões
+## The decision tree
 
-Cada decisão abre as que dependem dela. A **fronteira** são as decisões cujos pré-requisitos já
-estão resolvidos: só essas se perguntam agora. No candidato, a árvore passa pelas restrições, pelas
-dependências e a categoria delas (`references/aprofundar.md`), pela forma do módulo aprofundado,
-pelo que fica atrás da costura e pelos testes que sobrevivem. A pergunta da interface faz-se pelo
-`references/desenhar-duas-vezes.md`.
+Each decision unlocks those depending on it. The **frontier** consists of decisions whose
+prerequisites are resolved: ask only those now. For the candidate, the tree covers constraints,
+dependencies and their categories (`references/deepening.md`), the deepened module's shape,
+what stays behind the seam and which tests survive. Handle the interface question through
+`references/design-it-twice.md`.
 
-## Uma pergunta de cada vez
+## One question at a time
 
-Faz uma pergunta, espera a resposta, recalcula a fronteira e faz a seguinte: cada resposta muda a
-árvore. Cada pergunta leva a recomendação antes do contexto:
+Ask a question, wait for the answer, recalculate the frontier and ask the next: each answer
+changes the tree. Each question puts the recommendation before the context:
 
 ```
-**P<n>. <título da decisão>**
-Recomendação: <a tua resposta>, porque <uma linha>.
-<contexto em 1 a 2 linhas, com o facto que a motiva e o ficheiro:linha; as opções, se há mais de duas>
+**Q<n>. <decision title>**
+Recommendation: <your answer>, because <one line>.
+<1 to 2 lines of context, with the motivating fact and file:line; options if there are more than two>
 ```
 
-Escreve-a de forma a que «sim» aceite a recomendação. Com AskUserQuestion, uma pergunta por
-chamada; sem ela, no chat.
+Write it so “yes” accepts the recommendation. With AskUserQuestion, one question per
+call; otherwise, in chat.
 
-## Factos são teus, decisões são dele
+## Facts are yours, decisions are theirs
 
-Um facto que o código, os docs, o histórico ou o relatório respondem vais tu ver, ou mandas um
-subagente; não o perguntas. Enquanto um subagente procura, só as perguntas que dependem desse facto
-esperam. As decisões são do humano: cada uma vai-lhe com a recomendação, e esperas pela resposta.
-«Escolhe tu» fecha as pendentes com as tuas recomendações, registadas como delegadas.
+Look up a fact answered by code, docs, history or the report yourself, or send a
+subagent; do not ask it. While a subagent searches, only questions depending on that fact
+wait. Decisions belong to the human: send each with a recommendation and wait for the answer.
+“You choose” closes pending decisions with your recommendations, recorded as delegated.
 
-## Pelo caminho
+## Along the way
 
-Os efeitos laterais fazem-se logo que uma decisão fica clara:
+Carry out side effects as soon as a decision is clear:
 
-- **Um módulo aprofundado com o nome de um conceito que o glossário não tem**: acrescenta o termo
-  ao glossário do domínio (e cria o ficheiro, se não existe).
-- **Um termo difuso que a conversa afinou**: atualiza o glossário ali mesmo.
-- **O humano rejeita o candidato com uma razão de peso**: oferece uma ADR, assim: «Queres que
-  registe isto numa ADR, para as próximas revisões de arquitetura não o voltarem a sugerir?». Só
-  quando um explorador futuro precisaria da razão para não repetir a sugestão; razões passageiras
-  («agora não compensa») e evidentes não levam ADR.
+- **A deepened module named after a concept missing from the glossary**: add the term
+  to the domain glossary (and create the file if absent).
+- **A vague term refined in conversation**: update the glossary immediately.
+- **The human rejects the candidate with a substantive reason**: offer an ADR like this: “Would you
+  like me to record this in an ADR so future architecture reviews do not suggest it again?”. Only
+  when a future explorer would need the reason to avoid repeating the suggestion; temporary
+  (“not worth it right now”) and obvious reasons do not warrant an ADR.
 
-O formato de um termo é o de `<agentic-project>/references/grill-projeto.md` («Glossário»), e o de
-uma ADR o de `<agentic-project>/references/arquitetura.md` §6. Com o plugin
-`mattpocock-skills:domain-modeling` instalado, podes usá-lo para o glossário e as ADRs, dizendo-lhe
-o nome do ficheiro do glossário do projeto.
+The term format follows `<agentic-project>/references/project-grill.md` (“Glossary”), and
+ADRs follow `<agentic-project>/references/architecture.md` §6. With the
+`mattpocock-skills:domain-modeling` plugin installed, you may use it for the glossary and ADRs,
+telling it the project's glossary filename.
 
-## Quando acaba
+## When it ends
 
-Quando a fronteira está vazia: cada ramo da árvore visitado e a interface, a costura e os testes
-decididos. Mostra a tabela das decisões, com a origem de cada uma (humano ou delegada), e pede a
-confirmação do entendimento comum. Sem ela, o passo 6 espera.
+When the frontier is empty: every branch visited and the interface, seam and tests
+decided. Show the decision table with each origin (human or delegated) and ask for
+confirmation of shared understanding. Without it, step 6 waits.

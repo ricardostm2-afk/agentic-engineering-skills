@@ -1,0 +1,471 @@
+{
+  "version": 2,
+  "title": "The generate-page CLI",
+  "question": "How generate-page.mjs decides whether to write the page or exit with an error, and what a change request must preserve",
+  "topic": "code",
+  "area": "skills/agentic-explain/scripts/generate-page.mjs",
+  "base": "d7c3f1301dbe232c49001dccdff549086234fce8",
+  "profile": "C",
+  "granularity": "detail",
+  "objective": "change",
+  "intro": {
+    "simple": "The program reads the request, checks the data and writes the page only if everything is valid. It ends with a number: 0 when it wrote the page, 1 when data or scene is invalid, and 2 when something else failed.",
+    "technical": "The contract to preserve when changing this CLI is its three exit codes and error-line format (`field: what failed`, `scene:<line>: what failed`): the file header and `SKILL.md` describe them, and tests depend on them. Failure points are data validation (an extra or missing rule), scene validation (a word list over text, not a security barrier), and the entry point (`asProgram`), which has previously exited 0 without writing."
+  },
+  "types": [
+    {
+      "id": "function",
+      "name": "Function"
+    },
+    {
+      "id": "state",
+      "name": "CLI state"
+    },
+    {
+      "id": "output",
+      "name": "Exit"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "as-program",
+      "short": "asProgram",
+      "type": "function",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:484-489"
+      ],
+      "simple": "Decides whether the file runs as a program or is only imported by another.",
+      "technical": "`asProgram()` compares `import.meta.url` with the real path of `process.argv[1]`, obtained through `realpathSync` (486-488); the file's last line only calls `main` when it returns true (489). Without `realpathSync`, a symlink invocation (`install.sh --link`) returned false because Node resolves the link in one path but not the other (484-485): it exited 0 without writing. Failure point: silent failure reported as success. Trade-off: `catch` returns `false` when `realpathSync` throws, for example for a missing path, so nothing runs in that case either.",
+      "risk": "medium"
+    },
+    {
+      "id": "main",
+      "short": "main",
+      "type": "function",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:438-482",
+        "skills/agentic-explain/scripts/generate-page.mjs:489"
+      ],
+      "simple": "The function that runs when the program is called: reads arguments and files, requests validation, writes the page and returns the exit code.",
+      "technical": "`main(argv)` returns 0, 1 or 2 instead of exiting: its caller assigns the code to `process.exitCode` (489), and error lines go to the supplied `err`, which defaults to stderr (438). Reads arguments (439-459), data (461-466) and scene (467-470), validates (472-473), generates (475-476) and writes (477-480). Failure point: 1 (violated rule) and 2 (usage or read error) have different consumers; changing the chain can swap them.",
+      "risk": "medium"
+    },
+    {
+      "id": "validate",
+      "short": "validate",
+      "type": "function",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:64-70",
+        "skills/agentic-explain/scripts/generate-page.mjs:281-289",
+        "skills/agentic-explain/scripts/generate-page.mjs:330-346"
+      ],
+      "simple": "Checks all data at once and returns the list of errors without correcting anything.",
+      "technical": "`validate(data, scene)` enforces schema 2 without stopping at the first failure and cross-checks `scene` views against the scene file: a `scene` view requires `--scene` (284) and a scene file requires a `scene` view (289). Finally, a scan looks for keys in text and field names (330-343). Trade-off: scanning everything gives the agent the full list in one pass, at the cost of a long function, lines 67 to 346. Each line collected by `fail` passes through `redact` (69), so none repeats a secret. Failure point: a missing rule accepts data the page template cannot draw; an extra rule rejects valid explanations.",
+      "risk": "high"
+    },
+    {
+      "id": "validate-scene",
+      "short": "validateScene",
+      "type": "function",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:348-410",
+        "skills/agentic-explain/references/scene.md:61-66"
+      ],
+      "simple": "Checks scene code against a list of forbidden constructs over the entire text.",
+      "technical": "`validateScene(code)` applies static rules to the entire text, not line by line: the 40 KB ceiling (352, 385-386), exactly one `function scene(` (388-391, 407-408), 32 forbidden words (355-370), including `window`, `document`, `globalThis`, `self`, `constructor`, `Reflect`, `opener` and `frames` (365), and patterns for `</script`, `<!--`, addresses, literal colors and `\\u` and `\\x` escapes (371-378). A match split across lines counts on its starting line, one per rule per line (349-351). Trade-off: scanning the whole text also catches comments and strings (rejects `location` in a comment) without needing a JavaScript parser; it rejects escapes everywhere because they could spell a forbidden word without it appearing in the text (376-378). Failure point: a forbidden-text list is not a security barrier: a word assembled from two strings (`\"fe\" + \"tch\"`) is absent from the text and passes.",
+      "risk": "high"
+    },
+    {
+      "id": "generate-page",
+      "short": "generatePage",
+      "type": "function",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:420-434",
+        "skills/agentic-explain/scripts/generate-page.mjs:475-476"
+      ],
+      "simple": "Puts data, title and scene inside the page template.",
+      "technical": "`generatePage(data, { scene, template })` replaces the data block, `<title>` and, with a scene, its block (429-432). Escapes JSON's `<` (425) and the title (431). Replacements are functions so `$&` in data or scene is not interpreted as a pattern (421-422). Throws if the template lacks exactly one data block (426), the title marker (427) and, with a scene, exactly one slot (428). Failure point: a missing template marker is only detected here; `main` converts the error to exit 2 (475-476).",
+      "risk": "medium"
+    },
+    {
+      "id": "read-template",
+      "short": "readTemplate",
+      "type": "function",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:17-18",
+        "skills/agentic-explain/scripts/generate-page.mjs:416-418",
+        "skills/agentic-explain/scripts/generate-page.mjs:424"
+      ],
+      "simple": "Reads the page template file.",
+      "technical": "`readTemplate()` reads `assets/viewer.html`, located relative to the script folder (17-18), and turns read errors into a message containing the template path (417). It is the default for `generatePage`'s `template` parameter (424): the file is only read when the caller supplies no template, allowing a different template instead of the real one.",
+      "risk": "low"
+    },
+    {
+      "id": "s-args",
+      "short": "Read arguments",
+      "type": "state",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:439-459"
+      ],
+      "simple": "The program checks what was requested.",
+      "technical": "The `argv` loop accepts `--out` and `--scene` with a value not starting with `--` (443), rejects unknown options (455), a second data file (457) and repeated `--scene` (452), and requires a data file and `--out` (459). Repeated `--out` is accepted: the last wins (451). All failures here exit 2.",
+      "risk": "low"
+    },
+    {
+      "id": "s-data",
+      "short": "Read data",
+      "type": "state",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:461-470"
+      ],
+      "simple": "The program opens the data file and, if present, the scene file.",
+      "technical": "`read` only accepts a file, using `statSync(...).isFile()` (461): a directory exits 2, as does a read error, which reports the path and reason (462, 468). Invalid JSON exits 2 with only “<path> is not valid JSON”: a `JSON.parse` error would quote part of the file, and data must not enter a log (464-466). Without `--scene`, `scene` remains `null` (467).",
+      "risk": "low"
+    },
+    {
+      "id": "s-validate",
+      "short": "Validate",
+      "type": "state",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:472-473",
+        "skills/agentic-explain/scripts/generate-page.mjs:475-480"
+      ],
+      "simple": "The program checks data and scene before writing.",
+      "technical": "Collects lines from `validate` and, with a scene, `validateScene` (472). If any exist, writes each through `err` and returns 1 (473), before reading the template (475-476), `mkdirSync` or `writeFileSync` (478-479): the output file is neither created nor touched.",
+      "risk": "high"
+    },
+    {
+      "id": "s-template",
+      "short": "Read template",
+      "type": "state",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:416-418",
+        "skills/agentic-explain/scripts/generate-page.mjs:424-428",
+        "skills/agentic-explain/scripts/generate-page.mjs:472-476"
+      ],
+      "simple": "The program opens the ready-made page.",
+      "technical": "Happens inside `generatePage`, through the default `template = readTemplate()` (424). An unreadable template (417), missing markers (426-427) or missing scene slot (428) yields exit 2 (476), after data has passed validation (472-473).",
+      "risk": "medium"
+    },
+    {
+      "id": "s-write",
+      "short": "Write",
+      "type": "state",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:472-473",
+        "skills/agentic-explain/scripts/generate-page.mjs:477-480"
+      ],
+      "simple": "The program saves the page to the requested destination.",
+      "technical": "Recursive `mkdirSync` for the destination folder and `writeFileSync` for the page (478-479). Reached only with valid data (472-473); write failures exit 2 (480). Writing is not atomic: it goes straight to the destination without a temporary file; failure midway can leave an incomplete file.",
+      "risk": "medium"
+    },
+    {
+      "id": "s-0",
+      "short": "Exit 0",
+      "type": "output",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:481",
+        "skills/agentic-explain/scripts/generate-page.mjs:489",
+        "skills/agentic-explain/SKILL.md:107-117"
+      ],
+      "simple": "The page was written.",
+      "technical": "`main` returns 0 (481) and `process.exitCode` becomes 0 (489). The caller (the agent) proceeds to the detector (`SKILL.md`, step 4).",
+      "risk": "low"
+    },
+    {
+      "id": "s-1",
+      "short": "Exit 1",
+      "type": "output",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:5-8",
+        "skills/agentic-explain/scripts/generate-page.mjs:472-473",
+        "skills/agentic-explain/SKILL.md:107-108"
+      ],
+      "simple": "Data or scene is invalid; nothing was written.",
+      "technical": "One line per violated rule on stderr (`field: what failed` or `scene:<line>: what failed`), without writing anything (5-8, 472). The caller corrects data or scene and retries (`SKILL.md`, step 3); this is not an environment error.",
+      "risk": "low"
+    },
+    {
+      "id": "s-2",
+      "short": "Exit 2",
+      "type": "output",
+      "files": [
+        "skills/agentic-explain/scripts/generate-page.mjs:8",
+        "skills/agentic-explain/scripts/generate-page.mjs:439-459",
+        "skills/agentic-explain/scripts/generate-page.mjs:463",
+        "skills/agentic-explain/scripts/generate-page.mjs:464-466",
+        "skills/agentic-explain/scripts/generate-page.mjs:469",
+        "skills/agentic-explain/scripts/generate-page.mjs:476",
+        "skills/agentic-explain/scripts/generate-page.mjs:480"
+      ],
+      "simple": "Something outside the rules failed: an argument, a file (including unreadable JSON), the template or writing.",
+      "technical": "Usage or read error (8). Comes from arguments (439-459), reading data (463), invalid JSON (464-466), scene (469), template (476) or writing (480); the message identifies which. The caller corrects the command, file, template or writing, not the data rules. Only unreadable JSON requires rewriting data; the message does not identify where it fails.",
+      "risk": "medium"
+    }
+  ],
+  "views": [
+    {
+      "id": "v1",
+      "type": "layers",
+      "title": "Who calls whom",
+      "layers": [
+        {
+          "name": "Command line",
+          "nodes": [
+            "as-program",
+            "main"
+          ]
+        },
+        {
+          "name": "Validation",
+          "nodes": [
+            "validate",
+            "validate-scene"
+          ]
+        },
+        {
+          "name": "Writing",
+          "nodes": [
+            "generate-page",
+            "read-template"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "as-program",
+          "to": "main",
+          "type": "decides whether to call",
+          "mode": "sync",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:489"
+        },
+        {
+          "from": "main",
+          "to": "validate",
+          "type": "calls",
+          "mode": "sync",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:472"
+        },
+        {
+          "from": "main",
+          "to": "validate-scene",
+          "type": "calls if a scene exists",
+          "mode": "sync",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:472"
+        },
+        {
+          "from": "main",
+          "to": "generate-page",
+          "type": "calls",
+          "mode": "sync",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:476"
+        },
+        {
+          "from": "generate-page",
+          "to": "read-template",
+          "type": "calls by default",
+          "mode": "sync",
+          "ref": "skills/agentic-explain/scripts/generate-page.mjs:424"
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "type": "states",
+      "title": "The CLI lifecycle",
+      "states": [
+        "s-args",
+        "s-data",
+        "s-validate",
+        "s-template",
+        "s-write",
+        "s-0",
+        "s-1",
+        "s-2"
+      ],
+      "initial": "s-args",
+      "transitions": [
+        {
+          "from": "s-args",
+          "to": "s-data",
+          "event": "valid arguments"
+        },
+        {
+          "from": "s-args",
+          "to": "s-2",
+          "event": "missing or unknown argument"
+        },
+        {
+          "from": "s-data",
+          "to": "s-validate",
+          "event": "data and scene read"
+        },
+        {
+          "from": "s-data",
+          "to": "s-2",
+          "event": "unreadable file or invalid JSON"
+        },
+        {
+          "from": "s-validate",
+          "to": "s-template",
+          "event": "no errors"
+        },
+        {
+          "from": "s-validate",
+          "to": "s-1",
+          "event": "a rule was violated"
+        },
+        {
+          "from": "s-template",
+          "to": "s-write",
+          "event": "template has markers"
+        },
+        {
+          "from": "s-template",
+          "to": "s-2",
+          "event": "unreadable or incomplete template"
+        },
+        {
+          "from": "s-write",
+          "to": "s-0",
+          "event": "page written"
+        },
+        {
+          "from": "s-write",
+          "to": "s-2",
+          "event": "writing failed"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "title": "Who calls whom",
+      "view": "v1",
+      "highlight": [
+        "as-program",
+        "main",
+        "validate",
+        "validate-scene",
+        "generate-page",
+        "read-template"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:438-482",
+        "skills/agentic-explain/scripts/generate-page.mjs:484-489",
+        "skills/agentic-explain/scripts/generate-page.mjs:424",
+        "skills/agentic-explain/scripts/generate-page.mjs:67",
+        "skills/agentic-explain/scripts/generate-page.mjs:381"
+      ],
+      "simple": "Three floors: entry, checking and writing. Only the entry talks to the other two.",
+      "technical": "The end of the file (489) calls `main` only if `asProgram` returns true. `main` calls `validate` and, with a scene, `validateScene` (472), then `generatePage` (476), which reads the template by default (424). All synchronous: reads with `readFileSync` (461) and writes with `writeFileSync` (479). Validation functions receive data and scene as arguments (67, 381), so importers can call them without creating processes."
+    },
+    {
+      "title": "The entry runs only as a program",
+      "view": "v1",
+      "highlight": [
+        "as-program"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:10-11",
+        "skills/agentic-explain/scripts/generate-page.mjs:484-489",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1118-1128"
+      ],
+      "simple": "The file also exports its functions, so it runs on its own only when called as a program.",
+      "technical": "The guard compares `import.meta.url` with the `realpathSync` of `process.argv[1]` (486-488). Through a symlink, without `realpathSync`, the guard returned false and the file exited 0 without writing (484-485); a test prevents recurrence (1118-1125). Changing the guard without keeping that test reopens the defect, hidden by exit 0."
+    },
+    {
+      "title": "validate: all at once, without correcting",
+      "view": "v1",
+      "highlight": [
+        "validate"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:64-70",
+        "skills/agentic-explain/scripts/generate-page.mjs:330-346",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1296-1298"
+      ],
+      "simple": "Checking does not stop at the first error: it returns the full list, so the agent can fix everything in one pass.",
+      "technical": "Each rule appends its line through `fail` (68-69) instead of stopping; `errors` is returned only at the end (345). Trade-off: the full list saves iterations, but each rule must remain independent. Changing a rule requires changing its test; `assets/examples/` examples must remain valid (1296-1298)."
+    },
+    {
+      "title": "validateScene: reject across the entire text",
+      "view": "v1",
+      "highlight": [
+        "validate-scene"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:348-410",
+        "skills/agentic-explain/references/scene.md:61-66",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1243-1256"
+      ],
+      "simple": "The 3D drawing's code passes a list of forbidden constructs before entering the page.",
+      "technical": "The list (32 words, addresses, `</script`, `<!--`, literal colors, `\\u` and `\\x` escapes, 40 KB) runs over the entire text, not line by line (349-351). Rejects more than strictly dangerous constructs (comments and strings), yet cannot prevent everything: a word assembled from two strings (`\"fe\" + \"tch\"`) is absent from the text. It is not a security barrier; the template's CSP restricts the page's network access (fixed by a test). Adding a word means adding a list entry (356-365); removing one allows the scene to use what was forbidden."
+    },
+    {
+      "title": "generatePage: replace without interpreting patterns",
+      "view": "v1",
+      "highlight": [
+        "generate-page",
+        "read-template"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:416-418",
+        "skills/agentic-explain/scripts/generate-page.mjs:420-434"
+      ],
+      "simple": "The program inserts data into the ready-made page as it stands, without interpreting it.",
+      "technical": "`replace` replacements are functions, so `$&`, `$1` and `$'` in data or scenes remain literal (429-432). JSON's `<` is escaped so a `</script>` in text cannot close the block (425). Three `throw` statements (426-428) report missing template markers; an unreadable template throws in `readTemplate` (417)."
+    },
+    {
+      "title": "The CLI lifecycle",
+      "view": "v2",
+      "highlight": [
+        "s-args",
+        "s-data",
+        "s-validate",
+        "s-template",
+        "s-write",
+        "s-0"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:438-482"
+      ],
+      "simple": "The program always follows the same steps in this order: arguments, files, checking, template, writing.",
+      "technical": "Each state advances only if the previous one succeeded. Order matters: validating (472-473) before reading the template (475-476) keeps data defects distinct from template defects, and ensures exit 1 never creates the file."
+    },
+    {
+      "title": "Where exits 1 and 2 originate",
+      "view": "v2",
+      "highlight": [
+        "s-validate",
+        "s-1",
+        "s-2"
+      ],
+      "citations": [
+        "skills/agentic-explain/scripts/generate-page.mjs:5-8",
+        "skills/agentic-explain/scripts/generate-page.mjs:439-459",
+        "skills/agentic-explain/scripts/generate-page.mjs:461-470",
+        "skills/agentic-explain/scripts/generate-page.mjs:472-473",
+        "skills/agentic-explain/scripts/generate-page.mjs:475-476",
+        "skills/agentic-explain/scripts/generate-page.mjs:480",
+        "skills/agentic-explain/SKILL.md:107-108",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1130-1145",
+        "skills/agentic-explain/scripts/generate-page.test.mjs:1174-1202"
+      ],
+      "simple": "1 means “correct data or scene”; 2 means “something around them failed”.",
+      "technical": "Exit 1 comes only from validation (472-473) and leaves the destination untouched. Exit 2 has several sources: arguments (439-459), reading data and scene (461-470), template (475-476) and writing (480). CLI callers handle them differently: respond to 1 with corrected data or scene; to 2 with a corrected command, file or environment (rewrite data only if JSON is unreadable). The file header (5-8), `SKILL.md` and tests depend on these codes."
+    }
+  ],
+  "concepts": [
+    {
+      "term": "fail without writing",
+      "simple": "If data or scene has errors, the program leaves nothing new on disk.",
+      "technical": "With exit 1, the output file is neither created nor touched because `mkdirSync` and `writeFileSync` follow validation (the “Validate” and “Write” nodes). With exit 2 from arguments, reading or template, nothing has been written either; with exit 2 from writing, the destination may be incomplete."
+    },
+    {
+      "term": "raw text",
+      "simple": "The scene is read as text without understanding it as code.",
+      "technical": "`validateScene` does not parse JavaScript: it uses regular expressions over the entire text with identifier boundaries, including comments and strings."
+    }
+  ]
+}

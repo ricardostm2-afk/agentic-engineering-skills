@@ -1,31 +1,31 @@
-# Contratos, disponibilidade e ownership
+# Contracts, availability and ownership
 
-Adaptação seletiva de `docs/tool-design.md` de REA; a revisão e a licença estão em [origem](origem.md). Os detalhes de implementação, constantes e providers REA não são requisitos deste guia.
+Selective adaptation of REA's `docs/tool-design.md`; revision and license are in [origin](origin.md). REA implementation details, constants and providers are not requirements of this guide.
 
-## Disponibilidade e identidade
+## Availability and identity
 
-Conservar o catálogo e reportar disponibilidade/capacidade por sessão/provider, em vez de omitir silenciosamente ferramentas de schemas. Um provider candidato não é o provider selecionado; uma ferramenta anunciada não demonstra que o seu pré-requisito esteja instalado.
+Keep the catalog and report availability/capability per session/provider rather than silently omitting tools from schemas. A candidate provider is not the selected provider; an advertised tool does not demonstrate its prerequisite is installed.
 
-Separar a identidade canónica de labels legíveis. Incluir digest/versão/opções que afetem reutilização e associação à fonte. Nas relações estáticas, completude significa o conjunto realmente observado devolvido sem limite conhecido, não todas as relações que podem ocorrer em execução.
+Separate canonical identity from readable labels. Include digest/version/options affecting reuse and source linkage. In static relationships, completeness means the actually observed set returned without a known limit, not every relationship that may occur at runtime.
 
-Cada erro ou resultado parcial deve permitir distinguir input recusado, provider indisponível, falha física, limite, cancelamento, cobertura incompleta e cleanup pendente. Conservar diagnóstico primário e observações já obtidas; não converter o encerramento falhado numa alegação de que a análise nunca produziu nada.
+Every error or partial result must let callers distinguish rejected input, unavailable provider, physical failure, limit, cancellation, incomplete coverage and pending cleanup. Preserve primary diagnostics and observations already obtained; do not turn failed shutdown into a claim that analysis never produced anything.
 
-## Ciclo de vida
+## Lifecycle
 
-Dar um dono a recursos adquiridos: handles, processos, ligações, diretórios temporários e trabalho partilhado. Distinguir admissão do alvo, prontidão, trabalho ativo, saída do processo, fecho de output e libertação. Um PID ou launcher bem-sucedido só estabelece o seu próprio facto.
+Give acquired resources an owner: handles, processes, connections, temporary directories and shared work. Distinguish target admission, readiness, active work, process exit, output closure and release. A PID or successful launcher establishes only its own fact.
 
-Libertar só recursos próprios. Attach pode possuir apenas a ligação, não a aplicação observada. Saída do processo pai não demonstra o fim dos filhos ou fecho de streams. Preservar identidade suficiente para confirmar ownership antes de parar/remover recursos.
+Release only owned resources. Attach may own only the connection, not the observed application. Parent process exit does not demonstrate child termination or stream closure. Preserve enough identity to confirm ownership before stopping/removing resources.
 
-Em trabalho partilhado, há um produtor e consumidores canceláveis individualmente. Um consumidor não deve destruir o resultado de outro; o último acompanha cleanup. Reter falhas por recurso e repetir só os fechos ainda pendentes. Um retry não apaga sucesso/falha anterior nem demonstra que um recurso desconhecido foi libertado.
+Shared work has one producer and individually cancellable consumers. One consumer must not destroy another's result; the last tracks cleanup. Retain failures per resource and retry only pending closures. A retry does not erase prior success/failure or demonstrate an unknown resource was released.
 
-Propagar cancelamento até consumo/finalização. Antes de devolver sucesso, observar cancelamento depois da última espera relevante. Definir o ponto de compromisso para uma publicação atómica e conservar o respetivo recibo se já ocorreu; cancelamento posterior não a desfaz.
+Propagate cancellation through consumption/finalization. Before returning success, observe cancellation after the last relevant wait. Define the commit point for atomic publication and preserve its receipt if it has already occurred; later cancellation does not undo it.
 
-Conservar controlos de execução aceites em filas e retries. Guardar o motivo do cancelamento separado da falha do produtor e não o reconstruir por comparação de mensagens.
+Preserve accepted execution controls across queues and retries. Store cancellation reasons separately from producer failures rather than reconstructing them by comparing messages.
 
-## Limites e verificação
+## Limits and verification
 
-Escolher limites por formato, autoridade, protocolo e custo medido. Contabilizar processos filhos, descodificação, serialização e estado retido, não apenas workers ou tamanho de uma resposta. Descrever exatamente a cobertura quando se pagina ou interrompe.
+Choose limits by format, authority, protocol and measured cost. Account for child processes, decoding, serialization and retained state, not just workers or one response's size. Describe coverage precisely when paginating or stopping early.
 
-Verificar falha e cleanup no mesmo caminho público que o consumidor usa. Uma cache de sucesso anterior não prova prontidão atual de um serviço/host. Um wrapper de profiler verde não prova o payload; ler ambos os estados de saída.
+Verify failure and cleanup through the same public path the consumer uses. A cache of prior success does not prove current service/host readiness. A green profiler wrapper does not prove the payload; read both exit statuses.
 
-Reusar os tipos de erro, supervisores e contratos do próprio projeto quando correspondem à intenção. Não importar helpers internos nem números de timeout de um projeto alheio como requisitos universais.
+Reuse the project's own error types, supervisors and contracts when they fit the intent. Do not import internal helpers or timeout numbers from another project as universal requirements.
