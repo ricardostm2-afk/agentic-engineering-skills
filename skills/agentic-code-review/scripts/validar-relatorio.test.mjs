@@ -15,7 +15,7 @@ const AQUI = import.meta.dirname;
 const SCRIPT = path.join(AQUI, "validar-relatorio.mjs");
 const MODELO = path.join(AQUI, "..", "assets", "relatorio.template.md");
 
-const BOM = `Revisão 2bfcbbc05a1e · Padrão · ronda 1/2 · 2 Importantes · 1 Nit · 1 Pré-existente
+const BOM = `Revisão 9c4e2a105a1e · Padrão · ronda 1/2 · 2 Importantes · 1 Nit · 1 Pré-existente
 
 [Importante] src/api/faturas.ts:88 — o total ignora o desconto da entidade — reproduz: npm test -- faturas.desconto (vermelho) — classe: total recalculado à parte
 [Importante] docs/RUNBOOK.md:41 — manda correr scripts/migrar.sh, que já não existe — reproduz: ausente: scripts/migrar.sh (git ls-tree) — classe: doc que mente
@@ -24,7 +24,7 @@ const BOM = `Revisão 2bfcbbc05a1e · Padrão · ronda 1/2 · 2 Importantes · 1
 Pré-existentes: src/lib/datas.ts:30 · fuso horário fixo
 Não li: nada`;
 
-const LIMPO = `Revisão 2bfcbbc · Completa · lente segurança · ronda 2/3 · 0 Importantes · 0 Nits · 0 Pré-existentes
+const LIMPO = `Revisão 9c4e2a1 · Completa · lente segurança · ronda 2/3 · 0 Importantes · 0 Nits · 0 Pré-existentes
 0 Importantes — nada a corrigir
 
 Pré-existentes: nenhum`;
@@ -42,7 +42,7 @@ test("um relatório bom passa (Importantes, um Nit, um Pré-existente)", () => {
   assert.equal(r.ok, true);
   assert.deepEqual(
     { sha: r.cabecalho.sha, via: r.cabecalho.via, ronda: r.cabecalho.ronda, limite: r.cabecalho.limite },
-    { sha: "2bfcbbc05a1e", via: "Padrão", ronda: 1, limite: 2 },
+    { sha: "9c4e2a105a1e", via: "Padrão", ronda: 1, limite: 2 },
   );
 });
 
@@ -67,8 +67,8 @@ test("recusa uma 1.ª linha sem o formato da contagem", () => {
 });
 
 test("recusa um SHA que não é hexadecimal ou é curto demais", () => {
-  recusa(LIMPO.replace("2bfcbbc", "HEAD"), /1\.ª linha/);
-  recusa(LIMPO.replace("2bfcbbc", "2bfc"), /1\.ª linha/);
+  recusa(LIMPO.replace("9c4e2a1", "HEAD"), /1\.ª linha/);
+  recusa(LIMPO.replace("9c4e2a1", "2bfc"), /1\.ª linha/);
 });
 
 test("recusa a via por preencher", () => {

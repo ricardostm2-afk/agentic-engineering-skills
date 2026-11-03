@@ -4,7 +4,7 @@
   "pergunta": "Como o gerar-pagina.mjs decide entre escrever a página e sair com erro, e o que um pedido de mudança tem de respeitar",
   "tema": "codigo",
   "area": "skills/agentic-explain/scripts/gerar-pagina.mjs",
-  "base": "8e7d72ba015e71f443a244cdae5953a0a039ea7d",
+  "base": "d7c3f1301dbe232c49001dccdff549086234fce8",
   "perfil": "C",
   "granularidade": "detalhe",
   "objetivo": "mudar",

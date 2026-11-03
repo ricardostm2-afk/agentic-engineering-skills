@@ -618,22 +618,22 @@ test('erros: comando, opção, campo e argumentos em falta saem ≠ 0 com mensag
 
 test('segredos e e-mails não entram no quadro', () => {
   const d = novoDir()
-  const r = ok(d, ['evento', 'nota', 'chave ghp_abcdefghijklmnopqrstuvwxyz0123 senha: x9 e pessoa@exemplo.pt, tlm 912 345 678, +44 20 7946 0958, NIF: 123456789, IBAN PT50 0002 0123 1234 5678 9015 4, deploy d77aa8c3d às 20261015-200000'])
+  const r = ok(d, ['evento', 'nota', 'chave ghp_abcdefghijklmnopqrstuvwxyz0123 senha: x9 e pessoa@exemplo.pt, tlm 912 345 678, +44 20 7946 0958, NIF: 123456789, IBAN PT50 0002 0123 1234 5678 9015 4, deploy 4e1c9a7b2 às 20261015-200000'])
   assert.ok(r.avisos.length > 0)
   const txt = fs.readFileSync(path.join(d, 'estado', 'eventos.json'), 'utf8')
   assert.doesNotMatch(txt, /ghp_|x9|exemplo\.pt|912 345|7946|123456789|PT50|9015/)
   assert.match(txt, /20261015-200000/, 'datas compactas não são telefones')
-  assert.match(txt, /deploy d77aa8c3d/, 'um SHA não é um número de telefone')
+  assert.match(txt, /deploy 4e1c9a7b2/, 'um SHA não é um número de telefone')
   assert.match(txt, /\[removido\]/)
 })
 
 test('segredos: o número de utente (n.º de utente, utente n.º) também não entra no quadro', () => {
   const d = novoDir()
-  const r = ok(d, ['evento', 'nota', 'ficha do utente n.º 4567890 e n.º de utente 1234567, SNS 998877665, deploy d77aa8c3d'])
+  const r = ok(d, ['evento', 'nota', 'ficha do utente n.º 4567890 e n.º de utente 1234567, SNS 998877665, deploy 4e1c9a7b2'])
   assert.ok(r.avisos.length > 0)
   const txt = fs.readFileSync(path.join(d, 'estado', 'eventos.json'), 'utf8')
   assert.doesNotMatch(txt, /4567890|1234567|998877665/)
-  assert.match(txt, /deploy d77aa8c3d/, 'um SHA não é um número de identificação')
+  assert.match(txt, /deploy 4e1c9a7b2/, 'um SHA não é um número de identificação')
 })
 
 test('gancho.sh: início, sinal e fim de um job (nome e item pelo prompt, código de saída); falha do quadro é silenciosa', () => {

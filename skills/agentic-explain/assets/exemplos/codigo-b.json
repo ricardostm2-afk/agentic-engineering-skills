@@ -4,7 +4,7 @@
   "pergunta": "O que faz a skill agentic-explain e que ficheiros trabalham juntos para gerar a página de uma explicação",
   "tema": "codigo",
   "area": "skills/agentic-explain",
-  "base": "8e7d72ba015e71f443a244cdae5953a0a039ea7d",
+  "base": "d7c3f1301dbe232c49001dccdff549086234fce8",
   "perfil": "B",
   "granularidade": "componentes",
   "objetivo": "perceber",

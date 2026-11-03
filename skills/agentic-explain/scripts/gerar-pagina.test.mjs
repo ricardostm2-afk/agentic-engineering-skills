@@ -27,7 +27,7 @@ const MODELO_FIXTURE = [
 ].join("\n");
 const MODELO_SEM_CENA = MODELO_FIXTURE.replace('<script id="cena-codigo"></script>\n', "");
 
-const SHA = "25966db61e104971e48aad9b6cf48594e24cf542";
+const SHA = "0a1b2c3d4e5f60718293a4b5c6d7e8f901234567";
 
 // Um documento bom, escrito à mão e sem passar pelo código: o valor esperado vem do esquema da spec.
 // Cinco nós, uma vista grafo e uma de sequência, um passo e um conceito.

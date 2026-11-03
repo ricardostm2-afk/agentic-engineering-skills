@@ -71,14 +71,14 @@ S=.agentic/quadro/scrum.sh
 # pedido do humano (origem: chat | telegram | painel | outro; prioridade: alta | normal | baixa)
 $S pedido add --titulo "Ver as encomendas no telemóvel" --prioridade alta [--descricao …]
 $S pedido set p-20261015-ver-encomendas-telemovel estado=a-espera-do-humano
-$S pedido set p-20261015-ver-encomendas-telemovel resultado="em produção em d77aa8c3d"
+$S pedido set p-20261015-ver-encomendas-telemovel resultado="em produção em 4e1c9a7b2"
 $S pedido liga p-20261015-ver-encomendas-telemovel i-012-carrinho
 
 # trabalho (backlog com critério e dependências; depois o ciclo de vida)
 $S item add --titulo "Esqueleto que anda" --id f01-esqueleto --criterio "npm start responde 200 em /saude"
 $S item add --titulo "Agenda do dia" --id f02-agenda --depende f01-esqueleto --spec 002-agenda --pedido p-…
 $S item set f02-agenda estado=em-curso ramo=agente/f02-agenda responsavel=sessao-agenda
-$S item set f02-agenda sha=b52b8e639 tarefas.feitas=12 tarefas.total=20
+$S item set f02-agenda sha=7f3d2b8a6 tarefas.feitas=12 tarefas.total=20
 $S item set f02-agenda estado=em-bateria bateria.estado=a-correr bateria.perfil=completa   # bateria.sha = sha do item
 $S item set f02-agenda bateria.estado=verde bateria.duracao_s=1547
 $S item set f02-agenda estado=bloqueado bloqueio="falta a chave X; desbloqueia: o humano"
@@ -90,9 +90,9 @@ $S agente sinal sessao-agenda --nome "Sessão: agenda" --tipo claude-sessao --mo
 $S agente fim sessao-agenda [--estado erro] [--detalhe "…"]   # --lease <id> no sinal: o lease do agente, para o comando de fim
 
 # eventos (tipos: inicio commit bateria deploy bloqueio decisao nota fim erro pedido; ficam os 400 mais recentes)
-$S evento commit "b52b8e639 vista do dia" --agente sessao-agenda --item f02-agenda
-$S evento bateria "bateria vermelha em b52b8e639: 2 testes de integração" --item f02-agenda
-$S evento deploy "deploy de b52b8e639: smoke 14/14"
+$S evento commit "7f3d2b8a6 vista do dia" --agente sessao-agenda --item f02-agenda
+$S evento bateria "bateria vermelha em 7f3d2b8a6: 2 testes de integração" --item f02-agenda
+$S evento deploy "deploy de 7f3d2b8a6: smoke 14/14"
 $S evento fim "retro: bem X; atrasou Y; lição Z" --item f02-agenda
 
 # decisões para o humano

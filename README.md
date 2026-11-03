@@ -19,24 +19,45 @@ Codex, Cursor, Gemini CLI, GitHub Copilot and OpenCode.
 > manifests and the licence are in English. Translations of the skills are welcome. The installers
 > print Portuguese messages.
 
+## Try it in two minutes
+
+In a Claude Code session (CLI, the Code tab of Claude Desktop or the VS Code extension):
+
+~~~text
+/plugin marketplace add ricardostm2-afk/agentic-engineering-skills
+/plugin install agentic-skills@agentic-skills
+~~~
+
+Open a new session in any repository and start with something that only reads:
+
+- "explain how the login works": `agentic-explain` asks three short questions (your goal, what you already
+  know, how deep) and writes an HTML page with the explanation beside 3D views of the code;
+- "review this branch": `agentic-code-review` reviews the branch against its base with independent
+  lenses and reports each finding with `file:line`.
+
+You can ask in English; what the skills write (reports, specs, pages) is in European Portuguese unless your
+project's `AGENTS.md` declares another language. When you want to build: "set up this repo for agents"
+(`agentic-project`), then "build this feature" (`agentic-feature`).
+
 ## What is inside
 
 | Skill | What it does | Ask for it with | Origin |
 |---|---|---|---|
-| `agentic-project` | Prepares a project (new or existing) for agents working in parallel and safely. Ten phases: prerequisites checked, decisions recorded, architecture chosen with dated research, a git protocol for agents (short branches, one worktree per agent, hooks, an area map), Spec Kit, `AGENTS.md` and `CLAUDE.md`, a small scrum board, the first backlog and a `REVIEW.md` that says what counts as a failure in this project | «quero começar um projeto: …», «prepara este repo para agentes» | original |
-| `agentic-feature` | Takes a feature from request to integration. Risk triage (Standard, Complete, Too big; fixes go to `agentic-fix`), reading the code, research on what is current, a grill on what only the human can decide, real UI variants through `agentic-design`, a spec, one brief per lane for Claude or Codex agents using `agentic-implement`, independent review through `agentic-code-review` and measured proof | «quero desenvolver a feature …», «pega na próxima do backlog» | original |
-| `agentic-design` | Owns the UI method. Questions about the screen, 2–3 structurally different variants with screenshots, building inside the project's design system, blocking rules against the generic "AI look" (B1–B24) with a mechanical detector, and proof in the browser with an honest status. It carries no brand: looks come from each project's `DESIGN.md` | «faz variantes deste ecrã», «revê a UI» | original |
-| `agentic-fix` | Fixes what exists and is wrong. One question only if the report is ambiguous, a red test that reproduces it, root-cause diagnosis, the whole class of the defect fixed, red then green, review with fresh context, and the defect that escaped becomes an evaluation case | «está partido», «corrige isto» | original; the red-first diagnosis adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `agentic-project` | Prepares a project (new or existing) for agents working in parallel and safely. Ten phases: prerequisites checked, decisions recorded, architecture chosen with dated research, a git protocol for agents (short branches, one worktree per agent, hooks, an area map), Spec Kit, `AGENTS.md` and `CLAUDE.md`, a small scrum board, the first backlog and a `REVIEW.md` that says what counts as a failure in this project | «quero começar um projeto: …», «prepara este repo para agentes», "set up this repo for agents" | original |
+| `agentic-feature` | Takes a feature from request to integration. Risk triage (Standard, Complete, Too big; fixes go to `agentic-fix`), reading the code, research on what is current, a grill on what only the human can decide, real UI variants through `agentic-design`, a spec, one brief per lane for Claude or Codex agents using `agentic-implement`, independent review through `agentic-code-review` and measured proof | «quero desenvolver a feature …», «pega na próxima do backlog», "build this feature" | original |
+| `agentic-design` | Owns the UI method. Questions about the screen, 2–3 structurally different variants with screenshots, building inside the project's design system, blocking rules against the generic "AI look" (B1–B24) with a mechanical detector, and proof in the browser with an honest status. It carries no brand: looks come from each project's `DESIGN.md` | «faz variantes deste ecrã», «revê a UI», "redesign this screen" | original; the interaction mechanisms in `references/mecanismos.md` are rewritten from [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) |
+| `agentic-fix` | Fixes what exists and is wrong. One question only if the report is ambiguous, a red test that reproduces it, root-cause diagnosis, the whole class of the defect fixed, red then green, review with fresh context, and the defect that escaped becomes an evaluation case | «está partido», «corrige isto», "fix this" | original; the red-first diagnosis adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `agentic-implement` | The skill of the agent that writes the code (Claude or Codex). From a closed brief to a commit: read only what is needed, state assumptions, failing test first, minimal change in the style of the surrounding code, green with evidence, one commit per cause, hand-off with a status line | loaded by the briefs that `agentic-feature` and `agentic-fix` write | original; the test-first discipline adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `agentic-code-review` | Reviews a diff, a branch or a PR, alone or called by `agentic-feature`. Level by risk, a panel of independent lenses in a throw-away worktree, consolidation, confirmation of the serious findings, a report whose first line is validated by a script, limited rounds, and lessons and evaluation cases to measure the reviewer | «revê este ramo», «code review» | original |
-| `agentic-architecture` | Improves the architecture of code that already exists: shallow modules where the code changes most, with measured proof, a visual report, a grill on the chosen candidate and execution through `agentic-feature`. Carries the vocabulary of modules and seams the other skills use | «melhora a arquitetura», «módulos rasos» | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `agentic-explain` | Explains code, or any other topic from sources it reads, at the level of whoever asks. Three calibration questions (the goal, familiarity with concepts found in the material, the depth), three profiles (functional with metaphors; intermediate with parts and a glossary; advanced with details, risks and sync or async calls), and one page with the explanation beside 3D views chosen from a catalogue (graph, layers, sequence, states, timeline) or a free three.js scene in a fixed frame, generated from a template and validated data. It only reads: in code, debugging goes to `agentic-fix`, changes to `agentic-architecture` or `agentic-feature` | «explica isto», «como funciona X» | original |
+| `agentic-code-review` | Reviews a diff, a branch or a PR, alone or called by `agentic-feature`. Level by risk, a panel of independent lenses in a throw-away worktree, consolidation, confirmation of the serious findings, a report whose first line is validated by a script, limited rounds, and lessons and evaluation cases to measure the reviewer | «revê este ramo», «code review», "review this branch" | original |
+| `agentic-architecture` | Improves the architecture of code that already exists: shallow modules where the code changes most, with measured proof, a visual report, a grill on the chosen candidate and execution through `agentic-feature`. Carries the vocabulary of modules and seams the other skills use | «melhora a arquitetura», «módulos rasos», "improve the codebase architecture" | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `agentic-explain` | Explains code, or any other topic from sources it reads, at the level of whoever asks. Three calibration questions (the goal, familiarity with concepts found in the material, the depth), three profiles (functional with metaphors; intermediate with parts and a glossary; advanced with details, risks and sync or async calls), and one page with the explanation beside 3D views chosen from a catalogue (graph, layers, sequence, states, timeline) or a free three.js scene in a fixed frame, generated from a template and validated data. It only reads: in code, debugging goes to `agentic-fix`, changes to `agentic-architecture` or `agentic-feature` | «explica isto», «como funciona X», "explain this" | original |
 | `agentic-ci-audit` | Audits which regressions the CI checks really catch and which work can leave without losing that protection (test discovery, false greens, fixtures, caches, cost) | «audita o CI» | [morluto/rea](https://github.com/morluto/rea) |
 | `agentic-tool-design` | Designs tools for agents and their contracts: identity, coverage, effects and lifecycle | «desenha esta ferramenta para agentes» | [morluto/rea](https://github.com/morluto/rea) |
 | `agentic-analysis-optimization` | Improves methods and costs of analysis and production bottlenecks: reuse, cancellation, resources, and how to measure them | «otimiza esta análise» | [morluto/rea](https://github.com/morluto/rea) |
 
 Rows with a link adapt material from another open-source project, in Portuguese: the whole skill, or for
-`agentic-fix` and `agentic-implement` only the files that [UPSTREAMS.json](UPSTREAMS.json) lists. Each one
+`agentic-fix` and `agentic-implement` only the files that [UPSTREAMS.json](UPSTREAMS.json) lists, and for `agentic-design` only the
+interaction mechanisms ([CREDITS.md](CREDITS.md)). Each one
 keeps its own `references/origem.md` and licence file. Everything else is original to this repository.
 
 ## How they fit together
@@ -101,6 +122,10 @@ cd ~/agentic-skills
 ./install.sh                     # dry run: shows what it would do, per agent
 ./install.sh --aplicar --ligar   # installs as links to the clone (update with git pull)
 ~~~
+
+With the Claude Code plugin already installed, add `--agente codex` (or the agents you use): by default the
+installer also installs into `~/.claude/skills` when that folder exists, and Claude Code would then list
+every skill twice.
 
 ### Windows: `install.ps1`
 
@@ -205,9 +230,10 @@ Code) or `$agentic-feature` (Codex). A first session usually looks like this:
 3. Something broken? Ask for `agentic-fix` with the report.
 4. Want a second opinion on a branch? Ask for `agentic-code-review`.
 
-Preferences you want every agent to follow (language, code and product-text tastes) live in
-`skills/agentic-implement/references/gostos.md`; they are defaults, so edit that file to match yours. What belongs to one project goes in that project's `AGENTS.md`, which
-wins over the skills.
+Preferences every agent should follow (language, code and product-text tastes) have defaults in
+`skills/agentic-implement/references/gostos.md`. Put yours in your project's `AGENTS.md`, which wins over the
+skills: an edit to `gostos.md` only lasts in a clone or fork installed with `--ligar`, because a plugin update
+or `--forcar` replaces it.
 
 ## Agents and models per task (optional)
 
