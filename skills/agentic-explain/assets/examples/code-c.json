@@ -4,7 +4,7 @@
   "question": "How generate-page.mjs decides whether to write the page or exit with an error, and what a change request must preserve",
   "topic": "code",
   "area": "skills/agentic-explain/scripts/generate-page.mjs",
-  "base": "d7c3f1301dbe232c49001dccdff549086234fce8",
+  "base": "0e419e9cefa6e6444a995d0685c5c00fd68f0e98",
   "profile": "C",
   "granularity": "detail",
   "objective": "change",

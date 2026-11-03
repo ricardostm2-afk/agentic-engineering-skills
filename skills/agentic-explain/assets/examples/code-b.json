@@ -4,7 +4,7 @@
   "question": "What the agentic-explain skill does and which files work together to generate an explanation page",
   "topic": "code",
   "area": "skills/agentic-explain",
-  "base": "d7c3f1301dbe232c49001dccdff549086234fce8",
+  "base": "0e419e9cefa6e6444a995d0685c5c00fd68f0e98",
   "profile": "B",
   "granularity": "components",
   "objective": "understand",
