@@ -42,7 +42,7 @@ Not read: <what and why> | nothing
 One lens, with findings:
 
 ```text example
-Review 9f3c2ab · Complete · lens correctness · round 1/3 · 2 Important · 1 Nit · 1 Pre-existing
+Review 9f3c2ab · Complete · lens correctness · round 1/2 · 2 Important · 1 Nit · 1 Pre-existing
 
 [Important] api/src/routes/orders.ts:142 — another organization's id returns 403 instead of 404, confirming the order exists — reproduce: npm test -- orders.isolation (red on 9f3c2ab) — class: error reveals another organization's resource
 [Important] docs/RUNBOOK.md:57 — instructs running scripts/migrate.sh, deleted by this change — reproduce: absent: scripts/migrate.sh (git ls-tree 9f3c2ab) — class: lying doc
@@ -56,7 +56,7 @@ Not read: nothing
 Consolidated, without findings:
 
 ```text example
-Review 9f3c2ab1d0e4 · Standard · round 2/2 · 0 Important · 0 Nits · 0 Pre-existing
+Review 9f3c2ab1d0e4 · Complete · round 2/2 · 0 Important · 0 Nits · 0 Pre-existing
 0 Important — nothing to fix
 
 Pre-existing: none

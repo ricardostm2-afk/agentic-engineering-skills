@@ -4,10 +4,10 @@ Four Claude Code subagent definitions to launch instead of `general-purpose`:
 
 | File | Purpose | Tools | Default |
 |---|---|---|---|
-| `implementer.md` | a lane's code and tests with a closed brief | `Read, Edit, Write, Bash, Grep, Glob` | `sonnet`, `xhigh` |
-| `implementer-ui.md` | an interface lane; also preloads `agentic-design` | the same | `sonnet`, `xhigh` |
-| `researcher.md` | read-only research, inventory or diagnosis | `Read, Grep, Glob, WebFetch, WebSearch, Bash` | `sonnet`, `xhigh` |
-| `reviewer.md` | read-only review with fresh context | `Read, Grep, Glob, Bash` | `opus`, `medium` |
+| `implementer.md` | a lane's code and tests with a closed brief | `Read, Edit, Write, Bash, Grep, Glob` | `sonnet`, `high` |
+| `implementer-ui.md` | an interface lane; also preloads `agentic-design` | the same | `sonnet`, `high` |
+| `researcher.md` | read-only research, inventory or diagnosis | `Read, Grep, Glob, WebFetch, WebSearch, Bash` | `sonnet`, `medium` |
+| `reviewer.md` | read-only review with fresh context | `Read, Grep, Glob, Bash` | `sonnet`, `high` (verifier: `opus`, `medium`) |
 
 Each has a closed tool list (none launches other agents) and preloads only the skill it needs.
 `claude-md-excerpt.md` is the model-per-task rule to paste into your `CLAUDE.md`; levels (short,

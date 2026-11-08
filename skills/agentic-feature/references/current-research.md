@@ -39,7 +39,7 @@ one search: is pattern current? One Reading line, no research-notes.md.
 | Track | What | Countable ceiling | Indicative time | Location |
 |---|---|---|---|---|
 | **Standard** | 3 axes, only touched subjects | up to 3 searches/5 pages per axis | ~20 min total | research-notes.md beside reading.md; ≤4-line Reading summary; then Spec Kit research.md or light spec Research line |
-| **Complete** | 3 parallel axis subagents; read `references/complete-research.md` before research; you consolidate/cut | up to 6 searches/10 pages per subagent | ~45 min total | same as Standard |
+| **Complete** | one parallel subagent per touched axis (untouched axes: Standard depth by you); read `references/complete-research.md` before research; you consolidate/cut | up to 6 searches/10 pages per subagent | ~45 min total | same as Standard |
 | **Too big** | before slices, axis (a) at Standard depth: reference products' decomposition; technical research per slice/triage | up to 3 searches/5 pages | ~20 min | docs/research/<slug>-<yyyy-mm-dd>.md, cited by each backlog slice; separate docs(research) commit, push before stopping |
 
 Search = search-engine query. Page = source read (webpage, package registry document, data file).

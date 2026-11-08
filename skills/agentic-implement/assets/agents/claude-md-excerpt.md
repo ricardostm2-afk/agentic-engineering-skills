@@ -8,10 +8,10 @@ can close. Levels and the four separating questions are in `references/choosing-
 | Task | Who does it | Model and effort (example model names; the project picks its own) |
 |---|---|---|
 | short (definition in §1 of `choosing-the-agent.md`) | the session itself, with `agentic-implement`, no agent or brief | the session's |
-| well-defined | `implementer`, or `implementer-ui` for an interface lane | `sonnet`, effort `xhigh` |
+| well-defined | `implementer`, or `implementer-ui` for an interface lane | `sonnet`, effort `high` |
 | complex | the same agent | `opus`, effort `xhigh` |
-| code review | `reviewer`, with fresh context | `opus`, effort `medium` |
-| read-only research | `researcher` | `sonnet`, effort `xhigh` |
+| code review | `reviewer`, with fresh context | `sonnet`, effort `high`; verifier `opus`, effort `medium` |
+| read-only research | `researcher` | `sonnet`, effort `medium` |
 
 - Launch defined agent types rather than `general-purpose`: they have a closed tool list and
   start with less context. Use `general-purpose` only when none fits, with the reason in the brief.

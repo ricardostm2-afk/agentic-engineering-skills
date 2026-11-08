@@ -126,7 +126,7 @@ module, what stays behind the seam and which tests survive. You look up facts;
 the human makes decisions.
 
 Design the interface twice, following `references/design-it-twice.md`: show the problem space
-to the human, produce 3 or more radically different designs, compare depth,
+to the human, produce 2 radically different designs (a third only on request), compare depth,
 locality and seam placement, and give your recommendation. The choice returns to the grill as a decision.
 
 The seam and tests follow `references/deepening.md`: dependency category determines how to

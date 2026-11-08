@@ -152,7 +152,7 @@
       "targetPath": "skills/agentic-architecture/SKILL.md",
       "mode": "adapted",
       "reason": "English adaptation of improve-codebase-architecture: six steps with completion criteria, measured proof for each candidate in a declared history window (commits per candidate, coupling, co-change, deletion test, file:line and a command for every number), an agentic-design-compliant visual report published with Artifact, a one-question-at-a-time grill and execution through agentic-feature. Frontmatter has name and description only; requests trigger the skill. The agentic-implement sibling supplies the refactor recipe linked by deepening.md.",
-      "targetSha256": "a5d643ecf77f37aadb54984416763038efa20f16b6b7afdcc699d144eaf095f7"
+      "targetSha256": "ef1176305b5a114caf7b5b62725f3a9358dc39b6bada4cacfc26d90094370855"
     },
     {
       "upstream": "mattpocock",
@@ -179,7 +179,7 @@
       "targetPath": "skills/agentic-architecture/references/design-it-twice.md",
       "mode": "adapted",
       "reason": "English adaptation: without subagents, designs are sequential and the choice returns to the grill as the next question.",
-      "targetSha256": "d4efbc6989baffa01ffe1ed8792673f9c98b24bb23686743bd8bc6d15b9d9045"
+      "targetSha256": "528a79b1dec4bc0b0d09f8f8ad5c7eb53b4a94b4722b4b6ecf6808bf7f59b32d"
     },
     {
       "upstream": "mattpocock",
@@ -215,7 +215,7 @@
       "targetPath": "skills/agentic-fix/SKILL.md",
       "mode": "adapted",
       "reason": "Only step 3's red cycle comes from diagnosing-bugs: a command failing on this defect before any hypothesis. The rest is original: orchestrator/writer separation, defect class, safeguards, fresh-context review and the escaped-defect step.",
-      "targetSha256": "3a71f4bdeff10225c10afe0189ffd2f0cb933a989caa2b080a8366d30612b976"
+      "targetSha256": "9b1a15f1509c13682e75736ac116f28b6a89dad8b839599bb958707654b27712"
     },
     {
       "upstream": "mattpocock",

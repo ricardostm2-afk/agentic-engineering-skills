@@ -27,7 +27,9 @@ Step 8 — Done when the lesson line is committed there (or, without a location,
 
 **Level**
 
-1. **Unknown cause?** A defect whose cause is still unknown, or a race to diagnose. Yes: complex.
+1. **Unknown cause?** A defect whose cause is still unknown after a brief look (the trace, the
+   file it names, recent history of that path), or a race to diagnose. Yes: complex. A probable
+   cause goes in the brief as a hypothesis the agent proves red first.
 2. **Design that only shows in the code?** The contract, schema or module can only be decided
    through an experiment in the code. Yes: complex.
 3. **Steps not enumerable?** A refactor so coupled that the brief cannot list the steps.
@@ -55,7 +57,7 @@ Write the brief's `level:` line with these labels; the launch guard reads it:
 
 | Level | Claude | Codex |
 |---|---|---|
-| well-defined | Sonnet 5.5, effort xhigh | gpt-6.1-sol, effort medium |
+| well-defined | Sonnet 5.5, effort high | gpt-6.1-sol, effort medium |
 | complex | Opus 5.5, effort xhigh | gpt-6.1-sol, effort max |
 
 **Review**
@@ -64,7 +66,7 @@ Write the brief's `level:` line with these labels; the launch guard reads it:
 node <agentic-code-review>/scripts/validate-report.mjs <report.md>   # 0 = conforming; 1 = failure list
 ```
 
-- Round limit by level (1 for requested Quick, 2 for Standard, 3 for Complete). From round 2 onward:
+- Round limit by level (1 for requested Quick, 1 for Standard, 2 for Complete). From round 2 onward:
   only the new diff, without repeating closed findings, and only lenses with open Important findings, together.
 
 - **At the limit, with an open Important, stop and go to the human** with a summary (open findings,
@@ -189,13 +191,15 @@ or `blocked` or `spec-conflict` with the reason.
 
 - **Sensitive zone** (those in the repo's `REVIEW.md`; without it: authentication, permissions,
   third-party data, money, migrations): `agentic-code-review` panel.
-- **Outside it**: request “Quick (requested)” from `agentic-code-review`: one **fresh-context**
-  reviewer who did not write the code, with one lens, correctness, and 1 round
-  (`<agentic-code-review>/assets/reviewer-brief.template.md`). Read the diff against the brief
-  (symptom, expected behavior and class), looking for what the fix breaks. If `agentic-code-review`
-  checks the diff and assigns a higher level (large fix, always-high path), its level applies.
+- **Outside it, a short fix** (`<agentic-implement>/references/choosing-the-agent.md` §1): Quick,
+  no reviewer. Step 5's red → green and step 3's loop are the proof; read the diff yourself against
+  the symptom, expected behavior and class, looking for what the fix breaks.
+- **Outside it, a larger fix**: request “Quick (requested)” from `agentic-code-review`: one
+  **fresh-context** reviewer who did not write the code, with one lens, correctness, and 1 round
+  (`<agentic-code-review>/assets/reviewer-brief.template.md`), reading the diff against the brief.
+- If `agentic-code-review` checks the diff and assigns a higher level (always-high path), its level applies.
 
-Reviewers count toward `agentic-code-review`'s ceiling of 8 agents.
+Reviewers count toward `agentic-code-review`'s ceiling of 5 agents.
 
 Each Important returns to the agent, who reproduces before fixing it; do not fix what cannot be reproduced.
 

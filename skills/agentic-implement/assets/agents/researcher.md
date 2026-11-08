@@ -3,9 +3,9 @@ name: researcher
 description: "Researches an axis, inventories or diagnoses without changing the project, returning sourced facts. Use for a reading question (code, documentation, web) with defined limits and return format."
 # Model and effort: defaults for the well-defined level. These are example model names; the project
 # picks its own from its provider. Research with an unknown cause may need the more capable model.
-#   well-defined: model: sonnet, effort: xhigh      complex: model: opus, effort: xhigh
+#   well-defined: model: sonnet, effort: medium      complex: model: opus, effort: high
 model: sonnet
-effort: xhigh
+effort: medium
 # Closed list without writing tools. Bash is for read commands (git log, grep, ls): if your project
 # has a read-only Bash guard, apply it to this agent.
 tools: Read, Grep, Glob, WebFetch, WebSearch, Bash

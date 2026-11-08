@@ -23,12 +23,13 @@ effort follows what the change can break, and the change decides it.
 | Level | When (from diff) | Lenses | Confirmation | Rounds |
 |---|---|---|---|---|
 | Quick | docs and text outside high paths; ~50-line fix in one file and its test; additive behind a disabled flag | none: author's red → green test is proof. Explicitly requested: correctness | — | 1 (only if requested) |
-| Standard | normal product code | correctness, spec (with written intent), standards in one reviewer (`panel-and-rounds.md` §3) | fixer reproduces before fixing | 2 |
-| Complete | any always-high path (below) | those three plus security | a round 1 verifier and reproduction | 3 |
+| Standard | normal product code | correctness, spec (with written intent), standards in one reviewer (`panel-and-rounds.md` §3) | fixer reproduces before fixing | 1 |
+| Complete | any always-high path (below) | those three plus security, in two reviewers (`panel-and-rounds.md` §3) | a round 1 verifier when there is an Important, and reproduction | 2 |
 
 - **Hooks, CI and installers** (`.githooks/`, CI workflows, installation, packaging or automatic
-  update scripts) are never Quick and raise **lenses, not rounds**: add security and verifier to
-  whatever level the rest of the diff gives. Rounds stay at that level.
+  update scripts) are never Quick and raise **lenses, not rounds**: add the security lens (to the
+  Standard reviewer, or Complete's correctness reviewer) and the verifier when there is an
+  Important, to whatever level the rest of the diff gives. Rounds stay at that level.
 - **Escalate from lessons**: a `type: escaped` lesson line (`learning.md`, “Where it lives”), or
   confirmed `escaped` evaluation case in the same area in the last 30 days, raises one level.
   `type: repeated` does not. Nothing exceeds Complete.

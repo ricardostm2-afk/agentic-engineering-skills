@@ -545,7 +545,7 @@ test("agentic-code-review: Standard lenses share one reviewer; risk table and SK
   const source = "agentic-code-review/references/panel-and-rounds.md";
   const lenses = section(read("agentic-code-review", "references", "panel-and-rounds.md"), "## §3 ");
   assert.match(lenses, /\*\*Standard\*\* groups its lenses \(correctness, spec, standards, or \x60REVIEW\.md\x60's choices\) in one fresh-context reviewer with one brief/);
-  assert.match(lenses, /\*\*Complete\*\* gives each lens its own reviewer, including security, and a separate verifier/);
+  assert.match(lenses, /\*\*Complete\*\* splits its four lenses between two reviewers, correctness with security and spec with standards, and adds a separate verifier only when the consolidated report has an Important/);
   const standard = read("agentic-code-review", "references", "risk-levels.md").split("\n").find((line) => line.startsWith("| Standard |"));
   assert.match(standard, /one reviewer \(\x60panel-and-rounds\.md\x60 §3\)/);
   assert.match(read("agentic-code-review", "SKILL.md").replace(/\s+/g, " "), /lenses[^]*\x60references\/panel-and-rounds\.md\x60 §3[^]*level/);

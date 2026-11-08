@@ -3,9 +3,9 @@ name: implementer-ui
 description: "Implements a UI lane with the agreed variant and design system, using agentic-implement and agentic-design. Use when the brief points to the chosen variant and design system."
 # Model and effort: defaults for the well-defined level. These are example model names; the project
 # picks its own from its provider. For a complex task the orchestrator passes another model in the call.
-#   well-defined: model: sonnet, effort: xhigh      complex: model: opus, effort: xhigh
+#   well-defined: model: sonnet, effort: high      complex: model: opus, effort: xhigh
 model: sonnet
-effort: xhigh
+effort: high
 # Closed list. Visual proof needs a browser tool: add yours here (for example a browser MCP server,
 # using its name in your installation).
 tools: Read, Edit, Write, Bash, Grep, Glob

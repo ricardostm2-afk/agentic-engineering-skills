@@ -4,9 +4,9 @@ description: "Implements a lane's code and tests from a closed brief, using agen
 # Model and effort: defaults for the well-defined level. These are example model names; the project
 # picks its own from its provider. For a complex task the orchestrator passes a more capable model
 # in the call (the call parameter overrides this file): see the CLAUDE.md excerpt.
-#   well-defined: model: sonnet, effort: xhigh      complex: model: opus, effort: xhigh
+#   well-defined: model: sonnet, effort: high      complex: model: opus, effort: xhigh
 model: sonnet
-effort: xhigh
+effort: high
 # Closed list: edits and writes files, runs commands and searches. Does not launch other agents.
 tools: Read, Edit, Write, Bash, Grep, Glob
 skills: [agentic-implement]

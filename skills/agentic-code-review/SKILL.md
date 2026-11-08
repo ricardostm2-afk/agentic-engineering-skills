@@ -95,8 +95,9 @@ run one lens (correctness) and one round.
 - Each reviewer is a fresh-context subagent with a brief from `assets/reviewer-brief.template.md`,
   read after `REVIEW.md`, with lenses assigned by `references/panel-and-rounds.md` §3 for the level.
   Launch them in parallel.
-- Lenses, model and ceiling (8 review agents per change, across rounds):
-  `references/panel-and-rounds.md` §3. All lenses and the verifier use the user's review model.
+- Lenses, model and ceiling (5 review agents per change, across rounds):
+  `references/panel-and-rounds.md` §3. Lenses use the user's review model; the verifier, the
+  stronger verifier model.
 - `/security-review` reviews `git diff origin/HEAD...` in its working folder, not uncommitted
   changes: run in the worktree at the reviewed SHA without reset. It counts as the security lens
   only if `git -C <wt> merge-base origin/HEAD <reviewed-sha>` equals `<base>`; otherwise use a
@@ -113,9 +114,9 @@ proof), cut Nits to 3 total, put Pre-existing findings in one line, and write th
 ### 4. Confirmation
 
 No Important reaches the author without proof; none is fixed “just in case”.
-- Complete, and hooks, CI or installers: **one verifier** in round 1, using the review model and
-  fresh context, on consolidated Important findings. Confirms, refutes (with `file:line`) or
-  gives no verdict (= unconfirmed: “Not confirmed” line, not sent to author as Important).
+- Complete, and hooks, CI or installers, when there is a consolidated Important: **one verifier**
+  in round 1, using the verifier model and fresh context, on those findings. Confirms, refutes
+  (with `file:line`) or gives no verdict (= unconfirmed: “Not confirmed” line, not sent to author as Important).
 - Every level and round: the fixer reproduces each Important before fixing (red test; for a doc,
   its line and the contradicting line). Do not fix what is not reproduced.
 
@@ -143,7 +144,7 @@ The validator checks form, not truth; truth belongs to step 4.
   or a fix session, which is authorship). If the human asks you to fix, you become that fix's author
   and the next round reviews it.
 <!-- card:review-2 -->
-- Round limit by level (1 for requested Quick, 2 for Standard, 3 for Complete). From round 2 onward:
+- Round limit by level (1 for requested Quick, 1 for Standard, 2 for Complete). From round 2 onward:
   only the new diff, without repeating closed findings, and only lenses with open Important findings, together.
 <!-- /card:review-2 -->
 - What can enter after the reviewed SHA without a round (metadata, an Important fix with proof and
@@ -178,11 +179,11 @@ An open Important or “Direction” goes first.
 ## In other agents
 
 - **Codex**: lenses and verifier are Codex subagents with the same brief and the user's review
-  model (without a rule, for example gpt-6.1-sol with medium effort; example model names; the project
-  picks its own). Default sandbox makes `.git` read-only: `git worktree add` needs approval. Ask
-  once for the session; without approval, run lenses sequentially in one human-created worktree.
+  model, the verifier with the verifier model (without a rule, for example gpt-6.1-sol with medium
+  effort, and high for the verifier; example model names; the project picks its own). Default
+  sandbox makes `.git` read-only: `git worktree add` needs approval. Ask once for the session; without approval, run lenses sequentially in one human-created worktree.
   In a job launched without subagents (launcher disables them), each reviewer the level requires
-  separately (Complete lenses, verifier) is its own job with its own brief; a job combining what
+  separately (Complete's two reviewers, verifier) is its own job with its own brief; a job combining what
   the level separates marks the report “review not independent”.
 - **Cursor, Gemini CLI, Copilot, OpenCode**: subagents unconfirmed. Without them each lens runs
   in a new session (fresh context) with the brief; without even that, perform lenses sequentially

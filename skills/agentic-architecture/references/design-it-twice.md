@@ -16,8 +16,9 @@ Show it and proceed straight to point 2: the human reads and thinks while subage
 
 ## 2. The designs
 
-Launch 3 or more subagents in parallel. Each produces a **radically different** interface
-for the deepened module. Without subagents, produce the designs yourself, one at a time, each with
+Launch 2 subagents in parallel, with constraints 1 and 3 below by default; a third only when the
+human asks or the seam crosses dependencies (constraint 4). Each produces a **radically different**
+interface for the deepened module. Without subagents, produce the designs yourself, one at a time, each with
 its own constraint.
 
 Each subagent gets its own technical brief, independent of the explanation in point 1: file

@@ -10,7 +10,7 @@ import { validateReport } from './validate-report.mjs';
 const HERE = import.meta.dirname;
 const SCRIPT = path.join(HERE, 'validate-report.mjs');
 const TEMPLATE = path.join(HERE, '..', 'assets', 'report.template.md');
-const GOOD = `Review 9c4e2a105a1e · Standard · round 1/2 · 2 Important · 1 Nit · 1 Pre-existing
+const GOOD = `Review 9c4e2a105a1e · Standard · round 1/1 · 2 Important · 1 Nit · 1 Pre-existing
 
 [Important] src/api/orders.ts:88 — total ignores organization discount — reproduce: npm test -- orders.discount (red) — class: separately recalculated total
 [Important] docs/RUNBOOK.md:41 — says to run deleted scripts/migrate.sh — reproduce: absent: scripts/migrate.sh (git ls-tree) — class: lying doc
@@ -18,7 +18,7 @@ const GOOD = `Review 9c4e2a105a1e · Standard · round 1/2 · 2 Important · 1 N
 
 Pre-existing: src/lib/dates.ts:30 · fixed timezone
 Not read: nothing`;
-const CLEAN = `Review 9c4e2a1 · Complete · lens security · round 2/3 · 0 Important · 0 Nits · 0 Pre-existing
+const CLEAN = `Review 9c4e2a1 · Complete · lens security · round 2/2 · 0 Important · 0 Nits · 0 Pre-existing
 0 Important — nothing to fix
 
 Pre-existing: none`;
@@ -33,7 +33,7 @@ test('good report passes (Important, Nit, Pre-existing)', () => {
   const r = validateReport(GOOD);
   assert.equal(r.ok, true);
   assert.deepEqual({ sha:r.header.sha, level:r.header.level, round:r.header.round, limit:r.header.limit },
-    { sha:'9c4e2a105a1e', level:'Standard', round:1, limit:2 });
+    { sha:'9c4e2a105a1e', level:'Standard', round:1, limit:1 });
 });
 test('no findings passes with zero line immediately below header', () => assert.deepEqual(problems(CLEAN), []));
 test('report template examples pass', () => {
@@ -51,8 +51,8 @@ test('refuses short or nonhex SHA', () => {
 });
 test('refuses unfilled level',()=>refuse(CLEAN.replace('Complete','<level>'),/level/));
 test('refuses rounds above limit and zero',()=>{
-  refuse(CLEAN.replace('round 2/3','round 4/3'),/round 4 above limit 3/);
-  refuse(CLEAN.replace('round 2/3','round 0/3'),/round/);
+  refuse(CLEAN.replace('round 2/2','round 3/2'),/round 3 above limit 2/);
+  refuse(CLEAN.replace('round 2/2','round 0/2'),/round/);
 });
 test('refuses counts inconsistent with findings',()=>{
   refuse(GOOD.replace('2 Important','3 Important'),/Important: first line says 3, found 2/);
@@ -77,18 +77,18 @@ test('doc proof needs contradicting line or absent path',()=>{
   assert.deepEqual(problems(GOOD.replace('reproduce: absent: scripts/migrate.sh (git ls-tree)','reproduce: scripts/README.md:3 lists only deploy.sh')),[]);
 });
 test('dependency outside research needs absence in approved research',()=>{
-  const dep=proof=>`Review abcdef1 · Standard · round 1/2 · 1 Important · 0 Nits · 0 Pre-existing\n[Important] package.json:31 — adds left-pad — reproduce: ${proof} — class: dependency outside research\nPre-existing: none`;
+  const dep=proof=>`Review abcdef1 · Standard · round 1/1 · 1 Important · 0 Nits · 0 Pre-existing\n[Important] package.json:31 — adds left-pad — reproduce: ${proof} — class: dependency outside research\nPre-existing: none`;
   refuse(dep('git diff base...head -- package.json'),/dependency.*absent in/);
   assert.deepEqual(problems(dep('git diff base...head -- package.json; absent in specs/012/research.md')),[]);
   refuse(dep('git diff base...head -- package.json; absent in nothing'),/outside research.*absent in/);
 });
 test('vulnerable dependency is proved like code without approved research',()=>{
-  assert.deepEqual(problems(`Review abcdef1 · Standard · round 1/2 · 1 Important · 0 Nits · 0 Pre-existing\n[Important] package.json:31 — lodash 4.17.20 known CVE — reproduce: npm audit --omit=dev (high) — class: vulnerable dependency\nPre-existing: none`),[]);
+  assert.deepEqual(problems(`Review abcdef1 · Standard · round 1/1 · 1 Important · 0 Nits · 0 Pre-existing\n[Important] package.json:31 — lodash 4.17.20 known CVE — reproduce: npm audit --omit=dev (high) — class: vulnerable dependency\nPre-existing: none`),[]);
 });
 // Nits, labels, order, Pre-existing
  test('refuses more than 3 Nits',()=>{
   const nits=Array.from({length:4},(_,i)=>`[Nit] src/a.ts:${i+1} — confusing name`).join('\n');
-  refuse(`Review abcdef1 · Standard · round 1/2 · 0 Important · 4 Nits · 0 Pre-existing\n0 Important — nothing to fix\n${nits}\nPre-existing: none`,/4 Nits.*maximum 3/);
+  refuse(`Review abcdef1 · Standard · round 1/1 · 0 Important · 4 Nits · 0 Pre-existing\n0 Important — nothing to fix\n${nits}\nPre-existing: none`,/4 Nits.*maximum 3/);
 });
 test('refuses Nit without file:line',()=>refuse(GOOD.replace('[Nit] src/api/orders.ts:12','[Nit] orders'),/Nit without file:line/));
 test('refuses unknown labels',()=>refuse(GOOD.replace('[Nit]','[Critical]'),/unknown label «Critical»/));
@@ -105,13 +105,13 @@ test('refuses multiple, missing or incomplete Pre-existing lines',()=>{
   refuse(GOOD.replace(' · fixed timezone',''),/Pre-existing without class/);
 });
 test('refuses labels not at line start (hidden from counts)',()=>{
-  const report=line=>`Review abcdef1 · Standard · round 1/2 · 0 Important · 0 Nits · 0 Pre-existing\n0 Important — nothing to fix\n${line}\nPre-existing: none`;
+  const report=line=>`Review abcdef1 · Standard · round 1/1 · 0 Important · 0 Nits · 0 Pre-existing\n0 Important — nothing to fix\n${line}\nPre-existing: none`;
   for(const line of ['- [Important] src/a.ts:3 — loses discount — reproduce: npm test — class: separate total','1. [Nit] nothing','**[Important]** no file']) refuse(report(line),/outside line start/);
 });
 test('refuses round limits above skill level',()=>{
-  refuse(GOOD.replace('Standard · round 1/2','Standard · round 3/3'),/limit 3 above level «Standard» \(2\)/);
-  refuse(GOOD.replace('Standard · round 1/2','Quick (requested) · round 2/2'),/level «Quick \(requested\)» \(1\)/);
-  assert.deepEqual(problems(GOOD.replace('Standard · round 1/2','Deep · round 3/3')),[]);
+  refuse(GOOD.replace('Standard · round 1/1','Standard · round 2/2'),/limit 2 above level «Standard» \(1\)/);
+  refuse(GOOD.replace('Standard · round 1/1','Quick (requested) · round 2/2'),/level «Quick \(requested\)» \(1\)/);
+  assert.deepEqual(problems(GOOD.replace('Standard · round 1/1','Deep · round 3/3')),[]);
 });
 // CLI
 function run(args,input){ const r=spawnSync(process.execPath,[SCRIPT,...args],{encoding:'utf8',input}); return {code:r.status,out:r.stdout+r.stderr}; }
@@ -142,7 +142,7 @@ test('CLI: skill and script symlinks behave like real path',t=>{
 });
 test('accepts only the supported English report syntax',()=>{
   // Invalid English fixtures exercise each refusal without publishing another language's syntax.
-  const invalid='Audit abcdef1 · Standard · round 1/2 · 0 Important · 0 Nits · 0 Pre-existing\n0 Important — nothing to fix\nPre-existing: none';
+  const invalid='Audit abcdef1 · Standard · round 1/1 · 0 Important · 0 Nits · 0 Pre-existing\n0 Important — nothing to fix\nPre-existing: none';
   refuse(invalid,/first line/);
   refuse(GOOD.replace('[Important]','[Major]'),/unknown label/);
   refuse(GOOD.replace(' — reproduce: npm test -- orders.discount (red)',' — rerun: npm test -- orders.discount (red)'),/reproduce/);

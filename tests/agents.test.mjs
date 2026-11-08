@@ -89,8 +89,10 @@ for (const name of AGENTS) {
 }
 
 test("reviewer uses the review-level model; the other three use well-defined defaults", () => {
-  assert.deepEqual([agent("reviewer").fields.model, agent("reviewer").fields.effort], ["opus", "medium"]);
-  for (const name of ["implementer", "implementer-ui", "researcher"]) assert.deepEqual([agent(name).fields.model, agent(name).fields.effort], ["sonnet", "xhigh"], name);
+  assert.deepEqual([agent("reviewer").fields.model, agent("reviewer").fields.effort], ["sonnet", "high"]);
+  assert.match(agent("reviewer").comments.join(" "), /verifier: model: opus, effort: medium/, "the verifier keeps the stronger model");
+  for (const name of ["implementer", "implementer-ui"]) assert.deepEqual([agent(name).fields.model, agent(name).fields.effort], ["sonnet", "high"], name);
+  assert.deepEqual([agent("researcher").fields.model, agent("researcher").fields.effort], ["sonnet", "medium"]);
   assert.match(read(FOLDER, "reviewer.md"), /Read-only: do not edit, commit/);
 });
 

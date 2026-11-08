@@ -3,9 +3,9 @@ name: reviewer
 description: "Reviews a branch or diff read-only before integration, with the requested lenses, returning findings with file:line. Fresh context: the code's author does not review it."
 # Model and effort: defaults for review. These are example model names; the project picks its own
 # from its provider. Review always runs in an agent with fresh context.
-#   review: model: opus, effort: medium
-model: opus
-effort: medium
+#   review: model: sonnet, effort: high      verifier: model: opus, effort: medium
+model: sonnet
+effort: high
 # Closed list without writing tools. Bash is for Git (log, diff, blame) and reading;
 # the brief prohibits leaving files or commits in the review worktree.
 tools: Read, Grep, Glob, Bash

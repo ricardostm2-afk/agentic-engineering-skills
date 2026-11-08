@@ -41,8 +41,10 @@ work without PRs and an orchestrator (you) launching reviewers.
 
 ## §3 Lenses, model and ceiling
 
-All lenses and verifier use the user's **review model**; without a rule, for example Opus 5.5
-medium in Claude and gpt-6.1-sol medium in Codex (example model names; the project picks its own).
+Lenses use the user's **review model**; without a rule, for example Sonnet 5.5 high in Claude and
+gpt-6.1-sol medium in Codex. The verifier uses the stronger **verifier model**; without a rule,
+for example Opus 5.5 medium in Claude and gpt-6.1-sol high in Codex (example model names; the
+project picks its own).
 Provider is the orchestrator's; use the other only on explicit human request
 (`<agentic-implement>/references/choosing-the-agent.md` §3). The code's writer does not review it.
 
@@ -56,7 +58,8 @@ Provider is the orchestrator's; use the other only on explicit human request
 - **Reviewers per level**: **Standard** groups its lenses (correctness, spec, standards, or
   `REVIEW.md`'s choices) in one fresh-context reviewer with one brief: they always run together
   on the same diff; one agent per lens rereading the repo multiplies cost and loses consolidation
-  detail. **Complete** gives each lens its own reviewer, including security, and a separate verifier.
+  detail. **Complete** splits its four lenses between two reviewers, correctness with security and
+  spec with standards, and adds a separate verifier only when the consolidated report has an Important.
 - **Reviewer acceptance test** (spec lens, without reading author tests): **Complete** reviewer
   writes and runs an acceptance test outside the repo from intent; **Standard** describes it;
   **Quick** has none.
@@ -75,7 +78,7 @@ Provider is the orchestrator's; use the other only on explicit human request
   checklist against screenshots), docs, “fail-open guard / test unable to fail”, migrations.
 - Lenses are subagents with the brief. A generic review skill/command following its own method
   bypasses brief and `REVIEW.md`: do not use it as a lens (`/security-review` is the security exception).
-- **Ceiling: 8 review agents per change** (feature or branch), across rounds. Count those you
+- **Ceiling: 5 review agents per change** (feature or branch), across rounds. Count those you
   launch for review: lenses and verifier. A skill/command used as lens counts 1. Fixing or
   reproducing sessions do not count: they are authorship. Near ceiling, combine lenses in one
   agent; if still impossible, stop and go to human with §9 summary.
@@ -103,8 +106,9 @@ You, before findings reach the author:
 
 ## §6 Confirmation
 
-- **Verifier** (Complete, and hooks, CI or installers; round 1 only): **one** agent with review
-  model and fresh context receives consolidated Important findings. For each, open `file:line`
+- **Verifier** (Complete, and hooks, CI or installers; round 1 only, and only when there is a
+  consolidated Important): **one** agent with the verifier model (§3) and fresh context receives
+  consolidated Important findings. For each, open `file:line`
   at reviewed SHA, follow path to effect, return confirmed, refuted (reason and `file:line`) or
   no verdict. Adds no findings. Never two in one round.
 - **No verdict = not confirmed**: not sent to author as Important; stays on “Not confirmed” line.
@@ -145,7 +149,8 @@ Responses measure noise: many “wrong”/“does not matter” mean reviewer fl
 
 ## §9 Rounds
 
-- **Level limit**: 1 requested Quick, 2 Standard, 3 Complete.
+- **Level limit**: 1 requested Quick, 1 Standard, 2 Complete. An Important fixed with proof and an
+  integrator-checked diff needs no round (exceptions below), so most changes end in round 1.
 - From round 2: diff `<previous-reviewed-sha>..<reviewed-sha>` and closed findings list, never
   repeated (reopen only if new diff restores same effect on same lines). Only lenses with open
   Important findings return, combined in one agent when possible, plus lenses required by this

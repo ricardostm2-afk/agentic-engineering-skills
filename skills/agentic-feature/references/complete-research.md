@@ -4,11 +4,14 @@ Read this branch before research on the Complete route. Axes, sources, filtering
 remain in `references/current-research.md`; paths are relative to the skill folder.
 Without subagents, apply this same contract sequentially, one axis at a time.
 
-**Complete: one subagent per axis.** If mattpocock-skills:research exists invoke per axis with
-brief below: save `<session-temp>/research-<axis>.md` outside repo beside reading.md (dirty tree
-before step 4 breaks specify init requiring clean git status). Otherwise 3 subagents same brief.
-Wait all three before final suggestions. Dead/expired/empty agent did not find “nothing simpler”:
-its axis stays not confirmed; continue.
+**Complete: one subagent per axis the feature touches.** First state, in one line per axis, whether
+the feature touches it (a new dependency or library, a new UI pattern, a new technique). Untouched
+axes get no subagent: you research them yourself within Standard limits, or write
+`not touched: <why>`. If mattpocock-skills:research exists invoke per touched axis with brief
+below: save `<session-temp>/research-<axis>.md` outside repo beside reading.md (dirty tree before
+step 4 breaks specify init requiring clean git status). Otherwise one subagent per touched axis,
+same brief. Wait for all of them before final suggestions. Dead/expired/empty agent did not find
+“nothing simpler”: its axis stays not confirmed; continue.
 
 ```
 Research · axis <a feature | b design | c technique>: <axis question for feature>

@@ -21,7 +21,9 @@ schema, invariants, edge cases and red test, or split it into sequential steps.
 Then ask the four questions in order and stop at the first that leads to **complex**:
 
 <!-- card:level-1 -->
-1. **Unknown cause?** A defect whose cause is still unknown, or a race to diagnose. Yes: complex.
+1. **Unknown cause?** A defect whose cause is still unknown after a brief look (the trace, the
+   file it names, recent history of that path), or a race to diagnose. Yes: complex. A probable
+   cause goes in the brief as a hypothesis the agent proves red first.
 2. **Design that only shows in the code?** The contract, schema or module can only be decided
    through an experiment in the code. Yes: complex.
 3. **Steps not enumerable?** A refactor so coupled that the brief cannot list the steps.
@@ -40,8 +42,10 @@ A well-defined task is **short** when it fits one lane, with 1 code file and its
 the repo's `REVIEW.md`) and outside hooks, CI and installers. The orchestrator handles short tasks
 with `agentic-implement`, without a brief or agent: writing the brief and having another agent
 reread the same files costs more than the change, and a summary loses what the orchestrator already
-read. Sections 2 to 4 do not apply. Review still belongs to a subagent with fresh context: the writer
-does not review. If the change exceeds these limits midway, stop and launch an agent at its actual level.
+read. Sections 2 to 4 do not apply. Review follows the diff's review level: a short change is
+usually Quick, with no reviewer (the red → green test is the proof); when the level calls for one,
+it is a subagent with fresh context, because the writer does not review. If the change exceeds
+these limits midway, stop and launch an agent at its actual level.
 
 - The human may force the level.
 <!-- card:level-2 -->
@@ -73,7 +77,7 @@ The project chooses its models and efforts, and the user's rule always wins. Wit
 <!-- card:model -->
 | Level | Claude | Codex |
 |---|---|---|
-| well-defined | Sonnet 5.5, effort xhigh | gpt-6.1-sol, effort medium |
+| well-defined | Sonnet 5.5, effort high | gpt-6.1-sol, effort medium |
 | complex | Opus 5.5, effort xhigh | gpt-6.1-sol, effort max |
 <!-- /card:model -->
 

@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const NOTHING = '0 Important — nothing to fix';
 const MAX_NITS = 3;
 // Custom REVIEW.md levels are not checked against these default round limits.
-const LEVEL_LIMIT = [[/^Quick\b/,1],[/^Standard\b/,2],[/^Complete\b/,3]];
+const LEVEL_LIMIT = [[/^Quick\b/,1],[/^Standard\b/,1],[/^Complete\b/,2]];
 // Off-start labels (bullets, numbering, bold) would hide findings from counts: refuse them.
 const LOOSE_LABEL = /\[(Important|Nit|Pre-existing)\]/;
 const HEADER = /^Review ([0-9a-f]{7,40}) · ([^·]+?) · (?:lens ([^·]+?) · )?round (\d+)\/(\d+) · (\d+) Important · (\d+) Nits? · (\d+) Pre-existing$/;

@@ -249,10 +249,10 @@ own and edit, in `skills/agentic-implement/assets/agents/`:
 
 | Agent | For | Tools | Default |
 |---|---|---|---|
-| `implementer` | code and tests for one lane of a closed brief; loads `agentic-implement` | Read, Edit, Write, Bash, Grep, Glob | `sonnet`, `xhigh` |
-| `implementer-ui` | the same for a UI lane; also loads `agentic-design` | the same | `sonnet`, `xhigh` |
-| `researcher` | read-only research, inventory or diagnosis | Read, Grep, Glob, WebFetch, WebSearch, Bash | `sonnet`, `xhigh` |
-| `reviewer` | read-only review with fresh context, working from the brief of `agentic-code-review` | Read, Grep, Glob, Bash | `opus`, `medium` |
+| `implementer` | code and tests for one lane of a closed brief; loads `agentic-implement` | Read, Edit, Write, Bash, Grep, Glob | `sonnet`, `high` |
+| `implementer-ui` | the same for a UI lane; also loads `agentic-design` | the same | `sonnet`, `high` |
+| `researcher` | read-only research, inventory or diagnosis | Read, Grep, Glob, WebFetch, WebSearch, Bash | `sonnet`, `medium` |
+| `reviewer` | read-only review with fresh context, working from the brief of `agentic-code-review` | Read, Grep, Glob, Bash | `sonnet`, `high` (verifier: `opus`, `medium`) |
 
 The model and the effort in each file are a default for one task level, written next to a comment that
 says so: change those two lines to what your provider offers. The levels (short, well-defined, complex)

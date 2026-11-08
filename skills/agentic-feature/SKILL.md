@@ -28,7 +28,9 @@ Step 7 — Done when integration commit is where project policy requires and fin
 
 **Level**
 
-1. **Unknown cause?** A defect whose cause is still unknown, or a race to diagnose. Yes: complex.
+1. **Unknown cause?** A defect whose cause is still unknown after a brief look (the trace, the
+   file it names, recent history of that path), or a race to diagnose. Yes: complex. A probable
+   cause goes in the brief as a hypothesis the agent proves red first.
 2. **Design that only shows in the code?** The contract, schema or module can only be decided
    through an experiment in the code. Yes: complex.
 3. **Steps not enumerable?** A refactor so coupled that the brief cannot list the steps.
@@ -56,7 +58,7 @@ Write the brief's `level:` line with these labels; the launch guard reads it:
 
 | Level | Claude | Codex |
 |---|---|---|
-| well-defined | Sonnet 5.5, effort xhigh | gpt-6.1-sol, effort medium |
+| well-defined | Sonnet 5.5, effort high | gpt-6.1-sol, effort medium |
 | complex | Opus 5.5, effort xhigh | gpt-6.1-sol, effort max |
 
 **Review**
@@ -65,7 +67,7 @@ Write the brief's `level:` line with these labels; the launch guard reads it:
 node <agentic-code-review>/scripts/validate-report.mjs <report.md>   # 0 = conforming; 1 = failure list
 ```
 
-- Round limit by level (1 for requested Quick, 2 for Standard, 3 for Complete). From round 2 onward:
+- Round limit by level (1 for requested Quick, 1 for Standard, 2 for Complete). From round 2 onward:
   only the new diff, without repeating closed findings, and only lenses with open Important findings, together.
 
 - **At the limit, with an open Important, stop and go to the human** with a summary (open findings,
@@ -147,7 +149,7 @@ or changes track.
   sessions or customer isolation; money (payments, billing, pricing); new personal/sensitive data
   or new sharing; external integration (third-party API, webhooks, email/SMS); irreversible end-user
   action (effect leaves system or cannot be undone); public contract used by others; files in
-  `risk: high` area of `.agentic/areas.json`; over ~1 week. → research with one subagent per axis,
+  `risk: high` area of `.agentic/areas.json`; over ~1 week. → research with one subagent per touched axis,
   full Spec Kit, step 4 **gate**, security review.
 - **Standard**: everything else (filter, exporting what user already sees, read screen, cancelling
   own record under existing access rules). → focused research, light Spec Kit, step 4 **notice**.

@@ -1,7 +1,7 @@
 # Reviewer brief: <change> · lens <lens> · round <n>/<limit>
 
 <!-- agentic-code-review template (step 2), also called by agentic-feature step 6. One brief per
-reviewer with lenses assigned by panel-and-rounds.md §3 (Standard: all in one); verifier uses
+reviewer with lenses assigned by panel-and-rounds.md §3 (Standard: all in one; Complete: two); verifier uses
 last section only. Fill <...>, remove inapplicable parts and comment. <agentic-code-review>,
 <agentic-implement>, <agentic-design> are absolute skill paths (third only for UI). Recipient wrote
 no part of change. Orchestrator already checked level against round's diff; lenses do not redo it.
@@ -16,7 +16,8 @@ both in panel-and-rounds.md §2's <tmp>. -->
 - Commits: `git log --oneline <base-sha>..<reviewed-sha>`.
 - Review level: <Quick (requested) | Standard | Complete, or `REVIEW.md`'s>, because <criterion>
   (<+ security and verifier: hooks, CI or installers>, if applicable). Model: <user review model,
-  e.g. Opus medium | gpt-6.1-sol medium; example model names; the project picks its own>.
+  e.g. Sonnet high | gpt-6.1-sol medium; verifier: Opus medium | gpt-6.1-sol high; example model
+  names; the project picks its own>.
 - Intent: <spec, request, PR description or commit messages> · plan: <path or “none”> · approved
   research: <path or “none”> · UI: <variants/choice.md and screenshots, or “no UI”>.
 - Project rules: `REVIEW.md` (if present overrides brief), `AGENTS.md`, constitution. Read these,
