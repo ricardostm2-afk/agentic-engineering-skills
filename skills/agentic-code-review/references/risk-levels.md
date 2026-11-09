@@ -7,16 +7,21 @@ effort follows what the change can break, and the change decides it.
 
 - **The diff defines level**, not the author or their report. The author may think it is “just
   text”; if the diff touches a migration, it is Complete.
-- **You classify** (orchestrator), before round 1 lenses and again in each round against that
-  round's diff. A higher path in a later round adds missing lenses to that round (a fix touching
-  a hook or migration adds security) without changing round limit.
+- **You classify** (orchestrator), before round 1 and for **every post-review diff before any
+  exception** in `panel-and-rounds.md` §9. This includes metadata, proof-backed Important fixes,
+  acceptance-test integration and rebase/conflict changes; classify actual paths/effects, not the
+  author's label. A higher-risk diff adds only newly required lenses (for example security for a
+  hook or migration), on that diff only, without repeating satisfied lenses or changing round limits.
+  A no-new-round exception cannot waive a newly required lens; at a limit, use the panel's summary.
 - **The reviewer is the second classifier.** Lenses do not reclassify, but if reading calls for
   more than the assigned level (an unlisted path touching session, permissions, money or a guard),
   write “Level: <file:line> — <why>” in the report. You decide and state the decision in one line.
 - Project `REVIEW.md` wins: use its other level names, path list or diff classification command
   (names: “Three scales”, below).
-- Called by agentic-feature, the feature track is the starting level; still check the diff.
-  If it needs more, review at the correct depth (do not redo completed planning), saying so in one line.
+- Called by agentic-feature, the feature track is a starting point; the actual diff decides.
+  Its Standard short route has no Standard review floor: apply the existing Quick criteria when
+  they hold. If the diff needs more, review at the correct depth without redoing completed planning;
+  state the decision in one line.
 
 ## Levels
 
@@ -46,7 +51,7 @@ Three scales use similar names to measure different things. This table is the on
 | Scale | Measures | Values | Who decides | Written as |
 |---|---|---|---|---|
 | review level | what the diff can break | Quick, Standard, Complete | review orchestrator, using this page | “Review level:” in reviewer brief; `<level>` in report first line and `Review:` line |
-| feature track | request risk before code exists | Standard, Complete (Fix goes to `agentic-fix`; Too big is split first) | step 0 of `agentic-feature` | a line to the human; review starts at the same named level |
+| feature track | request risk before code exists | Standard, Complete (Fix goes to `agentic-fix`; Too big is split first) | step 0 of `agentic-feature` | a line to the human; review uses it as a starting point, then classifies the diff |
 | agent level | what the writer still must decide or discover | short, well-defined, complex | `<agentic-implement>/references/choosing-the-agent.md` §1 | `level:` in writer brief, read by launchers |
 
 - Other `REVIEW.md` level names map 1:1 in order (for example Quick, Normal, Deep); `REVIEW.md`
@@ -77,7 +82,7 @@ running evaluation cases (`learning.md`).
 - **Whoever requested the change answers for it.** The agent can write `Risk:` and `How to undo:`;
   the requester reads these and the proof and owns the result.
 - **Approval applies to a SHA.** New commits after the reviewed SHA follow `panel-and-rounds.md`
-  §9: either an exception applies or a round opens.
+  §9: reclassify the new diff first; only then decide whether an exception applies or a round opens.
 - **Multi-person team**: the article uses 0 humans for Quick (with green review and security),
   1 for Standard, 2 for Complete; always-high paths always get a person, lightweight paths only
   for trusted authors. Put this in `REVIEW.md` and remote rules (code owners, branch protection);

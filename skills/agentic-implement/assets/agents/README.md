@@ -5,9 +5,9 @@ Four Claude Code subagent definitions to launch instead of `general-purpose`:
 | File | Purpose | Tools | Default |
 |---|---|---|---|
 | `implementer.md` | a lane's code and tests with a closed brief | `Read, Edit, Write, Bash, Grep, Glob` | `sonnet`, `high` |
-| `implementer-ui.md` | an interface lane; also preloads `agentic-design` | the same | `sonnet`, `high` |
+| `implementer-ui.md` | an interface lane; reads only its exact design mode reference | the same | `sonnet`, `high` |
 | `researcher.md` | read-only research, inventory or diagnosis | `Read, Grep, Glob, WebFetch, WebSearch, Bash` | `sonnet`, `medium` |
-| `reviewer.md` | read-only review with fresh context | `Read, Grep, Glob, Bash` | `sonnet`, `high` (verifier: `opus`, `medium`) |
+| `reviewer.md` | production read-only, acceptance scratch writing, fresh context | `Read, Grep, Glob, Bash, Write` | `sonnet`, `high` (verifier: `opus`, `medium`) |
 
 Each has a closed tool list (none launches other agents) and preloads only the skill it needs.
 `claude-md-excerpt.md` is the model-per-task rule to paste into your `CLAUDE.md`; levels (short,
@@ -40,11 +40,14 @@ file, `CLAUDE_CODE_SUBAGENT_MODEL` variable, session model.
 
 - `implementer-ui` has no browser tool because its name depends on your installation: add it to
   `tools` for visual proof.
-- Bash in reading agents (`researcher`, `reviewer`) is for read commands. If your project has a
-  read-only Bash guard, apply it to them.
+- `researcher` uses Bash only for reading. `reviewer` keeps production read-only but may use
+  Write/Bash for a focused acceptance test in its authorized scratch path. Scope any Bash/write
+  guard accordingly; a blanket read-only guard would prevent Complete's required acceptance test.
+  No default extra test-writer agent is needed.
 - The `skills` field preloads skill text at agent startup, with skills already installed. If
   installed via the plugin, Claude Code shows them with the `agentic-skills:` prefix. We have not
   verified that preloading finds `agentic-implement` by its simple name: if the agent starts without
   the skill, put the prefixed name in the `skills` line.
 - A zone reviewer (for example database migrations) is made by copying `reviewer.md`: change `name`
-  and `description` and write that zone's requirements in the body, keeping the read-only list.
+  and `description` and write that zone's requirements in the body, keeping production read-only
+  and any acceptance writes limited to the authorized scratch path.

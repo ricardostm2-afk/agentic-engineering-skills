@@ -4,19 +4,21 @@ Read this branch before research on the Complete route. Axes, sources, filtering
 remain in `references/current-research.md`; paths are relative to the skill folder.
 Without subagents, apply this same contract sequentially, one axis at a time.
 
-**Complete: one subagent per axis the feature touches.** First state, in one line per axis, whether
-the feature touches it (a new dependency or library, a new UI pattern, a new technique). Untouched
-axes get no subagent: you research them yourself within Standard limits, or write
-`not touched: <why>`. If mattpocock-skills:research exists invoke per touched axis with brief
+**Complete: at most one subagent per independent unresolved axis.** First name each material
+question and its trigger from `current-research.md`, plus reusable local/primary evidence. Known,
+untouched or sufficiently evidenced axes get no researcher and no fallback search; record
+`settled locally: <evidence>` or `not touched: <why>`. Depth follows the unknown, not just the track.
+If mattpocock-skills:research exists invoke per touched axis with brief
 below: save `<session-temp>/research-<axis>.md` outside repo beside reading.md (dirty tree before
-step 4 breaks specify init requiring clean git status). Otherwise one subagent per touched axis,
+step 4 breaks specify init requiring clean git status). Otherwise one subagent per needed unresolved axis,
 same brief. Wait for all of them before final suggestions. Dead/expired/empty agent did not find
 “nothing simpler”: its axis stays not confirmed; continue.
 
 ```
 Research · axis <a feature | b design | c technique>: <axis question for feature>
 Installed stack (lockfile): <framework x.y.z, …> · Targets: <browserslist/minSdk/runtime>
-Radar: <relevant dated entries or no radar>
+Trigger: <time-sensitive fact | material unknown | explicit request>
+Reusable evidence: <relevant dated entries and scope/versions or none>; research only the gap.
 Project decisions (do not contradict; strong reasons marked propose to human):
 <relevant AGENTS.md/constitution/ADR rules>
 Ceiling: 6 searches/10 pages. Confirm with fact-owning source or 2 primary sources. Stop at ceiling;

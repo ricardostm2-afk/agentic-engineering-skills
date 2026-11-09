@@ -29,7 +29,9 @@ In order; record each fact and where you saw it (`path:line`).
 6. **Permissions**: roles, server refusal location, deciding function. Screen-only visibility
    decisions need noting: rule must come from server.
 7. **Area tests/checks**: where tests live, exact commands, duration, real dependencies (database,
-   queue) versus mocks, verification suite/CI. Run once now for baseline: pre-existing red changes plan.
+   queue) versus mocks, verification suite/CI. Reuse an applicable baseline under
+   `<agentic-implement>/references/evidence.md`; run only missing/invalid evidence. Pre-existing
+   red changes the plan.
 8. **Risks**: personal/sensitive data, large-table migrations, unindexed queries, concurrency (two
    simultaneous users), timezone/dates, customer/organization isolation, external service costs.
 9. **UI**: design system (tokens, shared components, `DESIGN.md`), 2–3 neighboring screens before/
@@ -60,7 +62,8 @@ evidence and effect:
 
 Not suggestions: repeating request, generic advice (“good test coverage”, “consider security”),
 options without recommendation, claims without filepath (research findings need URL and dates).
-Fewer than 3 suggestions means insufficient investigation: revisit points 3, 4, 5.
+Return **0–3 evidence-based suggestions**. Zero is valid when the requested approach already
+fits the evidence; do not invent improvements or expand scope to fill a quota.
 
 ## Output
 
@@ -68,5 +71,6 @@ Fill `assets/reading.template.md` as `reading.md` in a session temporary folder 
 in chat. Step 4 moves to feature folder (`specs/<NNN-slug>/`). Reading's open questions, impact
 ordered, seed step 2 grill.
 
-Write facts in 1a; finalize Suggestions/Recommended approach after 1b (`references/current-research.md`),
-whose `research-notes.md` shares temporary folder.
+Write facts in 1a; finalize Suggestions/Recommended approach after the conditional research check
+in 1b (`references/current-research.md`). When research is needed, its `research-notes.md` shares
+the temporary folder; otherwise record why local evidence suffices.

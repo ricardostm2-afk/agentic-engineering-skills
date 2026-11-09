@@ -1,7 +1,7 @@
 # Interfaces without AI aesthetics
 
-Read before designing or reviewing any screen, component, generated document (PDF, email, SMS)
-or chart. Applies to mockups, variants and code. Belongs to the `agentic-design` skill and also
+Use the selected mode's sections when designing or reviewing a screen, component, generated
+document (PDF, email, SMS) or chart. Applies to mockups, variants and code. Belongs to the `agentic-design` skill and also
 lives in projects' `.agentic/ui-without-slop.md`, for agents without the skill: it therefore
 contains everything needed to design and review without any other file.
 
@@ -42,9 +42,9 @@ Before designing, read what exists and extend it:
 Never invent a parallel system (another palette, radius scale or button) for a single screen.
 If the system falls short, propose extending the system itself, for all screens.
 
-Find current references from mature products with the same kind of use (professional tools,
-email clients, calendars, editors), not inspiration galleries. Those galleries are where
-the tics come from.
+For a material unknown or currentness question needing external research, use mature products
+with the same kind of use (professional tools, email clients, calendars, editors), not inspiration
+galleries. Reuse applicable project evidence; a local correction needs no new reference search.
 
 ## 2. Blockers
 
@@ -367,7 +367,10 @@ Without imposing style: properties any good design has.
 
 ## 4. Process
 
-The full procedure is `agentic-design`'s "variants" mode (its `variants.md`). The essentials:
+Select the mode before loading the procedure. A targeted correction preserves the current
+direction and needs only its requested change and proportional before/after proof; no variants
+or redesign. An approved direction goes directly to build. Only a material visual choice uses
+`agentic-design`'s "variants" mode (`variants-mode.md` and `variants.md`). For that mode:
 capture the current state (baseline); make 2–3 variants that disagree on structure, not just
 colour, using project tokens and realistic data; run them through the detector, section 5
 checklist and another agent's critique before showing them; the human chooses ("you choose"
@@ -381,7 +384,10 @@ For the independent reviewer (`agentic-code-review`'s UI lens). Each "no" is a f
 the blocker in parentheses. Start with the detector (last item; exits in §7): with exit 1,
 each blocker on a diff line is Important, with the detector line as proof, to be fixed or
 given `slop-ok: <reason>` when it is a project decision (§6); exit 2 counts as red until unread
-files have been checked manually. Then the list, against screenshots of the chosen variant.
+files have been checked manually. Then apply the list to the affected scope against the chosen
+variant or preserved baseline. For a targeted correction, use its before/after screen and only
+states, themes, widths and interactions the correction affects; do not require a new-screen matrix.
+Keep unrelated existing defects Pre-existing and do not expand scope.
 
 - [ ] No decorative or purple/indigo gradients, except the declared brand gradient (section 6)? (B1)
 - [ ] In greyscale, every state is still readable, each pill colour has a meaning written in the system, and fewer than half the rows have state colour? (B2)

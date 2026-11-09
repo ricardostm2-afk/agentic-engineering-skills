@@ -11,8 +11,8 @@ work without PRs and an orchestrator (you) launching reviewers.
 - Intent: spec, request, PR description or commit messages, and plan if present.
 - Approved research, if the project has it: standards lens checks new dependencies and patterns against it.
 - Closed findings from previous rounds, with each response.
-- With UI, `<agentic-design>` path (detector and `<agentic-design>/references/ui-without-slop.md`),
-  chosen variant and screenshots.
+- With UI, exact `<agentic-design>/references/review-mode.md` path, selected mode, chosen variant
+  or preserved baseline, screenshots and required proportional proof.
 
 ## §2 Reviewer worktree
 
@@ -22,7 +22,11 @@ work without PRs and an orchestrator (you) launching reviewers.
   `${TMPDIR:-/tmp}`. On macOS `$TMPDIR` is `/var/folders/…`, usually outside authorized folders,
   causing approval on every write. Brief includes worktree path and acceptance test folder
   (`<tmp>/acceptance-<topic>/`). Never the session tree, including for Codex or another agent.
-- Reviewer runs everything there (`git -C <wt> …`), leaving no commits, files or other mutations.
+- Reviewed production stays read-only: read it with `git -C <wt> …` and leave no commits, source
+  edits, generated files or other mutations there. The same reviewer may write and run its focused
+  independent acceptance test only in the brief's `<acceptance-tmp>` outside the worktree, referring
+  to the exact reviewed SHA. Give that reviewer the required scratch Write/Bash capability;
+  do not add another agent by default. Missing capability is blocked/unrun proof, not a pass.
 - `<base>` is `git merge-base <trunk> <reviewed-sha>` (remote trunk, for example `origin/main`),
   recalculated each round; on a branch based on another unintegrated branch, use that branch's
   merge-base and review it separately.
@@ -35,7 +39,8 @@ work without PRs and an orchestrator (you) launching reviewers.
   `git -C <wt> merge-base origin/HEAD <reviewed-sha>` equals `<base>`. Otherwise (stacked branch,
   different `origin/HEAD`), use a subagent with the brief.
 - A fresh worktree has no dependencies installed: reviewer does not install them in the repo
-  tree. If a test cannot run, proof is “how to reproduce” (command and expected result), marked unrun.
+  tree. Use prepared dependencies without mutations or a scratch harness. If a test cannot run
+  within this boundary, proof is “how to reproduce” (command and expected result), marked unrun.
 - End with `git worktree list`, empty `git -C <wt> status --short` (nothing changed), then
   `git worktree remove <wt>`. Report a dirty worktree before removing it.
 
@@ -53,7 +58,7 @@ Provider is the orchestrator's; use the other only on explicit human request
 | Correctness | does code do what it says on every path? Read callers and consumers, including outside diff (`git grep` names). In a fix, root cause: fixing symptom but leaving cause is Important. Name the class and seek other instances in the diff. For deletions (function, route, flag, file), require three proofs: history (`git log -S<name>`: why it existed), indirect uses (runtime-built names, strings, enums, wrappers, schemas, consumers listed by `REVIEW.md`), and live configuration (environment variable, flag enabled for a customer). Found use is Important; production-only information becomes an integrator question; deleting killswitches, permanent flags or incident paths goes to the human with a recommendation |
 | Spec | only with written intent: what is missing, unrequested, or looks done but is not. Plus reviewer acceptance test below |
 | Standards | documented repo rules; a new pattern where one existed; dependency or capability outside approved research; `AGENTS.md`, `CLAUDE.md`, `REVIEW.md` or doc lines made false by the change |
-| Security | server-enforced permissions tested with a role without access; customer isolation; input validation; secrets outside code; logs/errors without personal data or database values; new dependencies (known vulnerabilities, install-time code); may use `/security-review` under §2 conditions, counting as 1 |
+| Security | follow `references/security-lens.md`, the single operational checklist; `/security-review` may implement it under §2 conditions, counting as 1 |
 
 - **Reviewers per level**: **Standard** groups its lenses (correctness, spec, standards, or
   `REVIEW.md`'s choices) in one fresh-context reviewer with one brief: they always run together
@@ -61,7 +66,10 @@ Provider is the orchestrator's; use the other only on explicit human request
   detail. **Complete** splits its four lenses between two reviewers, correctness with security and
   spec with standards, and adds a separate verifier only when the consolidated report has an Important.
 - **Reviewer acceptance test** (spec lens, without reading author tests): **Complete** reviewer
-  writes and runs an acceptance test outside the repo from intent; **Standard** describes it;
+  writes and runs an acceptance test in its authorized `<acceptance-tmp>` outside the review
+  worktree, deriving it from intent and referring to the exact reviewed code. Production remains
+  read-only; use the same reviewer with scratch write capability, not an extra author agent.
+  Return the file unchanged for the author to integrate; **Standard** describes it;
   **Quick** has none.
 - **Silence the verifier** (correctness lens): search added lines for disabling typecheck or lint
   (or language equivalents):
@@ -73,9 +81,8 @@ Provider is the orchestrator's; use the other only on explicit human request
 - **No coverage number as gate**: keep the test failing on base, assertion integrity and guard
   mutations. Missing coverage numbers are not findings.
 - Specialized lenses enter only when `REVIEW.md` defines them or diff requires them, replacing
-  one above or adding within the ceiling: UI (agentic-design “review” mode: detector,
-  `node <agentic-design>/scripts/detect-slop.mjs --diff <base>`, and `ui-without-slop.md` §5
-  checklist against screenshots), docs, “fail-open guard / test unable to fail”, migrations.
+  one above or adding within the ceiling: UI (`<agentic-design>/references/review-mode.md`,
+  detector and proportional screenshot evidence), docs, “fail-open guard / test unable to fail”, migrations.
 - Lenses are subagents with the brief. A generic review skill/command following its own method
   bypasses brief and `REVIEW.md`: do not use it as a lens (`/security-review` is the security exception).
 - **Ceiling: 5 review agents per change** (feature or branch), across rounds. Count those you
@@ -149,6 +156,15 @@ Responses measure noise: many “wrong”/“does not matter” mean reviewer fl
 
 ## §9 Rounds
 
+**Classify every post-review diff first.** Before considering any exception below, inspect and
+classify the actual new diff with `risk-levels.md`, including metadata, an Important fix with proof,
+an unchanged acceptance-test file, or a rebase/conflict change. Record the level and required lens
+set. If risk adds a required lens, review that diff with **only newly required lenses**; do not
+repeat already satisfied lenses or reopen closed findings. The exception cannot waive this review.
+Keep the existing round/agent limits: if the necessary review would exceed either, go to the human
+with the summary rather than silently adding a round. Same-risk, narrow, proven fixes remain
+eligible for the exceptions after this classification.
+
 - **Level limit**: 1 requested Quick, 1 Standard, 2 Complete. An Important fixed with proof and an
   integrator-checked diff needs no round (exceptions below), so most changes end in round 1.
 - From round 2: diff `<previous-reviewed-sha>..<reviewed-sha>` and closed findings list, never
@@ -158,7 +174,8 @@ Responses measure noise: many “wrong”/“does not matter” mean reviewer fl
 - **At limit with an open Important**: stop and go to human with summary (open findings, responses,
   rounds run, unread diff, recommendation: another approach, split, accept with reason). No silent extra round.
 
-**Commits after reviewed SHA.** These do not open a round:
+**Commits after reviewed SHA.** After the classification above confirms no required lens is
+missing, these do not open a round:
 - metadata (lessons, `Review:` line, radar, retro);
 - fixing an Important from the last round with proof (red → green; doc line and its former
   contradiction) and integrator-checked diff (only what the finding identifies);
@@ -166,7 +183,8 @@ Responses measure noise: many “wrong”/“does not matter” mean reviewer fl
   fix and green afterward.
 
 Any other code (resolved conflict, fix without proof, new change) opens a round on that diff only;
-with limit reached, go to human.
+with limit reached, go to human. Reuse exact valid verification output under
+`<agentic-implement>/references/evidence.md`; review acceptance never substitutes for integration proof.
 
 **Trunk into branch** (merge or rebase): `git diff <reviewed-sha>..<head>` now includes trunk code,
 not to be reviewed. With `<new-base>` = recalculated `<base>`, review remains valid only if **every**
@@ -186,6 +204,10 @@ done
 echo "only equal pairs and clean merges: review valid"
 )   # subshell: exit does not close your shell
 ```
+
+Even when review remains valid, validate the new combined state under
+`<agentic-implement>/references/evidence.md`; equal patches do not establish runtime compatibility
+with a changed base. Classify branch changes/remerge-diffs before using a post-review exception.
 
 A wrong SHA or empty range makes range-diff fail or return empty; this **does not** count as review.
 When invalid, round covers only changes: `!` (changed patch, even just context), `<` (removed commit),

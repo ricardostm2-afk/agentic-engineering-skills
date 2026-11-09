@@ -13,7 +13,8 @@ Here only feature-specific handoff/results, verification, traps, delivery.
    - base (before preparation commit), reviewed SHA (HEAD to integrate);
    - spec, plan, approved Research paths (spec summary Research line and research-notes.md, or trivial
      Reading line: standards lens checks dependencies/new patterns);
-   - UI: variants/choice.md, chosen screenshots, absolute agentic-design path for UI review mode;
+   - UI: selected mode, variants/choice.md when one exists, chosen or preserved-baseline screenshots,
+     exact `<agentic-design>/references/review-mode.md` path and relevant proof scope;
    - round 2 onward: closed findings and responses.
 2. **Each returning Important** fixed per step 5 (new agentic-implement brief or implementation.md
    §4 short form), after reproduction (panel-and-rounds.md §6). Unreproduced is not fixed: respond
@@ -29,7 +30,10 @@ Here only feature-specific handoff/results, verification, traps, delivery.
 
 ## Verification
 
-After review/fixes on combined branch:
+After review/fixes on the combined branch, match each required check to existing proof under
+`<agentic-implement>/references/evidence.md`. Reuse exact valid evidence and run missing/invalid
+checks. New combined or rebased states need integration proof; moving between roles is not itself
+an invalidation.
 
 1. **speckit-converge** (with Spec Kit): compare code/spec/plan/tasks, add missing work. New tasks
    return to step 5. Without Spec Kit compare manually to light spec.
@@ -37,10 +41,11 @@ After review/fixes on combined branch:
    14 skipped for missing database” is not green.
 3. **End to end**: complete user path against running app (real HTTP or browser on real screen),
    not just separate services.
-4. **UI**: agentic-design review proof (`<agentic-design>/references/proof.md`): actual running-app
-   screenshots of agreed states (data, empty, loading, error, no permission, dense), target resolutions,
-   project themes, compared to chosen variant; rerun detector after fixes, exit 0 on diff lines.
-   Unagreed differences are findings. Test keyboard and smallest resolution.
+4. **UI**: follow the selected mode and proportional scope in
+   `<agentic-design>/references/proof.md`: a correction needs the reported screen before/after;
+   new screens/redesigns need agreed states, resolutions, themes and interaction evidence against
+   the chosen variant. Reuse matching screenshots/detector proof; changed UI invalidates affected
+   evidence. Unagreed differences are findings. Test the affected keyboard/reflow behavior.
 5. **Traps** below: every line.
 
 Proof format for board/final message:
@@ -74,15 +79,16 @@ Each trap → prevention. Check in review and whenever writing/assessing tests.
 8. **Commit claims absent work**: message describes excluded files/work → before push compare
    git show --stat and diff/message; git add only changed files.
 9. **Tight timeouts/orphans hang suite**: timeout fitted to fast machine, live child server/browser
-   → `<agentic-implement>/references/tests.md` “Timeouts and child processes”; check diff, run suite
-   twice consecutively without hanging.
+   → `<agentic-implement>/references/tests.md` “Timeouts and child processes”; run the affected
+   suite twice only when process lifecycle changed or an observed orphan/hang is under investigation.
 10. **Non-null default hides wrong query**: wrong read yields plausible default rather than error
     → distinguishing dates/customers/values, each indicator observed twice: normal and seeded defect.
 
 ## Delivery (step 7)
 
-0. **Radar** (current-research.md “Project radar”): update before final commit, same commit or
-   separate docs(radar) before push. One row per used/tried/rejected result with source/date.
+0. **Radar** (current-research.md “Project radar”): update new/materially refreshed research before
+   final commit, same commit or separate docs(radar) before push. No duplicate refresh for reused
+   evidence. One row per consequential used/tried/rejected result with source/date.
    New entries never directly Adopt. Without radar, propose under Needs you, do not create.
 1. **Commits**: one topic each, why and proving command/result. Standard/Complete integration
    commit body also Risk: (what can fail/for whom), How to undo:, Review: per panel-and-rounds.md

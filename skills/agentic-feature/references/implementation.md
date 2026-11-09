@@ -15,6 +15,9 @@ subagents or Codex jobs with agentic-implement) implement in separate worktrees 
 5. Maximum ~3 parallel lanes per feature: integration ceiling, not machine capacity. More means
    feature slices (`references/too-big.md`). Capacity: choosing-the-agent.md §4 in agentic-implement.
 6. One lane = vertical slice or coherent part, green independently.
+7. **The orchestrator is the sole owner of shared `tasks.md`.** Lanes read their assigned IDs
+   but never edit its checkboxes or shared status. They return task IDs, full commit SHA and proof;
+   the orchestrator reconciles completion after validating the handoff and combined state.
 
 Record grouping in `batch.md` from `assets/batch.template.md`: base, groups/owners (one per file),
 meeting files/guards, order. Do not copy rules into batch.
@@ -49,7 +52,10 @@ using lane values in that format.
 
 Exclude personal data, secrets, conversation history, open options. Include closed decisions,
 exact paths/commands, agreed interface, relevant approved Research rows (avoid repeated research
-or rejected choices). UI lane: absolute agentic-design path and chosen variant.
+or rejected choices). UI lane: exact absolute path to
+`<agentic-design>/references/build-mode.md` (or `<agentic-design>/references/targeted-adjustment.md` for that mode),
+project design rules, chosen variant or unchanged baseline, and required proof. Do not preload the
+whole design skill, variants workflow or orchestrator gates into an implementer.
 
 ## 4. Launch
 
@@ -99,11 +105,13 @@ nothing entered trunk, nothing to undo; resume/discard later.
 
 ## 5. Receive
 
-Each agent returns agentic-implement step 8 handoff plus brief's extra lines (deviations, new data/
-readers, seen/not touched). Before combining:
+Each agent returns assigned task IDs, full base/HEAD SHAs and evidence, plus agentic-implement
+step 8 and the brief's extra lines (deviations, new data/readers, seen/not touched). `tasks.md`
+remains unchanged in lane worktrees. Before combining:
 
-- Confirm outputs yourself in worktree (run verification; do not trust report). “All green” without
-  pasted output is unverified.
+- Inspect saved output and verify its exact state/command/inputs under
+  `<agentic-implement>/references/evidence.md`. Reuse valid evidence; run missing or invalid checks.
+  “All green” without output is unverified, but a new recipient alone is not a reason to rerun.
 - Read scope decisions; correct spec contradictions before combining.
 - Dead, expired or empty-return agent did not “find no problems”: unfinished; relaunch or do yourself.
 - `blocked: <question>`: collect across lanes, answer as SKILL.md step 5 (decide reversible technical
@@ -117,12 +125,19 @@ main integration is step 7. Lane by lane in dependency order:
 ```bash
 git -C ../<worktree> rebase <feature-branch>      # bring lane above already combined work
 git merge --ff-only agent/<id>-<topic>             # or project's required merge
-<full-project-verification>                        # after EACH lane, not only at end
+<full-project-verification>                        # validate each new combined state
 ```
 
 - Step 6 review applies to reviewed SHA. Later additions (rebase, resolved conflict, fix) follow
-  `<agentic-code-review>/references/panel-and-rounds.md` §9: exception or new round, human at limit.
-- Resolve conflicts yourself reading both sides/spec; never wholesale ours/theirs. Full verification again.
+  `<agentic-code-review>/references/panel-and-rounds.md` §9: reclassify every post-review diff
+  before any exception, add newly required lenses, human at the round/agent limit.
+- Each new combined state needs integration proof under
+  `<agentic-implement>/references/evidence.md`; exact existing proof may be reused. Equal patches
+  after a rebase do not make the old runtime evidence apply to a new base.
+- Resolve conflicts yourself reading both sides/spec; never wholesale ours/theirs. Verify the result.
+- After a lane is combined and its evidence accepted, the orchestrator alone marks its task IDs
+  complete in `tasks.md`, recording the commit/proof pointer. Reconcile missing IDs or contradictions
+  before changing status; a lane's claim is not a completion mark.
 - Never force-push shared branch. Rewriting private agent branch before combining is acceptable.
 - Red after combining: identify causing lane (git bisect if unclear), fix with reproducing test,
   then next lane.

@@ -28,11 +28,12 @@ new capability, success observation. Ambiguous request: both readings and which 
 ## Research
 
 <!-- Up to 4 lines: stack/targets read; findings changing suggestions; research-notes.md path
-(full table per references/current-research.md). -->
+(full table per references/current-research.md), or why local evidence is sufficient. -->
 
 ## Suggestions
 
-<!-- 3–6, each changes request or approach. Required format: -->
+<!-- 0–3 evidence-based suggestions, each changes request or approach. Zero is valid; no quota.
+Use this format when there is a useful suggestion: -->
 
 1. **<Reuse | Cut | Simplify | Risk | Order | Missing connection>: <one-sentence suggestion>**
    Evidence: `<path:line>` <what is there>, or `<URL>` (published <yyyy-mm-dd>, read <yyyy-mm-dd>) for research.

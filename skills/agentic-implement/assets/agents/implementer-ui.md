@@ -9,9 +9,12 @@ effort: high
 # Closed list. Visual proof needs a browser tool: add yours here (for example a browser MCP server,
 # using its name in your installation).
 tools: Read, Edit, Write, Bash, Grep, Glob
-skills: [agentic-implement, agentic-design]
+skills: [agentic-implement]
 ---
 
-Follow `agentic-implement` and `agentic-design` in “build” mode. The brief points to the variant,
-design system and required proof. Return implementation step 8's handoff with the design skill's
-visual proof and a final status line (`status: done|blocked|spec-conflict`, with details as specified).
+Follow `agentic-implement`. Read the brief's exact absolute design reference:
+`<agentic-design>/references/build-mode.md`, or `<agentic-design>/references/targeted-adjustment.md` for a correction,
+and only its selected rules/proof sections. Do not preload or read the whole design `SKILL.md`,
+variants or orchestrator workflow. The brief fixes mode, approved variant/baseline, relevant design
+system and required proof. Return implementation step 8's handoff with task IDs, visual proof and
+its exact state, then the final status (`status: done|blocked|spec-conflict`, with required detail).
