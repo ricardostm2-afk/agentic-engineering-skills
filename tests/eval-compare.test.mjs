@@ -263,6 +263,41 @@ test("quality preparation fails clearly for inline graders it cannot classify", 
   assert.deepEqual(f.calls(), []);
 });
 
+test("quality profile rejects quoted/escaped keys, flow roots and structural aliases", (t) => {
+  const header = 'schema_version: "1.1"\nname: case-a\n';
+  const budget = '[{name: budget, type: tool_used, tool: Agent, max: 0}]';
+  const variants = {
+    "double-quoted graders key": header + '"graders": ' + budget + '\n',
+    "single-quoted graders key": header + "'graders': " + budget + '\n',
+    "Unicode-escaped graders key": header + String.raw`"gra\u0064ers": ` + budget + '\n',
+    "hex-escaped graders key": header + String.raw`"gra\x64ers": ` + budget + '\n',
+    "JSON root": JSON.stringify({ schema_version: "1.1", name: "case-a", graders: [{ name: "budget", type: "tool_used", tool: "Agent", max: 0 }] }),
+    "flow mapping root": '{schema_version: "1.1", name: case-a, graders: ' + budget + '}\n',
+    "merge alias": header + 'defaults: &defaults\n  graders: ' + budget + '\n<<: *defaults\n',
+    "quoted merge key": header + 'defaults: &defaults\n  graders: ' + budget + '\n"<<": *defaults\n',
+    "root anchor": '&case\n' + header + 'graders: ' + budget + '\n',
+    "tagged mapping": '!!map\n' + header + 'graders: ' + budget + '\n',
+    "second document": header + '---\nname: another-case\ngraders: ' + budget + '\n',
+    "carriage-return boundary hidden after literal text": header + 'expected_outcome: |\n  Safe text\rgraders:\r  - name: budget\r    type: tool_used\r    tool: Agent\r',
+  };
+  for (const [name, yaml] of Object.entries(variants)) {
+    const f = fixture(t);
+    writeFileSync(path.join(f.repo, "evals/case-a/case.yaml"), yaml);
+    const run = f.run();
+    assert.equal(run.status, 1, `${name}: ${run.stdout}\n${run.stderr}`);
+    assert.match(run.stderr, /single block mapping.*graders\/\*\.md/, name);
+    assert.deepEqual(f.calls(), [], name + ": no native eval before a profile is established");
+  }
+});
+
+test("quality profile accepts the case format with literal outcome text and scalar context", (t) => {
+  const f = fixture(t);
+  writeFileSync(path.join(f.repo, "evals/case-a/case.yaml"), 'schema_version: "1.1"\nname: case-a\nexpected_outcome: |\n  Text can mention "graders":, &anchors and *aliases without defining YAML structure.\ncontext:\n  scaffold_script: place-fixture.sh\n');
+  const run = f.run();
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(f.output().metadata.comparisonProfile, "quality-only-v1");
+});
+
 test("repository-local temporary directories do not recurse into snapshots or mark the source dirty", (t) => {
   const f = fixture(t), localTemp = path.join(f.repo, "local-tmp");
   mkdirSync(localTemp);

@@ -27,6 +27,46 @@ function isAgentBudget(file) {
   return scalar(frontmatter, "type", file) === "tool_used" && scalar(frontmatter, "tool", file) === "Agent";
 }
 
+function validateCaseYaml(text, file) {
+  // This is an explicit YAML subset, not a general YAML parser. Fail closed on syntax
+  // that could hide top-level graders through quoted keys, flow mappings, tags or merges.
+  // Our cases use unquoted block-mapping keys, scalar values, and literal outcome text.
+  const unsupported = () => { throw new Error(`${file}: ${PROFILE} accepts a single block mapping with simple unquoted keys and scalar values, without document markers, flow collections, tags, anchors or aliases; convert the case to this format and put graders in graders/*.md`); };
+  text = text.replaceAll("\r\n", "\n");
+  // Do not let a YAML parser recognize line boundaries that this restricted reader skips.
+  if (/[\r\u0085\u2028\u2029]/.test(text)) unsupported();
+  let rootSeen = false, literalParent = null;
+  const rootKeys = new Set();
+  for (const line of text.split("\n")) {
+    if (!line.trim()) continue;
+    const indent = /^ */.exec(line)[0].length;
+    if (literalParent !== null && indent > literalParent) continue;
+    literalParent = null;
+    const content = line.slice(indent);
+    if (content.startsWith("#")) continue;
+    if (!rootSeen && indent !== 0) unsupported();
+    const mapping = /^([A-Za-z_][A-Za-z0-9_]*)[ \t]*:(?:[ \t]+(.*)|[ \t]*)$/.exec(content);
+    if (!mapping) unsupported();
+    const [, key, rawValue = ""] = mapping;
+    if (indent === 0) {
+      if (rootKeys.has(key)) unsupported();
+      rootKeys.add(key);
+      rootSeen = true;
+      if (key === "graders") throw new Error(`${file}: inline case.yaml graders are not supported by ${PROFILE}; use graders/*.md`);
+    }
+    const value = rawValue.trim();
+    if (!value || value.startsWith("#")) continue;
+    if (/^[|>](?:[+-]?[1-9]?|[1-9][+-]?)?(?:[ \t]+#.*)?$/.test(value)) {
+      literalParent = indent;
+      continue;
+    }
+    if (/^(?:"(?:[^"\\]|\\.)*"|'(?:[^']|'')*')(?:[ \t]+#.*)?$/.test(value)) continue;
+    const plain = value.replace(/[ \t]+#.*$/, "");
+    if (/[{}\[\],&*!"'|>%@`]/.test(plain) || /:[ \t]/.test(plain)) unsupported();
+  }
+  if (!rootSeen) unsupported();
+}
+
 export function prepareQualitySuite(source, destination) {
   mkdirSync(destination);
   cpSync(source, destination, { recursive: true, dereference: true,
@@ -37,9 +77,7 @@ export function prepareQualitySuite(source, destination) {
     if (existsSync(path.join(dir, "prompt.md")) || existsSync(path.join(dir, "case.yaml"))) {
       caseCount++;
       const yaml = path.join(dir, "case.yaml");
-      if (existsSync(yaml) && /^graders[ \t]*:/m.test(readFileSync(yaml, "utf8"))) {
-        throw new Error(`${relative || "."}: inline case.yaml graders are not supported by ${PROFILE}; use graders/*.md`);
-      }
+      if (existsSync(yaml)) validateCaseYaml(readFileSync(yaml, "utf8"), relative + "case.yaml");
       const graderDir = path.join(dir, "graders");
       const graders = existsSync(graderDir) ? entries(graderDir).filter((entry) => entry.isFile() && entry.name.endsWith(".md")) : [];
       let retained = 0;
