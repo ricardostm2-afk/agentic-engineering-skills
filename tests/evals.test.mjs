@@ -11,6 +11,7 @@ const EVALS = path.join(import.meta.dirname, "..", "evals");
 const VERIFY_FIX = path.join(EVALS, "verify-fix.mjs");
 const FIXTURES = path.join(EVALS, "fixtures", "orders-api");
 const OVERLAYS = ["bug-sort", "bug-isolation", "change-leak", "change-doc-lie", "change-clean"];
+const WORKFLOW_CASES = ["architecture-assess-only", "design-targeted-spacing", "explain-code-plain", "feature-parallel-ownership", "feature-sensitive-plan", "feature-short-label", "project-minimal-bootstrap", "review-risk-escalation"];
 const CASES = readdirSync(EVALS, { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && !["fixtures", "results"].includes(entry.name))
   .map((entry) => entry.name);
@@ -183,7 +184,8 @@ function frontMatter(text) {
 }
 
 test("there are cases, and each is a folder with prompt, case.yaml, scaffold and graders", () => {
-  assert.ok(CASES.length >= 5, CASES.join(","));
+  assert.ok(CASES.length >= 13, CASES.join(","));
+  for (const name of WORKFLOW_CASES) assert.ok(CASES.includes(name), name + ": missing workflow case");
   for (const name of CASES) {
     const dir = path.join(EVALS, name);
     const prompt = frontMatter(readFileSync(path.join(dir, "prompt.md"), "utf8"));
@@ -195,8 +197,13 @@ test("there are cases, and each is a folder with prompt, case.yaml, scaffold and
     assert.match(yaml, new RegExp("^name: " + name + "$", "m"), name + ": name equals the folder");
     const script = /scaffold_script: (\S+)/.exec(yaml)?.[1];
     assert.ok(script && existsSync(path.join(dir, script)), name + ": scaffold script");
-    const overlay = / (?:fix|branch) (\S+) /.exec(readFileSync(path.join(dir, script), "utf8"))?.[1];
-    assert.ok(OVERLAYS.includes(overlay), name + ": overlay " + overlay);
+    const scaffold = readFileSync(path.join(dir, script), "utf8");
+    if (WORKFLOW_CASES.includes(name)) {
+      assert.match(scaffold, /\/fixtures\/make-workflow-repo\.sh/, name + ": shared workflow fixture");
+    } else {
+      const overlay = / (?:fix|branch) (\S+) /.exec(scaffold)?.[1];
+      assert.ok(OVERLAYS.includes(overlay), name + ": overlay " + overlay);
+    }
     const graders = readdirSync(path.join(dir, "graders")).filter((f) => f.endsWith(".md"));
     assert.ok(graders.length >= 2, name + ": graders");
   }
@@ -241,7 +248,7 @@ test("the case set covers fix and review and keeps one cost grader per case", ()
 });
 
 test("scaffold scripts build the repository (POSIX only)", { skip: process.platform === "win32" }, () => {
-  for (const [name, mode, branch] of [["fix-sort-order", "fix"], ["review-leak", "branch", "change-leak"]]) {
+  for (const [name, mode, branch] of [["fix-sort-order", "fix"], ["review-leak", "branch", "change-leak"], ...WORKFLOW_CASES.map((name) => [name, "fix"])]) {
     const work = mkdtempSync(path.join(os.tmpdir(), "eval-scaffold-"));
     temporary.push(work);
     const run = spawnSync("bash", [path.join(EVALS, name, "place-fixture.sh")], { cwd: work, encoding: "utf8" });
@@ -250,5 +257,36 @@ test("scaffold scripts build the repository (POSIX only)", { skip: process.platf
     assert.equal(log.length, mode === "fix" ? 1 : 2, name);
     if (branch) assert.equal(spawnSync("git", ["branch", "--show-current"], { cwd: work, encoding: "utf8" }).stdout.trim(), branch);
     assert.equal(spawnSync("git", ["status", "--short"], { cwd: work, encoding: "utf8" }).stdout, "", name + ": clean tree");
+    assert.equal(runSpecs(work).status, 0, name + ": fixture tests must start green");
+  }
+});
+
+test("workflow fixture separates ordinary changes from the authorization boundary", () => {
+  const dir = path.join(EVALS, "fixtures", "workflow");
+  assert.equal(runSpecs(dir).status, 0);
+  assert.match(readFileSync(path.join(dir, "AGENTS.md"), "utf8"), /src\/access\.js/);
+  assert.match(readFileSync(path.join(dir, "src", "labels.js"), "utf8"), /\?\? ['"]Unknown['"]/);
+  assert.doesNotMatch(readFileSync(path.join(dir, "src", "labels.js"), "utf8"), /archived/);
+  assert.match(readFileSync(path.join(dir, "tasks.md"), "utf8"), /T1/);
+  assert.match(readFileSync(path.join(dir, "tasks.md"), "utf8"), /T2/);
+});
+
+test("planning-only graders observe final source contents, not just claims in the last response", () => {
+  for (const name of ["architecture-assess-only", "feature-sensitive-plan", "feature-parallel-ownership"]) {
+    const dir = path.join(EVALS, name, "graders");
+    assert.equal(frontMatter(readFileSync(path.join(dir, "01-outcome-and-route.md"), "utf8")).fields.focus, "trace");
+    const guards = readdirSync(dir).filter((file) => file.includes("-unchanged-"));
+    assert.equal(guards.length, 5, name + ": production inputs have final-state guards");
+    for (const file of guards) {
+      const { fields } = frontMatter(readFileSync(path.join(dir, file), "utf8"));
+      const relative = /path: ([^\s}]+)/.exec(fields.target)?.[1];
+      assert.ok(relative, file);
+      const content = readFileSync(path.join(EVALS, "fixtures", "workflow", relative), "utf8");
+      const pattern = new RegExp(fields.pattern);
+      assert.ok(pattern.test(content), file + ": baseline accepted");
+      assert.ok(pattern.test(content.replaceAll("\n", "\r\n")), file + ": line endings normalized");
+      assert.equal(pattern.test(content + "\n// production edit\n"), false, file + ": mutation rejected");
+      assert.equal(pattern.test(""), false, file + ": deletion rejected");
+    }
   }
 });

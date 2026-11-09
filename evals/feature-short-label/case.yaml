@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: feature-short-label
+expected_outcome: |
+  The archived label is implemented and verified through the early short route; unchanged status behavior remains valid.
+context:
+  scaffold_script: place-fixture.sh

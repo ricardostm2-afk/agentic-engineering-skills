@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: feature-parallel-ownership
+expected_outcome: |
+  Disjoint code ownership; the orchestrator alone updates shared tasks.md after accepting worker evidence.
+context:
+  scaffold_script: place-fixture.sh

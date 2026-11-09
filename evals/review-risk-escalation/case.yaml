@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: review-risk-escalation
+expected_outcome: |
+  The new diff is reclassified before applying the exception; newly required security coverage is applied without repeating unrelated review.
+context:
+  scaffold_script: place-fixture.sh
