@@ -8,6 +8,7 @@ import os from "node:os";
 import path from "node:path";
 
 const EVALS = path.join(import.meta.dirname, "..", "evals");
+const VERIFY_FIX = path.join(EVALS, "verify-fix.mjs");
 const FIXTURES = path.join(EVALS, "fixtures", "orders-api");
 const OVERLAYS = ["bug-sort", "bug-isolation", "change-leak", "change-doc-lie", "change-clean"];
 const CASES = readdirSync(EVALS, { withFileTypes: true })
@@ -67,6 +68,73 @@ test("bug-sort: the list is not oldest first", () => {
 
 test("bug-isolation: getOrder and updateCustomer leak, the other reads do not", () => {
   assert.deepEqual(probe(compose("bug-isolation"), ISOLATION_PROBE), { get: true, update: true, total: false, list: false });
+});
+
+function verifyFix(name, dir) {
+  const result = spawnSync(process.execPath, [VERIFY_FIX, name, dir], { encoding: "utf8" });
+  assert.equal(result.error, undefined);
+  assert.ok([0, 1].includes(result.status), result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.passed, result.status === 0);
+  return report;
+}
+
+test("independent fix oracles reject planted defects and accept the repaired base", () => {
+  for (const [name, overlay] of [["fix-sort-order", "bug-sort"], ["fix-isolation-class", "bug-isolation"]]) {
+    assert.equal(verifyFix(name, compose(overlay)).passed, false, name + ": buggy fixture");
+    const fixed = verifyFix(name, compose());
+    assert.equal(fixed.passed, true, JSON.stringify(fixed.checks));
+  }
+});
+
+test("sort oracle rejects constant, descending and boolean comparators plus missing exports", () => {
+  for (const source of [
+    "export const byOldest = () => 0;\n",
+    "export const byOldest = (a, b) => b.createdAt - a.createdAt;\n",
+    "export const byOldest = (a, b) => a.createdAt > b.createdAt;\n",
+    "export const renamed = (a, b) => a.createdAt - b.createdAt;\n",
+  ]) {
+    const dir = compose();
+    writeFileSync(path.join(dir, "src/sort.js"), source);
+    assert.equal(verifyFix("fix-sort-order", dir).passed, false, source);
+  }
+});
+
+test("sort oracle checks public list behavior in addition to comparator source", () => {
+  const dir = compose();
+  const source = readFileSync(path.join(dir, "src/orders.js"), "utf8");
+  writeFileSync(path.join(dir, "src/orders.js"), source.replace("orders.filter((o) => o.orgId === orgId)", "orders"));
+  assert.equal(verifyFix("fix-sort-order", dir).passed, false, "an organization leak must not pass as a sort fix");
+});
+
+test("isolation oracle rejects a partial repair and whitespace changes that evade source regexes", () => {
+  const partial = compose("bug-isolation");
+  const file = path.join(partial, "src/orders.js");
+  const source = readFileSync(file, "utf8");
+  writeFileSync(file, source.replace("o.id === id)", "o.id === id && o.orgId === orgId)"));
+  const report = verifyFix("fix-isolation-class", partial);
+  assert.equal(report.passed, false);
+  assert.ok(report.checks.some((check) => check.name.startsWith("updateCustomer denies") && !check.passed));
+  writeFileSync(file, source.replaceAll("o.id === id", "o.id===id"));
+  assert.equal(verifyFix("fix-isolation-class", partial).passed, false);
+});
+
+test("isolation oracle rejects throw-everywhere repairs and mutations before rejection", () => {
+  const dir = compose();
+  const file = path.join(dir, "src/orders.js");
+  const source = readFileSync(file, "utf8");
+  writeFileSync(file, source.replace("return findOwned(orgId, id);", 'throw new NotFoundError("denied");'));
+  assert.equal(verifyFix("fix-isolation-class", dir).passed, false, "same-organization access must work");
+  writeFileSync(file, source.replace("const order = findOwned(orgId, id);\n  order.customer", "const foreign = orders.find((o) => o.id === id);\n  if (foreign) foreign.customer = customer;\n  const order = findOwned(orgId, id);\n  order.customer"));
+  assert.equal(verifyFix("fix-isolation-class", dir).passed, false, "throwing after the write still violates isolation");
+});
+
+test("fix oracle validates its command line", () => {
+  for (const args of [[], ["unknown", "."], ["fix-sort-order"], ["fix-sort-order", ".", "extra"]]) {
+    const run = spawnSync(process.execPath, [VERIFY_FIX, ...args], { encoding: "utf8" });
+    assert.equal(run.status, 2);
+    assert.match(run.stderr, /Usage:/);
+  }
 });
 
 test("change-leak: findByReference returns another organization's order", () => {
@@ -142,6 +210,21 @@ test("every grader has a known type and a pattern that compiles", () => {
       for (const key of ["pattern", "input_match"]) if (fields[key]) assert.doesNotThrow(() => new RegExp(fields[key], fields.flags), `${name}/${file}: ${key}`);
       if (fields.pattern) assert.doesNotMatch(fields.pattern, /\(\?i\)/, `${name}/${file}: inline flags are not supported; use flags: i`);
     }
+  }
+});
+
+// These are rubric contract checks, not evidence that a model judge passed good/bad traces.
+test("red-before-fix graders judge observed bug failures and subsequent passes across write tools", () => {
+  for (const name of ["fix-sort-order", "fix-isolation-class"]) {
+    const { fields, body } = frontMatter(readFileSync(path.join(EVALS, name, "graders", "03-red-before-fix.md"), "utf8"));
+    assert.equal(fields.type, "llm");
+    assert.equal(fields.focus, "trace");
+    assert.match(body, /Edit, Write, Bash/);
+    assert.match(body, /SAME regression test/);
+    assert.match(body, /green baseline run alone/);
+    assert.match(body, /syntax, missing dependency, or setup/);
+    assert.match(body, /insufficient visible red\/green evidence/);
+    assert.match(body, name === "fix-sort-order" ? /oldest first/ : /NotFoundError/);
   }
 });
 
