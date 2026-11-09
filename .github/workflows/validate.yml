@@ -1,0 +1,60 @@
+name: Validate skills and tools
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  portable:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            node: '20'
+          - os: ubuntu-latest
+            node: '24'
+          - os: macos-latest
+            node: '24'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: node --test
+      - run: node tools/context-budget.mjs
+
+  powershell:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      AGENTIC_REQUIRE_POWERSHELL: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Require PowerShell and exercise the real installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Get-Command pwsh -ErrorAction Stop | Out-Null
+          node --test tests/install-ps1.test.mjs
+          exit $LASTEXITCODE

@@ -11,6 +11,9 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SCRIPT = path.join(ROOT, "install.ps1");
 const PS = ["pwsh", "powershell"].find((b) => spawnSync(b, ["-NoProfile", "-Command", "exit 0"]).status === 0);
+if (process.env.AGENTIC_REQUIRE_POWERSHELL === "1" && !PS) {
+  throw new Error("PowerShell is required in this job; installer tests must not be skipped");
+}
 const options = { skip: PS ? false : "no PowerShell (pwsh or powershell) on this machine" };
 const ELEVEN = ["agentic-analysis-optimization", "agentic-architecture", "agentic-ci-audit", "agentic-code-review", "agentic-design", "agentic-explain", "agentic-feature", "agentic-fix", "agentic-implement", "agentic-project", "agentic-tool-design"];
 
