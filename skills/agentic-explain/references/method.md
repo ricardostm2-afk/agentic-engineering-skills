@@ -1,7 +1,9 @@
 # Method and assessment
 
-These are authoring steps, not mandatory HTML sections. Use the project's requested language;
-default to English. The SKILL.md map may live in the delivery notes.
+Read for **lesson mode** or when the user explicitly wants practice and assessment. These are
+authoring steps, not mandatory HTML sections; the map may live in delivery notes. Explain and
+walkthrough modes use source-grounded reasoning without an activity, transfer or retrieval gate.
+Use the project's requested language; default to English.
 
 1. Define an observable capability and prerequisites. “Predict a conditional request's response”
    is assessable; “understand HTTP” does not bound a task.
