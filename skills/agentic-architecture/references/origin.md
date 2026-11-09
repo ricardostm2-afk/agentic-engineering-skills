@@ -44,7 +44,9 @@ Codex, and `agentic-implement` and `agentic-feature` point to the vocabulary.
 - Vocabulary lives in one file, `references/vocabulary.md`, read by `agentic-feature`,
   `agentic-implement` and `agentic-project`. Upstream it lives in the `codebase-design` skill,
   available only through the plugin.
-- Six steps, each with a completion criterion (“Done when”), like this repo's other skills.
+- Adaptive modes: assess ends with evidence and priorities; design resolves only material open
+  interface questions; refactor hands an authorized design to `agentic-feature`. Small scopes
+  require neither subagents, a candidate-choice interview nor two artificial alternatives.
 - Measured evidence in each candidate (step 2), within a declared history window even when the
   human gives the direction: change frequency counted per commit, callers and internal uses
   with `file:line`, co-change, the deletion test with N counted, and each number's command.
@@ -52,19 +54,21 @@ Codex, and `agentic-implement` and `agentic-feature` point to the vocabulary.
   on each candidate card; exploration remains free, but each candidate carries evidence. The
   report gained the “Proof” block and the history window in its header, and candidates are ordered
   by strength, then by change frequency within it.
-- Report: with the Artifact tool, publish as a page and let the `artifact-design` contract
-  override the skeleton; without it, use a file in the temporary folder, as upstream does.
+- Report: text, an evidence table and useful diagrams are the default. HTML is requested or
+  justified by its navigation/shareability; actual pages retain detector and visual proof.
+  Publication follows the available tool's contract and the user's authorization.
 - Report style: `HTML-REPORT.md` asks for `text-xs uppercase tracking-wider` labels,
   colored strength pills, a gradient on the deep module, each candidate in a card with its
   diagram in another card, and side borders on cross-sections. Here the report is a screen for the human
   to read and follows `agentic-design` UI rules (`ui-without-slop.md`, B1, B2, B7, B13 and B17), with
-  its detector exiting 0 on the page: UI preferences live there. Skeleton colors became tokens,
-  retaining upstream values.
+  its detector exiting 0 on an actual page: UI preferences live there. Only the applicable review
+  checklist and relevant blocker/exception sections load; no full UI reference by default.
 - Grill: one question at a time, with the recommendation before context and no emojis; upstream
   `grilling` asks the entire frontier each round. Facts remain the agent's responsibility and
-  decisions the human's. “Design it twice” becomes the way to answer the interface question within the grill.
+  material commitments the human's. “Design it twice” applies when alternatives have real
+  trade-offs; established local interfaces need no forced comparison.
 - The grill has an end criterion: interface, seam and tests decided, each with its origin,
-  and shared understanding confirmed.
+  and shared understanding recorded. Existing approval or delegation is not asked for again.
 - Execution (step 6): the agreed design becomes a request to `agentic-feature`, which handles triage,
   spec, lanes and review. Upstream ends at the grill.
 - Deepening tests: upstream says to delete old shallow-module tests once tests exist at the new

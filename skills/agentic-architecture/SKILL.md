@@ -1,174 +1,162 @@
 ---
 name: agentic-architecture
 description: >-
-  Assesses an existing codebase for architectural friction and module deepening, compares
-  interfaces and hands an agreed refactor to agentic-feature. Use for architecture assessment or
-  design; use agentic-fix for a specific bug and agentic-project for a new project.
-  Not for a feature (agentic-feature) or a fix (agentic-fix).
+  Assesses architectural friction in existing code, designs module boundaries and interfaces,
+  or hands an authorized refactor to agentic-feature. Use for architecture assessment or design;
+  assessment stops with evidence and priorities. Use agentic-project for a new project,
+  agentic-fix for a specific bug and agentic-feature for a feature.
 ---
 
 # agentic-architecture
 
-Host differences, installations, tool substitutes and sibling resolution follow
-`<agentic-project>/references/host-compatibility.md`; find that sibling through
-`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
+Find where architecture makes real changes harder, and recommend useful **deepenings**: simpler
+interfaces that hide meaningful implementation complexity. Preserve repository rules, accepted
+ADRs and domain vocabulary. Inspect before proposing; measure instead of guessing.
 
-Find where architecture holds back people changing the code and propose **deepenings**: refactors
-that replace shallow modules with a deep module, making the code easier for agents to test and
-navigate. You explore, measure and propose; the human chooses the candidate and decides the design
-in the grill; `agentic-feature` executes it.
+Host differences and sibling/third-party resolution follow
+`<agentic-project>/references/host-compatibility.md`; locate that sibling through
+`$AGENTIC_PROJECT_DIR` first. Resolve `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`) for refactor
+handoff and `<agentic-design>` (`$AGENTIC_DESIGN_DIR`) only for an actual page. Without a Skill
+tool, read the resolved `SKILL.md`; do not invent commands or substitute another provider.
 
-The terms (module, interface, implementation, deep and shallow, seam, adapter, leverage,
-locality, deletion test) have the meanings in `references/vocabulary.md`: read it before step 2
-and use them exactly in candidates, the report, the grill and the final request. The domain
-glossary names the modules; the vocabulary names the architecture.
+Refactor test recipes may refer to `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`); resolve it
+through the same common reference only when needed.
 
-Repo rules override this skill: `AGENTS.md`/`CLAUDE.md`, ADRs and the glossary.
+## 0. Select the mode
 
-The siblings `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`), `<agentic-design>` (`$AGENTIC_DESIGN_DIR`)
-and `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`) follow the common reference; paths, prefixes
-and order are not repeated here. Without a Skill tool, read the found `SKILL.md`.
+Infer the requested stopping point immediately and state scope in one line.
 
-## 1. The domain model
+| Mode | Intent | Complete when |
+|---|---|---|
+| **Assess** (default) | Review architecture, find friction, prioritize improvements | Source-backed findings, measured evidence, priorities and limits are delivered |
+| **Design** | Explore a named candidate or agree a material boundary/interface choice | Recommendation and relevant interface/seam/test decisions are documented |
+| **Refactor** | Implement or carry an agreed architectural change through delivery | The agreed request has entered `agentic-feature` and its authorized execution path |
 
-In the project repo, read whatever exists: the glossary (`GLOSSARY.md` or whatever
-`AGENTS.md` names), ADRs (`docs/adr/` or equivalent), `AGENTS.md`/`CLAUDE.md`,
-`ARCHITECTURE.md` and the area map (`.agentic/areas.json`). ADRs record decisions this
-skill does not reopen (step 3, “Conflict with an ADR”).
+An assessment ends after step 3. Do not require candidate choice, a grill, alternatives, an HTML
+report, ADR creation or implementation to finish an assessment. In design/refactor mode, reuse
+a candidate or decision already selected by the user. Ask only material unresolved questions.
+Routine reversible choices within authorized scope are the agent's to make; record the reason.
 
-Done when you have the list of domain terms you will use and ADRs affecting the areas to
-explore, or have written “no glossary” and “no ADRs”.
+Text with an evidence table and useful diagram is the default report. Generate HTML only when
+requested or justified by a substantial comparison that benefits from navigation/shareability.
+A small module needs neither a page nor subagents. Delegate independent areas/designs only when
+that saves time or adds a useful perspective; otherwise inspect directly. Keep scope local when
+the user named a module or pain point.
+
+## 1. Domain model and constraints
+
+Read applicable `AGENTS.md`/`CLAUDE.md`, relevant glossary entries, accepted ADRs and architecture
+docs, plus the area map if present. Do not create missing files merely to complete this step.
+Record “no glossary” or “no ADRs” when absent. Read `references/vocabulary.md` before analysis:
+module, interface, deep/shallow, seam, adapter, leverage, locality and deletion test retain those
+meanings. The domain glossary supplies names; this vocabulary supplies architecture terms.
+
+Identify the constraints and existing decisions affecting the area. Accepted ADRs are not silently
+reopened. A candidate contradicting one needs demonstrated friction, the exact ADR and a reason
+to revisit it; leave out theoretical refactors forbidden by existing decisions.
 
 ## 2. Candidates with evidence
 
-**Where to look.** Deepening a module pays off in subsequent changes to it, so give weight
-to where code changes most (YAGNI). Decide where to look before looking:
+**Scope first.** If the user supplied a direction, inspect that area. Otherwise choose and state
+a history window (`--since=<date>`) and start with files changing most:
 
-- choose a history window (`--since=<date>`) and declare it: the counts under “Measure”,
-  the order in step 3 and the report header use it, even when the human gave a direction;
-- if the human gave a direction (a module, an area, a pain point), use it and skip the next point;
-- otherwise, count changes per file in that window and start with the most frequent:
-  `git log --since=<date> --name-only --format= -- <folders> | grep . | sort | uniq -c | sort -rn`.
-  If changes are spread out with no hotspots, widen the window or folders.
+```sh
+git log --since=<date> --name-only --format= -- <folders> | rg . | sort | uniq -c | sort -rn
+```
 
-**Explore.** Launch a subagent to walk those areas (without subagents, do it yourself). No
-rigid heuristics: note where there is friction.
+Use one declared window for comparisons; widening it requires saying why. If history is absent,
+state that limitation and use actual callers/tests/change requirements, never invented frequency.
+Do not scan the whole repository solely to assess a small named module.
 
-- Does understanding a concept require jumping between many small modules?
-- Where are modules shallow, with an interface almost as complex as the implementation?
-- Where were pure functions extracted just to test them, while defects live in how they
-  are called (no locality)?
-- Where do coupled modules leak through the seam?
-- Which parts lack tests, or are hard to test through their interface?
+**Explore friction.** Look for concepts scattered across shallow wrappers, interfaces nearly
+as complex as their implementations, coupled modules exposing internals, tests detached from
+real call paths, and meaningful behaviour that cannot be tested through the public interface.
+A pure function or small file is not by itself an architectural defect.
 
-**Measure.** Each candidate carries evidence, measured and never estimated, with the command that produced it:
+**Measure each candidate**, with commands and `file:line` references:
 
-- **change frequency**: commits touching its files within the declared window,
-  counted per commit (summing file counts counts a commit touching several files twice):
-  `git log --since=<date> --format=%H -- <candidate files> | wc -l`;
-- **coupling**: callers (`grep` of imports: the total and each `file:line`), places
-  where a caller uses its internals (`file:line`) and co-change, meaning how many of
-  those commits changed each file outside the candidate:
-  `git log --since=<date> --full-diff --name-only --format= -- <candidate files> | grep . | sort | uniq -c | sort -rn`;
-- **deletion test**: imagine deleting it and say where the complexity goes, with N counted: if
-  it disappears, it was pass-through; if it reappears in N callers, it earns its place. A candidate's
-  signal is complexity concentrating in one place when shallow modules merge, rather than
-  moving elsewhere;
-- **interface**: what a caller must know to use it (inputs, ordering, errors,
-  configuration), with `file:line`.
+- **Change frequency:** commits touching candidate files within the window, counted per commit:
+  `git log --since=<date> --format=%H -- <candidate files> | wc -l`.
+  Do not sum per-file counts and double-count commits.
+- **Coupling:** actual callers/imports (total and locations), uses of internals, and co-change
+  outside the candidate:
+  `git log --since=<date> --full-diff --name-only --format= -- <candidate files> | rg . | sort | uniq -c | sort -rn`.
+  Separate search candidates from verified call sites.
+- **Deletion test:** reason about where complexity would go if removed. If it disappears, the
+  module is pass-through; if it reappears in N callers, count N and show those callers. Label
+  this counterfactual reasoning; it is not an executed measurement.
+- **Interface:** what a caller must know (inputs, ordering, errors, configuration), with locations.
 
-A number you have not measured does not go in: state what remains unmeasured in the candidate.
-Classify each one's dependencies using the four categories in `references/deepening.md`.
+Unmeasured values stay explicitly unmeasured. Classify dependencies using
+`references/deepening.md`. Each candidate needs its scope/files, one-sentence problem, dependency
+category, measured evidence and the reason a deepening would reduce future work. Distinguish an
+observed defect, an architectural hypothesis and a speculative improvement.
 
-Done when each candidate has its files, a one-sentence problem, dependency category
-and the evidence above, with commands, numbers and `file:line` references.
+## 3. Findings and priorities
 
-## 3. Visual report
+Deliver findings in chat or the requested document. Use `references/report.md` for the evidence
+fields and optional page procedure. Put the recommendation and practical implication first;
+order candidates by strength (**strong**, **worth exploring**, **speculative**), then by measured
+change frequency within the strength. Explain missing measurements instead of treating them as zero.
 
-Write the report following `references/report.md`: a standalone HTML page, one section per
-candidate with before/after diagrams, the evidence from step 2 and recommendation strength,
-then the top recommendation at the end. This is a screen for the human to read: follow `agentic-design` UI rules.
-Order candidates by strength (strong, worth exploring, speculative), then within each strength
-by change frequency, highest first.
+Use a current-state diagram when it clarifies coupling. An assessment may sketch a possible
+deepening, labeled as a hypothesis; it does not need an agreed interface or mandatory before/after
+diagrams for every candidate. Include ADR conflicts and the reason to reopen them.
 
-- **With the Artifact tool**: publish it as a page using the tool's procedure
-  for a new page (through the `artifact-design` skill); where that contract and
-  `report.md` differ, the contract wins. Give the human the link.
-- **Without it**: save the file outside the repo, in the session's temporary folder (the scratchpad,
-  if the agent has one; otherwise `$TMPDIR`, or `/tmp`), as `architecture-review-<date-time>.html`, open it
-  (`open` on macOS, `xdg-open` on Linux, `start` on Windows) and give its absolute path.
+**Assess stops here**, with evidence, priorities and limits. A short suggested next step is enough;
+do not ask “Which candidate?” as a required completion gate or start a refactor.
+For an actual HTML page, use the report's applicable visual checklist, detector and browser proof;
+text reports do not require UI tooling.
 
-**Conflict with an ADR.** Include a candidate contradicting an ADR only if the friction justifies
-reopening it, and say so in its section (“contradicts ADR-0007, but worth reopening because…”).
-Leave out theoretical refactors forbidden by an ADR.
+## 4. Resolve a candidate only when needed
 
-Do not propose interfaces yet: they belong in step 5.
+For design/refactor, reuse the supplied candidate, explicit delegation or clear scope. Ask for a
+choice only when several material directions remain and choosing changes product commitments,
+scope or a hard-to-reverse decision. Give the top recommendation and a reason. “You choose” is
+valid; record delegated origin and proceed without another confirmation of that delegation.
+If the user declines, deliver the findings. A substantive lasting rejection may justify an ADR
+under `references/grill.md`; temporary preference alone does not.
 
-Done when the `agentic-design` detector exits 0 on the page (`references/report.md`,
-“Style”), the report is published or saved, the human has the link or path, and each
-candidate has the evidence from step 2.
+## 5. Design to the uncertainty
 
-## 4. The human's choice
+Carry existing decisions forward. Read `references/grill.md` only for a material unresolved
+design question. Investigate facts yourself; ask one dependent question at a time, with a
+recommendation. Do not interview merely to populate a decision table.
 
-Ask “Which of these do you want to explore?”, with the top recommendation first and a one-line reason.
-The human chooses; “you choose” is valid and selects the top recommendation, recorded as
-delegated. A rejection with a substantive reason leads to the ADR offer in `references/grill.md`
-(“Along the way”).
+Use `references/design-it-twice.md` when materially different interface/seam designs have real
+trade-offs, or the user requested alternatives. Compare two real alternatives then; a small
+local refactor with an established interface can keep it and explain the choice. A third design
+needs a concrete unresolved question. Parallel subagents are optional, not part of the definition
+of design quality.
 
-Done when the human has named a candidate, delegated the choice, or said none: in that case
-stop here, having written any ADRs they accepted.
+Retain the seam and test rules in `references/deepening.md`: dependency category informs how to
+test through the seam; one adapter is hypothetical and two are real; replacement tests displace
+redundant ones instead of accumulating them.
 
-## 5. Grill the candidate
+Design is complete when the necessary **interface** (inputs, invariants, ordering, errors,
+configuration), **seam/adapters** and **test strategy** are clear, with origins (existing ADR,
+human, delegated or agent within scope). Confirm only a material unresolved commitment; an
+already agreed design is not sent through another approval gate. Design-only work ends here.
 
-Follow `references/grill.md`: one question at a time, each with your recommendation, through
-the candidate's decision tree: constraints, dependencies and their categories, the shape of the deepened
-module, what stays behind the seam and which tests survive. You look up facts;
-the human makes decisions.
+## 6. Authorized refactor through agentic-feature
 
-Design the interface twice, following `references/design-it-twice.md`: show the problem space
-to the human, produce 2 radically different designs (a third only on request), compare depth,
-locality and seam placement, and give your recommendation. The choice returns to the grill as a decision.
+For refactor mode, invoke `agentic-feature` (or read its resolved `SKILL.md`) with:
 
-The seam and tests follow `references/deepening.md`: dependency category determines how to
-test through the seam, one adapter is a hypothetical seam and two are a real seam, and new
-tests replace old ones instead of piling up.
+- the candidate, scope and evidence (text or report link);
+- agreed interface, seam, adapters and dependency category;
+- implementation complexity hidden behind the seam;
+- required interface tests and any obsolete tests to remove;
+- decisions and their origins, relevant glossary/ADR changes, and verification limits.
 
-Done when the following are decided, each with its origin (human or delegated): **interface**
-(inputs, invariants, ordering, errors, configuration), **seam** (placement, adapters and
-dependency category) and **tests** (new ones at the interface and old ones to delete); and
-when the human has confirmed the shared understanding.
+Do not reopen settled design choices. The route, spec, lanes, review and execution belong to
+`agentic-feature`. Carry the original implementation authorization forward. If the user asks
+to defer execution, deliver the complete handoff request instead; a recommendation alone is
+not implementation authorization.
 
-## 6. Execution through agentic-feature
+## Sources and optional references
 
-Run the refactor through `agentic-feature`: invoke it with the Skill tool (in the plugin,
-`agentic-skills:agentic-feature`; in Codex, `$agentic-feature`) or, without it, read
-`<agentic-feature>/SKILL.md` and follow it. The request carries the agreed design so its grill
-does not reopen it:
-
-- the candidate and evidence (report link or path);
-- the interface, seam, adapters and dependency category;
-- what the implementation hides behind the seam;
-- new tests at the interface and old ones to delete;
-- the decision table from step 5, each decision's origin, and glossary and ADR
-  changes.
-
-The route, spec, lanes and review belong to `agentic-feature`. If the human asked only for
-planning, say so in the request: it has a “Plan only” mode.
-
-Done when `agentic-feature` has started with the request or, if the human deferred it,
-when you have given them the full request and the line “Next step: invoke agentic-feature with this
-request”.
-
-## In other agents
-
-The steps stay the same; the tool changes, and you state the substitution in one line:
-
-- **Without subagents**: exploration in step 2 and designs in step 5 run sequentially.
-- **Without AskUserQuestion**: questions go in chat, one at a time, in the format of
-  `references/grill.md`.
-- **Without Artifact**: the report stays in the HTML file from step 3.
-- **With the `mattpocock-skills` plugin**: `codebase-design` and `grilling` are this method's
-  English sources and can accompany it; where they differ (one question at a time, measured evidence,
-  execution through `agentic-feature`), this skill wins.
-
-Method origin, changes and license: `references/origin.md`.
+`references/vocabulary.md` and `references/deepening.md` preserve the method's definitions and
+measurement/test reasoning. `references/report.md` covers output; `references/grill.md` and
+`references/design-it-twice.md` are conditional design tools. Method origin and license:
+`references/origin.md`. If installed, `mattpocock-skills:codebase-design` and `grilling` may
+supply background through the common resolver; this skill's mode boundaries take precedence.
