@@ -107,7 +107,10 @@ The canonical cases above retain those budgets for direct native runs. Compariso
 cover the retained task/workflow criteria without mixing the agent-count ceiling into quality.
 Skill-routing and all other graders stay. Both plugin versions receive the same filtered suite;
 cases with no remaining criteria fail before a model is called. Inline `case.yaml` graders must first
-be moved into `graders/*.md` so their classification is explicit.
+be moved into `graders/*.md` so their classification is explicit. The preparer accepts a single
+block-mapping `case.yaml` with simple unquoted keys and scalar/literal values. Flow/JSON documents,
+quoted keys, merge keys, aliases, anchors and tags are rejected with conversion guidance; they are
+not silently treated as safe or partially parsed.
 
 The candidate and baseline are copied into disposable snapshots before either run. This freezes
 candidate edits and avoids modifying the checkout. The CLI requires a relative eval directory,
