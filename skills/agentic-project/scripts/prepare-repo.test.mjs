@@ -7,7 +7,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, existsSync, rmSync, copyFileSync, appendFileSync } from "node:fs";
+import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, existsSync, rmSync, copyFileSync, appendFileSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -84,7 +84,7 @@ test("--show prints the current hook with its version marker; unknown name exits
   const ok = spawnSync("bash", [SCRIPT, "--show", "pre-commit"], { encoding: "utf8" });
   assert.equal(ok.status, 0);
   assert.match(ok.stdout, /^#!\/usr\/bin\/env bash/);
-  assert.match(ok.stdout, /agentic-project:pre-commit:3/);
+  assert.match(ok.stdout, /agentic-project:pre-commit:4/);
   assert.equal(spawnSync("bash", ["-n"], { input: ok.stdout }).status, 0, "generated hook has valid bash syntax");
   assert.equal(spawnSync("bash", [SCRIPT, "--show", "unknown"], { encoding: "utf8" }).status, 2);
 });
@@ -123,7 +123,7 @@ test("pre-commit from an older version (no marker) produces a pending warning", 
   const r = newRepo(t);
   r.git("init", "-q", "-b", "main");
   const current = spawnSync("bash", [SCRIPT, "--show", "pre-commit"], { encoding: "utf8" }).stdout;
-  r.write(".githooks/pre-commit", current.replace("agentic-project:pre-commit:3", "old-version"));
+  r.write(".githooks/pre-commit", current.replace("agentic-project:pre-commit:4", "old-version"));
   const out = r.sh(["--dir", r.repo]).stdout;
   assert.match(out, /comes from an older version/);
   assert.match(out, /Pending: 1 item\(s\)/);
@@ -231,6 +231,67 @@ test("hook with real agentic-design detector: old 10px passes, new 9px blocks", 
   const bad = r.commit("new small font");
   assert.equal(bad.status, 1);
   assert.match(bad.out, /src\/screen\.css:3\s+blocker\s+small-text/);
+});
+
+const BRAND_CSS = ":root {\n  --brand-gradient: linear-gradient(135deg, #6d28d9, #2563eb);\n}\n";
+const BRAND_CONFIG = JSON.stringify({ brand_gradients: ["--brand-gradient"] });
+
+for (const situation of ["staged", "tracked", "unstaged", "unstaged removal", "staged removal"]) {
+  test(`hook: brand-gradient declaration uses index configuration (${situation})`, { skip: !REAL_DETECTOR }, (t) => {
+    const r = repoWithHooks(t, { detector: readFileSync(REAL_DETECTOR, "utf8") });
+    const config = ".agentic/ui.json";
+    r.write(config, BRAND_CONFIG);
+    if (situation !== "unstaged") r.git("add", config);
+    if (["tracked", "unstaged removal", "staged removal"].includes(situation)) {
+      assert.equal(r.commit("declare brand gradient").status, 0);
+    }
+    if (situation === "staged removal") r.git("rm", config);
+    if (situation === "unstaged removal") rmSync(path.join(r.repo, config));
+    r.write("src/brand.css", BRAND_CSS);
+    r.git("add", "src/brand.css");
+    const c = r.commit("add approved brand token");
+    const allowedInIndex = !["unstaged", "staged removal"].includes(situation);
+    assert.equal(c.status, allowedInIndex ? 0 : 1, c.out);
+    if (allowedInIndex) assert.match(c.out, /0 blocker\(s\) on changed lines/);
+    else assert.match(c.out, /purple-gradient/);
+  });
+}
+
+test("hook and direct detector agree when CSS and brand config are staged; unstaged edits do not change hook verdict", { skip: !REAL_DETECTOR }, (t) => {
+  const r = repoWithHooks(t, { detector: readFileSync(REAL_DETECTOR, "utf8") });
+  r.write(".agentic/ui.json", BRAND_CONFIG);
+  r.write("src/brand.css", BRAND_CSS);
+  r.git("add", ".agentic/ui.json", "src/brand.css");
+  const direct = () => spawnSync(process.execPath, [REAL_DETECTOR, "--json", "src/brand.css"], { cwd: r.repo, env: r.env, encoding: "utf8" });
+  assert.equal(direct().status, 0);
+  r.write(".agentic/ui.json", JSON.stringify({ brand_gradients: [] }));
+  assert.equal(direct().status, 1, "direct detector follows the edited working tree");
+  const c = r.commit("index retains approved declaration");
+  assert.equal(c.status, 0, c.out);
+});
+
+test("hook: a temporary snapshot inside the repository cannot use its unstaged declaration", { skip: !REAL_DETECTOR }, (t) => {
+  const r = repoWithHooks(t, { detector: readFileSync(REAL_DETECTOR, "utf8") });
+  r.write(".agentic/ui.json", BRAND_CONFIG);
+  r.write("src/brand.css", BRAND_CSS);
+  r.git("add", "src/brand.css");
+  const temp = path.join(r.repo, "local-tmp");
+  mkdirSync(temp);
+  const c = r.commit("config not in index", { TMPDIR: temp, GIT_DIR: path.join(r.repo, ".git"), GIT_WORK_TREE: r.repo });
+  assert.equal(c.status, 1, c.out);
+  assert.match(c.out, /purple-gradient/);
+});
+
+test("hook: invalid or symlink config fails closed instead of reading unstaged external JSON", { skip: !REAL_DETECTOR || process.platform === "win32" }, (t) => {
+  const r = repoWithHooks(t, { detector: readFileSync(REAL_DETECTOR, "utf8") });
+  const external = path.join(r.root, "external.json");
+  writeFileSync(external, BRAND_CONFIG);
+  symlinkSync(external, path.join(r.repo, ".agentic/ui.json"));
+  r.write("src/brand.css", BRAND_CSS);
+  r.git("add", ".agentic/ui.json", "src/brand.css");
+  const c = r.commit("config symlink cannot authorize a gradient");
+  assert.equal(c.status, 1, c.out);
+  assert.match(c.out, /FAILED: detect-slop could not analyze/);
 });
 
 test("hook: finds the detector in ~/.agents/skills (Codex, Cursor, Gemini, Copilot, OpenCode)", (t) => {

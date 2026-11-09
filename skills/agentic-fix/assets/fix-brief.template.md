@@ -10,7 +10,9 @@ worktree: {{path}} · branch: {{branch}} · area: {{area}}
 
 human order: {{their exact words for orchestrator work (push, deploy, production), or “none”}}
 
-Load `agentic-implement` and perform steps 3 to 5 of `agentic-fix`.
+Load `agentic-implement` and read `<absolute agentic-fix path>/references/writer-steps.md` only.
+Do not preload `agentic-fix` or run its orchestrator steps. Visual correction: also read the exact
+`<agentic-design>/references/targeted-adjustment.md` (absolute path) and required proof sections.
 
 ## The defect
 

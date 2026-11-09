@@ -7,14 +7,16 @@ procedure (prepare, build, filter, capture, show and record) and does not repeat
 
 ## 1. Prepare
 
-1. Capture the 2 neighbouring screens at the main resolution: the variant must look like the
+1. Reuse valid captures or capture the 2 neighbouring screens at the main resolution: the variant must look like the
    same application beside them. If the screen exists, also capture its current state at the
    target resolutions and project themes: this is the **baseline**. Confirm that the reproduction
    of the current state matches the real app before trusting the variants.
 2. Prepare realistic synthetic data: the quantity the caller measured (not 3 rows), long names,
    empty values, accents. Never real people's data.
-3. For flows and information architecture, references are mature products in the category and
-   current primary sources, with source and date (`ui-without-slop.md` §1), never galleries.
+3. Start from supplied/project research and approved local patterns. Use external research only
+   for a material unknown, time-sensitive claim or explicit request. When needed, use mature
+   products in the category and primary sources with source/date (`ui-without-slop.md` §1), never
+   galleries. Reuse applicable evidence; choosing variants is not a whole-platform freshness audit.
 
 ## 2. Choose the prototype form
 

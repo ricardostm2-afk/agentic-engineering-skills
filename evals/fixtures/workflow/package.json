@@ -1,0 +1,1 @@
+{"name":"workflow-fixture","private":true,"type":"module","scripts":{"test":"node --test spec/*.spec.js"}}

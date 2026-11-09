@@ -1,56 +1,52 @@
-# Grill the candidate
+# Resolve a material design question
 
-For step 5. The goal is shared understanding with the human about the chosen candidate's
-design, decision by decision, until nothing remains silently assumed.
+For design/refactor mode, only when a consequential interface, seam or scope decision remains.
+Assess mode ends with evidence and priorities; do not load this interview merely to close it.
 
-## The decision tree
+## Decision frontier
 
-Each decision unlocks those depending on it. The **frontier** consists of decisions whose
-prerequisites are resolved: ask only those now. For the candidate, the tree covers constraints,
-dependencies and their categories (`references/deepening.md`), the deepened module's shape,
-what stays behind the seam and which tests survive. Handle the interface question through
-`references/design-it-twice.md`.
+Carry forward accepted ADRs, the user's chosen candidate and prior decisions/delegation. Identify
+only unresolved questions that change scope, callers, invariants, dependencies or verification.
+Look up facts in code/docs/history yourself. A local reversible choice within the authorized scope
+can be made and explained by the agent; it does not need a human question.
 
-## One question at a time
+Resolve prerequisites before dependent decisions. Use `references/deepening.md` for dependency
+categories and test seams. Read `references/design-it-twice.md` only when materially different
+interface designs offer real trade-offs or alternatives were requested.
 
-Ask a question, wait for the answer, recalculate the frontier and ask the next: each answer
-changes the tree. Each question puts the recommendation before the context:
+## Questions
+
+Ask one dependent question at a time, with a recommendation first:
 
 ```
 **Q<n>. <decision title>**
-Recommendation: <your answer>, because <one line>.
-<1 to 2 lines of context, with the motivating fact and file:line; options if there are more than two>
+Recommendation: <answer>, because <one line>.
+<1–2 lines with the motivating evidence and file:line; meaningful alternatives if needed>
 ```
 
-Write it so “yes” accepts the recommendation. With AskUserQuestion, one question per
-call; otherwise, in chat.
+Use the available question tool or chat. “You choose” resolves the choice with the recommendation,
+recorded as delegated. Do not ask again about a delegated or already accepted decision.
+If there is no material unknown, skip the interview and document the scoped choice.
 
-## Facts are yours, decisions are theirs
+## Lasting records
 
-Look up a fact answered by code, docs, history or the report yourself, or send a
-subagent; do not ask it. While a subagent searches, only questions depending on that fact
-wait. Decisions belong to the human: send each with a recommendation and wait for the answer.
-“You choose” closes pending decisions with your recommendations, recorded as delegated.
+Keep glossary/ADR changes proportional to the request:
 
-## Along the way
+- If a new shared domain term is needed, update the existing glossary or include its definition
+  in the design. Create a glossary only when it will serve subsequent work.
+- If a substantive rejection would otherwise be repeatedly rediscovered, consider an ADR.
+  Temporary “not now” or obvious reasons do not warrant one.
+- Apply `<agentic-project>/references/architecture.md` §6: an ADR needs a hard-to-reverse,
+  surprising decision with a real trade-off. Never rewrite an accepted ADR; append a dated
+  addendum or supersede it explicitly. Reuse existing authorization to document a decision;
+  ask only for a material commitment not already authorized.
+- Domain term format follows `<agentic-project>/references/project-grill.md`. Optional
+  `mattpocock-skills:domain-modeling` uses the common resolver and the project's real glossary path.
 
-Carry out side effects as soon as a decision is clear:
+## Completion
 
-- **A deepened module named after a concept missing from the glossary**: add the term
-  to the domain glossary (and create the file if absent).
-- **A vague term refined in conversation**: update the glossary immediately.
-- **The human rejects the candidate with a substantive reason**: offer an ADR like this: “Would you
-  like me to record this in an ADR so future architecture reviews do not suggest it again?”. Only
-  when a future explorer would need the reason to avoid repeating the suggestion; temporary
-  (“not worth it right now”) and obvious reasons do not warrant an ADR.
-
-The term format follows `<agentic-project>/references/project-grill.md` (“Glossary”), and
-ADRs follow `<agentic-project>/references/architecture.md` §6. With the
-`mattpocock-skills:domain-modeling` plugin installed, you may use it for the glossary and ADRs,
-telling it the project's glossary filename.
-
-## When it ends
-
-When the frontier is empty: every branch visited and the interface, seam and tests
-decided. Show the decision table with each origin (human or delegated) and ask for
-confirmation of shared understanding. Without it, step 6 waits.
+Record the necessary interface, seam/adapters and test strategy with each origin (existing ADR,
+human, delegated or agent within scope). Show the resulting understanding. Confirmation is
+needed only for a material unresolved commitment; do not create a second approval gate after
+the user has chosen or delegated. Design-only work stops here; authorized refactor continues
+through `agentic-feature` with these decisions intact.

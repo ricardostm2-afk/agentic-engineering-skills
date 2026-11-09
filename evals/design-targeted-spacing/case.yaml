@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: design-targeted-spacing
+expected_outcome: |
+  Only the requested token use changes; no variants or redesign, and visual proof status is honest.
+context:
+  scaffold_script: place-fixture.sh

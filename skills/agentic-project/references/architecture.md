@@ -4,6 +4,10 @@ Goal: choose an architecture the human understands and can afford, and agents ca
 fast feedback. Architecture is the project's most expensive decision to reverse; propose
 options and costs rather than imposing it.
 
+Read only for a selected architecture module. Keep the procedure proportional to the material
+decision: existing/small repo preparation does not require this audit, a new stack comparison,
+an area-map file, radar or an ADR. Use existing docs/decisions where they already answer the need.
+
 ## Adopt mode
 
 In a repo with code, architecture already exists: do not propose options from scratch. Audit
@@ -15,7 +19,8 @@ code: actual modules and an area map of real folders.
 
 ## 1. Deciding constraints
 
-Before options, write 5–8 constraints from `docs/decisions.md` and `docs/prerequisites.md`
+Before an open material choice, list the constraints that actually decide it, using existing
+context or `docs/decisions.md` and `docs/prerequisites.md` when present
 (e.g. “personal data stays in the chosen region”, “50 currency units/month ceiling”, “one
 operator”, “10× Monday peaks”). Evaluate each option against these; otherwise comparison is taste.
 
@@ -39,8 +44,8 @@ otherwise the web tool). Without network access, give ranges, marking each “es
 confirm” in the table and `docs/decisions.md`; the human must not decide on an apparently
 verified number that was not checked.
 
-End with **Recommendation** and a one-sentence reason tied to constraints. Ask the human
-(one question; “you choose” is valid).
+End with **Recommendation** and a reason tied to constraints. Ask only a material unresolved
+choice; carry an existing choice or delegation forward (“you choose” is valid).
 
 Reasonable starting points, adjusted to constraints:
 - Modular monolith + one relational database + server or PaaS. Simple to operate, easy to test
@@ -79,8 +84,9 @@ For each main module write: name (from glossary), one-sentence responsibility, i
 
 ## 5. Area map
 
-State which folders belong to each area, checks for changes there, and risk. Goes into
-`.agentic/areas.json` in phase 4:
+State which affected folders belong to each area, checks for changes there, and risk when needed
+for planning or parallel ownership. Write `.agentic/areas.json` only with selected parallel setup
+in phase 4; otherwise the existing repo instructions or a short scope map are sufficient:
 
 ```json
 {
@@ -140,7 +146,7 @@ Short (target ≤ 150 lines), written for agents and the human six months from n
 1. 5-line overview and text diagram.
 2. Modules (from §4).
 3. Main data flows (origin, storage and readers of each personal datum).
-4. Area map (summary; `.agentic/areas.json` is the source).
+4. Area map when relevant (link `.agentic/areas.json` only if it exists).
 5. How to run and verify locally (exact commands).
 6. Irreversible decisions linked to ADRs.
 

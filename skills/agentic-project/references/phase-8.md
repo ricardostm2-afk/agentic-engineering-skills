@@ -1,8 +1,11 @@
 Phase 8 — Methodology
 
+Only when the **Planning** module needs an ongoing team process. A small repo or a request for
+instructions/backlog alone does not need methodology or empty lessons files. Reuse existing rules.
+
 Read `references/methodology.md` and `references/skills-map.md`. Write `docs/methodology.md`
-adapted to the project: work cycle (current research at the start of each feature, slop
-detector during UI review, radar at delivery before the final commit), roles, WIP limit,
+adapted to the project: work cycle (scoped research when a material question needs current evidence,
+applicable UI review, radar updates only when useful evidence changed), roles, WIP limit,
 definition of done, cadence, pitfalls, and the “when → skill → how to invoke it” table with
 only skills installed here. Do not repeat rules: link to the constitution and `AGENTS.md`.
 Create `docs/lessons.md` (heading and one-line format only) for retrospective lessons.

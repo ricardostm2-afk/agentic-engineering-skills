@@ -1,8 +1,8 @@
-Filing: this index holds only what guides any session, or what is costly to forget. Everything else lives in the topic sub-index, one line per memory in exactly one index. New memory: a line in the topic sub-index, never here. Beyond ~6 KB or ~45 lines: move one down to a sub-index.
+Filing: only globally useful pointers or costly-to-forget scoped context belongs here. New memory: one line in a topic sub-index, never here. Each fact or cohesive retrieval unit belongs in exactly one index. Beyond ~6 KB or ~45 lines: move detail down; do not import it at startup.
 
 ## Applies to any session
 
-<!-- One line per memory: `- [Title](file.md) — one-line hook`. Cap of ~30 lines: one in, one out. -->
+<!-- One line per memory: `- [Title](file.md) — scope and retrieval trigger`. Cap of ~30 lines: one in, one out. Never promote a project-specific fact into a global rule. -->
 
 ## Topic sub-indexes
 

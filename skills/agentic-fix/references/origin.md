@@ -8,7 +8,7 @@ An original skill from this repo. The method incorporates adapted material from 
   `49dd158d1076134a641b33efb035946536778336` (plugin 1.3.1), MIT license
   ([copy](../licenses/LICENSE-mattpocock-skills) of upstream [LICENSE](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/LICENSE), Copyright (c) 2026 Matt Pocock):
   - [skills/engineering/diagnosing-bugs/SKILL.md](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/skills/engineering/diagnosing-bugs/SKILL.md):
-    step 3's red loop and `references/diagnosis.md`;
+    step 3's red loop in `references/writer-steps.md` and `references/diagnosis.md`;
   - [skills/engineering/tdd/SKILL.md](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/skills/engineering/tdd/SKILL.md):
     red before green, through `agentic-implement`.
 - [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills),
@@ -30,6 +30,10 @@ alone), the scripted human loop and references to `GLOSSARY.md` and ADRs. Added:
 separation, agent level by user rules, defect class, safeguards, fresh-context review and “if it
 escaped”. Two process preferences: an interface report stays on the specified screen (step 1);
 a structural defect requires its cause rather than another symptom adjustment (step 4).
+
+The entrypoint now routes orchestrators; delegated writers load only `references/writer-steps.md`
+and the implementation skill. Exact-state evidence may carry across handoffs, while changed
+inputs require new proof. Copied model/risk Cards were removed in favor of canonical references.
 
 ## How to update
 

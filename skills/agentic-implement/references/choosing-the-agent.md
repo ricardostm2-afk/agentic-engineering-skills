@@ -45,7 +45,8 @@ reread the same files costs more than the change, and a summary loses what the o
 read. Sections 2 to 4 do not apply. Review follows the diff's review level: a short change is
 usually Quick, with no reviewer (the red → green test is the proof); when the level calls for one,
 it is a subagent with fresh context, because the writer does not review. If the change exceeds
-these limits midway, stop and launch an agent at its actual level.
+these limits midway, stop and return to the caller's triage before dependent work; preserve
+settled decisions and valid proof, then launch an agent at its actual level when needed.
 
 - The human may force the level.
 <!-- card:level-2 -->
@@ -112,10 +113,12 @@ they have a closed tool list and start with less context. Adapt them to project 
 them in its agents folder (`install.sh --agents`, or copy files without overwriting existing ones):
 
 - `assets/agents/implementer.md`: a lane's code and tests.
-- `assets/agents/implementer-ui.md`: a UI lane; also preloads `agentic-design`.
+- `assets/agents/implementer-ui.md`: a UI lane; preloads only `agentic-implement`, and reads the
+  exact design build/targeted reference, rules and proof passed in its brief.
 - `assets/agents/researcher.md`: research by axis, inventory or read-only diagnosis;
   receives question, limits and return format from the calling skill.
-- `assets/agents/reviewer.md`: read-only review with fresh context; the brief comes from `agentic-code-review`.
+- `assets/agents/reviewer.md`: fresh-context review; production stays read-only, with scoped scratch
+  writing for its independent acceptance test. The brief comes from `agentic-code-review`.
 
 The project chooses model and effort; for implementation follow §2.
 `assets/agents/claude-md-excerpt.md` is the model-per-task rule to paste into `CLAUDE.md`, and
@@ -126,14 +129,15 @@ names: preloading includes only `SKILL.md`, not references. Without a script:
 - **Codex**: use the job launcher named by the project's `AGENTS.md` or `CLAUDE.md`, with a model
   and effort it accepts; without a launcher,
   `codex exec -m <model> -c model_reasoning_effort="<effort>" -C <worktree> - < <brief>`. The job
-  commits only with writable `.git`: session approval for Git commands, or unrestricted sandbox,
-  only with human OK. If Codex, its launcher or the sandbox cannot meet the brief, state `blocked:`
-  and ask for an explicit decision: a sequential route from the same provider or a different
-  provider. Never switch to Claude automatically; record the decision on the `agent:` line.
+  uses observed Git/worktree capabilities and existing authorization under
+  `<agentic-project>/references/host-compatibility.md`. Use an allowed same-provider sequential
+  route when it preserves scope; if a necessary action remains blocked, report the exact operation
+  and error. A different provider requires an explicit decision. Never switch to Claude
+  automatically; record the decision on the `agent:` line.
 
 **Job without subagents** (launcher disables Codex multiagents, or the agent lacks that tool): the
-brief says to load `agentic-implement` and, from another skill, only the writer's steps (3 to 5 of
-`agentic-fix`, the vocabulary of `agentic-architecture`); never run an orchestrator skill in full
+brief says to load `agentic-implement` and only exact writer references from another skill
+(`<agentic-fix>/references/writer-steps.md`, the vocabulary of `agentic-architecture`); never run an orchestrator skill in full
 (`agentic-feature`, the `agentic-code-review` panel). Lanes, panels and verifiers require subagents
 the job does not have, and the plan is already decided in the brief. A review assigned to a job
 follows “In other agents” in `<agentic-code-review>/SKILL.md`.

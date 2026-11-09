@@ -4,6 +4,10 @@ Goal: one place the human can view anytime, on any device: requests and progress
 work, blockers or human decisions, recorded decisions, delivery pace and quality (verification,
 deploys, specs, main-branch commits), without reading conversations. Also a place for new requests.
 
+Read only for a selected board module. Minimal bootstrap and a simple planning backlog do not
+need this CLI or a published board. Existing trackers can satisfy the coordination need; missing
+Artifact capability alone does not select this module.
+
 ## Parts
 
 | Part | Where | Role |
@@ -39,20 +43,21 @@ transitions in commit messages; put this exact arrangement in `AGENTS.md`.
    `node --test .agentic/board/scrum.test.mjs` (must pass), commit. Any agent, on another
    machine or without this skill, can then record work.
 3. **Configure** `.agentic/board/config.json` with existing project capabilities confirmed by
-   phase 2/3 decisions only: always `project`; `branch` unless `main`; `specs` unless
+   repo capabilities and selected decisions only: always `project`; `branch` unless `main`; `specs` unless
    `specs/*/tasks.md`; `verify_notes`/`deploy_notes` only if project verification/deploy writes
    those notes (README format), otherwise omit; `readyz`, `production_cmd` only with production,
    and the human chooses its command (knows permitted reads and methods). Never invent servers
    or commands. Verify `scrum.sh export` has no `warnings`.
 4. **Publish page** per `assets/board/artifact-sync.md` (load `artifact-capabilities`, exact capabilities, icon). Store
    URL in `AGENTS.md`.
-5. **Seed** CLI with one `integrated` item per completed phase (`item add --id setup-pN
+5. **Seed** CLI with one `integrated` item per selected, actually completed phase (`item add --id setup-pN
    --title … --status integrated`) and main decisions via `decision add` +
    `decision set … status=decided`. Include human-pending work because board shows it first:
-   each “Only the human can do this” entry in `docs/prerequisites.md` becomes
+   each relevant pending human action (from `docs/prerequisites.md` if present) becomes
    `request add --title "<missing action>" --status waiting-for-human`; each delegated decision
-   becomes `decision add --question … --recommendation "<what was applied> (delegated — review)"`,
-   open until confirmed. Backlog items arrive in phase 9.
+   becomes a recorded decided choice with delegated origin; optional later review does not
+   reopen its authorization. Backlog items arrive only if planning was selected. Never create
+   setup completion items for omitted modules.
 6. **Send and prove** (“Seed” in `assets/board/artifact-sync.md`): `scrum.sh sync-plan` with all 7 documents `=0` (absent
    from artifact); ArtifactData `batch` using its `writes` (no `if_version`); read back
    `state/items` with `get`, confirm seeded items, then run `sync-plan`'s `confirm`. If

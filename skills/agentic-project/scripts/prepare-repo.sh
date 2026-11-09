@@ -145,8 +145,9 @@ if [ "$checked" = 0 ]; then
   echo "pre-commit: WARNING: no typecheck/lint detected; only secrets were checked" >&2
 fi
 
-# UI without the "AI look" (marker: agentic-project:pre-commit:3): agentic-design's
-# detect-slop.mjs on staged UI files. Analyzes staged content (copied to a temporary folder),
+# UI without the "AI look" (marker: agentic-project:pre-commit:4): agentic-design's
+# detect-slop.mjs on staged UI files and the index version of .agentic/ui.json.
+# Analyzes staged content (copied to a temporary folder),
 # not the working tree. Only BLOCKS findings on lines this commit adds or changes
 # (git diff --cached -U0). Existing blockers appear as "Pre-existing": they do not stop the
 # commit and are not fixed along the way (one line in the report; no backlog item).
@@ -216,12 +217,22 @@ if [ "$#" -gt 0 ]; then
     echo "pre-commit: FAILED: detect-slop (mktemp failed)" >&2
     failed=1
   else
+    tmp_slop="$(cd "$tmp_slop" && pwd -P)"
     trap 'rm -rf "$tmp_slop"' EXIT
     mkdir "$tmp_slop/tree"
     printf '%s\0' "$@" | git checkout-index -z --stdin --prefix="$tmp_slop/tree/"
+    # Brand declarations must match the commit too. Include a tracked/staged config even
+    # when it is unchanged; never import unstaged declarations from the working tree.
+    if git ls-files --error-unmatch .agentic/ui.json >/dev/null 2>&1; then
+      mkdir -p "$tmp_slop/tree/.agentic"
+      git show :.agentic/ui.json > "$tmp_slop/tree/.agentic/ui.json"
+    fi
     echo "pre-commit: detect-slop ($# staged UI file(s); only changed lines block)"
     rc=0
-    (cd "$tmp_slop/tree" && node "$slop" --json "$@") > "$tmp_slop/findings.json" || rc=$?
+    # Do not discover the original repository if TMPDIR is inside it, or a hook exports
+    # its Git paths. The detector must resolve project config relative to this snapshot.
+    (cd "$tmp_slop/tree" && unset GIT_DIR GIT_WORK_TREE GIT_COMMON_DIR &&
+      GIT_CEILING_DIRECTORIES="$tmp_slop" node "$slop" --json "$@") > "$tmp_slop/findings.json" || rc=$?
     if [ "$rc" -gt 1 ]; then
       echo "pre-commit: FAILED: detect-slop could not analyze (exit $rc)" >&2
       failed=1
@@ -436,9 +447,9 @@ if [ -f "$TOP/.githooks/pre-commit" ]; then
     say "" "(view it with: $0 --show pre-commit). Without UI: '# detect-slop: n/a (no UI, D-NNN)'."
     pending=$((pending + 1))
   elif grep -q "Generic pre-commit (agentic-project)" "$TOP/.githooks/pre-commit" \
-    && ! grep -q "agentic-project:pre-commit:3" "$TOP/.githooks/pre-commit"; then
-    say "warning" ".githooks/pre-commit comes from an older version (looks for the detector in agentic-feature,"
-    say "" "where it no longer lives, or blocks existing slop on untouched lines). Propose a replacement with"
+    && ! grep -q "agentic-project:pre-commit:4" "$TOP/.githooks/pre-commit"; then
+    say "warning" ".githooks/pre-commit comes from an older version (the current hook checks staged UI config"
+    say "" "and blocks only changed lines). Propose a replacement with"
     say "" "diff: $0 --show pre-commit"
     pending=$((pending + 1))
   fi

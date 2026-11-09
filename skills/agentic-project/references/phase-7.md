@@ -1,7 +1,11 @@
 Phase 7 — Scrum board
 
+Only when **Board** is selected. An initial backlog alone does not require this module or CLI.
+Reuse an existing tracker where it serves the requested coordination. Publication requires the
+applicable authorization; local CLI/Markdown setup does not imply permission to publish.
+
 Read `references/board.md` and follow it: copy the CLI, hook, page and tests into `.agentic/board/`
-(green tests), write `config.json` only with what the project has, publish the page
+(green tests), write `config.json` only with what the project has, and when authorized publish the page
 (`assets/board/board.html`, exact capabilities in `assets/board/artifact-sync.md`), seed, send and read back, and write
 instructions in `AGENTS.md`: every agent records transitions and a heartbeat through the CLI,
 at every transition and at least every 30 minutes while working. Only the orchestrator, the

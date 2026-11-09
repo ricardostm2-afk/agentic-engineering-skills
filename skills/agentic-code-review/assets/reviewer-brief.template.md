@@ -4,7 +4,8 @@
 reviewer with lenses assigned by panel-and-rounds.md §3 (Standard: all in one; Complete: two); verifier uses
 last section only. Fill <...>, remove inapplicable parts and comment. <agentic-code-review>,
 <agentic-implement>, <agentic-design> are absolute skill paths (third only for UI). Recipient wrote
-no part of change. Orchestrator already checked level against round's diff; lenses do not redo it.
+no part of change. Orchestrator already classified every post-review diff before exceptions; lenses report a Level
+line for newly discovered risk instead of redoing classification.
 Orchestrator creates outside-repo worktree, fills Where you run and <acceptance-tmp> for spec lens,
 both in panel-and-rounds.md §2's <tmp>. -->
 
@@ -30,8 +31,11 @@ both in panel-and-rounds.md §2's <tmp>. -->
 In `<review-wt>`, outside repo, detached at reviewed SHA, created for you by orchestrator
 (`git worktree add --detach <review-wt> <reviewed-sha>`); run every command there
 (`git -C <review-wt> …`), never session tree. Do not create/remove it: orchestrator checks
-`git worktree list`, `git -C <review-wt> status --short` then removes it. Leave no commits, files or
-other mutations. <For an uncommitted-only review command: orchestrator already ran
+`git worktree list`, `git -C <review-wt> status --short` then removes it. Reviewed production is
+read-only: leave no source edits, commits, generated files or other mutations there.
+For the assigned spec acceptance test, the same reviewer may Write/Bash only in
+`<acceptance-tmp>` outside the review worktree, using prepared dependencies and the exact reviewed
+code. Do not install into or mutate the worktree. No extra test-writer agent is required. <For an uncommitted-only review command: orchestrator already ran
 `git -C <review-wt> reset --soft <base-sha>`. `/security-review` is not one (it reviews
 `git diff origin/HEAD...`): run at reviewed SHA without reset.>
 
@@ -50,20 +54,22 @@ other mutations. <For an uncommitted-only review command: orchestrator already r
   search from `<agentic-code-review>/references/panel-and-rounds.md` §3 on diff.
 - **Spec** (written intent only): missing, unrequested, seemingly done but incomplete behavior.
   Also acceptance test required by `<agentic-code-review>/references/panel-and-rounds.md` §3 for
-  fixed-point level, without reading author's tests. If writing it, run in `<review-wt>`, copy to
-  `<acceptance-tmp>` (outside-repo folder filled by orchestrator), remove from worktree before
-  finishing. Author integrates unchanged.
+  fixed-point level, without reading author's tests. Write and run it only in `<acceptance-tmp>`
+  (outside-repo folder filled by orchestrator), referencing code at `<reviewed-sha>` in `<review-wt>`.
+  Production stays read-only. Return the exact test file/path; author integrates unchanged.
+  If the harness cannot run under that boundary, mark it unrun with the command and blocker.
 - **Standards**: documented repo rules; preferences writer applied in `agentic-implement` step 6
   (`<agentic-implement>/references/preferences.md`, `AGENTS.md`, project design system for UI):
   violated preference is a finding with source line; new pattern where project had one;
   dependency/capability outside approved research (if present); `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`
   or docs made false by change.
-- **Security**: server-enforced permissions tested with a role without access; customer isolation;
-  input validation; secrets outside code; logs/errors without personal data or database values.
-- **UI** (UI only; may join spec lens): agentic-design “review” mode:
-  `node <agentic-design>/scripts/detect-slop.mjs --diff <base-sha>` and
-  `<agentic-design>/references/ui-without-slop.md` §5 checklist against chosen-variant screenshots
-  (handling each detector output: §5 opening and §7).
+- **Security**: read `<agentic-code-review>/references/security-lens.md`, the single operational
+  checklist. Its scope includes permissions/isolation, validation, secrets/logs, and new or changed
+  dependencies, known vulnerabilities and install-time code. Apply it to this diff and affected
+  paths; do not substitute a shorter copied checklist.
+- **UI** (UI only; may join spec lens): read only
+  `<agentic-design>/references/review-mode.md` and its selected rules/proof sections. Compare the
+  approved variant or preserved baseline at this mode's required scope; do not load all design modes.
 
 ## Rules
 
@@ -79,7 +85,10 @@ other mutations. <For an uncommitted-only review command: orchestrator already r
   research>`. Without `file:line`, no finding.
 - Class: name it and search other diff instances; outside instances are Pre-existing.
 - Challenging approved approach (spec, human decision) is not a defect: goes under Direction.
-- Do not fix code or commit. Spec acceptance test lives outside repo, never committed.
+- Do not fix production code or commit. The assigned spec acceptance test lives only in
+  `<acceptance-tmp>`, never committed by the reviewer. Return it unchanged to the author.
+- Inspect/reuse saved verification only when `<agentic-implement>/references/evidence.md`'s exact
+  state/command/input contract holds; run focused missing checks, not an identical full suite again.
 
 ## Report
 

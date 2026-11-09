@@ -1,8 +1,8 @@
-# Researching current best practice (step 1b)
+# Research only the unresolved decision (step 1b)
 
-Every feature starts from today's best practice rather than model memory: feature, design,
-frontend/backend construction. This reference defines when, depth, subjects, sources, modern
-versus hype, and result location.
+Start with project evidence. Research externally when a consequential answer is time-sensitive,
+a material unknown cannot be settled locally, or the human explicitly asks. This reference defines
+those triggers, bounded depth, sources and result location; it does not require a search per feature.
 
 - [Why](#why)
 - [When, limits and location](#when-limits-and-location)
@@ -15,10 +15,10 @@ versus hype, and result location.
 
 ## Why
 
-Model knowledge stops at a date; platform does not: CSS, browsers, frameworks, standards change
-monthly. Building from memory yields working code born old: popover library when HTML has native
-popovers, replaced cache pattern, navigation framework handles better. Minutes researching before
-design save days rewriting.
+Local code, lockfiles, accepted decisions and current project research often settle a change.
+External research is useful when their limits matter: a new dependency, uncertain versioned API,
+current vulnerability, platform support or a material product choice with missing evidence.
+A label or spacing change following a known local pattern does not need a freshness audit.
 
 Three rules frame everything:
 
@@ -32,46 +32,59 @@ Three rules frame everything:
 
 ## When, limits and location
 
-Always, every track: “is there a better way today?” applies to every feature. Triage decides depth/
-ceiling. Trivial Standard change (text, field, style following existing pattern): 1–2-minute check,
-one search: is pattern current? One Reading line, no research-notes.md.
+Before searching, name the unresolved question and why its answer could change implementation,
+risk or the user's choice. If local evidence settles it and no current external fact is asserted,
+write `Research: local evidence sufficient — <paths/decision>` and continue. The short route keeps
+this in its compact scope/proof note; other routes use Reading. Do not create empty research files.
 
-| Track | What | Countable ceiling | Indicative time | Location |
-|---|---|---|---|---|
-| **Standard** | 3 axes, only touched subjects | up to 3 searches/5 pages per axis | ~20 min total | research-notes.md beside reading.md; ≤4-line Reading summary; then Spec Kit research.md or light spec Research line |
-| **Complete** | one parallel subagent per touched axis (untouched axes: Standard depth by you); read `references/complete-research.md` before research; you consolidate/cut | up to 6 searches/10 pages per subagent | ~45 min total | same as Standard |
-| **Too big** | before slices, axis (a) at Standard depth: reference products' decomposition; technical research per slice/triage | up to 3 searches/5 pages | ~20 min | docs/research/<slug>-<yyyy-mm-dd>.md, cited by each backlog slice; separate docs(research) commit, push before stopping |
+Existing research is reusable when its source, installed version/targets, decision scope and
+relevant dependencies/configuration/environment still apply. Follow
+`<agentic-implement>/references/evidence.md` for state and external-freshness invalidation. Research
+only the gap; handing the work to another role does not invalidate evidence. Material uncertainty
+that remains after the ceiling is a stated limitation or escalation, not an invented answer.
+
+| Track | When research is triggered | Countable ceiling | Location |
+|---|---|---|---|
+| **Standard** | only the unresolved axes/questions | up to 3 searches/5 pages per relevant axis | research-notes.md only when needed, beside reading.md; ≤4-line Reading summary |
+| **Complete** | independent unresolved axes may use one subagent each; read `references/complete-research.md` before delegating | up to 6 searches/10 pages per needed subagent | same as Standard |
+| **Too big** | research decomposition only if local/product evidence leaves a material unknown; technical questions belong to each slice | up to 3 searches/5 pages | docs/research/<slug>-<yyyy-mm-dd>.md if needed, cited by each affected slice |
+
+Ceilings are maxima, never quotas. Known or untouched axes get no search and no researcher. Stop
+when the question is settled; a full research panel is not a prerequisite for Complete.
 
 Search = search-engine query. Page = source read (webpage, package registry document, data file).
 Requested empty/error/JS-only pages count: prefer APIs/structured data (How to research). Local
-repo/radar/node_modules files do not count. Count ceiling; time is indicative because agents
-measure time poorly.
+repo/radar/node_modules files do not count. Count the ceiling per unresolved question/axis, not per handoff.
 
-**No web.** Load deferred research tools first. If domain-by-domain authorization is required,
+**No web, when external research is required.** Load deferred research tools first. If domain-by-domain authorization is required,
 propose one documentation search/read authorization in step 0 plan, not midway. No web (missing,
 refused, offline): local lockfile/CHANGELOG/types/node_modules/radar only; write “web unavailable”
-in research-notes.md and spec summary Research, mark web-dependent claims not confirmed. Undeclared
-skipped research is missing research.
+in the existing scope/Reading/research record and spec summary if present; mark web-dependent
+claims not confirmed. A deliberate “local evidence sufficient” is not missing research.
 
 **Stop rule.** Confirm when fact-owning source confirms (package registry for versions/dates;
 web-features/browser-compat-data for support; spec/official docs for behavior), or 2 independent
 primary sources agree. Entire research stops at ceiling.
 
-**Radar first.** Read docs/radar.md if present. Subject verified <~6 months ago: reuse, research
-only gaps. Older: refresh now (source, changed status) within ceiling. Only refresh now, not retro.
+**Radar first.** Read relevant entries in docs/radar.md if present. Reuse entries whose evidence
+still applies; inspect version, targets, scope and source validity rather than a blanket age cutoff.
+A dependency advisory or live compatibility claim may need a current check even when recently
+recorded; a stable local decision does not need refresh merely because another feature starts.
+Refresh only material stale claims within the ceiling.
 
-**Nothing simpler is a result.** Write “searched X in Y; project's current pattern remains
-recommended” and continue.
+**Keeping the existing pattern is a result.** When a search was needed, write “searched X in Y;
+project's current pattern remains recommended”. Otherwise cite the local evidence, without implying
+a search happened.
 
 ## Protocol fit
 
 ```
-0 Triage → 1a Reading (facts) → 1b Research → Reading (suggestions) → 2 Grill → 3 Variants
-→ 4 Spec (Complete gate, Standard notice) → 5 Briefs/agents → 6 Review → 7 Integration
+0 Triage → short route, or 1a Reading → 1b Research if triggered → 2 Unresolved decisions
+→ 3 Selected UI mode → 4 Spec → 5 Implementation → 6 Review → 7 Integration
 ```
 
 - **After Reading facts**: know existing code/versions first; otherwise generic research proposes
-  poor fits. Facts in 1a; finalize Suggestions/Recommended approach after 1b can change them.
+  poor fits. Facts in 1a; finalize Suggestions/Recommended approach after resolving any triggered 1b questions.
 - **Before grill**: findings affecting project decision (dependency, existing pattern, version)
   become grill questions. **At most 2 research questions per feature**: highest measured gains.
   Ask effect (“one less dependency; native Esc/focus”), not API. Others go as backlog proposals;
@@ -81,7 +94,7 @@ recommended” and continue.
   `<agentic-design>/references/ui-without-slop.md`, not repeated here.
 - **Spec summary step 4**: `Research: adopted <short list>; grill-decided <n>; rejected <n> —
   <research.md or light spec>`. Shows unasked adoptions to human at Complete gate/Standard notice.
-- **Spec Kit**: pass research-notes.md to speckit-plan as completed phase 0. Each adopted/grill-decided
+- **Spec Kit**: pass existing research-notes.md or the local-evidence decision to speckit-plan as completed phase 0. Each adopted/grill-decided
   row becomes Decision/Rationale/Alternatives in `research.md` with source. Plan only researches new Technical
   Context unknowns under these source/date/hype rules, separate ceiling: total 2 searches/3 pages
   Standard, 3/5 Complete. Without Spec Kit use light spec §2 Research line.
@@ -151,7 +164,8 @@ proposal, never hidden within feature.
 web platform (CSS/HTML/accessibility/performance) in agentic-design
 `<agentic-design>/references/web-platform-<yyyy-mm>.md`
 (`ls <agentic-design>/references/web-platform-*.md | sort | tail -1`). Use latest each only through
-Valid until; afterward do not read. Starting point, not source: reverify every decision row.
+Valid until; afterward do not read. Starting point, not source: verify decision rows lacking
+applicable primary evidence; do not redo valid source verification.
 Refresh is a separate proposed task, never within feature or writing skill folder without OK.
 
 ## How to research
@@ -162,7 +176,7 @@ web-features powers MDN/caniuse/webstatus.dev. Read JSON
 browser_implementations); `https://webstatus.dev/features/<id>` is JS-only, empty for readers.
 Package versions/dates: `https://registry.npmjs.org/<package>` dist-tags.latest, time[<version>].
 
-**Complete**: before research, read `references/complete-research.md`: delegation by axis,
+**Complete**: before delegating unresolved research, read `references/complete-research.md`: delegation by axis,
 brief, limits and failures. Without subagents, apply the same contract sequentially.
 
 **Sources by trust**:
@@ -219,13 +233,15 @@ Novelty becomes recommendation only with “yes” to all mandatory questions:
 
 ## Output: research-notes.md
 
-Save temporary beside reading.md; step 4 moves both to specs/<NNN-slug>/.
+Create only when external research produces findings to carry. Save temporary beside reading.md;
+step 4 moves existing files to specs/<NNN-slug>/. Otherwise the local-evidence line suffices.
 
 ```markdown
 # Research: <feature> (<yyyy-mm-dd>, track <Standard|Complete>)
 
 Stack read: <framework x.y.z (lockfile)> · Targets: <browserslist/decision> · Radar: <used entries or none>
-Ceiling used: <searches/pages per axis>
+Trigger: <time-sensitive claim | material unknown | explicit request> · Reused evidence: <scope/source or none>
+Ceiling used: <searches/pages per relevant axis>
 
 | Axis | Finding | Source (published · read) | Gain | Cost / risk | Recommendation |
 |---|---|---|---|---|---|
@@ -249,8 +265,9 @@ each sourced/dated. Template: `<agentic-project>/assets/radar.template.md`.
 
 - **Not a rule**: AGENTS.md/constitution/ADRs override.
 - **Read/refresh** only step 1b.
-- **Write** at delivery before final commit (same or separate docs(radar), before push): one row
-  per used/tried/rejected result plus refreshed entry dates, sourced.
+- **Write** at delivery only for a new or materially refreshed result (same or separate docs(radar)
+  commit, before push): one row per consequential used/tried/rejected result, sourced. Reuse does not
+  manufacture a new verification date or duplicate a row.
 - **Entry ring**: new entries enter Trial (used in feature), Assess, Avoid; never directly Adopt.
   Promotion to Adopt or moves Adopt↔Avoid belong to human: propose under Needs you, record decision
   in Decided by. Exception: agentic-project phase 3 immediately Adopts its decided stack (human/

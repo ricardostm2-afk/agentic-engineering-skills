@@ -6,14 +6,14 @@ agent promise actions it cannot perform:
 - **Skill** — the model invokes it with the Skill tool using its qualified name.
 - **Read** — only the user can invoke it (`disable-model-invocation: true`). The agent reads
   SKILL.md and applies the method, or suggests the human type `/name`. Never say “I will invoke
-  /name” for these. Find the file:
-  `find ~/.claude/plugins/cache -path '*mattpocock*/<name>/SKILL.md' | sort | tail -1` (cache
-  contains the installed version; `marketplaces/` is the catalogue checkout and may be ahead).
-  Without a result, search `~/.claude/plugins`.
+  /name” for these. Resolve the selected installation through `host-compatibility.md`, the
+  same resolver used for sibling skills. Verify the name and host registration; do not scan
+  caches for a lexically newest version or use a marketplace catalogue as the installed skill.
 - **Project** — Spec Kit skills created in `.claude/skills/` by `specify init` (and in
   `.agents/skills/` by the `codex` integration, phase 5). Invoke through Skill only when the
   session started in this repo's root and they already existed. Otherwise read **this repo's**
-  `.claude/skills/<name>/SKILL.md` (or `.agents/skills/<name>/SKILL.md` if absent) and follow it:
+  host-specific integration's `<name>/SKILL.md` (`.claude/skills/` for Claude Code,
+  `.agents/skills/` for Codex) and follow it:
   skills created after session start do not appear; if the session started elsewhere, the
   listed `speckit-*` skills belong to that other repo (different version, scripts running in
   the wrong folder).
@@ -46,7 +46,7 @@ take precedence when they do the same job.
 | Spec from conversation, implementing a spec | `to-spec`, `implement`, `implement-spec` | Read | Spec Kit (below) |
 | Handing work to another session | `handoff` | Read | handoff note: state, next step, files |
 | Issue triage | `triage` | Read | — |
-| Improving existing code architecture: shallow modules where code changes most, report, candidate grill (replaces and adapts `improve-codebase-architecture`) | `agentic-architecture` (this set; `agentic-skills:agentic-architecture` in plugin) | Skill | read `<agentic-architecture>/SKILL.md` and follow it |
+| Assessing architecture, designing a material interface or carrying an authorized refactor forward | `agentic-architecture` (this set; `agentic-skills:agentic-architecture` in plugin) | Skill | read `<agentic-architecture>/SKILL.md` and select assess, design or refactor |
 | Project principles | `speckit-constitution` | Project | Principles section in `docs/decisions.md` |
 | Specify → clarify → plan → tasks | `speckit-specify`, `speckit-clarify`, `speckit-plan`, `speckit-tasks` | Project | agentic-feature's light spec |
 | Consistency and quality before implementation | `speckit-analyze`, `speckit-checklist` | Project | manual spec ↔ plan ↔ tasks review |

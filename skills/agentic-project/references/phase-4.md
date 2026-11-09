@@ -1,5 +1,9 @@
 Phase 4 — Git environment for agents
 
+Only for selected **parallel setup** or an explicitly requested hook/ownership protocol. Minimal
+bootstrap keeps the existing git workflow. Reuse actual repo commands and ownership boundaries;
+architecture/planning modules are not prerequisites merely because this procedure mentions them.
+
 Read `references/git-environment.md` (protocol: short branches, one worktree per agent, commit
 rules, hooks, area map).
 
@@ -10,11 +14,12 @@ rules, hooks, area map).
    script never overwrites; every “warning” is a pending item and the phase cannot close with
    unresolved items. In adopt mode, treat every “exists, kept” and “warning” as an audit item:
    `--show pre-commit` prints the current hook for the diff you propose.
-3. Fill in `.agentic/areas.json` using phase 3's map (`risk`: `high`, `medium` or `low`). In a
+3. Fill in `.agentic/areas.json` using the actual repo or phase 3's map (`risk`: `high`, `medium` or `low`). In a
    repo with code, adjust hooks to the project's real fast commands; in a new project there
    is nothing to adjust: hooks already call `typecheck`/`lint`/`test` when available and the
-   first feature creates them. A local-hooks warning for `.git/hooks` waits for human approval
-   before setting `core.hooksPath`.
+   first feature creates them. A local-hooks warning for `.git/hooks` requires understanding the
+   existing behavior and a reviewed diff before changing `core.hooksPath`; reuse existing
+   authorization and ask only if replacing that behavior is not already authorized.
 4. Prove hooks work: a test commit expected to fail does fail, the corrected one passes, and
    likewise for pre-push (how to prove this before code exists: “Phase proof” in
    `references/git-environment.md`). If there is UI, also prove the pre-commit slop detector on

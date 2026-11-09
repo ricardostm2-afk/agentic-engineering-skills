@@ -25,6 +25,8 @@ standards: `<pointers or none>`.
 
 Spec `<path/spec.md>` · plan `<path/plan.md>` · tasks `<path/tasks.md>` · batch
 `<path/batch.md, this lane's group>`.
+Assigned task IDs: <IDs>. Shared `tasks.md` is read-only for lanes; the orchestrator alone updates
+completion. Return IDs, full commit SHA and evidence instead of editing shared checkboxes.
 
 ## Goal
 
@@ -68,15 +70,18 @@ Specific limits: <pointers to applicable project sections>.
 
 ## UI
 
-Load `agentic-design` (`<absolute path>`; Codex `$agentic-design`), “build” mode.
-Design system: `<pointer>` · variant: `<choice.md and screenshots>`.
-States/widths: <task table or pointer>.
+Read only `<agentic-design>/references/build-mode.md` (absolute path) (for a targeted correction,
+`<agentic-design>/references/targeted-adjustment.md`) and its selected rules/proof sections. Do not load the
+whole `agentic-design` SKILL or variants workflow.
+Design system: `<exact relevant sections>` · mode: <build | targeted adjustment>.
+Variant or preserved baseline: `<choice.md and screenshots | current-screen evidence>`.
+States/widths/themes and interaction proof: <task table or exact proof sections>.
 Detector: `node <agentic-design>/scripts/detect-slop.mjs --diff <base-SHA>`.
-Proof follows skill's build mode.
 
 ## Delivery
 
-agentic-implement step 8 handoff with **Deviations from the brief**, **New data and who reads it**,
+Assigned task IDs, full base/HEAD SHAs and evidence under `agentic-implement` step 8, with
+**Deviations from the brief**, **New data and who reads it**,
 **Seen, not touched**.
 
 ## Board

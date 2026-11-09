@@ -4,13 +4,15 @@ This is the single source for differences between Claude Code, Codex and other h
 here; do not repeat product or project rules here. A folder or tool being present does not authorize
 writes, publishing, installation or contact with a service.
 
-## Where to find a sibling skill
+## Where to find a sibling or third-party skill
 
-When a skill writes `<sibling-name>`, resolve the folder containing its `SKILL.md` in this order,
-stopping at the first valid candidate:
+Use this resolver for both this set's siblings and third-party methods. When a skill writes
+`<sibling-name>`, resolve the folder containing its `SKILL.md` in this order, stopping at the
+first unambiguous valid candidate:
 
-1. The explicit `$AGENTIC_NAME_DIR` variable, when set. Resolve symlinks, require a regular folder,
-   and confirm `SKILL.md` and the expected `name` field.
+1. The explicit directory selected by the user/session (`$AGENTIC_NAME_DIR` for this set), when
+   set. Resolve symlinks, require a regular folder, and confirm `SKILL.md` and the expected `name`
+   field. An invalid explicit selection is an error to resolve, not permission to pick a stale copy.
 2. The folder beside the current skill (`<skill>/../<sibling-name>`). This is the normal case when
    the set was installed by copy, symlink or plugin.
 3. The project skill folders and their ancestors. Codex uses `.agents/skills`; Claude Code uses
@@ -18,7 +20,7 @@ stopping at the first valid candidate:
 4. The host's global folder: for Codex, `~/.agents/skills`, then `/etc/codex/skills`; for Claude
    Code, `$CLAUDE_CONFIG_DIR/skills`, then `~/.claude/skills`. Other hosts enter only when their own
    directory is documented by that host.
-5. A plugin installed by the host. In Claude Code, read `installPath` from
+5. A plugin installed and registered by the active host. In Claude Code, read `installPath` from
    `~/.claude/plugins/installed_plugins.json` and look for `<installPath>/skills/<sibling-name>`. In
    Codex, do not assume Claude's cache: a portable plugin has `plugin.json` at its root and `skills/`,
    or the `.codex-plugin/plugin.json` fallback pointing to the same folder; resolve relative paths
@@ -32,6 +34,14 @@ must not silently win over the copy the user just selected.
 A sibling skill does not need to be loaded through a named tool. If the host has no `Skill`, read the
 `SKILL.md` found by the resolver. `<sibling-name>` markers are documentation references, not macros
 the model may invent.
+
+For a third-party user-only command (`disable-model-invocation: true`), read and apply the resolved
+method only when allowed, or suggest the user invoke it. Do not claim a user-only slash command was
+invoked. A plugin cache or marketplace checkout is not proof of the active installation. Never
+pick a cache entry with `sort | tail -1`, by lexical version, or by modification time; use the
+host's registration/explicit selection and confirm the resolved skill name. Project-generated
+skills must belong to the current repository and the active host's integration, not another repo
+listed at session startup. See `skills-map.md` for invocation categories, not another resolver.
 
 ## Capabilities and substitutes
 
@@ -49,6 +59,20 @@ Capabilities are the contract; tool names vary by host.
 
 An adaptation says in one line which substitute it used. A result from a simulation, fake browser or
 missing provider does not prove the real service.
+
+## Observe capabilities before escalating
+
+Read the session's permission contract and observe the relevant capability. A host name, sandbox
+label or an old failure does not prove that `.git`, a sibling worktree, a browser or network is
+unavailable now. Try an authorized action in its intended directory; use read-only inspection
+first where it answers the question. Do not request blanket git approval or a full-access session
+before an actual restriction is known. A missing optional tool blocks only the module needing it.
+
+When an action is blocked, identify the operation, path and observed error. Use an allowed
+equivalent with the same scope, or the host's actual approval mechanism if available and necessary.
+Carry prior authorization forward. Do not weaken controls, edit permissions to evade a denial, or
+retry automatically rejected escalations. Without a usable path, report the concrete blocker and
+continue independent work; sequential lanes are appropriate only when they are safe and allowed.
 
 ## Invocation, models and provider
 

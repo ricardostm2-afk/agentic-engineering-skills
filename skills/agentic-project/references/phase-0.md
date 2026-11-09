@@ -1,5 +1,8 @@
 Phase 0 — Context and mode
 
+Use this context procedure for selected setup modules. Minimal bootstrap uses the same directory
+and adoption safety, but does not require a decision file or the later phases.
+
 0. Decide **where** the project belongs before inspecting its contents. The current folder is
    suitable only if it clearly belongs to this project. If it is the home folder, a folder
    holding several projects (`~/projects`, `~/code`…), another product's repo, or the request
@@ -17,9 +20,12 @@ Phase 0 — Context and mode
    `pyproject.toml`, `go.mod`, `Cargo.toml`…), `docs/`, existing CI.
 3. Choose the mode: **new** (empty folder or docs only) or **adopt** (code exists). Say which
    and why in one line. If the folder is not yet a git repo and `git` exists, run
-   `git init -b main` now: reversible, and allows a commit per phase from the start.
-4. Create `docs/decisions.md` from `assets/decisions.template.md` (or, in adopt mode, add the
+   `git init -b main` when repository setup is in scope: reversible, and allows logical commits.
+4. When lasting decisions need a record, create `docs/decisions.md` from `assets/decisions.template.md` (or, in adopt mode, add the
    Context section to the existing decision file) with: what the project is, mode, detected
-   stack, what already exists.
+   stack, what already exists, selected modules and their reason. Reuse an existing decision
+   location; remove unused template sections. A small preparation task can state this in its
+   handoff without another file.
 
-Done when the mode is decided and the Context section is written.
+Done when the directory, new/adopt mode and selected modules are clear, and any lasting context
+has an appropriate record. Do not make an empty Context artifact a gate.

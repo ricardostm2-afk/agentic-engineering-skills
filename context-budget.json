@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "metadataMaxBytes": 4200,
+  "skillMaxBytes": 11000,
+  "skills": {
+    "agentic-feature": 20000,
+    "agentic-code-review": 13500,
+    "agentic-design": 5500,
+    "agentic-fix": 8000,
+    "agentic-implement": 9000,
+    "agentic-project": 11500,
+    "agentic-architecture": 10500,
+    "agentic-explain": 9000,
+    "agentic-analysis-optimization": 6000,
+    "agentic-ci-audit": 5500,
+    "agentic-tool-design": 4500
+  },
+  "routes": [
+    {
+      "name": "short-feature-entry-and-core-rules",
+      "files": [
+        "skills/agentic-feature/SKILL.md",
+        "skills/agentic-implement/SKILL.md",
+        "skills/agentic-implement/references/choosing-the-agent.md",
+        "skills/agentic-code-review/references/risk-levels.md",
+        "skills/agentic-implement/references/evidence.md"
+      ],
+      "maxBytes": 49000
+    },
+    {
+      "name": "ui-writer-preloaded-skill",
+      "files": [
+        "skills/agentic-implement/SKILL.md"
+      ],
+      "maxBytes": 9000
+    },
+    {
+      "name": "ui-build-capsule-and-shared-rules",
+      "files": [
+        "skills/agentic-design/references/build-mode.md",
+        "skills/agentic-design/references/mode-rules.md"
+      ],
+      "maxBytes": 5700
+    },
+    {
+      "name": "ui-targeted-capsule-and-shared-rules",
+      "files": [
+        "skills/agentic-design/references/targeted-adjustment.md",
+        "skills/agentic-design/references/mode-rules.md"
+      ],
+      "maxBytes": 5700
+    },
+    {
+      "name": "fix-writer-entry-and-proof-rules",
+      "files": [
+        "skills/agentic-implement/SKILL.md",
+        "skills/agentic-fix/references/writer-steps.md",
+        "skills/agentic-implement/references/evidence.md"
+      ],
+      "maxBytes": 17000
+    },
+    {
+      "name": "security-review-brief-and-lens",
+      "files": [
+        "skills/agentic-code-review/assets/reviewer-brief.template.md",
+        "skills/agentic-code-review/references/security-lens.md"
+      ],
+      "maxBytes": 11500
+    },
+    {
+      "name": "project-minimal-entry-and-procedure",
+      "files": [
+        "skills/agentic-project/SKILL.md",
+        "skills/agentic-project/references/minimal-bootstrap.md"
+      ],
+      "maxBytes": 15500
+    },
+    {
+      "name": "explain-chat-entry",
+      "files": [
+        "skills/agentic-explain/SKILL.md"
+      ],
+      "maxBytes": 9000
+    },
+    {
+      "name": "architecture-assessment-core",
+      "files": [
+        "skills/agentic-architecture/SKILL.md",
+        "skills/agentic-architecture/references/vocabulary.md",
+        "skills/agentic-architecture/references/deepening.md",
+        "skills/agentic-architecture/references/report.md"
+      ],
+      "maxBytes": 26000
+    }
+  ]
+}

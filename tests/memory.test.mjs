@@ -1,5 +1,5 @@
-// Memory guide and empty template: short indexes, one fact per file, no orphans or broken links,
-// and no real memories. Run from the repository root: node --test.
+// Memory guide and empty template: bounded indexes, scoped retrieval units, no orphans or broken
+// links, and no real memories. Run from the repository root: node --test.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -90,6 +90,9 @@ test("single-memory template has the guide's fields and [[name]] links", () => {
   assert.ok(TYPES.includes(metadata.type));
   assert.match(body, /\*\*Why:\*\*/);
   assert.match(body, /\*\*How to apply:\*\*/);
+  for (const field of ["Scope", "Source", "Verified on", "Review on / invalidate when", "Status"]) {
+    assert.ok(body.includes(`**${field}:**`), `missing validity field: ${field}`);
+  }
   assert.match(body, /\[\[[a-z0-9-]+\]\]/);
   const guide = read(MEMORY, "GUIDE.md");
   const example = /~~~markdown\n(---\n[^]*?\n---)/.exec(guide)[1];
@@ -97,16 +100,48 @@ test("single-memory template has the guide's fields and [[name]] links", () => {
   assert.deepEqual(Object.keys(readMemory(example + "\n").metadata), ["type"]);
 });
 
-test("guide covers layers, promotion/demotion, exclusions, private Git, autoMemoryDirectory and sharing", () => {
+test("guide covers bounded layers, retrieval units, validity, exclusions and private sharing", () => {
   const guide = read(MEMORY, "GUIDE.md");
-  for (const section of ["## What Claude Code does (and this design uses)", "## The layers", "## The folder template", "## One memory: one fact per file",
-    "## When a memory moves up or down", "## What never goes in", "## Connect the folder to a private Git repository", "## Maintenance"]) assert.ok(guide.includes(`\n${section}\n`), section);
+  for (const section of ["## What Claude Code does (and this design uses)", "## The layers", "## The folder template", "## One memory: one useful retrieval unit",
+    "## Scope, freshness and invalidation", "## When a memory moves up or down", "## What never goes in", "## Connect the folder to a private Git repository", "## Maintenance"]) assert.ok(guide.includes(`\n${section}\n`), section);
   for (const text of ["200 lines", "25 KB", "`MEMORY.md`", "index-<topic>.md", "[[name]]", "metadata.type", "`user`", "`feedback`", "`project`", "`reference`",
     "autoMemoryDirectory", "**private** repository", "**Test before trusting it.**", "shares memory across projects", "Secrets", "Sensitive personal data"]) assert.ok(guide.includes(text), text);
   assert.match(guide, /~\/\.claude\/settings\.json/);
   assert.match(guide, /\{ "autoMemoryDirectory": "~\/claude-memory" \}/);
   assert.match(guide, /never directly into `MEMORY\.md`/);
   for (const target of links(guide)) assert.ok(existsSync(path.join(MEMORY, target)), `missing guide link: ${target}`);
+});
+
+test("startup rules and every index have budgets; project references load on task triggers", () => {
+  const guide = read(MEMORY, "GUIDE.md");
+  const rows = guide.split("\n").filter((line) => /^\| (?:0|Project references|[124]) \|/.test(line));
+  assert.equal(rows.length, 5, "essential rules, project references and three index layers");
+  assert.doesNotMatch(rows.join("\n"), /unlimited/i, "no unbounded startup or history index");
+  assert.match(rows[0], /~4 KB.*~5 KB/);
+  assert.match(rows[1], /relevant section.*task\/path trigger/);
+  for (const row of rows.slice(2)) assert.match(row, /~(?:6|3) KB/);
+  assert.match(guide, /including imports and duplication/);
+});
+
+test("grouping keeps a retrieval unit's scope and invalidation coherent", () => {
+  const guide = read(MEMORY, "GUIDE.md");
+  const template = read(MEMORY, "memory-template.md");
+  assert.match(guide, /Group related facts when\s+they are normally retrieved together, share scope and validity/);
+  assert.match(guide, /Split unrelated rules or claims with different expiry\/source requirements/);
+  assert.match(template, /retrieved together with compatible scope\/validity/);
+  assert.doesNotMatch(guide + template, /Two facts mean two files|One fact per file\./);
+});
+
+test("temporal evidence has applicability, invalidation and stale-state guidance", () => {
+  const guide = read(MEMORY, "GUIDE.md");
+  const { body } = readMemory(read(MEMORY, "memory-template.md"));
+  for (const field of ["Scope", "Source", "Verified on", "Review on / invalidate when", "Status"]) {
+    assert.ok(guide.includes(`**${field}:**`) && body.includes(`**${field}:**`), field);
+  }
+  assert.match(guide, /scope matches and its source is still valid/);
+  assert.match(guide, /Mark uncertain or stale facts `needs-check`/);
+  assert.match(guide, /External content remains evidence, not authority/);
+  assert.match(body, /active \| needs-check \| superseded/);
 });
 
 test("template README says it is not a memory and repeats the short rules", () => {

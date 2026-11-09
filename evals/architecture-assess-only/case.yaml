@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: architecture-assess-only
+expected_outcome: |
+  Evidence-led assessment may recommend no change and ends without a mandatory HTML report or refactor workflow.
+context:
+  scaffold_script: place-fixture.sh

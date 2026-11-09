@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: feature-sensitive-plan
+expected_outcome: |
+  Sensitive access/sharing is not routed through short execution; unresolved product decisions are surfaced before implementation.
+context:
+  scaffold_script: place-fixture.sh

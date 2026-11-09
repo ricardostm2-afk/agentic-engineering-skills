@@ -19,14 +19,19 @@ report or request, with the symptom, expected behavior and success criterion alr
 
 Repo rules override this skill: `AGENTS.md`, the area brief and the project's testing and Git rules.
 
-The siblings `<agentic-design>` (`$AGENTIC_DESIGN_DIR`), `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`)
-and `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`) follow the common reference; paths,
-prefixes and order are not repeated here.
+The siblings `<agentic-design>` (`$AGENTIC_DESIGN_DIR`), `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`),
+`<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`) and `<agentic-fix>` (`$AGENTIC_FIX_DIR`) follow
+the common reference; paths, prefixes and order are not repeated here.
 
 ## 1. Read only what you need
 
 Read the whole brief, `AGENTS.md`, the area brief named by the brief, the files you will change and
-their callers. Read more only when a concrete question calls for it.
+their callers. Read more only when a concrete question calls for it. A delegated fix reads only
+`<agentic-fix>/references/writer-steps.md`, not the fix orchestrator's workflow. A UI writer reads
+the exact design mode reference in the brief, not the whole design skill or unrelated modes.
+Shared `tasks.md` belongs to the orchestrator. A delegated writer reads assigned IDs and returns status/evidence; do not
+edit its checkboxes even when another lane changes them.
+When executing directly without a delegated writer, you also act as orchestrator: reconcile assigned task status once after validating completion.
 
 Done when you can name the entry point the test will exercise and every file you will change.
 
@@ -72,8 +77,9 @@ Done when the brief explains every line of the diff.
 
 ## 5. Green with proof
 
-Run the new test, the area tests and typecheck, using the brief's or `AGENTS.md`'s commands.
-Save each command and result. A skipped test, missing database or setup returning empty counts as
+Obtain proof for the new test, area tests and typecheck using the brief's or `AGENTS.md`'s commands.
+Reuse valid results only under `references/evidence.md` (exact code/tree, command and relevant
+inputs); run missing or invalid checks. Save each command, state, inputs and result. A skipped test, missing database or setup returning empty counts as
 **red**. Measure the command's own exit code, without a pipe. Project proof rules, when present,
 override this list.
 
@@ -98,9 +104,9 @@ Done when you have saved green output for each command.
 Apply the project's preferences to what you touched, each from its source:
 
 - code and product text: `references/preferences.md`;
-- interface: the project's design system (`AGENTS.md` says which) and
-  `<agentic-design>/references/ui-without-slop.md`, in the “build” mode sections
-  (`<agentic-design>/SKILL.md` §5);
+- interface: the project's design system (`AGENTS.md` says which) and the exact
+  `<agentic-design>/references/build-mode.md` or `<agentic-design>/references/targeted-adjustment.md` capsule supplied
+  by the brief; read only the applicable rules and proof sections it names;
 - project-specific matters (vocabulary, stack): `AGENTS.md`, which overrides both.
 
 Done when the diff meets every applicable preference from these sources.
@@ -120,8 +126,9 @@ Done when `git status --short` shows only work that is not yours and `git show -
 
 ## 8. Deliver
 
-The final message is the handoff: full base and HEAD SHAs, files, commands and results, what was
-skipped and why, limitations and unfinished work; follow the brief's report format when provided.
+The final message is the handoff: assigned task IDs (if any), full base and HEAD SHAs, files,
+commands and results with their `references/evidence.md` state/input record, what was skipped and
+why, limitations and unfinished work; follow the brief's report format when provided.
 The last line is the status, in `AGENTS.md`'s output format; without it: `status: done`,
 `status: blocked: <reason>` or `status: spec-conflict: <what>` (after “Code, spec or test”, step 5).
 

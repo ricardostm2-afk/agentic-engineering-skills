@@ -13,66 +13,10 @@ From request to integrated feature. You orchestrate: decide technical and revers
 write spec and briefs, launch agents, review and integrate. Agents (Claude subagents or Codex jobs)
 write code with `agentic-implement`. The human decides product, commitments and irreversible matters.
 
-<!-- card:start — copied from the cited sources; update when they change -->
-## Card
-
-Sources: `<agentic-implement>/references/choosing-the-agent.md` (level §1, model §2); `<agentic-code-review>/SKILL.md` (review steps 5 and 6).
-
-Step 0 — Done when you stated track and matched criterion in one line (and each subsequent track change).
-Step 1 — Done when Reading has final suggestions and approach with cited research. Show it at checkpoint 1's start.
-Step 2 — Done when the frontier is empty (not the question list) and you showed the decision table.
-Step 4 — Done when spec is committed and, for Complete, human said “proceed”; for Standard, notice was sent.
-Step 5 — Done when all lanes returned `done` and are combined, with full verification green.
-Step 6 — Done when no Important is open and every check has command and output. Skipped, unrun, or exit 0 without testing anything counts as red.
-Step 7 — Done when integration commit is where project policy requires and final message follows Delivery format.
-
-**Level**
-
-1. **Unknown cause?** A defect whose cause is still unknown after a brief look (the trace, the
-   file it names, recent history of that path), or a race to diagnose. Yes: complex. A probable
-   cause goes in the brief as a hypothesis the agent proves red first.
-2. **Design that only shows in the code?** The contract, schema or module can only be decided
-   through an experiment in the code. Yes: complex.
-3. **Steps not enumerable?** A refactor so coupled that the brief cannot list the steps.
-   Yes: complex.
-4. **Already failed?** An agent failed this task once at the well-defined level. Yes: complex,
-   and the new brief carries the premise the agent returned (step 5 of `agentic-implement`).
-
-Passed all four: **well-defined**. New design, delicate logic (money, concurrency, access rules)
-or multiple areas do not make the task complex when the brief has already decided them. Examples:
-a label; rounding; a lane with a spec and tasks; fixing an Important the orchestrator reproduced
-and wrote a rule for.
-
-- A sensitive zone (tenant, session, billing, personal data) does not raise the level: the brief
-  carries invariants and refusal tests, and the zone affects the review level (`agentic-code-review`).
-
-Write the brief's `level:` line with these labels; the launch guard reads it:
-
-- `level: well-defined — decisions closed: <which>`;
-- `level: complex — <label>: <detail>`, using one of the four questions as the label, lowercase
-  without “?”: `unknown cause`, `design that only shows in the code`, `steps not enumerable`,
-  `already failed`;
-- the human forced the level: `level: <level> — forced by the human: <their words>`.
-
-**Model** (example model names; the project picks its own)
-
-| Level | Claude | Codex |
-|---|---|---|
-| well-defined | Sonnet 5.5, effort high | gpt-6.1-sol, effort medium |
-| complex | Opus 5.5, effort xhigh | gpt-6.1-sol, effort max |
-
-**Review**
-
-```bash
-node <agentic-code-review>/scripts/validate-report.mjs <report.md>   # 0 = conforming; 1 = failure list
-```
-
-- Round limit by level (1 for requested Quick, 1 for Standard, 2 for Complete). From round 2 onward:
-  only the new diff, without repeating closed findings, and only lenses with open Important findings, together.
-
-- **At the limit, with an open Important, stop and go to the human** with a summary (open findings,
-  responses, rounds, unreviewed diff, your recommendation). Never silently add a round.
-<!-- card:end -->
+Read only the current role/step: agent level, model and launch rules live in
+`<agentic-implement>/references/choosing-the-agent.md`; review classification and rounds live in
+`<agentic-code-review>/references/risk-levels.md` and `<agentic-code-review>/references/panel-and-rounds.md`.
+Do not copy those rules into briefs or reload the orchestrator workflow in a delegated writer.
 
 Host differences, installations, tool substitutes and sibling resolution follow
 `<agentic-project>/references/host-compatibility.md`; find that sibling through
@@ -80,25 +24,20 @@ Host differences, installations, tool substitutes and sibling resolution follow
 
 The siblings `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`), `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`),
 `<agentic-design>` (`$AGENTIC_DESIGN_DIR`) and `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`) follow
-the same reference; paths, prefixes and order are not repeated here.
+the same reference. `<skill>` is this file's folder; run scripts from the project repo root.
 
 Repo rules override this skill: read `AGENTS.md`/`CLAUDE.md`, constitution
-(`.specify/memory/constitution.md`) and ADRs before applying it; use project commands (`/ship`,
+(`.specify/memory/constitution.md`) and applicable ADRs before applying it; use project commands (`/ship`,
 `/deploy`, verification suite, job launcher) rather than generic ones.
-
-`<skill>` is this `SKILL.md`'s folder; scripts run from project repo root. Resolve siblings
-through the single reference `<agentic-project>/references/host-compatibility.md`; the explicit
-variable wins over the adjacent folder, project folders, global roots and plugin. Host invocation
-names do not change that order.
 
 ## The circuit and human stops
 
 | Step | What | Human |
 |---|---|---|
-| 0 | Triage: Standard or Complete | reads one-line track, may force another |
-| 1 | Code reading and current research | — |
+| 0 | Triage: Standard (short route when eligible) or Complete | reads one-line track, may force another |
+| 1 | Code reading; research for a material unknown or currentness question | — |
 | 2 | Feature grill (including UI questions when applicable) | **stop: checkpoint 1** |
-| 3 | Visual variants (UI only, via `agentic-design`) | **stop: checkpoint 2** |
+| 3 | Select UI mode via `agentic-design`; variants only for a material visual choice | variants: **stop at checkpoint 2** |
 | 4 | Spec, plan, tasks | Complete: **stop at gate until “proceed”**; Standard: spec notice |
 | 5 | Briefs and lane launch | mechanical batch only: **stop at playbook** before batch (`references/implementation.md` §4) |
 | 6 | Independent review and verification | — |
@@ -114,13 +53,13 @@ reversible reading and record origin “default”. Every stop says where: “st
 and recommend the first `backlog` item without unresolved dependencies in one question; with item
 id, use it without creating another. For started feature (`in-progress` item, `specs/NNN-*`,
 `reading.md`/`research-notes.md`, its `agent/*` branches), briefly list existing artifacts and resume
-first step without one. First message states track and steps in one line, then starts Reading
-in the same turn without permission.
+first incomplete step. State track/route in one line and start in the same turn without permission.
+Carry forward closed decisions and valid evidence; a new role/session does not require new artifacts.
 
 ## Board
 
-State lives in agentic-project's board. CLI and URL location: “Source and copies” in
-`<agentic-project>/assets/board/README.md`. First use each session: `<cli> help`, follow its syntax.
+All board actions below apply only when this project already uses a board; a short request does not select setup.
+CLI and URL: “Source and copies” in `<agentic-project>/assets/board/README.md`. First use: `<cli> help`.
 Transition commands: “When to update” in that README; here:
 
 - **start** (after triage): item becomes `in-progress` (chat request: `request add` and
@@ -130,15 +69,15 @@ Transition commands: “When to update” in that README; here:
 - **spec**: `item set <id> spec=<NNN-slug> tasks.total=<M>`; **review**: `status=in-review`;
   **end**: `status=integrated sha=<sha>`, `event end "<mini-retro>"`, `agent end`.
 
-With a published board (URL in same place) and ArtifactData tool (deferred: ToolSearch
-`select:ArtifactData`), send to artifact at every transition and every 30 min, using four “Sync”
-steps from same README. Without ArtifactData record in CLI; next orchestrator with tool sends.
-Without board (no CLI or `node`), warn once and continue.
+With a published board and ArtifactData (deferred: `select:ArtifactData`), sync at every transition
+and every 30 min using the same README's four “Sync” steps. Without it, keep CLI state for later sync.
+Without an adopted board, use the existing issue/work log; do not create a board or warn about its absence.
 
 ## Step 0: triage
 
-Classify from request and a glance at code; first matching rule wins. Reading (step 1) confirms
-or changes track.
+Classify from the request, project rules and a brief look at the affected code/test seam; first
+matching rule wins. This happens **before Reading, external research, grill or Spec Kit**. Full
+Reading (step 1), when needed, confirms or changes the track.
 
 - **Fix** (existing wrong behavior), any zone: `agentic-fix`. If fixing requires behavior not yet
   existing, it is a feature.
@@ -149,10 +88,14 @@ or changes track.
   sessions or customer isolation; money (payments, billing, pricing); new personal/sensitive data
   or new sharing; external integration (third-party API, webhooks, email/SMS); irreversible end-user
   action (effect leaves system or cannot be undone); public contract used by others; files in
-  `risk: high` area of `.agentic/areas.json`; over ~1 week. → research with one subagent per touched axis,
-  full Spec Kit, step 4 **gate**, security review.
+  `risk: high` area of `.agentic/areas.json`; over ~1 week. → research only the unresolved material
+  questions (delegate independent axes), full Spec Kit, step 4 **gate**, security review.
+- **Short route (Standard)**: no Complete criterion and the existing **short** criteria in
+  `<agentic-implement>/references/choosing-the-agent.md` §1 hold. Follow “Short route” below
+  immediately; do not enter steps 1–5 first.
 - **Standard**: everything else (filter, exporting what user already sees, read screen, cancelling
-  own record under existing access rules). → focused research, light Spec Kit, step 4 **notice**.
+  own record under existing access rules). → focused reading, research only when triggered,
+  light Spec Kit, step 4 **notice**.
 
 Doubt involving data, money or permissions (changing who can do what; reusing existing access
 rule does not count): heavier track; otherwise lighter. Track follows work: raise when a Complete
@@ -162,33 +105,65 @@ raises one track, never above Complete.
 
 Done when you stated track and matched criterion in one line (and each subsequent track change).
 
+### Short route: scope → implement → proof
+
+Keep one compact scope/proof note in the work log or existing issue: expected behavior, allowed
+paths, existing implementation/test seam, proving command and any relevant risk. Reuse the request
+and valid evidence; no separate Reading, grill, spec, lane brief or minimum suggestion count.
+For a planning-only request, deliver this compact plan and stop before changing code.
+
+Execute with `agentic-implement` in the current branch under project rules. A local pattern already
+settling the change needs no external research; use `references/current-research.md` only for a
+time-sensitive fact, a material unknown that local evidence cannot settle, or an explicit request.
+For UI, preserve **targeted adjustment** when no material visual choice remains; use
+`<agentic-design>/references/targeted-adjustment.md`, not variants.
+
+Before claiming done, inspect the actual diff and classify it with
+`<agentic-code-review>/references/risk-levels.md`; short execution never waives a required lens.
+Record command/output evidence under `<agentic-implement>/references/evidence.md`, then integrate
+under repo rules, reconcile assigned tasks as orchestrator, close any existing board item, and deliver change/proof/limits.
+
+If scope exceeds the short criteria, material behavior is ambiguous, a new visual decision appears
+or risk rises, stop the short route and re-triage **before dependent code**. Preserve closed decisions
+and valid proof; enter only the missing Standard/Complete steps. Never use the short route to skip
+sensitive-zone, hook/CI/installer, integration or review requirements.
+
 ## Step 1: reading and research
 
 **1a. Reading.** Before questions or plan, investigate using `references/reading-context.md`,
-write Reading from `assets/reading.template.md`: facts with `path:line`, 3–6 reasoned suggestions,
-recommended approach. Write facts now; finalize suggestions and approach after research can change them.
+write Reading from `assets/reading.template.md`: facts with `path:line`, **0–3 evidence-based
+suggestions** when useful, and the recommended approach. No suggestion quota or invented scope.
+Write facts now; finalize the approach after any necessary research.
 
-**1b. Research.** Before recommending, study current best practice using `references/current-research.md`:
-3 axes (feature, design, technique **at lockfile version**), primary dated sources, starting from
-project radar (`docs/radar.md`), at track's depth/ceiling. Output `research-notes.md` beside `reading.md`,
-with ≤4-line Reading summary; trivial changes get one Reading line, no `research-notes.md`. Adopt
-nothing silently: anything affecting a project decision becomes a grill question; adoption appears
-in spec summary's Research line.
+**1b. Research, when needed.** Use `references/current-research.md` for time-sensitive claims,
+material unknowns not settled by local evidence, or an explicit research request. Reuse valid
+project research, decisions and evidence first. Research only unresolved axes (feature, design,
+technique **at lockfile version**) with primary dated sources and a bounded ceiling. Record a
+trigger and result or a one-line “local evidence sufficient”; create `research-notes.md` only when
+there are findings to carry. Anything affecting a project decision becomes a grill question;
+adoption appears in the spec summary's Research line.
 
-Done when Reading has final suggestions and approach with cited research. Show it at checkpoint 1's start.
+Done when Reading has a supported approach and any useful suggestions, with research cited when
+used or its absence explained. Show it at checkpoint 1's start.
 
 ## Step 2: feature grill (checkpoint 1)
 
 Circuit's only grill: lane agents do not question human (step 5). Read `references/questions.md`
-(question bank by dimension, each with recommendation type) and, for UI,
-`<agentic-design>/references/ui-questions.md` (mandatory block; pass answers to agentic-design step 3).
+(question bank by dimension, each with recommendation type) and, for a material UI decision,
+`<agentic-design>/references/ui-questions.md` (only unresolved questions; pass answers to step 3).
+A targeted adjustment retains its mode and does not reopen settled UI decisions.
 If Reading found no `.specify/`, add “initialize Spec Kit?” (step 4).
 
 Done when the frontier is empty (not the question list) and you showed the decision table.
 
-## Step 3: visual variants (checkpoint 2, UI only)
+## Step 3: UI mode (checkpoint 2 only for variants)
 
-UI method belongs to sibling `agentic-design`, “variants” mode: invoke Skill tool
+Preserve the caller's mode. A label, contrast or spacing correction without a material visual
+choice uses `<agentic-design>/references/targeted-adjustment.md`; an already approved direction
+uses `<agentic-design>/references/build-mode.md`. Neither opens a variants checkpoint. New screens, redesigns
+or navigation with a material visual choice use **variants** and the procedure below.
+
+UI method belongs to sibling `agentic-design`: invoke Skill tool
 (plugin: `agentic-skills:agentic-design`) or read/follow `<agentic-design>/SKILL.md` without tool.
 Its blockers, procedure, screenshots and detector are not repeated here.
 
@@ -203,9 +178,6 @@ Its blockers, procedure, screenshots and detector are not repeated here.
   “choose for me”, goes into `choice.md`. After `speckit-specify`, move folder to
   `specs/<NNN-slug>/variants/`; spec cites `choice.md`, step 6 compares screenshots. Any route
   prototype stays until step 6's end and never integrates.
-
-Why variants rather than descriptions: people recognize what they want when seeing it; descriptions
-hide density/hierarchy problems screenshots reveal.
 
 Without `agentic-design` (no listed folder has `SKILL.md`): say so in one line with installation
 command. Checkpoint 2 uses screenshots of what you build; UI proof is “unverified” under Needs you,
@@ -253,8 +225,9 @@ Follow “While they run” (§4): monitors ≥10 min, wake only on completion, 
 batched news, one command with few log lines. At spec commit, lanes launched, lanes combined:
 compaction or new session with summary per user's/project `CLAUDE.md`. Model does not run `/compact`.
 
-For UI also load `agentic-design`, “build” mode, with its proof. Brief points to absolute
-`<agentic-design>`, variant and base; with blockers it is not done.
+For UI pass the exact absolute `<agentic-design>/references/build-mode.md` (or
+`<agentic-design>/references/targeted-adjustment.md`) path, relevant project rules, variant/baseline, base and proof.
+The UI writer does not preload the whole design skill; with blockers it is not done.
 
 Ambiguous brief: `blocked: <question>`; other lanes continue. Gather questions: decide technical,
 reversible ones and relaunch; human decisions go in one message with recommendation.
@@ -268,11 +241,12 @@ Done when all lanes returned `done` and are combined, with full verification gre
 Read `references/review-and-delivery.md`. Review belongs to sibling `agentic-code-review`: invoke
 Skill tool (plugin: `agentic-skills:agentic-code-review`) or read/follow its `SKILL.md`. It owns
 review level, lenses, model, rounds and ceiling; feature track is starting level. Run with lanes
-combined and green on feature branch, again after fixes in each round.
+combined and green on the feature branch; each post-review diff is reclassified before the
+review skill decides whether an exception or another bounded round applies.
 
-- **Pass**: track/why, base/reviewed SHA, spec, plan, approved Research; for UI, chosen variant,
-  screenshots and `<agentic-design>` path: UI lens uses its “review” mode (detector and
-  `ui-without-slop.md` §5 checklist). Full list: review-and-delivery.md “Review”. Returns Important,
+- **Pass**: track/why, base/reviewed SHA, spec, plan, approved Research; for UI, selected mode,
+  chosen variant or preserved baseline, screenshots and the exact
+  `<agentic-design>/references/review-mode.md` path. Full list: review-and-delivery.md “Review”. Returns Important,
   Nit, Pre-existing findings, each with `file:line`.
 - **Handle** as same section says. Reproduce each Important before fixing in a new step 5 brief;
   at round limit with an open Important, go to human: feature is unfinished.
@@ -280,9 +254,10 @@ combined and green on feature branch, again after fixes in each round.
 Without `agentic-code-review` (no listed folder has `SKILL.md`): say so in one line with installation;
 review stays “pending” under Needs you, never “done”.
 
-Then real verification: tests, typecheck, project suite, end-to-end path. UI uses agentic-design
-“review” proof: real screenshots of step 2's agreed states in project themes, compared to chosen
-variant; detector exits 0 on diff lines. Check review-and-delivery.md traps.
+Then obtain real verification: tests, typecheck, project suite and end-to-end path, reusing valid
+exact-state evidence under `<agentic-implement>/references/evidence.md`. UI proof follows the
+selected mode's proportional scope (targeted correction versus new screen), with detector exit 0
+on supported diff lines. Check review-and-delivery.md traps only where applicable.
 
 Done when no Important is open and every check has command and output. Skipped, unrun, or exit 0
 without testing anything counts as red.
@@ -302,34 +277,23 @@ Done when integration commit is where project policy requires and final message 
 
 Same steps/stops, different tool; state replacement in one line:
 - **No AskUserQuestion**: questions in chat per questions.md point 4.
-- **No subagents**: sequential reading, per-axis research and lanes (`implementation.md` §4);
+- **No subagents**: sequential reading, needed research and lanes (`implementation.md` §4);
   review follows agentic-code-review “In other agents”.
-- **Codex orchestrating** (`workspace-write` sandbox, read-only `.git`): at checkpoint 1 ask human
-  to approve session Git commands, or `codex --sandbox danger-full-access` (human OK only);
-  without it lanes use short form.
+- **Codex orchestrating**: use observed capabilities and existing authorization under
+  `<agentic-project>/references/host-compatibility.md`; a host label does not require a new approval.
 
-## Third-party skills
+## Tool integrations
 
-| Skill | Usage | If absent |
-|---|---|---|
-| `mattpocock-skills:grilling`, `:prototype`, `:domain-modeling`, `:research` | Skill tool | method summarized in references |
-| `to-tickets`, `wayfinder`, `retro` (mattpocock) | user invokes only: read/apply SKILL.md or suggest `/<name>` | `references/too-big.md`; `assets/retro.template.md` |
-| `simplify` (Claude Code) | author at lane end targeting `<base>...HEAD` (current-diff-only: disposable worktree with `git reset --soft <base>`) | agentic-implement minimal change (step 4) |
-| `agentic-design` (sibling) | steps 2 UI questions, 3 variants, 5 UI lanes, 6 UI lens/proof: Skill tool or read SKILL.md | say so; UI “unverified” under Needs you |
-| `agentic-implement`, `agentic-fix`, `agentic-architecture` (siblings) | lane agents load implement; fix handles corrections; architecture supplies step 4 design vocabulary (`<agentic-architecture>/references/vocabulary.md`; installed `mattpocock-skills:codebase-design` is same English source) and deepening handoffs | say so: installed together |
-| `speckit-*` | target repo versions (spec-kit.md “Which speckit-* to use”) | `assets/light-spec.template.md` |
-
-Installation (tell human; do not install without OK): `/plugin marketplace add mattpocock/skills`,
-`/plugin install mattpocock-skills@mattpocock`; Spec Kit:
-`uv tool install --force specify-cli --from git+https://github.com/github/spec-kit.git@v1.2.0`.
+Optional skills, installation commands and fallbacks: `references/tool-integrations.md`.
+Read it only when needed; installation requires the human's authorization.
 
 ## References: when to read each
 
 Read each reference at its linked step. Also:
-- `references/snapshot-<yyyy-mm>.md`: step 1b technical axis (language/frameworks), starting point
-  to reverify. Use latest, never after Valid until. Web platform (CSS, HTML, accessibility,
-  performance) belongs to agentic-design: `<agentic-design>/references/web-platform-<yyyy-mm>.md`.
-- `<agentic-design>`: step 2 UI questions, step 3 variants, step 5 build in UI lanes, step 6 review/proof.
+- `references/snapshot-<yyyy-mm>.md`: latest unexpired technical starting point for needed research;
+  web platform uses `<agentic-design>/references/web-platform-<yyyy-mm>.md`. Reuse valid primary evidence.
+- `<agentic-design>`: step 2 unresolved UI questions, step 3 selected mode, step 5 exact writer
+  capsule, step 6 review/proof. Preserve targeted adjustment when its direction is settled.
 - `references/review-and-delivery.md`, “Traps”: whenever writing/assessing tests.
 - `assets/`: templates to fill (Reading, agent brief, light spec, retro). Reviewer brief/report
   belong to agentic-code-review.

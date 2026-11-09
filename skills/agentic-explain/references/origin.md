@@ -5,6 +5,12 @@ Portuguese, in the style of the others, from a skill draft; the two stages, thre
 questions and three profiles were decided during the rewrite. It therefore does not appear in
 `UPSTREAMS.json`.
 
+Those calibration/profile decisions describe the legacy page pilot, not today's default route.
+The current skill selects explain, walkthrough or lesson early: ordinary explanations can finish
+as source-grounded text/diagrams without calibration questions or practice. Teaching maps and
+activities belong to lessons; page packaging and visual QA apply only to actual pages. The
+legacy generator and its historical fixtures keep their existing contracts and cited base SHAs.
+
 ## Ideas
 
 - **Profiles.** The expertise reversal effect: what helps a learner can hinder an expert, and the

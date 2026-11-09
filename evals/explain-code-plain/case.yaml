@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: explain-code-plain
+expected_outcome: |
+  A grounded explanation in chat, with examples and no compulsory calibration, lesson or generated page.
+context:
+  scaffold_script: place-fixture.sh

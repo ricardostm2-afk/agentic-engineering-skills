@@ -1,157 +1,79 @@
 # Architecture report
 
-For step 3. The report is a standalone HTML page. Tailwind and Mermaid come from CDNs:
-Mermaid handles graph diagrams, while hand-built divs and inline SVG handle more
-editorial visuals (mass diagrams, cross-sections). Mix both: Mermaid alone looks generic.
+For step 3 in any mode. Default to text with an evidence table and diagrams where they clarify
+the relationship. An **assess** report is complete with findings and priorities; it does not need
+a candidate choice, an agreed design, HTML or a refactor handoff.
 
-It is a screen for the human to read, so UI rules come from `agentic-design` (“Style”, below).
-With the Artifact tool, the `artifact-design` skill's contract overrides this template where they differ
-(scripts and theme, for example): adapt the skeleton to it.
+## Evidence in every format
 
-## Skeleton
+Lead with the recommendation and practical implication. State repo/checkout, scope, date and the
+declared history window (or why history was unavailable). Order candidates by strength
+(**Strong**, **Worth exploring**, **Speculative**), then measured change frequency.
 
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Architecture review of {{repo}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module">
-      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
-    </script>
-    <style>
-      /* Page tokens, one job each; text and leakage measured against white. */
-      :root {
-        --background: #ffffff;
-        --text: #0f172a;
-        --leakage: #dc2626;
-        --deep: #1e293b;
-      }
-      body { background: var(--background); color: var(--text); }
-      .seam { stroke-dasharray: 4 4; }
-      .leakage { stroke: var(--leakage); }
-      .deep { background: var(--deep); color: var(--background); }
-    </style>
-  </head>
-  <body class="font-sans">
-    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
-      <header>...</header>
-      <section id="candidates" class="space-y-16">...</section>
-      <section id="recommendation">...</section>
-    </main>
-  </body>
-</html>
-```
+For each candidate include:
 
-Colors follow the upstream skeleton, with contrast measured against `#ffffff`: red gives
-4.83:1, and both dark colors exceed 14:1. Any new accent or amber becomes a token, with
-contrast measured the same way.
+- title, affected files and a one-sentence friction/problem statement;
+- dependency category from `references/deepening.md`;
+- measured change frequency, callers, internal uses and co-change, with commands and
+  `file:line` references; identify unmeasured values;
+- the deletion-test reasoning and counted callers, separated from observed measurements;
+- likely gain, relevant trade-offs and strength of the recommendation;
+- the accepted ADR and reason to reopen it if the candidate contradicts one;
+- the next decision only if it materially affects the requested design/refactor.
 
-## Header
+Use the architecture vocabulary and domain names consistently. Cite the exact checkout; do not
+invent precision or turn a hypothetical gain into a benchmark. A compact table can be sufficient
+for a small module; do not create headings with empty evidence merely to fill the format.
 
-Repo name, date, history window declared in step 2 and a compact legend: filled
-box = module, dashed line = seam, red arrow = leakage, thick dark box =
-deep module. No introductory paragraph: straight to candidates.
+## Diagrams when useful
 
-## Each candidate
+A current-state call graph can explain coupling. A before/after sketch is useful for comparing
+deepening hypotheses, but label the “after” as proposed until decisions are settled. Assessment
+does not require a new interface design or two diagrams per candidate.
 
-Diagrams carry the weight. Prose is brief and simple, using the terms in
-`references/vocabulary.md` naturally. Each candidate is an `<article>` without an enclosing box,
-separated from others by space and a strong title:
+Choose the representation by the question:
 
-- **Title**: short, names the deepening (“Unify order intake”).
-- **Strength and category**: spelled out, in text color, directly below the title (“Strong · ports and
-  adapters”). Strength is `Strong`, `Worth exploring` or `Speculative`; dependency
-  category comes from `references/deepening.md`.
-- **Files**: monospaced list, `font-mono text-sm`.
-- **Before and after**: the candidate's centerpiece, in two side-by-side columns (patterns below).
-- **Problem**: one sentence. What hurts.
-- **Solution**: one sentence. What changes.
-- **Proof**: numbers from step 2, each with the command or `file:line` it came from:
-  commits in the window, callers, internal uses, co-change, deletion test
-  result. State what remains unmeasured here.
-- **Gains**: bullets of at most 6 words, using vocabulary terms (“tests cross one
-  interface”, “pricing stops leaking”, “delete 4 shallow wrappers”).
-- **ADR** (if applicable): one line beginning “ADR:”, in amber.
+| Question | Representation |
+|---|---|
+| Who calls whom or leaks internals? | Dependency/call-flow graph |
+| Where do round trips or ordering matter? | Sequence diagram |
+| Which shallow layers merely pass data? | Cross-section |
+| Where does complexity move after merging? | Call graph with the proposed internal boundary |
+| How much must a caller know? | Concrete interface example and explanation; avoid unmeasured area ratios |
 
-No explanatory paragraphs. If understanding the diagram requires a paragraph, redesign the
-diagram.
+Use 2D, short labels and a small legend only when notation needs it. Do not vary diagrams for
+decoration or force a diagram when an evidence table answers the question better.
 
-## Diagram patterns
+## Optional HTML page
 
-Choose the pattern that serves the candidate and vary it: identical diagrams hide what makes each
-candidate distinctive.
+Choose HTML when requested, or when navigation/shareability materially helps a substantial
+comparison. State that reason. Use a standalone page with semantic headings, sections and
+tables; checked inline SVG can carry diagrams. Prefer self-contained styles and rendered diagrams
+over loading floating CDN scripts. Follow the available publication tool's actual contract if
+it supplies a theme or packaging policy; never invent a tool or publication.
 
-### Mermaid graph (for dependencies and call flow)
+Suggested structure: header with scope/window → leading recommendation → candidate sections →
+remaining decisions/limits. Each section carries the same evidence as the text report. Keep
+plain prose where it explains a subtle claim; concision is not a ban on explanations.
 
-A `flowchart` or `graph` when the point is “X calls Y, which calls Z, and look at the tangle”. Put it directly
-in the candidate's section without another enclosing box. Use `classDef` to make leaking edges
-red and the deep module dark, using the token values. Sequence diagrams
-serve “before: 6 round trips; after: 1”.
+### Style and verification
 
-```html
-<pre class="mermaid">
-  flowchart LR
-    A[OrderIntake] --> B[OrderValidator]
-    B --> C[OrderRepository]
-    C -.leaks.-> D[PricingClient]
-    classDef leakage stroke:#dc2626,stroke-width:2px;
-    class C,D leakage
-</pre>
-```
+Read `<agentic-design>/references/review-mode.md` and the applicable **§5 Review checklist** in
+`<agentic-design>/references/ui-without-slop.md`. Do not read the full anti-slop reference by
+default. Read a specific blocker only if relevant and §6 for a justified project exception.
+Use readable labels, explicit strength text, restrained semantic colour and simple hierarchy.
 
-### Hand-built boxes and arrows (when Mermaid cannot give the right layout)
+Before delivery:
 
-Modules as outlined, labeled `<div>` elements; arrows as inline SVG `<line>` or `<path>` elements, over
-a `relative` container. Useful when “after” should look like one deep module with a thick outline
-and faded internals, which Mermaid cannot draw with that weight.
+1. Run `node <agentic-design>/scripts/detect-slop.mjs <report file>`; require exit 0.
+   When publishing, check the exact local file being published.
+2. Open at 375 and 1366 px. Inspect diagram labels, layout/overflow, keyboard navigation,
+   contrast and any interactive controls; check console/network errors. Inspect supported
+   light/dark states. Fix defects; detector success alone is not visual evidence.
+3. Confirm source links and diagram relationships match the inspected code and report.
+4. Publish only with the applicable authorization, or save to the requested deliverable location
+   and give the real path. Do not put the report into the code repository unless requested.
+   If browser/publication is unavailable, report the precise limit and deliver the useful text
+   findings; an unseen page has not passed visual QA.
 
-### Cross-section (for layered shallow modules)
-
-Stacked horizontal strips, one per layer a call passes through. Before: 6 thin layers
-that do nothing. After: 1 thick strip with the responsibility combined.
-
-### Mass diagram (for an interface as wide as the implementation)
-
-Two rectangles per module: interface area and implementation area. Before: interface
-rectangle almost as tall as the implementation rectangle (shallow). After: short interface, tall
-implementation (deep).
-
-### Call graph collapse
-
-Before: a call tree in nested boxes. After: the same tree enclosed in one box,
-with the now-internal calls faded inside.
-
-## Style
-
-UI rules are those of `<agentic-design>/references/ui-without-slop.md`, in full: the report
-is a screen to read. They provide, for example, sentence-case labels without tracking and at least
-12 px, strength spelled out rather than colored pills, flat color rather than gradients, and
-candidates without cards. Before showing it, the detector must exit 0 on the page:
-`node <agentic-design>/scripts/detect-slop.mjs <report file>`. When published
-as an Artifact, run it on the local file you published.
-
-Within those rules:
-
-- Editorial, not a corporate dashboard. Generous whitespace; optional serif headings.
-- Color sparingly: red for leakage, amber for notices and at most one
-  accent.
-- Diagrams around 320 px high, so before and after fit side by side without
-  scrolling the page.
-- The only scripts are Tailwind and Mermaid. Everything else is static: no application code or
-  interaction beyond what Mermaid draws.
-
-## Top recommendation
-
-The last section, with the page's largest heading: the candidate's name, a one-sentence reason and an
-anchor link to its section.
-
-## Tone
-
-Short, simple sentences; architecture nouns and verbs come from
-`references/vocabulary.md`, including what to avoid. Concision is no excuse to dodge the
-terms. No circumlocution or “it is worth noting…”: a sentence that can be a bullet becomes one,
-and a bullet that can be cut is cut.
+None of these page-specific tools is required for a text/diagram assessment.

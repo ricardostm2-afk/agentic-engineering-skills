@@ -1,25 +1,27 @@
 Phase 3 — Architecture
 
-Read `references/architecture.md` and `references/architecture-research.md`. Before proposing,
-find the current state of each category and research every option on the web using dated
-primary sources (stable version and support, sourced cost, agent suitability measured in a
-skeleton when cheap), within that file's limits; never quote versions or prices from memory,
-and human decisions on constraints take precedence over research. Propose 2–3 options with
-monthly cost (confirmed or marked “estimate”), operating effort, vendor lock-in, agent
-suitability and a recommendation. The human chooses (or delegates). In adopt mode, or when
-phase 2 already chose the stack, do not offer options from scratch: audit the existing
-architecture (“Adopt mode” in `references/architecture.md`) and research each component's
-version and support (“Adopt mode and an already chosen stack” in
-`references/architecture-research.md`). Highlight decisions that are hard to reverse; write
-ADRs only for those meeting all three conditions in the reference (§6); record others in
-`docs/decisions.md`.
+Only for a selected **Architecture** module. Preparing an existing repository does not by itself
+request an architecture or security/currentness audit.
 
-Output: a short `ARCHITECTURE.md` (modules, data flows, area map, where checks run) + the stack
-decision with the research table (`docs/adr/NNNN-*.md`, or `docs/decisions.md` when there is no
-ADR) + initial `docs/radar.md` from `assets/radar.template.md` (targets; phase decisions in
-Adopt with who decided; promising options in Assess; Avoid only for failures of a mandatory
-criterion).
+Read `references/architecture.md`; read `references/architecture-research.md` only when a
+material decision needs current evidence. First identify the relevant constraint, component
+or boundary. For unchanged adopted components, reuse scoped valid evidence and document the
+existing shape; do not refresh every framework, runtime, database, auth provider and host.
+Research newly introduced/changed components, unknown support/security/API currentness that
+matters to this decision, or the explicitly requested audit scope.
 
-Done when the option is chosen, every planned code folder has an area and a check, and
-`docs/radar.md` has targets filled in and a source and date for each entry (or “not confirmed
-(no network)”, with a pending item in `docs/prerequisites.md`).
+For a real open stack choice, compare 2–3 viable options within the research limits, with cost
+(confirmed or marked estimate), operation, lock-in, agent suitability and a recommendation.
+Reuse an already chosen stack; ask only an unresolved material decision. A skeleton is useful
+when it resolves a concrete uncertainty, not a mandatory demonstration for every option.
+
+Output only what supports this module: a short `ARCHITECTURE.md` (modules, flows, verification)
+or a scoped update to the existing document; the decision/research evidence in the current
+decision location; ADRs only when all three conditions in `architecture.md` §6 hold.
+An area map becomes `.agentic/areas.json` only if parallel setup is selected. Create/update
+`docs/radar.md` only for reusable technology evidence and targets that merit maintaining it;
+a small scoped source table can remain with the decision instead.
+
+Done when relevant constraints and choices are clear, the affected code has a real verification
+path, and claims have sources/dates or explicit uncertainty. Record unresolved access/research
+with an owner in the existing prerequisite record or handoff; do not create unrelated artifacts.

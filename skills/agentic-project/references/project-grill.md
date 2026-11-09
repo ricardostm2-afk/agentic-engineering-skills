@@ -1,7 +1,8 @@
 # Project interview (phase 2)
 
-Goal: reach a shared, written understanding of the project before any architecture. Every
-undecided question here gets silently decided by an agent during a feature, when it costs more.
+Use for material open product/architecture decisions in selected modules. The goal is enough
+shared understanding for that work. Do not interview every dimension for simple repo preparation;
+context can already resolve the scope, and unrelated dimensions need no artifacts or questions.
 
 ## Protocol
 
@@ -21,15 +22,14 @@ undecided question here gets silently decided by an agent during a feature, when
    this does not exist?”. Flag answers contradicting another answer or the code immediately.
 5. **Delegation.** “You choose” = apply your recommendation and mark the decision delegated.
    “Follow the recommendations” = the same for all pending questions in this phase.
-6. **Record as you go.** Every answer goes straight into `docs/decisions.md` (format in
-   `assets/decisions.template.md`); every resolved domain term into `GLOSSARY.md`. Do not save
-   them for the end: a dropped session must not lose decisions.
+6. **Record lasting decisions as you go.** Use the project's existing decision record, or
+   `docs/decisions.md` when useful (format in `assets/decisions.template.md`). Add glossary terms
+   only when shared domain vocabulary matters. Do not create files for trivial answers.
 
 **Adopt mode.** Before round 1, read existing repo rules (`AGENTS.md`, `CLAUDE.md`,
-`CONTRIBUTING`, CI, hooks) and compare them with SKILL.md defaults (trunk-based, branches < 24 h,
-push at session end, approval before irreversible actions…). Each conflicting rule becomes a
-round 1 question with both options and your recommendation; until then, the repo rule applies.
-Discovering such a conflict during a feature stops an agent's work.
+`CONTRIBUTING`, CI, hooks). Preserve their workflow. A conflict requires a question only when
+the selected work actually needs a different rule; a template preference is not a reason to
+reopen the repo's policy. Until resolved, the existing rule applies.
 
 With `mattpocock-skills:grilling` available, invoke it with phase 0 context and this dimension
 bank. The rules fit together as follows: grilling provides frontier rounds and fact-finding
@@ -40,7 +40,8 @@ and ADRs (its default `GLOSSARY.md` is also this project's file).
 
 ## Order and question bank
 
-You need not ask every question; every dimension must be resolved, delegated or out of scope.
+Use only dimensions material to the selected work. Infer answers from context, accept delegation
+and omit irrelevant dimensions without manufacturing an interview checklist.
 Parenthetical suggestions are typical recommendations, not answers.
 
 1. **Problem and user.** Who has the problem, how often, how do they solve it today? Who is the
@@ -65,11 +66,12 @@ Parenthetical suggestions are typical recommendations, not answers.
    Language(s) and writing tone? Minimum accessibility (recommend: WCAG 2.2 AA, keyboard
    navigation and AA contrast)? These targets feed phase 3's radar and every feature's
    research filter.
-   Fixed rule, no question: UI work follows `agentic-design`
+   For actual UI work, follow the appropriate mode in `agentic-design`
    (`<agentic-design>/references/ui-without-slop.md`) and runs its detector
-   (`<agentic-design>/scripts/detect-slop.mjs`). With UI, phase 4 versions copies of both in
-   `.agentic/` without asking (agents without the skill have the rules; pre-commit fails
-   closed). Ask only about intentional brand exceptions (e.g. glass in the frame, a brand
+   (`<agentic-design>/scripts/detect-slop.mjs`). With selected parallel setup and UI, phase 4
+   can version copies of both in `.agentic/` under the existing setup authorization. Minimal
+   agent preparation does not retrofit an unchanged UI. Ask only unresolved material brand
+   exceptions (e.g. glass in the frame, a brand
    gradient): record a “UI exceptions” decision in `docs/decisions.md` with scope (where it
    applies and where it does not), turn it into `slop-ok: <reason>` in code, and link to it
    from `AGENTS.md` (phase 6).
@@ -80,8 +82,9 @@ Parenthetical suggestions are typical recommendations, not answers.
 
 ## Stopping criterion
 
-Stop when all 9 dimensions are resolved, delegated or marked “out of scope”; no open question
-changes architecture choice; and the human confirms your decision summary (≤ 15 lines).
+Stop when material questions for the selected scope are resolved or delegated. Show a concise
+decision summary; ask for confirmation only if a material commitment remains, not when existing
+authorization or delegation already resolves it. Do not require all nine dimensions.
 
 ## Glossary (`GLOSSARY.md`)
 

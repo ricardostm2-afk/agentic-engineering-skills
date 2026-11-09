@@ -43,8 +43,10 @@ A test launching a server, browser or another child process can hang the suite w
   fails on the first loaded machine.
 - **Registered child**: register child termination before starting it, and terminate in teardown,
   including when the test fails midway.
-- **Orphan**: an orphan child hangs the suite. After green, run the suite twice consecutively:
-  both runs finish.
+- **Orphan**: an orphan child hangs the suite. When the change adds or alters process lifecycle
+  (startup, termination, teardown, timeout handling) or investigates an observed orphan/flaky hang,
+  run the affected suite twice consecutively: both runs finish. Unrelated changes reuse valid
+  lifecycle proof under `evidence.md`; they do not trigger two full suite runs.
 
 ## Refactor: pin, change, prove equal
 

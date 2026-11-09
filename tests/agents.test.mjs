@@ -38,7 +38,7 @@ export function readAgent(text) {
 
 const agent = (name) => readAgent(read(FOLDER, `${name}.md`));
 const tools = (name) => agent(name).fields.tools.split(",").map((s) => s.trim());
-const READ_ONLY = ["researcher", "reviewer"];
+const READ_ONLY = ["researcher"];
 const WRITING = ["Edit", "Write", "NotebookEdit"];
 
 test("the folder contains four agents, the CLAUDE.md excerpt and README only", () => {
@@ -71,7 +71,10 @@ for (const name of AGENTS) {
     for (const forbidden of ["Agent", "Task", "Skill"]) assert.ok(!list.includes(forbidden), forbidden);
     assert.ok(list.includes("Read"));
     if (READ_ONLY.includes(name)) for (const tool of WRITING) assert.ok(!list.includes(tool), `${name} is read-only and has ${tool}`);
-    else for (const tool of ["Edit", "Write", "Bash"]) assert.ok(list.includes(tool), `${name} lacks ${tool}`);
+    else if (name === "reviewer") {
+      for (const tool of ["Write", "Bash"]) assert.ok(list.includes(tool), `reviewer needs ${tool} for acceptance scratch`);
+      assert.ok(!list.includes("Edit"), "reviewer does not need a general source editing tool");
+    } else for (const tool of ["Edit", "Write", "Bash"]) assert.ok(list.includes(tool), `${name} lacks ${tool}`);
     assert.equal(agent(name).fields.disallowedTools, undefined, "a closed list does not need disallowedTools");
   });
   test(`${name}: model and effort match the commented task-level default the user can change`, () => {
@@ -93,12 +96,14 @@ test("reviewer uses the review-level model; the other three use well-defined def
   assert.match(agent("reviewer").comments.join(" "), /verifier: model: opus, effort: medium/, "the verifier keeps the stronger model");
   for (const name of ["implementer", "implementer-ui"]) assert.deepEqual([agent(name).fields.model, agent(name).fields.effort], ["sonnet", "high"], name);
   assert.deepEqual([agent("researcher").fields.model, agent("researcher").fields.effort], ["sonnet", "medium"]);
-  assert.match(read(FOLDER, "reviewer.md"), /Read-only: do not edit, commit/);
+  assert.match(read(FOLDER, "reviewer.md"), /Reviewed production is read-only: do not edit source, commit/);
 });
 
 test("preloaded skills exist; only code-writing agents preload them", () => {
   assert.equal(agent("implementer").fields.skills, "[agentic-implement]");
-  assert.equal(agent("implementer-ui").fields.skills, "[agentic-implement, agentic-design]");
+  assert.equal(agent("implementer-ui").fields.skills, "[agentic-implement]", "UI writer must not preload the design orchestrator");
+  assert.match(agent("implementer-ui").body, /references\/build-mode\.md/);
+  assert.match(agent("implementer-ui").body, /Do not preload or read the whole design/);
   assert.equal(agent("researcher").fields.skills, undefined);
   assert.equal(agent("reviewer").fields.skills, undefined);
   for (const a of AGENTS) {
@@ -113,6 +118,15 @@ test("reviewer links to the agentic-code-review brief rather than repeating it",
   assert.ok(existsSync(path.join(ROOT, "skills", "agentic-code-review", "assets", "reviewer-brief.template.md")));
   assert.doesNotMatch(body, /\[Important\]|Pre-existing|Nit\b/, "report format belongs in the skill's brief and template");
   assert.ok(body.split("\n").length < 30);
+});
+
+test("reviewer scratch capability is bounded to the independent acceptance test", () => {
+  const body = agent("reviewer").body;
+  assert.match(body, /same reviewer may write[\s\S]*only in[\s\S]*<acceptance-tmp>/);
+  assert.match(body, /Production\/review worktree files stay read-only|Reviewed production is read-only/);
+  assert.match(body, /status --porcelain[\s\S]*must be empty/);
+  assert.match(body, /does not authorize production changes or an extra agent by default/);
+  assert.match(body, /missing capability is unrun\/blocked proof/);
 });
 
 // Generic machine paths and installation-specific tool names. Never copy a project's vocabulary here.

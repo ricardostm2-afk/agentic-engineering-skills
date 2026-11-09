@@ -79,8 +79,8 @@ lens does not run; the report says so. When called by agentic-feature, all this 
 
 You (orchestrator) classify from the diff, never the author's report: Quick, Standard or Complete,
 or `REVIEW.md` levels. Always-high paths, hook/CI/installer rules (raise lenses, not rounds) and
-lesson escalation: `references/risk-levels.md`. State level and why in one line. Recheck each round
-against that round's diff. Lenses do not reclassify; if what they read needs more, they write a
+lesson escalation: `references/risk-levels.md`. State level and why in one line. Reclassify **every
+post-review diff before any exception**, adding only newly required lenses when risk rises. Lenses do not reclassify; if what they read needs more, they write a
 “Level” line in the report and you decide.
 
 Quick has no panel: proof is the author's red → green test. On an explicit human review request,
@@ -145,9 +145,10 @@ The validator checks form, not truth; truth belongs to step 4.
   and the next round reviews it.
 <!-- card:review-2 -->
 - Round limit by level (1 for requested Quick, 1 for Standard, 2 for Complete). From round 2 onward:
-  only the new diff, without repeating closed findings, and only lenses with open Important findings, together.
+  only the new diff, without repeating closed findings; combine lenses with open Important findings
+  and add only newly required lenses from classification.
 <!-- /card:review-2 -->
-- What can enter after the reviewed SHA without a round (metadata, an Important fix with proof and
+- After reclassifying every post-review diff, what can enter without a round (metadata, an Important fix with proof and
   checked diff, unchanged integration of a reviewer's test), trunk brought into the branch (merge
   or rebase), “how to undo” and the `Review:` line: `references/panel-and-rounds.md` §9–§10.
 <!-- card:review-3 -->
@@ -180,8 +181,9 @@ An open Important or “Direction” goes first.
 
 - **Codex**: lenses and verifier are Codex subagents with the same brief and the user's review
   model, the verifier with the verifier model (without a rule, for example gpt-6.1-sol with medium
-  effort, and high for the verifier; example model names; the project picks its own). Default
-  sandbox makes `.git` read-only: `git worktree add` needs approval. Ask once for the session; without approval, run lenses sequentially in one human-created worktree.
+  effort, and high for the verifier; example model names; the project picks its own). Worktrees use
+  observed capabilities and existing authorization under `<agentic-project>/references/host-compatibility.md`.
+  Escalate an actual necessary blocked action through the host's supported mechanism; do not pre-request session approval.
   In a job launched without subagents (launcher disables them), each reviewer the level requires
   separately (Complete's two reviewers, verifier) is its own job with its own brief; a job combining what
   the level separates marks the report “review not independent”.
@@ -200,6 +202,7 @@ An open Important or “Direction” goes first.
 | `references/layers.md` | explaining where review fits, or when the human asks what it misses |
 | `references/risk-levels.md` | step 1, every round |
 | `references/panel-and-rounds.md` | steps 0, 2–6 |
+| `references/security-lens.md` | assigned security lens; single operational checklist, also linked in the brief |
 | `references/review-md.md` | writing or reviewing `REVIEW.md`, or a repeated finding |
 | `references/learning.md` | step 7; changing reviewer (brief, prompts, model, effort) |
 | `references/maintenance.md` | maintenance mode on explicit request only; and “Mechanical batch” for a scripted diff with approved playbook |

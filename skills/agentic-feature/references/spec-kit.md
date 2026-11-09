@@ -23,7 +23,8 @@ UI variants, Complete gate):
 
 1. **speckit-specify**: description, Reading approach, grill decision table (including delegated),
    excluded scope, UI states, variants/choice.md reference. More decisions mean fewer NEEDS CLARIFICATION.
-   - Immediately move reading.md, research-notes.md, variants/ into feature folder for all consumers.
+   - Immediately move existing reading.md, research-notes.md and variants/ into the feature folder
+     for their consumers; do not create empty research or variants artifacts for routes that skipped them.
    - Branch: active Spec Kit Git extension creates NNN-slug (specify init --integration claude
      alone does not activate it). Without extension follow project convention, otherwise create
      short NNN-slug before writing.
@@ -37,7 +38,7 @@ UI variants, Complete gate):
    (deep modules: small interface, much behavior behind; test seams; one adapter=hypothetical seam,
    two=real); installed mattpocock-skills:codebase-design is same English source. Difficult-to-reverse
    decision/new domain term: ADR and glossary update with mattpocock-skills:domain-modeling.
-   Pass research-notes.md to speckit-plan as completed phase 0: adopted/grill-decided rows become Decision/Rationale/
+   Pass existing research-notes.md or the local-evidence decision to speckit-plan as completed phase 0: adopted/grill-decided rows become Decision/Rationale/
    Alternatives in plan's research.md with sources. Plan researches only new Technical Context
    unknowns using current-research.md source/date/hype filter, separate ceiling from 1b: total
    up to 2 searches/3 pages Standard, 3 searches/5 pages Complete.
@@ -60,7 +61,9 @@ UI variants, Complete gate):
    briefs point to these paths.
 
 Do not use speckit-implement: step 5 distributes tasks to agent worktrees, which it does not.
-Agents mark [X] in tasks.md. speckit-converge is step 6. Do not use discontinued speckit-taskstoissues,
+The orchestrator alone marks [X] in shared `tasks.md`, after reconciling each lane's returned task
+IDs, commit SHA and evidence with the combined state. Lanes never edit shared task status.
+speckit-converge is step 6. Do not use discontinued speckit-taskstoissues,
 even if init installed it.
 
 ## Without Spec Kit

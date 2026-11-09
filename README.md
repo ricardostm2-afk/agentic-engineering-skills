@@ -28,8 +28,8 @@ In a Claude Code session (CLI, the Code tab of Claude Desktop or the VS Code ext
 
 Open a new session in any repository and start with something that only reads:
 
-- "explain how the login works": `agentic-explain` asks three short questions (your goal, what you already
-  know, how deep) and writes an HTML page with the explanation beside 3D views of the code;
+- "explain how the login works": `agentic-explain` reads the relevant code and explains it in chat;
+  request a walkthrough or lesson when you want a more structured explanation;
 - "review this branch": `agentic-code-review` reviews the branch against its base with independent
   lenses and reports each finding with `file:line`.
 
@@ -41,14 +41,14 @@ as the default. When you want to build: "set up this repo for agents"
 
 | Skill | What it does | Ask for it with | Origin |
 |---|---|---|---|
-| `agentic-project` | Prepares a project (new or existing) for agents working in parallel and safely. Ten phases: prerequisites checked, decisions recorded, architecture chosen with dated research, a git protocol for agents (short branches, one worktree per agent, hooks, an area map), Spec Kit, `AGENTS.md` and `CLAUDE.md`, a small scrum board, the first backlog and a `REVIEW.md` that says what counts as a failure in this project | "start a project: …", "prepare this repo for agents", "set up this repo for agents" | original |
-| `agentic-feature` | Takes a feature from request to integration. Risk triage (Standard, Complete, Too big; fixes go to `agentic-fix`), reading the code, research on what is current, a grill on what only the human can decide, real UI variants through `agentic-design`, a spec, one brief per lane for Claude or Codex agents using `agentic-implement`, independent review through `agentic-code-review` and measured proof | "develop this feature …", "take the next backlog item", "build this feature" | original |
-| `agentic-design` | Owns the UI method. Questions about the screen, 2–3 structurally different variants with screenshots, building inside the project's design system, blocking rules against the generic "AI look" (B1–B24) with a mechanical detector, and proof in the browser with an honest status. It carries no brand: looks come from each project's `DESIGN.md` | "make variants of this screen", "review the UI", "redesign this screen" | original; the interaction mechanisms in `references/mechanisms.md` are rewritten from [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) |
+| `agentic-project` | Prepares the smallest useful project setup: repository inventory, verified commands, concise agent instructions and review criteria. Adds parallel-work protocols, architecture decisions, planning, a board or Spec Kit only when the project needs them | "start a project: …", "prepare this repo for agents", "set up this repo for agents" | original |
+| `agentic-feature` | Takes a feature from request to integration. A short Standard route handles closed, reversible changes before research, questions or a spec. Larger or sensitive work uses risk triage, focused research, material human decisions, a plan, owned implementation lanes and independent review | "develop this feature …", "take the next backlog item", "build this feature" | original |
+| `agentic-design` | Owns UI work through targeted adjustment, variants, build and review modes. Small corrections use the existing design system; new visual directions get structurally different alternatives. Shared rules against the generic AI look, a mechanical detector and honest browser proof remain in force | "make variants of this screen", "review the UI", "redesign this screen" | original; the interaction mechanisms in `references/mechanisms.md` are rewritten from [uiverse-io/galaxy](https://github.com/uiverse-io/galaxy) |
 | `agentic-fix` | Fixes what exists and is wrong. One question only if the report is ambiguous, a red test that reproduces it, root-cause diagnosis, the whole class of the defect fixed, red then green, review with fresh context, and the defect that escaped becomes an evaluation case | "this is broken", "fix this" | original; the red-first diagnosis adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `agentic-implement` | The skill of the agent that writes the code (Claude or Codex). From a closed brief to a commit: read only what is needed, state assumptions, failing test first, minimal change in the style of the surrounding code, green with evidence, one commit per cause, hand-off with a status line | "implement this brief"; also loaded by the briefs that `agentic-feature` and `agentic-fix` write | original; the test-first discipline adapts part of [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `agentic-code-review` | Reviews a diff, a branch or a PR, alone or called by `agentic-feature`. Level by risk, a panel of independent lenses in a throw-away worktree, consolidation, confirmation of the serious findings, a report whose first line is validated by a script, limited rounds, and lessons and evaluation cases to measure the reviewer | "review this branch", "code review" | original |
-| `agentic-architecture` | Improves the architecture of code that already exists: shallow modules where the code changes most, with measured proof, a visual report, a grill on the chosen candidate and execution through `agentic-feature`. Carries the vocabulary of modules and seams the other skills use | "improve the architecture", "shallow modules", "improve the codebase architecture" | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `agentic-explain` | Explains code, or any other topic from sources it reads, at the level of whoever asks. Three calibration questions (the goal, familiarity with concepts found in the material, the depth), three profiles (functional with metaphors; intermediate with parts and a glossary; advanced with details, risks and sync or async calls), and one page with the explanation in a free 2D composition by default; use 3D only when depth carries meaning, while the fixed-frame template and three.js data path remain optional legacy mode. It only reads: in code, debugging goes to `agentic-fix`, changes to `agentic-architecture` or `agentic-feature` | "explain this", "how does X work" | original |
+| `agentic-architecture` | Assesses architectural friction using code and history evidence. Assessment can finish with priorities or no change; design and refactor modes add alternatives, human decisions and execution only when justified. Visual reports are optional | "improve the architecture", "shallow modules", "improve the codebase architecture" | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `agentic-explain` | Explains code or a topic from inspected sources in chat by default. Walkthrough and lesson modes add structure when useful; ask calibration questions only for missing information that changes the explanation. Create a page only when requested or useful, with 2D by default and browser verification | "explain this", "how does X work" | original |
 | `agentic-ci-audit` | Audits which regressions the CI checks really catch and which work can leave without losing that protection (test discovery, false greens, fixtures, caches, cost) | "audit the CI", "audit this test suite", "find why the tests are slow" | [morluto/rea](https://github.com/morluto/rea) |
 | `agentic-tool-design` | Designs tools for agents and their contracts: identity, coverage, effects and lifecycle | "design this tool for agents" | [morluto/rea](https://github.com/morluto/rea) |
 | `agentic-analysis-optimization` | Optimizes agent analysis pipelines with measured latency, CPU, memory, subprocess or context costs; suite cost belongs to `agentic-ci-audit` and tool contracts to `agentic-tool-design` | "optimize this analysis" | [morluto/rea](https://github.com/morluto/rea) |
@@ -91,7 +91,8 @@ copies or as links.
 
 ## Install
 
-Requirements: **git** and **Node.js >= 20** (the skills' scripts and the tests are Node). Optional:
+The repository utilities and tests require **git** and **Node.js >= 20**. Reading the skills or
+preparing a repository that uses another stack does not by itself require Node. Optional:
 the GitHub CLI (`gh`), `gitleaks` (the pre-commit hook skips secret scanning without it), and `uv` with
 Spec Kit 1.2.0 (without it the skills use a lighter spec).
 `bash skills/agentic-project/scripts/check-environment.sh` shows what is missing (exit 0 = the
@@ -229,10 +230,10 @@ Ask for the work in plain words and the matching skill loads from its descriptio
 trigger, name it: `/agentic-skills:agentic-feature` (plugin), `/agentic-feature` (copies in Claude
 Code) or `$agentic-feature` (Codex). A first session usually looks like this:
 
-1. In a repository, ask for `agentic-project` to prepare it. It asks the few questions only you can
-   answer and writes `AGENTS.md`, `REVIEW.md` and the backlog.
-2. Pick a backlog item and ask for `agentic-feature`. It stops at the grill and, for UI, at the variants;
-   everything else it decides and records.
+1. In a repository, ask for `agentic-project` to prepare it. It checks the existing setup and adds
+   concise instructions and review criteria; planning modules are conditional.
+2. Ask for `agentic-feature` with the desired behavior or a backlog item. Closed Standard changes
+   follow the short route; larger work asks only for material decisions still missing.
 3. Something broken? Ask for `agentic-fix` with the report.
 4. Want a second opinion on a branch? Ask for `agentic-code-review`.
 
@@ -250,9 +251,9 @@ own and edit, in `skills/agentic-implement/assets/agents/`:
 | Agent | For | Tools | Default |
 |---|---|---|---|
 | `implementer` | code and tests for one lane of a closed brief; loads `agentic-implement` | Read, Edit, Write, Bash, Grep, Glob | `sonnet`, `high` |
-| `implementer-ui` | the same for a UI lane; also loads `agentic-design` | the same | `sonnet`, `high` |
+| `implementer-ui` | the same for a UI lane; reads the selected design capsule from its brief | the same | `sonnet`, `high` |
 | `researcher` | read-only research, inventory or diagnosis | Read, Grep, Glob, WebFetch, WebSearch, Bash | `sonnet`, `medium` |
-| `reviewer` | read-only review with fresh context, working from the brief of `agentic-code-review` | Read, Grep, Glob, Bash | `sonnet`, `high` (verifier: `opus`, `medium`) |
+| `reviewer` | fresh-context review; production is read-only, acceptance tests may be created in named scratch | Read, Grep, Glob, Bash | `sonnet`, `high` (verifier: `opus`, `medium`) |
 
 The model and the effort in each file are a default for one task level, written next to a comment that
 says so: change those two lines to what your provider offers. The levels (short, well-defined, complex)
@@ -277,9 +278,10 @@ yours to edit. The excerpt is printed for you to paste where you want it.
 
 `memory/` holds a guide, `GUIDE.md`, and an empty folder to copy, `memory/template/`, for
 Claude Code's auto memory: a short `MEMORY.md` index that loads in every session, one sub-index per
-topic, and one fact per file with the frontmatter Claude Code uses (`name`, `description`,
-`metadata.type`) and `[[links]]` between related memories. The guide says when a memory moves up to the
-index or down to a sub-index, what must never go in (secrets, sensitive data, personal data), and how to keep
+topic, and focused topic files with the frontmatter Claude Code uses (`name`, `description`,
+`metadata.type`) and `[[links]]` between related memories. Layer 0 contains bounded essential rules; technical documents load
+by trigger. Scope and invalidation rules keep stale project facts out of unrelated work. The guide
+says when a memory moves up to the index or down to a sub-index, what must never go in (secrets, sensitive data, personal data), and how to keep
 the folder in a private git repository and point Claude Code at it with `autoMemoryDirectory`, so the
 same memory follows you to any PC. That setting applies to all the projects of your account: they share
 one folder, and the guide warns about it before it explains the steps. No memory is included and nothing
@@ -287,8 +289,9 @@ installs the folder for you: copy `memory/template` when you want it.
 
 ## Limits
 
-- **Opinionated and not light.** The process is built for work that deserves a spec, a test and a review.
-  The skills define a short path for small changes, but for a one-line edit just ask the agent directly.
+- **Adaptive process.** Short changes, assessments and explanations have direct routes. Sensitive
+  changes still require appropriate proof, decisions and review; a shorter prompt does not establish
+  a token saving by itself.
 - **Language.** Agent output follows the project's `AGENTS.md`, defaulting to English. See the note above.
 - **Claude Code first.** Questions, sub-agents, worktrees and the web research use Claude Code tools. In
   the other agents the skills fall back (questions in the chat, lanes in sequence, no web board); each
@@ -296,10 +299,10 @@ installs the folder for you: copy `memory/template` when you want it.
   `docs/backlog.md` when the Artifact tool is not there.
 - **Agents act.** The skills tell agents to run git, tests, scripts and to create worktrees. Everything is
   plain text: read it, and try it on a branch you can throw away first.
-- **What was verified** (2026-10, macOS, Node 22, Claude Code 2.1): the test battery (`node --test`), the
-  plugin manifests and the skills (`claude plugin validate`) and a secret scan (`gitleaks`). `install.ps1` was run under PowerShell 7 on
-  macOS and not on a Windows machine; Linux was not run natively. Behaviour of the skills inside each
-  agent depends on the agent's version.
+- **Validation scope.** The local Node test suite checks scripts, installers, fixtures and text contracts.
+  CI runs portable checks on Linux and macOS and requires PowerShell for the Windows installer job.
+  Real agent behavior and cost require the separately invoked, billed [eval suite](evals/README.md).
+  A passing structural test does not prove that every agent follows a skill.
 - **Installing a skill installs no service.** No telemetry comes from these skills; the tools they call
   (`gh`, `npx`, the browser…) have their own.
 
@@ -324,7 +327,8 @@ technique it does not cover.
 From the root of a clone (Node >= 20):
 
 ~~~bash
-node --test                       # every test: skills, installers, provenance (about 30 s)
+node --test                       # scripts, installers, fixtures and skill contracts
+node tools/context-budget.mjs     # bounded static input sizes, no model calls
 claude plugin validate .          # plugin and marketplace manifests (Claude Code >= 2.1.233)
 claude plugin validate skills     # the skills themselves
 gitleaks dir .                    # secret scan
@@ -333,6 +337,23 @@ gitleaks dir .                    # secret scan
 `node --test` must report `# fail 0`. `claude plugin validate skills` checks the skills' frontmatter with
 Claude Code's own validator; `tests/skills.test.mjs` checks it too, and that every `references/…` and
 `assets/….md` cited exists, also across skills.
+
+## Efficiency and evidence
+
+Read a skill router and the references needed for the current role or mode. UI writers receive a
+build or targeted-adjustment capsule; bug-fix writers receive the writer steps. The orchestrator owns
+shared `tasks.md` updates and consumes worker handoffs with task IDs, commit IDs and verification
+evidence. Research resolves relevant unknowns; it is not a compulsory phase for a local correction.
+
+Verification evidence is reusable only for the same code state, command, environment and inputs.
+Integration creates a new state to verify. Changes after review are reclassified before applying a
+limited-review exception, including changes to dependencies or authorization boundaries.
+
+[`context-budget.json`](context-budget.json) sets byte budgets for metadata, skill entrypoints and
+explicit role/mode routes. These prevent prompt growth; they do not measure model tokens.
+[`evals/README.md`](evals/README.md) describes reproducible before/after runs, quality gates, native
+cost and duration reports, and optional observed token, tool-call and intervention metrics. Missing
+telemetry remains unknown. CI does not launch paid model evaluations.
 
 ## Update and uninstall
 

@@ -4,6 +4,9 @@ Goal: the human thinks only about the right decisions (product, money, irreversi
 agents do the rest, with proof. Use this file to write the project's `docs/methodology.md`,
 adapted to its decisions (project rules take precedence).
 
+Only for a selected ongoing team-process module. Minimal bootstrap and a simple backlog do not
+need this file, lessons, a radar or a board. Link only artifacts the project actually uses.
+
 `docs/methodology.md` describes **process** (cycle, roles, done, pitfalls). Do not repeat rules:
 point to the constitution for principles and `AGENTS.md` for hard rules. In the same phase,
 create `docs/lessons.md` with just a heading and a format line for retrospective lessons.
@@ -15,7 +18,7 @@ use skill names, never paths from your own machine.
 ## Cycle
 
 ```
-request → triage (size and risk) → agentic-feature (Reading → current Research → grill → … → agentic-code-review) → continuous integration into main → delivery → short retrospective
+request → triage (size and risk) → agentic-feature (read → scoped research if needed → resolve material decisions → implement → review) → integration → delivery
 ```
 
 - **Triage**: effort scales with risk. Standard (ordinary feature: light spec); Complete (data,
@@ -25,10 +28,11 @@ request → triage (size and risk) → agentic-feature (Reading → current Rese
   lesson in the same area (`docs/lessons.md`, last 30 days) raises the route one level, never
   above Complete; `type: repeated` does not. agentic-feature performs triage. Fixing existing
   wrong behavior (label, rounding, error) uses `agentic-fix` instead.
-- **Research at every feature's start**: before recommending, study current best practice
-  (feature in reference products, design, frontend/backend construction at lockfile versions),
-  using dated primary sources and starting from `docs/radar.md`. Modern is not fashion: stable,
-  target coverage and measurable gain only; changes to project decisions become questions.
+- **Scoped research when needed**: research new/changed components, material unknown currentness
+  or an explicit audit. Start with existing version/target-matched evidence and relevant radar
+  entries if present; reuse them until a relevant dependency, constraint or review trigger
+  invalidates them. Do not refresh the whole stack each feature. Modern is not fashion: stable,
+  target coverage and measurable gain only; material changes to project decisions become questions.
   Method: `<agentic-feature>/references/current-research.md`.
 - **Detector at review**: for every UI slice, before requesting review,
   `node <detector> --diff <base>` must have no blockers on added or changed lines (untouched
@@ -42,9 +46,10 @@ request → triage (size and risk) → agentic-feature (Reading → current Rese
   and empty states need reviewer judgment. Pre-commit applies the same rule to staged content.
 - **Continuous integration**: each green slice enters `main` the same day. No week-long feature
   branches.
-- **Delivery**: before final commit, record technology used, tried or rejected in `docs/radar.md`
-  with source and date (never new entries straight into Adopt; adoption is the human's decision
-  in “Needs you”). Then follow project policy; production deploy only with explicit approval.
+- **Delivery**: record reusable new technology evidence where the project keeps it, with source,
+  date, component/target scope and invalidation trigger. Update `docs/radar.md` only if it exists
+  or maintaining one is justified; unchanged technology needs no repeated entry. Follow the
+  agreed adoption authority and project policy; production deploy needs explicit authorization.
 - **Short retrospective**: 3–5 lines per feature (went well, delayed, lesson) plus
   `radar: <entries or nothing>`. If something escaped (reverted, incident, human report) or
   the same class appears a second time in review, add one `docs/lessons.md` line in its heading's
@@ -64,12 +69,12 @@ request → triage (size and risk) → agentic-feature (Reading → current Rese
 
 - **WIP ≤ 3 fronts per human**: more causes pending decisions to accumulate and agents to wait.
 - **No calendar sprints**: continuous flow; weekly board review (stalled work, changed priorities,
-  delegated decisions to review, ADRs with expired `Review on` or triggered conditions, radar
-  entries older than ~6 months in active areas → backlog proposals). Each feature's research
-  also checks `Review on` in relevant ADRs.
-- **Ask the human** only during interview, UI variant choice, pre-implementation gate,
-  irreversible actions and, at feature closing, radar decisions (Adopt, creating missing radar)
-  and research backlog proposals in “Needs you” (nonblocking). Everything else is autonomous.
+  delegated decisions to review, ADRs with expired `Review on` or triggered conditions, invalidated
+  evidence in active areas). Review cadence does not authorize a whole-stack refresh or generate
+  backlog items automatically. Research checks relevant ADR/evidence triggers when needed.
+- **Ask the human** only for a material unresolved product/scope/design commitment or an action
+  still requiring authorization under the selected route. Reuse existing decisions and
+  delegation. A new phase, optional missing artifact or unchanged evidence is not a new gate.
 
 ## Definition of done
 
@@ -79,9 +84,8 @@ With evidence:
 3. independent review (`agentic-code-review`) covering integrated SHA (later changes follow its
    rules), no open Important, each answered (fixed, wrong, intentional, does not matter); for
    UI, also no detector blockers on added/changed lines;
-4. updated board (item `integrated`/`in-production` with SHA, mini-retrospective in `end` event,
-   `agent end`);
-5. radar updated when technology was used, tried or rejected (before final commit);
+4. updated project tracker if one is in use (board items include SHA and final state);
+5. reusable new evidence recorded when relevant; no mandatory radar creation;
 6. push done (trunk-based: `main`).
 
 “Should work” is not done. “Ran X and got Y” is.
