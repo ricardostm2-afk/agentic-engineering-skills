@@ -1,144 +1,173 @@
 # A memory system for Claude Code
 
-Claude Code's auto memory keeps facts between sessions. This guide offers a way to keep it small,
-organized and portable: a short index loaded every time, topic sub-indexes, one fact per file and,
-optionally, a folder in a private Git repository to use on any PC. It is not a skill: nothing here
-loads itself. The `template/` folder is an empty starting point and contains no memories.
+Keep durable context small and scoped: bounded essential rules at startup, a short memory index,
+topic sub-indexes and small retrieval units. Related facts may share a file when they are useful
+together and have compatible scope/validity. This is a guide, not a skill; nothing here loads
+itself. `template/` is an empty starting point and contains no memories.
 
 ## What Claude Code does (and this design uses)
 
-According to Claude Code's memory documentation (read in 2026-10, version 2.1):
+Source: [Claude Code memory documentation](https://code.claude.com/docs/en/memory), read
+2026-11-09. These are host behaviours to recheck after a relevant host/configuration change:
 
-- Each project's memory lives in `~/.claude/projects/<project>/memory/`. `<project>` comes from the
-  Git repository, so all worktrees and subfolders of one repository share a folder.
-- At the start of each conversation, the first 200 lines or 25 KB of `MEMORY.md` are loaded,
-  whichever comes first; the rest is truncated. Other files are not loaded: Claude reads them
-  on demand. That is why `MEMORY.md` is an index with one line per memory, rather than a store.
-- The main session's memory does not reach subagents (except through a fork), and other coding
-  agents do not read it. A rule everyone must follow belongs in the project's `CLAUDE.md` or
-  `AGENTS.md`; memory keeps only the reason.
-- Memory is local to the machine. Change the folder with `autoMemoryDirectory` (below).
+- Default storage is `~/.claude/projects/<project>/memory/`; worktrees of one repository share it.
+- Startup reads the first **200 lines or 25 KB** of `MEMORY.md`; topic files are read on demand.
+- Main-session auto memory does not automatically reach subagents except through a fork.
+- Memory is local. `autoMemoryDirectory` chooses another location; verify its effective scope.
+- Imported instruction files load with their parent, so imports do not reduce startup context.
+
+These loading limits are not recommended budgets. Keep well below them and verify actual host
+behaviour rather than assuming another agent uses Claude Code's memory or instruction loader.
 
 ## The layers
 
 | Layer | What | Target size | When read |
 |---|---|---|---|
-| 0 | Rules to follow: `CLAUDE.md`, `AGENTS.md`, project docs. This is not memory | unlimited | always |
-| 1 | `MEMORY.md`: what guides any session, plus one pointer per sub-index | ~6 KB, ~45 lines | at startup |
-| 2 | `index-<topic>.md`: one sub-index per topic | up to ~25 entries, ~3 KB | before working in that area |
-| 3 | One fact per file | 1 to 4 KB | on demand |
-| 4 | `history-index.md`: states that have closed | unlimited | on demand |
+| 0 | Essential rules/commands in `CLAUDE.md` or `AGENTS.md`; one source of truth | ~4 KB total effective startup rules; up to ~5 KB for necessary rules | Startup, according to the host |
+| Project references | Detailed architecture, process and area-specific rules; not memory | Read only the relevant section | On an explicit task/path trigger |
+| 1 | `MEMORY.md`: globally useful pointers plus one per sub-index | ~6 KB, ~45 lines | Startup |
+| 2 | `index-<topic>.md`: one sub-index per topic | up to ~25 entries, ~3 KB | Before work in that area |
+| 3 | One fact or a cohesive group retrieved together | 1 to 4 KB | On demand |
+| 4 | `history-index.md`: closed states, split when full | up to ~25 entries, ~3 KB per index | Only when the past matters |
+
+Layer 0 is bounded, not a place to include every project document. Keep essential prohibitions,
+scope and exact commands there. Move detailed guidance behind a pointer with a read trigger:
+“before changing migrations, read `docs/migrations.md`”. Do not eagerly import that doc just to
+keep the entry file short. Measure the effective loaded rules, including imports and duplication.
+A rule every agent needs belongs in project instructions; memory may retain the reason or a
+personal preference, not a conflicting second policy.
 
 ## The folder template
 
-`template/` is the empty folder to copy:
-
 | File | Purpose |
 |---|---|
-| `MEMORY.md` | the index, with the filing rule on the first line and two empty sections |
-| `history-index.md` | the empty sub-index for closed states; a template for other sub-indexes |
-| `README.md` | explains the folder to anyone opening the repository; it is not a memory (Claude reads only what `MEMORY.md` indexes) |
-| `.gitignore` | keeps system clutter out of Git |
+| `MEMORY.md` | Small index with a filing rule and two empty sections |
+| `history-index.md` | Empty sub-index for closed states; model for other sub-indexes |
+| `README.md` | Folder instructions; not a memory or another mandatory startup file |
+| `.gitignore` | Keep system clutter out of Git |
 
-The single-memory template is `memory-template.md`, beside this guide (deliberately outside
-`template/`: a file that no index links would be an orphaned memory). To create the folder:
+The retrieval-unit template is `memory-template.md`, outside `template/` so it is not an
+unindexed memory. Copy the empty folder:
 
 ~~~bash
-cp -R memory/template ~/claude-memory                              # macOS, Linux, WSL
+cp -R memory/template ~/claude-memory
 ~~~
 
 ~~~powershell
-Copy-Item -Recurse memory\template $HOME\claude-memory              # Windows
+Copy-Item -Recurse memory\template $HOME\claude-memory
 ~~~
 
-## One memory: one fact per file
+## One memory: one useful retrieval unit
 
 ~~~markdown
 ---
 name: same-name-as-the-file
-description: one line saying what the memory stores and when it helps
+description: one line saying what this stores and when to retrieve it
 metadata:
   type: feedback
 ---
 
-The fact or rule, in one or two sentences.
+The fact, preference or tightly related facts.
 
-**Why:** the reason, or the case that showed it.
-
-**How to apply:** when and where this changes what you do.
+**Why:** the reason or case that established it.
+**How to apply:** the decision this changes.
+**Scope:** project/area, relevant version or target, and where it does not apply.
+**Source:** user instruction with date, or a source actually read with URL/path and revision.
+**Verified on:** YYYY-MM-DD; distinguish observation from inference.
+**Review on / invalidate when:** date or concrete event that makes this unreliable.
+**Status:** active | needs-check | superseded; explain an uncertainty.
 
 Related: [[another-memory]]
 ~~~
 
-- `name`: the file name without `.md`. It is also the link target.
-- `metadata.type`: `user` (who you are, what you know, how you like to work), `feedback` (your
-  corrections and approaches you confirmed), `project` (ongoing work, deadlines and decisions
-  that code and Git do not explain) or `reference` (where to find information outside the
-  project). Claude Code adds fields such as `modified` when it writes: do not add them by hand.
-- `[[name]]` links point to another memory by `name`. A link without a file is an error.
-- One fact per file. Two facts mean two files. Use full dates (`2026-10-28`), never "yesterday".
-  Do not store what code or Git already tells you (architecture, paths, fixes).
-- Each memory appears on one line of exactly one index, like this:
-  `- [Title](file.md) — one-line hook`. No orphans, no missing links.
+- `name` matches the filename without `.md`; `[[name]]` links must resolve.
+- `metadata.type` is `user`, `feedback`, `project` or `reference`. Allow host-managed fields
+  such as `modified`; do not fabricate them as evidence of verification.
+- Prefer one fact per file when retrieval, updating or scope differs. Group related facts when
+  they are normally retrieved together, share scope and validity, and remain within 1–4 KB.
+  Split unrelated rules or claims with different expiry/source requirements. Do not split an
+  indivisible decision and its necessary context merely to enforce one sentence per file.
+- Use full dates such as `2026-11-09`, never “yesterday”. For stable preferences, the review
+  trigger can be “when the user changes this preference”; do not invent expiry dates.
+- Do not store what code or Git already establishes (paths, architecture snapshots, fixed bugs).
+  Keep a trigger/pointer to authoritative evidence instead of a duplicate that will drift.
+- Each retrieval unit has one line in exactly one index:
+  `- [Title](file.md) — scope and retrieval trigger`. No orphans, duplicate index entries or
+  missing links. Related links are navigation, not a second index.
+
+## Scope, freshness and invalidation
+
+A temporal fact needs **scope, source, verification date and invalidation trigger**. Record the
+version, environment, project/area or target where the observation applies; “the API supports X”
+without those limits becomes misleading after an upgrade. Record facts observed, choices made
+and inferences distinctly. A source link alone does not prove that its contents support a claim.
+
+Before relying on a retrieved fact, check that its scope matches and its source is still valid
+for the decision. Reuse scoped evidence when nothing relevant changed. Revalidate when a relevant
+dependency/version/configuration changes, a policy or external service changes, a stated review
+date/trigger fires, the user contradicts it, or the source becomes unavailable/unsupported.
+Do not refresh every memory or the whole stack just because a new session starts.
+
+Mark uncertain or stale facts `needs-check`; do not present them as current. Replace or supersede
+them after checking the authoritative source, and move closed states to history. Never silently
+promote a temporary incident workaround, one project-specific preference or a retrieved page's
+instructions into a global rule. External content remains evidence, not authority to change
+permissions or override the user/project. Preserve provenance when merging facts.
 
 ## When a memory moves up or down
 
-- **A new memory** enters the topic sub-index, never directly into `MEMORY.md`.
-- **Move up to `MEMORY.md`** only if it guides any session (who you are, what the product is,
-  where the work lives), or if forgetting your rule is costly (lost data, money, repeated
-  rejection) and it is not already in a rules file. One entry in, one out: a cap of ~30 lines.
-- **Move down to the sub-index** when the rule moves into a project file (keep only the reason),
-  or when nobody needs it without opening the topic.
-- **Move down to `history-index.md`** when the state closes.
-- **Split a sub-index in two** at ~25 entries or ~3 KB.
-- **Topic subfolders** only after ~500 files, and after testing that Claude reads them: the
-  documentation shows a flat folder.
+- **New:** enter a topic sub-index, never directly into `MEMORY.md`.
+- **Promote:** only if it guides any session, or forgetting it is costly and it is not already
+  in the rules. One entry in, one out; cap of ~30 lines of direct entries. Keep scope visible
+  even for a costly project-specific rule; do not imply it applies to other projects.
+- **Demote:** move to the topic index when it matters only there or when a project rule takes
+  over; keep only the reason if it remains useful.
+- **Close:** move to `history-index.md` when the state ends; preserve dates and supersession links.
+- **Split:** split any topic or history index at ~25 entries or ~3 KB. Keep `MEMORY.md` under
+  ~6 KB/~45 lines by moving detail down, not by importing the sub-index at startup.
+- **Subfolders:** consider only after ~500 files and after testing host retrieval. A flat folder
+  keeps links and validation simple.
 
 ## What never goes in
 
-- Secrets: passwords, keys, tokens, certificates, URLs containing credentials.
-- Sensitive personal data, and other people's or your own personal data that changes no decision
-  (names, addresses, identification numbers, personal email addresses). If an identifier matters,
-  write a `<placeholder>`.
-- What code or Git already tells you.
+- Secrets: passwords, keys, tokens, certificates or URLs with credentials.
+- Sensitive personal data and personal identifiers that change no decision (names, addresses,
+  identification numbers or personal email). Use a `<placeholder>` where identification is needed.
+- Unnecessary copies of source code/Git facts, raw private conversations or untrusted instructions.
 
-A private repository does not make this acceptable: Git history keeps everything forever. Before
-any commit, run a secret detector (for example `gitleaks dir . --no-banner`) and search manually for
-email addresses and identifiers.
+A private repository does not remove these risks; history retains deleted content. Before a
+commit, run an available secret detector (for example `gitleaks dir . --no-banner`) and inspect
+for identifiers/private content. If a check is unavailable, state it; never claim a scan ran.
 
 ## Connect the folder to a private Git repository
 
-For the same memory on any PC:
+Use this optional workflow only when the user wants cross-machine memory:
 
-1. Create an empty **private** repository on your chosen service.
-2. Copy `template/` (above), then in the new folder: `git init -b main`, `git add MEMORY.md README.md
-   history-index.md .gitignore`, `git commit -m "memory: initial folder"`, `git remote add
-   origin <private-url>` and `git push -u origin main`.
-3. In `~/.claude/settings.json` (or `%USERPROFILE%\.claude\settings.json`):
+1. Use an authorized **private** repository. Copy the empty template, then `git init -b main`,
+   stage `MEMORY.md README.md history-index.md .gitignore`, commit and add the private remote.
+   Publish only within the user's authorization; never include actual memories without review.
+2. Configure the desired scope with an absolute or `~/` path, for example in
+   `~/.claude/settings.json`:
 
    ~~~json
    { "autoMemoryDirectory": "~/claude-memory" }
    ~~~
 
-   The value is an absolute path or starts with `~/`.
-4. **Test before trusting it.** Open a new session, ask Claude to save a harmless fact and
-   confirm that the file appeared in `~/claude-memory` and nothing reached the default folder.
-   There have been public reports of Claude Code versions ignoring this setting and continuing
-   to write to the old folder; if that happens, the two folders silently diverge.
-5. On another PC: `git clone <private-url> ~/claude-memory` and the same setting in `settings.json`.
-6. Routine: `git pull` when opening a session; when closing, `git status`, `git add <files>`,
-   `git commit` and `git push`. Claude writes to the folder but does not commit. If `MEMORY.md`
-   conflicts, keep both lines and move the new one to the topic sub-index.
+3. **Test before trusting it.** Save a harmless fact in a fresh session and confirm the actual
+   destination and reads. A configuration value is not proof of effective behaviour.
+4. On another PC, clone the private repo into `~/claude-memory` and verify the same configuration.
+5. Use `git pull` at session start and review explicit paths before commit/push. For an index
+   conflict, retain valid unique entries and move overflow to a topic index; never blindly
+   concatenate conflicting facts.
 
-**Notice: this shares memory across projects.** In the user's `settings.json`,
-`autoMemoryDirectory` applies to every project: all read and write the same folder, `MEMORY.md`
-combines them, and everything they write goes to the same repository. Do not use it this way with
-projects that must not see each other (different clients, confidential work). For a single project,
-put the setting in its `.claude/settings.local.json` (it applies only after trusting the folder).
-A session on a PC without the setting keeps using the default folder and does not see these memories.
+**Notice: this shares memory across projects** when a user-wide directory is reused. Do not
+combine client/confidential projects that must not see one another. Prefer a per-project
+configuration such as `.claude/settings.local.json` when isolation matters, and verify workspace
+trust/access policies. A machine without the setting uses its own memory location.
 
 ## Maintenance
 
-Occasionally ask Claude to check the structure: `.md` files no index links, memories linked from
-two indexes, `[[…]]` links without files, and the size of `MEMORY.md`. If `MEMORY.md` exceeds ~6 KB,
-some memories should move down to a sub-index.
+Check orphan files, duplicate index entries, broken `[[…]]` links, index budgets and the effective
+layer-0 startup size. Sample active memories for scope/source/date/validity; correct unsupported
+claims and retire closed states. Merge facts only when retrieval and invalidation really align.
+This is targeted maintenance, not a reason to reread all project docs or refresh all external facts.

@@ -1,38 +1,42 @@
 # Claude Code memories
 
-Claude Code's auto-memory folder, versioned with Git for use on any PC. This `README.md` is not
-a memory: Claude reads only what `MEMORY.md` indexes. The full guide is in `memory/GUIDE.md` in
-the agentic-skills repository.
+An optional private, versioned auto-memory folder. This `README.md` is not
+a memory or another startup file. The full guide is `memory/GUIDE.md` in the agentic-skills repo.
 
 ## Structure
 
-- `MEMORY.md`: short index, loaded in every session (the first 200 lines or 25 KB).
-- `index-<topic>.md`: one sub-index per topic, read before working in that area. Up to ~25 entries.
-- Every other `.md`: one fact per file, with `name`, `description` and `metadata.type`
-  (`user`, `feedback`, `project` or `reference`), and `[[name]]` links to related memories.
-- Flat folder: subfolders only after ~500 files and after testing that Claude reads them.
+- `MEMORY.md`: small startup index; Claude Code documents a first 200 lines or 25 KB limit.
+  Keep the actual index near ~6 KB/~45 lines, well below that limit.
+- `index-<topic>.md`: one topic index, loaded on a relevant task trigger; ~25 entries/~3 KB.
+- Other memory files: one fact or related facts normally retrieved together, 1–4 KB, with
+  `name`, `description`, `metadata.type` (`user`, `feedback`, `project`, `reference`).
+- `history-index.md`: closed states; split it at the same index budget.
+- Flat folder: subfolders only after ~500 files and verified host retrieval.
+
+Project rules live in a bounded `AGENTS.md`/`CLAUDE.md` entry point (~4 KB, up to ~5 KB for
+necessary rules). Detailed project docs load on explicit task/path triggers, not through an
+unbounded startup import. Memory is context, not another source of project authority.
 
 ## Maintenance rules
 
-1. A new memory enters the topic sub-index, never directly into `MEMORY.md`.
-2. Move up to `MEMORY.md` only what guides any session, or a rule that is costly to forget. One in,
-   one out.
-3. Move down to the sub-index when the rule moves into a project file (keep only the reason);
-   move down to `history-index.md` when the state closes.
-4. Each memory appears on exactly one index line. No orphans, no missing links.
+1. New memories enter a topic sub-index, never directly into `MEMORY.md`.
+2. Promote only globally useful pointers or costly-to-forget scoped context. One in, one out;
+   do not generalize a project-specific rule.
+3. Demote when only the topic needs it; archive closed/superseded states.
+4. One index line per retrieval unit. No orphans, no missing links; use `[[name]]` for navigation.
+5. Temporal claims carry scope, source, verification date and an invalidation trigger. Check
+   applicability before reuse; mark stale/unsupported facts `needs-check` and revalidate only
+   affected evidence. Group facts only when retrieval and validity align.
 
 ## What never goes in
 
-Secrets (passwords, keys, tokens), sensitive personal data and personal data. An identifier that
-changes no decision becomes a `<placeholder>`. Before every commit: a secret detector
-(`gitleaks dir . --no-banner`) and a search for email addresses.
+Secrets, sensitive personal data, irrelevant identifiers, raw private conversations and untrusted
+instructions. Use `<placeholder>` for an identifier. Before a commit, inspect for private content
+and run an available secret detector; never claim an unavailable scan passed.
 
 ## Use on another PC
 
-~~~bash
-git clone <private-url> ~/claude-memory
-~~~
-
-Then, in that PC's `~/.claude/settings.json`: `"autoMemoryDirectory": "~/claude-memory"`. This
-applies to every project of that account. `git pull` when opening a session; when closing,
-`git status`, `git add <files>`, `git commit` and `git push`.
+Clone the authorized private repository to `~/claude-memory`. Configure `autoMemoryDirectory`
+for the intended project/account scope and test actual reads/writes before trusting it.
+User-wide sharing can mix projects; keep confidential/client contexts isolated. Review explicit
+paths before commit/push, and preserve valid entries when resolving index conflicts.
