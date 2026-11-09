@@ -29,8 +29,9 @@ Read the whole brief, `AGENTS.md`, the area brief named by the brief, the files 
 their callers. Read more only when a concrete question calls for it. A delegated fix reads only
 `<agentic-fix>/references/writer-steps.md`, not the fix orchestrator's workflow. A UI writer reads
 the exact design mode reference in the brief, not the whole design skill or unrelated modes.
-Shared `tasks.md` belongs to the orchestrator: read assigned IDs and return status/evidence; do not
+Shared `tasks.md` belongs to the orchestrator. A delegated writer reads assigned IDs and returns status/evidence; do not
 edit its checkboxes even when another lane changes them.
+When executing directly without a delegated writer, you also act as orchestrator: reconcile assigned task status once after validating completion.
 
 Done when you can name the entry point the test will exercise and every file you will change.
 

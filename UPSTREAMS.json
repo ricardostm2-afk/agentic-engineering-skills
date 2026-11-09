@@ -151,8 +151,8 @@
       "sourceSha256": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
       "targetPath": "skills/agentic-architecture/SKILL.md",
       "mode": "adapted",
-      "reason": "English adaptation of improve-codebase-architecture: six steps with completion criteria, measured proof for each candidate in a declared history window (commits per candidate, coupling, co-change, deletion test, file:line and a command for every number), an agentic-design-compliant visual report published with Artifact, a one-question-at-a-time grill and execution through agentic-feature. Frontmatter has name and description only; requests trigger the skill. The agentic-implement sibling supplies the refactor recipe linked by deepening.md.",
-      "targetSha256": "ef1176305b5a114caf7b5b62725f3a9358dc39b6bada4cacfc26d90094370855"
+      "reason": "English adaptation retaining source-grounded module analysis, measured history/call-site evidence and seam/test reasoning. Local assess/design/refactor modes bound the stopping point; text is the default report and alternatives, questions and execution depend on material uncertainty and authorization.",
+      "targetSha256": "79079ab89106af423d77e2a5c0cf79a9361dae7c730a145d93625abfde9a5261"
     },
     {
       "upstream": "mattpocock",
@@ -178,8 +178,8 @@
       "sourceSha256": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
       "targetPath": "skills/agentic-architecture/references/design-it-twice.md",
       "mode": "adapted",
-      "reason": "English adaptation: without subagents, designs are sequential and the choice returns to the grill as the next question.",
-      "targetSha256": "528a79b1dec4bc0b0d09f8f8ad5c7eb53b4a94b4722b4b6ecf6808bf7f59b32d"
+      "reason": "English adaptation with conditional interface alternatives: compare materially different choices, reuse settled local interfaces, and delegate only when useful. Design-only requests stop at the decision.",
+      "targetSha256": "fad68fbf16ff69c99356d759150184cbee2334b5e18d09ab176c021ba4b39619"
     },
     {
       "upstream": "mattpocock",
@@ -187,8 +187,8 @@
       "sourceSha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
       "targetPath": "skills/agentic-architecture/references/report.md",
       "mode": "adapted",
-      "reason": "English adaptation with a Proof block per candidate and a declared history window. The human-facing report follows agentic-design rules: no spaced uppercase, colored pills, gradients, cards or side borders; color tokens retain upstream values and the detector exits 0 on the page. Artifact publishing applies the artifact-design contract over the skeleton.",
-      "targetSha256": "a63850236ef9ae4a5f5e726a1a1c6274863397766931bdbaaf1313357b704d7f"
+      "reason": "English adaptation retaining per-candidate evidence and a declared history window. Text and evidence tables are the default; actual optional HTML loads the design review capsule and retains detector/browser QA.",
+      "targetSha256": "2949ecf8b78023045a61ce35ef93597b86ec6c8c6d92da82a475045be39774b6"
     },
     {
       "upstream": "mattpocock",
@@ -196,8 +196,8 @@
       "sourceSha256": "befdff1e27a1dfe2a294d5871169ac1afe16d983911daa4f32627514a48c1e15",
       "targetPath": "skills/agentic-architecture/references/grill.md",
       "mode": "adapted",
-      "reason": "Candidate grill: one question at a time, recommendation before context, no emojis, plus glossary/ADR side effects from improve-codebase-architecture step 3.",
-      "targetSha256": "eec6029ea34af2cdbc646ca62cd3fbc806459d743ecf727a9a6be05976b73291"
+      "reason": "English adaptation of the candidate interview, limited to material unresolved decisions. Recommendations precede questions, prior delegation carries forward, and glossary/ADR updates remain proportional.",
+      "targetSha256": "81e8a05e0e5550a330f3318f0edc685d046bf1321091e253b420c501dad3c55c"
     },
     {
       "upstream": "mattpocock",
@@ -214,8 +214,8 @@
       "sourceSha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
       "targetPath": "skills/agentic-fix/SKILL.md",
       "mode": "adapted",
-      "reason": "Only step 3's red cycle comes from diagnosing-bugs: a command failing on this defect before any hypothesis. The rest is original: orchestrator/writer separation, defect class, safeguards, fresh-context review and the escaped-defect step.",
-      "targetSha256": "e24e03597ea1f0df0bc364894ba92c06442c121fbcd3c3dbfb4ddd28d9cbcb6c"
+      "reason": "Original orchestration around the adapted diagnosing-bugs red cycle, now delegated through references/writer-steps.md. Adds role-scoped context, defect-class safeguards, fresh review and escaped-defect learning.",
+      "targetSha256": "d2dcaf3d8852a51b4c305c0b013eda93c23d37beccc03de2f7da0526f3cb7867"
     },
     {
       "upstream": "mattpocock",
@@ -241,8 +241,8 @@
       "sourceSha256": "5505d25bbaa8fc14a79e4d20163936958992a2995b7f1dd1d6197edc9ed722e0",
       "targetPath": "skills/agentic-implement/SKILL.md",
       "mode": "adapted",
-      "reason": "Only step 3 (test first, vertical slices, public seam) comes from tdd. The closed brief as input, project preferences, commit per cause and status handoff are original.",
-      "targetSha256": "f4508ed23a6acc7d1ad3e0e7a60588280c7fd5d3a0b8c02fb17e334630744f65"
+      "reason": "Only step 3 (test first, vertical slices, public seam) derives from tdd. Original closed-brief workflow adds role-scoped context, single task-state ownership, exact-state evidence reuse, logical commits and status handoffs.",
+      "targetSha256": "d180667c80abc0b85295d4a2e517cadec6efcd2b2aad9c3727090380e38293a9"
     },
     {
       "upstream": "mattpocock",
@@ -250,8 +250,8 @@
       "sourceSha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
       "targetPath": "skills/agentic-implement/references/tests.md",
       "mode": "adapted",
-      "reason": "English adaptation of good tests, seams, bad tests and mocks only at system boundaries from tdd/mocking.md (the tdd/SKILL.md portion is listed separately). Adds timeouts, child processes, the refactor recipe and cycle rules.",
-      "targetSha256": "0e2db3536945b99c2a79bd0cb3d575920ce3e5e43ba7abdd05b9c29aa0b070f1"
+      "reason": "English adaptation of public seams and mocks at system boundaries from tdd/mocking.md. Adds process cleanup, timeouts, refactor proof and gate-cycle rules; repeated orphan checks apply only to process-lifecycle changes or an observed hang/flakiness investigation.",
+      "targetSha256": "12f2a0e95fe097b2b6b1d127d7c55e159c17a053a024ef79f0b4d4f6b4f0f3d3"
     },
     {
       "upstream": "mattpocock",
@@ -261,6 +261,15 @@
       "mode": "verbatim",
       "reason": "Full MIT license, including Matt Pocock's copyright notice required in copies and substantial portions.",
       "targetSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
+    },
+    {
+      "upstream": "mattpocock",
+      "sourcePath": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "sourceSha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
+      "targetPath": "skills/agentic-fix/references/writer-steps.md",
+      "mode": "adapted",
+      "reason": "The adapted diagnosing-bugs red-before-hypothesis cycle moved from the fix entrypoint into this writer-only capsule. Class search, scope safeguards, proportional visual proof and exact-state evidence reuse are local additions.",
+      "targetSha256": "39c98cf6105b3ad7c7724e3e6c3febd18b14b00753e7c618d2a53d171e8ae755"
     }
   ]
 }

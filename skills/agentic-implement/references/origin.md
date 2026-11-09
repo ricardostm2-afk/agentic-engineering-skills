@@ -32,6 +32,10 @@ Ideas from two sources, in our own words without copied text: Microsoft's articl
 no license (only its ideas were read). These inform the refactor recipe in `references/tests.md`,
 the stop after two failures at one gate, and code/spec/test triage (step 5).
 
+Local workflow refinements keep shared task state with the orchestrator, load only the writer's
+role/mode context, and reuse proof only for matching code, commands and relevant inputs. These
+contracts live in this skill and its evidence reference; they are not claims about upstream.
+
 ## How to update
 
 1. In an isolated checkout of each upstream, `git fetch origin main`, pin the new SHA and compare

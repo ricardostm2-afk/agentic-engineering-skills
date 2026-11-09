@@ -9,9 +9,9 @@ as a new feature with its own triage. Examples: “customer portal”, “import
    in `docs/research/<slug>-<yyyy-mm-dd>.md` when needed; otherwise cite local evidence. Technical
    research follows per slice and only for unresolved questions.
 2. **Vertical slices**: each crosses all layers, demonstrates alone. Vague destination: `wayfinder`;
-   clear: `to-tickets`. Both from `mattpocock-skills`, user-invoked only: read installed SKILL.md
-   (`find ~/.claude/plugins/cache -path '*mattpocock*/<name>/SKILL.md' | sort | tail -1`) and apply,
-   or suggest human invokes `/<name>`. Every slice cites the applicable evidence from point 1.
+   clear: `to-tickets`. Both from `mattpocock-skills`, user-invoked only: resolve their active
+   installation under `<agentic-project>/references/host-compatibility.md` and apply only when
+   allowed, or suggest human invokes `/<name>`. Every slice cites the evidence from point 1.
 3. **Stop**: show slices (this track's checkpoint 1), add to board as `backlog`, propose starting
    first with `agentic-feature` and id (`/agentic-skills:agentic-feature <id>` in Claude Code plugin,
    `/agentic-feature <id>` in copied skill, `$agentic-feature <id>` in Codex).

@@ -2,9 +2,8 @@
 // Plugin manifest validation alone cannot catch broken skill frontmatter.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -132,7 +131,7 @@ test("lesson writers share one docs/lessons.md line format, including type", () 
   assert.match(step7, /lesson in[^]*<agentic-code-review>\/references\/learning\.md/);
   for (const file of markdownIn("agentic-feature")) assert.deepEqual(readFileSync(file, "utf8").match(LESSON_LINE), null, path.relative(SKILLS, file) + " copies the format");
   const sites = {
-    project: format("agentic-project", "SKILL.md"),
+    project: format("agentic-project", "references", "phase-8.md"),
     learning: format("agentic-code-review", "references", "learning.md"),
     evaluation: format("agentic-code-review", "assets", "eval-case.template.md"),
   };
@@ -159,7 +158,8 @@ test("agentic-feature calls agentic-code-review in step 6; project points to it"
   assert.match(step6, /read\/follow its \x60SKILL\.md\x60/);
   assert.match(read("agentic-feature", "references", "review-and-delivery.md"), /<agentic-code-review>\/references\/panel-and-rounds\.md/);
   assert.match(read("agentic-project", "references", "skills-map.md"), /^\| Code review.*\x60agentic-code-review\x60/m);
-  assert.match(read("agentic-project", "assets", "AGENTS.template.md"), /\x60agentic-code-review\x60 \(read \x60REVIEW\.md\x60\)/);
+  assert.match(read("agentic-project", "assets", "AGENTS.template.md"), /review uses \x60agentic-code-review\x60/);
+  assert.match(read("agentic-project", "assets", "AGENTS.template.md"), /Add REVIEW\.md only if it exists/);
 });
 
 const DESIGN_ONLY = /Recognizable by|slop-ok-block|\bB1–B2\d\b/;
@@ -168,43 +168,26 @@ export function designCopies(files) {
 }
 test("agentic-feature calls agentic-design in steps 2, 3, 5 and 6 without copying UI rules", () => {
   assert.match(featureStep(2), /<agentic-design>\/references\/ui-questions\.md/);
-  assert.match(featureStep(3), /sibling \x60agentic-design\x60, “variants” mode/);
+  assert.match(featureStep(3), /sibling \x60agentic-design\x60/);
+  assert.match(featureStep(3), /references\/targeted-adjustment\.md/);
+  assert.match(featureStep(3), /Neither opens a variants checkpoint/);
   assert.match(featureStep(3), /<agentic-design>\/SKILL\.md/);
-  assert.match(featureStep(5), /\x60agentic-design\x60, “build” mode/);
-  assert.match(featureStep(6), /“review” mode/);
+  assert.match(featureStep(5), /<agentic-design>\/references\/build-mode\.md/);
+  assert.match(featureStep(6), /references\/review-mode\.md/);
   assert.match(read("agentic-feature", "assets", "agent-brief.template.md"), /node <agentic-design>\/scripts\/detect-slop\.mjs --diff/);
   assert.ok(!existsSync(path.join(SKILLS, "agentic-feature", "scripts")), "detector belongs only to agentic-design");
   assert.deepEqual(designCopies(markdownIn("agentic-feature")), []);
   assert.ok(designCopies(markdownIn("agentic-design")).length > 0, "control: design markers absent from source");
 });
 
-// Public cards have fixed declarations; the private generator is not shipped.
-const WITH_CARD = ["agentic-feature/SKILL.md", "agentic-fix/SKILL.md"];
-const hasCard = (file) => WITH_CARD.includes(path.relative(SKILLS, file).split(path.sep).join("/"));
-export function linesOutsideCard(text, withCard = false) {
-  const result = [];
-  let state = withCard ? "before" : "none";
-  let separator = false;
-  text.split("\n").forEach((line, i) => {
-    if (state === "inside") { if (line.trim() === "<!-- card:end -->") { state = "after"; separator = true; } return; }
-    if (state === "before" && line.startsWith("<!-- card:start")) { state = "inside"; return; }
-    if (separator && line.trim() === "") { separator = false; return; }
-    separator = false;
-    result.push([line, i + 1]);
-  });
-  assert.ok(state !== "inside", "card lacks <!-- card:end -->");
-  return result;
-}
 function featureStep(n) {
   const feature = read("agentic-feature", "SKILL.md");
   return feature.slice(feature.indexOf("## Step " + n), feature.indexOf(n === 7 ? "\n## " : "## Step " + (n + 1), feature.indexOf("## Step " + n) + 1));
 }
-test("agentic-feature: at most 300 lines outside the generated card", () => {
-  const outside = (text) => linesOutsideCard(text, true).length - (text.endsWith("\n") ? 1 : 0);
-  const count = outside(read("agentic-feature", "SKILL.md"));
-  assert.ok(count <= 300, count + " lines outside card");
-  assert.equal(outside("a\n\n<!-- card:start -->\nx\n<!-- card:end -->\n\nb\n"), 3, "card and following blank line do not count");
-  assert.throws(() => linesOutsideCard("a\n<!-- card:start -->\nx\n", true), /card lacks/);
+test("agentic-feature: entrypoint has at most 300 lines, counting all instructions", () => {
+  const text = read("agentic-feature", "SKILL.md");
+  const count = text.trimEnd().split("\n").length;
+  assert.ok(count <= 300, count + " lines");
 });
 test("agentic-feature: grill and variants stop; only Complete waits for proceed, Standard gets a notice", () => {
   const table = read("agentic-feature", "SKILL.md").split("\n").filter((line) => /^\| [0-7] \|/.test(line));
@@ -219,7 +202,7 @@ test("agentic-feature: grill and variants stop; only Complete waits for proceed,
 
 const MODEL_TABLE = /Sonnet|Opus|Haiku|gpt-\d|model_reasoning_effort|effort (xhigh|max|medium)/i;
 export function modelsOutside(files) {
-  return files.flatMap((file) => linesOutsideCard(readFileSync(file, "utf8"), hasCard(file)).filter(([line]) => MODEL_TABLE.test(line)).map(([, n]) => path.relative(SKILLS, file) + ":" + n));
+  return files.flatMap((file) => readFileSync(file, "utf8").split("\n").map((line, i) => [line, i + 1]).filter(([line]) => MODEL_TABLE.test(line)).map(([, n]) => path.relative(SKILLS, file) + ":" + n));
 }
 test("agentic-feature points to choosing-the-agent.md §1–§4 without its own model table", () => {
   assert.match(featureStep(5), /<agentic-implement>\/references\/choosing-the-agent\.md\x60 §1–§3/);
@@ -252,9 +235,10 @@ test("agentic-implement step 7 requires a human order for push, deploy and produ
   assert.match(step7, /[Nn]ever \x60--no-verify\x60/);
   assert.match(step7, /never rewrite history \([^)]*rebase[^)]*amend[^)]*force-push[^)]*\)/);
   assert.match(step7, /orchestrator[^.]*integrates|integrates[^.]*orchestrator/);
-  const push = read("agentic-project", "assets", "AGENTS.template.md").split("\n").filter((line) => /\bpush/.test(line) && /at the end/.test(line));
-  assert.equal(push.length, 1);
-  assert.match(push[0], /orchestrator/);
+  const rules = read("agentic-project", "assets", "AGENTS.template.md");
+  assert.match(rules, /authorization for production deployment/);
+  assert.match(rules, /carry existing authorization forward/);
+  assert.match(rules, /preserve checks and\s+other people's work/);
 });
 test("agentic-implement owns timeout and child-process rules; feature delivery points there", () => {
   const tests = read("agentic-implement", "references", "tests.md").replace(/\s+/g, " ");
@@ -314,11 +298,13 @@ test("agentic-implement: preferences.md contains Code and Product text only, wit
   assert.deepEqual(text.split("\n").filter((line) => line.startsWith("## ")), ["## Code", "## Product text"]);
   assert.match(text, /\x60<agentic-design>\x60 is the sibling skill/);
 });
-test("agentic-feature: trivial-change research is a 1–2-minute check", () => {
+test("agentic-feature: research needs a material gap and reuses valid local evidence", () => {
   const when = section(read("agentic-feature", "references", "current-research.md"), "## When, limits and location");
-  assert.match(when, /Trivial Standard change[^]*1–2-minute check/);
-  assert.match(featureStep(1), /trivial changes get one Reading line, no \x60research-notes\.md\x60/);
-  assert.match(read("agentic-feature", "references", "review-and-delivery.md"), /trivial\s+Reading line/);
+  assert.match(when, /Before searching, name the unresolved question/);
+  assert.match(when, /local evidence settles it/);
+  assert.match(when, /Do not create empty research files/);
+  assert.match(when, /relevant dependencies\/configuration\/environment/);
+  assert.match(when, /Research only the gap/);
 });
 test("agentic-implement step 6 points to preferences, project design system and AGENTS.md", () => {
   const step6 = read("agentic-implement", "SKILL.md").split("## 6. ")[1].split("\n## ")[0];
@@ -334,17 +320,18 @@ test("agentic-code-review standards lens uses agentic-implement preferences.md",
   assert.match(brief.split("-->")[0], /<agentic-implement>/);
 });
 
-test("agentic-architecture: six steps with completion criteria, measured proof, one-question grill and feature execution", () => {
-  const steps = read("agentic-architecture", "SKILL.md").split(/^## (?=\d\. )/m).slice(1).map((p) => p.split("\n## ")[0]);
-  assert.deepEqual(steps.map((p) => p.slice(0, 2)), ["1.", "2.", "3.", "4.", "5.", "6."]);
-  for (const step of steps) assert.match(step, /\nDone when /);
-  const [, proof, report, , grill, execution] = steps;
-  for (const marker of [/git log/, /\x60file:line\x60/, /\*\*deletion test\*\*/, /never estimated/]) assert.match(proof, marker);
-  assert.match(report, /\x60references\/report\.md\x60[^]*Artifact tool/);
-  assert.match(grill, /\x60references\/grill\.md\x60: one question at a time/);
-  assert.match(grill, /\x60references\/design-it-twice\.md\x60/);
-  assert.match(execution, /<agentic-feature>\/SKILL\.md/);
-  assert.match(read("agentic-architecture", "references", "grill.md"), /^## One question at a time$/m);
+test("agentic-architecture: assessment stops with evidence; design and execution remain scoped", () => {
+  const text = read("agentic-architecture", "SKILL.md");
+  assert.match(text, /An assessment ends after step 3/);
+  assert.match(text, /\*\*Assess stops here\*\*/);
+  const proof = section(text, "## 2. ");
+  for (const marker of [/git log/, /\x60file:line\x60/, /Deletion test/, /Unmeasured values stay explicitly unmeasured/]) assert.match(proof, marker);
+  const design = section(text, "## 5. ");
+  assert.match(design, /material unresolved design question/);
+  assert.match(design, /references\/design-it-twice\.md/);
+  assert.match(design, /already agreed design is not sent through another approval gate/);
+  assert.match(section(text, "## 6. "), /invoke \x60agentic-feature\x60/);
+  assert.match(read("agentic-architecture", "references", "grill.md"), /one dependent question at a time/i);
 });
 test("agentic-architecture: vocabulary defines the method's terms and principles", () => {
   const vocabulary = read("agentic-architecture", "references", "vocabulary.md");
@@ -382,68 +369,37 @@ test("codebaseDesignWithoutPointer catches a missing adjacent pointer (control)"
 test("agentic-architecture: frequency and co-change have commands; history window is always declared", () => {
   const step2 = read("agentic-architecture", "SKILL.md").split("## 2. ")[1].split("\n## ")[0];
   assert.ok(step2.includes("git log --since=<date> --format=%H -- <candidate files> | wc -l"));
-  assert.ok(step2.includes("git log --since=<date> --full-diff --name-only --format= -- <candidate files> | grep . | sort | uniq -c | sort -rn"));
-  assert.match(step2, /history window[^]*declare it[^]*even when the human gave a direction/);
+  assert.ok(step2.includes("git log --since=<date> --full-diff --name-only --format= -- <candidate files> | rg . | sort | uniq -c | sort -rn"));
+  assert.match(step2, /state[^]*a history window/);
+  assert.match(step2, /Use one declared window for comparisons/);
+  assert.match(step2, /history is absent[^]*never invented frequency/);
 });
-test("agentic-architecture: report follows design rules and its HTML blocks pass the detector", (t) => {
+test("agentic-architecture: actual HTML retains visual QA while text needs no UI tooling", () => {
   const report = read("agentic-architecture", "references", "report.md");
-  const style = report.split("## Style")[1].split("\n## ")[0];
-  assert.match(style, /<agentic-design>\/references\/ui-without-slop\.md/);
-  assert.match(style, /node <agentic-design>\/scripts\/detect-slop\.mjs <report file>/);
-  assert.doesNotMatch(report, /\buppercase\b|tracking-wid|linear-gradient|bg-gradient|border-l-\d/);
-  const blocks = [...report.matchAll(/```html\n([^]*?)```/g)].map((m) => m[1]);
-  assert.ok(blocks.length >= 2, "skeleton and Mermaid example");
-  const folder = mkdtempSync(path.join(tmpdir(), "report-"));
-  t.after(() => rmSync(folder, { recursive: true, force: true }));
-  blocks.forEach((block, i) => writeFileSync(path.join(folder, "block-" + i + ".html"), block));
-  const result = spawnSync(process.execPath, [path.join(SKILLS, "agentic-design", "scripts", "detect-slop.mjs"), folder], { encoding: "utf8" });
-  assert.equal(result.status, 0, result.stdout + result.stderr);
-  assert.match(result.stdout, new RegExp(blocks.length + " file\\(s\\) analysed: 0 blocker\\(s\\), 0 notice\\(s\\)"));
+  assert.match(report, /## Optional HTML page/);
+  assert.match(report, /<agentic-design>\/references\/review-mode\.md/);
+  assert.match(report, /node <agentic-design>\/scripts\/detect-slop\.mjs <report file>/);
+  assert.match(report, /375 and 1366 px/);
+  assert.match(report, /detector success alone is not visual evidence/);
+  assert.match(report, /None of these page-specific tools is required for a text\/diagram assessment/);
 });
 
 // Rule guards pin each rule's home and search for literal copies elsewhere.
 const allMarkdown = () => folders.flatMap(markdownIn);
-export function markersInText(pattern, text, withCard = false) {
-  return linesOutsideCard(text, withCard).filter(([line]) => pattern.test(line)).map(([, n]) => n);
+export function markersInText(pattern, text) {
+  return text.split("\n").flatMap((line, i) => pattern.test(line) ? [i + 1] : []);
 }
 export function markersOutside(pattern, source) {
-  return allMarkdown().filter((file) => path.relative(SKILLS, file) !== source).flatMap((file) => markersInText(pattern, readFileSync(file, "utf8"), hasCard(file)).map((n) => path.relative(SKILLS, file) + ":" + n));
+  return allMarkdown().filter((file) => path.relative(SKILLS, file) !== source).flatMap((file) => markersInText(pattern, readFileSync(file, "utf8")).map((n) => path.relative(SKILLS, file) + ":" + n));
 }
-test("markersOutside ignores only the first declared generated card", () => {
+test("rule guards include all instructions and copied Cards cannot hide duplication", () => {
   const pattern = /Steps not enumerable\?/;
-  const text = [
-    "Steps not enumerable? (outside, before)", "<!-- card:start — copied from sources -->",
-    "## Card", "3. **Steps not enumerable?** (inside)", "<!-- card:end -->", "",
-    "Steps not enumerable? (outside, after)",
-  ].join("\n");
-  assert.deepEqual(markersInText(pattern, text, true), [1, 7]);
-  assert.deepEqual(markersInText(pattern, "<!-- card:level-1 -->\nSteps not enumerable?\n<!-- /card:level-1 -->"), [2]);
-  assert.deepEqual(markersInText(pattern, text, false), [1, 4, 7]);
-  const twoCards = [text, "<!-- card:start — another -->", "Steps not enumerable? (second card)", "<!-- card:end -->"].join("\n");
-  assert.deepEqual(markersInText(pattern, twoCards, true), [1, 7, 9]);
+  const text = "Steps not enumerable?\n<!-- card:start -->\nSteps not enumerable?\n<!-- card:end -->";
+  assert.deepEqual(markersInText(pattern, text), [1, 3]);
   const source = "agentic-implement/references/choosing-the-agent.md";
-  for (const skill of ["agentic-fix", "agentic-feature"]) assert.match(read(skill, "SKILL.md"), pattern);
   assert.deepEqual(markersOutside(pattern, source), []);
   assert.ok(markersOutside(pattern, "").length > 0, "control: marker absent from source");
-});
-export function cardProblems(relative, text, declared) {
-  const lines = text.split("\n");
-  const starts = lines.filter((line) => line.startsWith("<!-- card:start")).length;
-  const ends = lines.filter((line) => line.trim() === "<!-- card:end -->").length;
-  if (declared) return starts === 1 && ends === 1 ? [] : [relative + ": expected one card start and end, got " + starts + "/" + ends];
-  return starts || ends ? [relative + ": undeclared card markers"] : [];
-}
-test("only declared SKILL.md files contain a card, exactly one each", () => {
-  assert.deepEqual(WITH_CARD, ["agentic-feature/SKILL.md", "agentic-fix/SKILL.md"]);
-  assert.deepEqual(allMarkdown().flatMap((file) => {
-    const relative = path.relative(SKILLS, file);
-    return cardProblems(relative, readFileSync(file, "utf8"), WITH_CARD.includes(relative));
-  }), []);
-  const card = "<!-- card:start — x -->\n## Card\n<!-- card:end -->\n";
-  assert.ok(cardProblems("agentic-fix/references/x.md", "a\n\n" + card, false).length > 0);
-  assert.ok(cardProblems("agentic-fix/SKILL.md", card + "\n" + card, true).length > 0);
-  assert.ok(cardProblems("agentic-fix/SKILL.md", "no card\n", true).length > 0);
-  assert.deepEqual(cardProblems("agentic-fix/SKILL.md", "a\n\n" + card, true), []);
+  for (const file of allMarkdown()) assert.doesNotMatch(readFileSync(file, "utf8"), /<!-- card:(?:start|end)/, path.relative(SKILLS, file));
 });
 
 const section = (text, heading) => text.split(heading)[1].split("\n## ")[0].replace(/\s+/g, " ");
@@ -505,7 +461,7 @@ test("agentic-design: corrections capture before/after; full matrix only for new
   assert.match(capture, /full matrix \(states, resolutions, themes, keyboard\) is only for a new screen or a redesign/);
   assert.match(capture, /\*\*The full matrix\.\*\* Capture populated/);
   assert.match(capture, /rest of §2 also applies to screenshots for a correction/);
-  const step3 = section(read("agentic-fix", "SKILL.md"), "## Step 3");
+  const step3 = section(read("agentic-fix", "references", "writer-steps.md"), "## Step 3");
   assert.match(step3, /visual defect[^]*<agentic-design>\/references\/proof\.md\x60 §2/);
   assert.doesNotMatch(step3, /resolu|\btheme|matrix|empty/i);
   assert.deepEqual(markersOutside(/full matrix/i, source), []);
@@ -513,7 +469,9 @@ test("agentic-design: corrections capture before/after; full matrix only for new
 });
 test("agentic-code-review: reviewer acceptance-test rule lives in panel §3; other sites point there", () => {
   const lenses = section(read("agentic-code-review", "references", "panel-and-rounds.md"), "## §3 ");
-  assert.match(lenses, /Complete[^.]*reviewer writes and runs an acceptance test outside the repo from intent/);
+  assert.match(lenses, /Complete[^.]*reviewer writes and runs an acceptance test in its authorized/);
+  assert.match(lenses, /outside the review worktree, deriving it from intent/);
+  assert.match(lenses, /Production remains read-only/);
   assert.match(lenses, /Standard[^.]*describes it/);
   assert.match(lenses, /Quick[^.]*has none/);
   const pointer = /panel-and-rounds\.md\x60? §3/;
@@ -589,7 +547,7 @@ test("one How to undo field, in the integration commit; agentic-fix points to pa
   const base = allMarkdown().filter((file) => /^agentic-(feature|fix|implement|code-review|design|project|architecture)\//.test(path.relative(SKILLS, file)));
   assert.deepEqual(base.filter((file) => /How to revert|\bRevert:/.test(readFileSync(file, "utf8"))).map((file) => path.relative(SKILLS, file)), []);
   const fix = read("agentic-fix", "SKILL.md");
-  assert.doesNotMatch(section(fix, "## Step 5"), /\x60Risk:\x60/);
+  assert.doesNotMatch(section(read("agentic-fix", "references", "writer-steps.md"), "## Step 5"), /\x60Risk:\x60/);
   assert.match(section(fix, "## Step 7"), /\x60How to undo:\x60[^]*panel-and-rounds\.md\x60 §10/);
   assert.match(section(read("agentic-code-review", "references", "panel-and-rounds.md"), "## §10 "), /other names\/locations, those apply/);
 });
@@ -628,7 +586,7 @@ test("agentic-project: board README owns CLI source and selection; feature point
 });
 test("agentic-feature: first Board command runs with both scrum.sh and scrum.mjs", () => {
   const board = section(read("agentic-feature", "SKILL.md"), "## Board");
-  const match = /(?:session:|run) \x60([^\x60]*<cli>[^\x60]*)\x60/.exec(board);
+  const match = /(?:session:|run|First use:) \x60([^\x60]*<cli>[^\x60]*)\x60/.exec(board);
   assert.ok(match, "Board lacks a command with <cli>");
   for (const name of ["scrum.sh", "scrum.mjs"]) {
     const cli = path.join(SKILLS, "agentic-project", "assets", "board", name);
@@ -638,15 +596,16 @@ test("agentic-feature: first Board command runs with both scrum.sh and scrum.mjs
     assert.match(result.stdout, /development board/);
   }
 });
-test("agentic-design takes precedence (§1); description separates visuals from behavior and correctness", () => {
-  const precedence = section(read("agentic-design", "SKILL.md"), "## 1. Precedence");
-  assert.match(precedence, /\*\*Other UI skills\.\*\*[^]*do not replace this/);
-  assert.match(precedence, /only for a technique this skill does not cover/);
+test("agentic-design shared rules preserve precedence; description separates visuals from behavior and correctness", () => {
+  const precedence = section(read("agentic-design", "references", "mode-rules.md"), "## Precedence and scope");
+  assert.match(precedence, /owner's explicit request/);
+  assert.match(precedence, /scoped exceptions/);
+  assert.match(precedence, /Other installed UI skills may supply a missing technique, not replace this method/);
   const description = readFrontmatter(read("agentic-design", "SKILL.md")).fields.description;
   assert.match(description, /project design system/);
   assert.match(description, /agentic-feature/);
   assert.match(description, /agentic-code-review/);
-  assert.deepEqual(markersOutside(/\*\*Other UI skills\.\*\*/, "agentic-design/SKILL.md"), []);
+  assert.deepEqual(markersOutside(/Other installed UI skills may supply a missing technique/, "agentic-design/references/mode-rules.md"), []);
 });
 test("suite audits and slow CI enter through agentic-ci-audit without activating maintenance", () => {
   const modes = section(read("agentic-code-review", "SKILL.md"), "## Two modes");
@@ -676,29 +635,29 @@ for (const [id, refusal] of [
   });
 }
 
-test("board: only the orchestrator sends; phase, reference and template keep jobs on CLI", () => {
+test("board: optional module preserves single publisher and CLI-only worker writes", () => {
   assert.doesNotMatch(read("agentic-project", "assets", "board", "board.html"), /each Claude agent sends/);
   for (const text of [
-    section(read("agentic-project", "SKILL.md"), "## Phase 7"),
+    read("agentic-project", "references", "phase-7.md"),
     read("agentic-project", "references", "board.md"),
-    read("agentic-project", "assets", "AGENTS.template.md"),
   ]) {
     assert.match(text, /[Oo]nly the orchestrator/);
     assert.match(text, /[Ss]ubagents[^.]*jobs[^.]*only through the CLI|subagents[^.]*jobs use CLI only/);
     assert.match(text, /30 min/);
   }
+  assert.match(read("agentic-project", "assets", "AGENTS.template.md"), /Optional board:[^]*only the orchestrator publishes/);
 });
-test("agentic-design reads anti-slop by mode; reviewer reads brief and references, not review SKILL.md", () => {
-  const source = "agentic-design/SKILL.md";
-  const antiSlop = section(read("agentic-design", "SKILL.md"), "## 5. Anti-slop");
-  assert.match(antiSlop, /Read \x60references\/ui-without-slop\.md\x60 by mode, not in full/);
-  assert.match(antiSlop, /\*\*variants\*\*[^;]*§1, §2, §3 and §5/);
-  assert.match(antiSlop, /\*\*review\*\*[^;]*detector and §5/);
-  assert.doesNotMatch(read("agentic-design", "SKILL.md"), /ui-without-slop\.md\x60 in full/);
-  assert.match(read("agentic-implement", "SKILL.md").replace(/\s+/g, " "), /“build” mode sections \(\x60<agentic-design>\/SKILL\.md\x60 §5\)/);
+test("agentic-design reads anti-slop by mode; reviewer receives only its brief and lens context", () => {
+  const router = read("agentic-design", "SKILL.md");
+  assert.match(router, /Do not load every\s+reference or other modes/);
+  const build = read("agentic-design", "references", "build-mode.md");
+  assert.match(build, /ui-without-slop\.md\x60 §3 and §5/);
+  const review = read("agentic-design", "references", "review-mode.md");
+  assert.match(review, /ui-without-slop\.md\x60 §5/);
+  assert.match(review, /Do not load build or variants workflows/);
+  assert.match(read("agentic-implement", "SKILL.md"), /<agentic-design>\/references\/build-mode\.md/);
   assert.match(section(read("agentic-code-review", "references", "panel-and-rounds.md"), "## §4 "), /\x60SKILL\.md\x60 is the orchestrator process/);
-  assert.match(read("agentic-code-review", "assets", "reviewer-brief.template.md").replace(/\s+/g, " "), /review \x60SKILL\.md\x60 is for orchestrator \(\x60panel-and-rounds\.md\x60 §4\)/);
-  assert.deepEqual(markersOutside(/by mode, not in full on every call/, source), []);
+  assert.match(read("agentic-code-review", "assets", "reviewer-brief.template.md").replace(/\s+/g, " "), /review \x60SKILL\.md\x60 is for orchestrator \(/);
   assert.deepEqual(markersOutside(/\x60SKILL\.md\x60 is the orchestrator process/, "agentic-code-review/references/panel-and-rounds.md"), []);
 });
 test("agentic-implement owns the refactor recipe; deepening removes old tests only after equivalent behavior is proved", () => {

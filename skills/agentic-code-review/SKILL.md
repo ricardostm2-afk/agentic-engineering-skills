@@ -181,8 +181,9 @@ An open Important or “Direction” goes first.
 
 - **Codex**: lenses and verifier are Codex subagents with the same brief and the user's review
   model, the verifier with the verifier model (without a rule, for example gpt-6.1-sol with medium
-  effort, and high for the verifier; example model names; the project picks its own). Default
-  sandbox makes `.git` read-only: `git worktree add` needs approval. Ask once for the session; without approval, run lenses sequentially in one human-created worktree.
+  effort, and high for the verifier; example model names; the project picks its own). Worktrees use
+  observed capabilities and existing authorization under `<agentic-project>/references/host-compatibility.md`.
+  Escalate an actual necessary blocked action through the host's supported mechanism; do not pre-request session approval.
   In a job launched without subagents (launcher disables them), each reviewer the level requires
   separately (Complete's two reviewers, verifier) is its own job with its own brief; a job combining what
   the level separates marks the report “review not independent”.

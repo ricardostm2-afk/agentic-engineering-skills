@@ -57,7 +57,27 @@ test("shared tasks have one writer, with IDs, SHA and evidence returned by lanes
   assert.match(brief, /Shared `tasks\.md` is read-only for lanes/);
   assert.match(brief, /Return IDs, full commit SHA and evidence/);
   assert.match(read("agentic-implement"), /Shared `tasks\.md` belongs to the orchestrator/);
+  assert.match(read("agentic-implement"), /executing directly without a delegated writer[\s\S]*also act as orchestrator/);
   assert.doesNotMatch(spec + lanes + brief, /Agents mark \[X\]|Lanes mark \[X\]/);
+});
+
+test("a short feature does not create a board just because the tool is available", () => {
+  const feature = read("agentic-feature");
+  const board = section(feature, "## Board", "## Step 0:");
+  assert.match(board, /only when this project already uses a board/);
+  assert.match(board, /do not create a board or warn about its absence/);
+  assert.match(feature, /reconcile assigned tasks as orchestrator/);
+});
+
+test("host routes share observed permissions and do not pre-request unrestricted sessions", () => {
+  for (const [skill, file] of [["agentic-feature", "SKILL.md"], ["agentic-code-review", "SKILL.md"], ["agentic-implement", "references/choosing-the-agent.md"]]) {
+    const text = read(skill, file);
+    assert.match(text, /host-compatibility\.md/);
+    assert.doesNotMatch(text, /danger-full-access|sandbox makes `\.git` read-only|session approval for Git commands/);
+  }
+  const slices = read("agentic-feature", "references/too-big.md");
+  assert.match(slices, /host-compatibility\.md/);
+  assert.doesNotMatch(slices, /find ~\/\.claude\/plugins\/cache|sort \| tail/);
 });
 
 test("post-review exceptions cannot precede diff classification or waive a new lens", () => {

@@ -58,8 +58,8 @@ Carry forward closed decisions and valid evidence; a new role/session does not r
 
 ## Board
 
-State lives in agentic-project's board. CLI and URL location: “Source and copies” in
-`<agentic-project>/assets/board/README.md`. First use each session: `<cli> help`, follow its syntax.
+All board actions below apply only when this project already uses a board; a short request does not select setup.
+CLI and URL: “Source and copies” in `<agentic-project>/assets/board/README.md`. First use: `<cli> help`.
 Transition commands: “When to update” in that README; here:
 
 - **start** (after triage): item becomes `in-progress` (chat request: `request add` and
@@ -71,7 +71,7 @@ Transition commands: “When to update” in that README; here:
 
 With a published board and ArtifactData (deferred: `select:ArtifactData`), sync at every transition
 and every 30 min using the same README's four “Sync” steps. Without it, keep CLI state for later sync.
-Without board (no CLI or `node`), warn once and continue.
+Without an adopted board, use the existing issue/work log; do not create a board or warn about its absence.
 
 ## Step 0: triage
 
@@ -121,7 +121,7 @@ For UI, preserve **targeted adjustment** when no material visual choice remains;
 Before claiming done, inspect the actual diff and classify it with
 `<agentic-code-review>/references/risk-levels.md`; short execution never waives a required lens.
 Record command/output evidence under `<agentic-implement>/references/evidence.md`, then integrate
-under repo rules, close the board item, and deliver change, proof, limitations and human needs.
+under repo rules, reconcile assigned tasks as orchestrator, close any existing board item, and deliver change/proof/limits.
 
 If scope exceeds the short criteria, material behavior is ambiguous, a new visual decision appears
 or risk rises, stop the short route and re-triage **before dependent code**. Preserve closed decisions
@@ -279,9 +279,8 @@ Same steps/stops, different tool; state replacement in one line:
 - **No AskUserQuestion**: questions in chat per questions.md point 4.
 - **No subagents**: sequential reading, needed research and lanes (`implementation.md` §4);
   review follows agentic-code-review “In other agents”.
-- **Codex orchestrating** (`workspace-write` sandbox, read-only `.git`): at checkpoint 1 ask human
-  to approve session Git commands, or `codex --sandbox danger-full-access` (human OK only);
-  without it lanes use short form.
+- **Codex orchestrating**: use observed capabilities and existing authorization under
+  `<agentic-project>/references/host-compatibility.md`; a host label does not require a new approval.
 
 ## Tool integrations
 

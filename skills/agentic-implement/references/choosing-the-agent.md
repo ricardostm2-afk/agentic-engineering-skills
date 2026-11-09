@@ -129,10 +129,11 @@ names: preloading includes only `SKILL.md`, not references. Without a script:
 - **Codex**: use the job launcher named by the project's `AGENTS.md` or `CLAUDE.md`, with a model
   and effort it accepts; without a launcher,
   `codex exec -m <model> -c model_reasoning_effort="<effort>" -C <worktree> - < <brief>`. The job
-  commits only with writable `.git`: session approval for Git commands, or unrestricted sandbox,
-  only with human OK. If Codex, its launcher or the sandbox cannot meet the brief, state `blocked:`
-  and ask for an explicit decision: a sequential route from the same provider or a different
-  provider. Never switch to Claude automatically; record the decision on the `agent:` line.
+  uses observed Git/worktree capabilities and existing authorization under
+  `<agentic-project>/references/host-compatibility.md`. Use an allowed same-provider sequential
+  route when it preserves scope; if a necessary action remains blocked, report the exact operation
+  and error. A different provider requires an explicit decision. Never switch to Claude
+  automatically; record the decision on the `agent:` line.
 
 **Job without subagents** (launcher disables Codex multiagents, or the agent lacks that tool): the
 brief says to load `agentic-implement` and only exact writer references from another skill
