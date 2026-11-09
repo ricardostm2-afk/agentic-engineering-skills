@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: fix-isolation-class
+expected_outcome: |
+  Both lookups that ignore the organization (getOrder, the reported one, and updateCustomer, the
+  same defect nearby) are fixed, with a failing test first. Because the fix is in organization
+  isolation, a review runs; it is a small one, not a panel per lens.
+context:
+  scaffold_script: place-fixture.sh

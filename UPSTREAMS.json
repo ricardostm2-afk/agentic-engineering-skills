@@ -215,7 +215,7 @@
       "targetPath": "skills/agentic-fix/SKILL.md",
       "mode": "adapted",
       "reason": "Only step 3's red cycle comes from diagnosing-bugs: a command failing on this defect before any hypothesis. The rest is original: orchestrator/writer separation, defect class, safeguards, fresh-context review and the escaped-defect step.",
-      "targetSha256": "9b1a15f1509c13682e75736ac116f28b6a89dad8b839599bb958707654b27712"
+      "targetSha256": "e24e03597ea1f0df0bc364894ba92c06442c121fbcd3c3dbfb4ddd28d9cbcb6c"
     },
     {
       "upstream": "mattpocock",

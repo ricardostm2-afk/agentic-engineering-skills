@@ -87,7 +87,7 @@ Repo rules override this skill: read `AGENTS.md`/`CLAUDE.md`, constitution
 `/deploy`, verification suite, job launcher) rather than generic ones.
 
 `<skill>` is this `SKILL.md`'s folder; scripts run from project repo root. Resolve siblings
-through the single reference `<agentic-project>/references/host-compatibility.md>`; the explicit
+through the single reference `<agentic-project>/references/host-compatibility.md`; the explicit
 variable wins over the adjacent folder, project folders, global roots and plugin. Host invocation
 names do not change that order.
 

@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: fix-sort-order
+expected_outcome: |
+  listOrders sorts with a real three-way comparator (the boolean comparator is gone), a test that
+  failed before the change passes after it, and the whole suite is green. A one-file fix of a few
+  lines outside a sensitive zone needs no subagent.
+context:
+  scaffold_script: place-fixture.sh

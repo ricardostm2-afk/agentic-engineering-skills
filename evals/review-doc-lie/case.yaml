@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: review-doc-lie
+expected_outcome: |
+  The review flags that README.md still documents orderTotalFor, which the change renamed, as an Important finding with file:line. No invented findings about code that is correct.
+context:
+  scaffold_script: place-fixture.sh

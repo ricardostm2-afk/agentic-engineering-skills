@@ -208,7 +208,7 @@ sends to the artifact; subagents and jobs use CLI only, with a signal at least e
 | `references/skills-map.md` | before phase 2 and whenever invoking a third-party skill |
 | `assets/decisions.template.md` | phase 0 |
 | `assets/radar.template.md` | end of phase 3 to create `docs/radar.md` |
-| `<agentic-design>/references/ui-without-slop.md` (another skill) | phase 2 (UI dimension) and phase 6 (`AGENTS.md` UI rule) |
+| `<agentic-design>/references/ui-without-slop.md` §1 and §6 only (another skill; §2's blockers are 19 KB the setup never needs) | phase 2 (UI dimension) and phase 6 (`AGENTS.md` UI rule) |
 | `<agentic-architecture>/references/vocabulary.md` (another skill) | phase 3 (§4 of `references/architecture.md`: modules, interfaces and seams) |
 | `<agentic-feature>/references/current-research.md` (another skill) | phase 3 (sources, rules, “modern, not fashion” filter) and phase 8 |
 | `assets/AGENTS.template.md`, `assets/CLAUDE.template.md`, `<agentic-code-review>/assets/REVIEW.template.md` and `<agentic-code-review>/references/review-md.md` (another skill) | phase 6 |

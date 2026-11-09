@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: review-clean
+expected_outcome: |
+  The review finds nothing Important: the status filter stays inside the organization, keeps the oldest-first order and is tested. At most Nits. A clean change is not a reason to run a large panel.
+context:
+  scaffold_script: place-fixture.sh

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: review-leak
+expected_outcome: |
+  The review flags findByReference as an Important finding: it returns an order of another organization (no orgId check), with file:line. It does not drown the finding in noise and it stays within a small panel.
+context:
+  scaffold_script: place-fixture.sh

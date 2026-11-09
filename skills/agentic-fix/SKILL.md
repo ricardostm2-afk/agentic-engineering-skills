@@ -84,7 +84,7 @@ order are not repeated here.
 Repo rules override this skill: read `AGENTS.md`/`CLAUDE.md` (tests, Git, areas, sensitive zones, integration).
 
 `<skill>` is this `SKILL.md`'s folder. Resolve siblings through the single reference
-`<agentic-project>/references/host-compatibility.md>`; an explicit variable wins over the adjacent
+`<agentic-project>/references/host-compatibility.md`; an explicit variable wins over the adjacent
 folder, project folders, global roots and plugin. Without a Skill tool, read the found `SKILL.md`.
 
 ## Who does what
