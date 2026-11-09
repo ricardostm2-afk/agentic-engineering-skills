@@ -1,217 +1,134 @@
 ---
 name: agentic-project
 description: >-
-  Sets up or resumes a new project, or prepares an existing repository for AI coding agents:
-  prerequisites, architecture, agent instructions and an initial backlog. Use for project bootstrap
-  or agent setup; use agentic-feature for work inside an already prepared project.
+  Sets up or resumes a new project, or prepares an existing repository for AI coding agents.
+  Starts with a minimal bootstrap and adds architecture, parallel work, planning, a board or
+  Spec Kit only when needed. Use for project bootstrap or agent setup; use agentic-feature
+  for work inside an already prepared project.
 ---
 
 # agentic-project
 
-Host differences, installations, tool substitutes and sibling resolution follow
-`<agentic-project>/references/host-compatibility.md`; find that sibling through
-`$AGENTIC_PROJECT_DIR` first and read the reference when the host varies.
+Leave the repository ready for the requested work: clear scope, applicable rules, exact commands
+and evidence that the verification path works. Add only the setup modules that serve that work.
+A small or existing repository normally needs **minimal bootstrap**, not a new project process.
 
-Goal: leave this session with the project ready for agents to work in parallel and safely —
-prerequisites checked, decisions recorded, architecture chosen, a repo with an agent protocol,
-Spec Kit, agent instructions, a published board and the first batch of features in the backlog.
-Each phase leaves an artifact in the repo so another session (or another agent) can resume
-without this conversation.
+`<skill>` is the folder containing this file. Run scripts by full path with the intended repo as
+the working directory, or their documented `--dir <repo>`. Resolve sibling and third-party skills,
+host capabilities and substitutes through `references/host-compatibility.md`; use
+`$AGENTIC_PROJECT_DIR` first when locating this skill from another. Resolve other siblings only
+when their module is selected. Tool availability is not authorization to publish or install.
 
-Paths under `scripts/`, `references/` and `assets/` are relative to this skill's folder, called
-`<skill>` here (the folder containing this `SKILL.md`: for example
-`~/.claude/skills/agentic-project/` in Claude Code, `~/.agents/skills/agentic-project/` in Codex,
-or inside a plugin). Run scripts with the project repo as the current directory, so invoke
-them by their full path (`bash <skill>/scripts/…`).
+The common resolver maps `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`), `<agentic-design>`
+(`$AGENTIC_DESIGN_DIR`), `<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`) and
+`<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`). These are conditional dependencies,
+not skills to load during every bootstrap.
 
-Resolve `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`), `<agentic-design>` (`$AGENTIC_DESIGN_DIR`),
-`<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`) and `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`)
-by the common reference's normative order. The reference confirms `SKILL.md`, rejects ambiguity and
-explains invocation prefixes; this skill does not repeat the paths or silently choose an older copy.
+## 1. Select scope and resume
 
-The common reference also supplies the UI, review and architecture siblings and their host-specific
-invocation prefixes; this skill keeps their methods and does not repeat their search order.
+In the first message, state the repository, **new** (empty/docs only) or **adopt** (code exists),
+and the selected route/modules in one line, then inspect or act in the same turn. Do not ask
+permission to start. Read existing `AGENTS.md`, `CLAUDE.md`, CONTRIBUTING, relevant docs, manifests,
+CI and git status before proposing changes; project rules override this skill's defaults.
+If the directory is ambiguous or contains unrelated projects, resolve the intended project
+directory first (`references/phase-0.md`). Never initialize git in a home or multi-project folder.
 
-## Getting started: show the plan and resume existing work
+Default to minimal bootstrap when the request is “prepare this repo for agents”, the project is
+small, or the user supplied no need for wider setup. A request for a full project setup selects
+the relevant modules below, not every artifact automatically. State the reason for additions.
 
-1. The first message includes the plan on one line (0 context → 1 prerequisites → 2 interview →
-   3 architecture → 4 git → 5 Spec Kit → 6 AGENTS.md → 7 board → 8 methodology → 9 backlog), the
-   mode, and the first action or question **in the same turn**: do not ask permission to start
-   (show the table below to anyone who asks). Repeat “Phase N/9: <name>” at the start of each
-   phase so the human always knows where things stand.
-2. If the repo already has artifacts from this skill (`docs/decisions.md`, `ARCHITECTURE.md`,
-   `.agentic/areas.json`, `docs/radar.md`, `AGENTS.md`, `.specify/`), check each against its
-   phase's **current** “Done when” (an earlier version of this skill may have created them:
-   a stack ADR without the source table or `Review on`, a pre-commit without the UI detector,
-   an `AGENTS.md` without radar or a UI rule). Show what is missing by phase and resume at the
-   first incomplete phase. Do not redo completed work; complete the rest (supplement or
-   supersede an accepted ADR, `references/architecture.md` §6; change an existing hook with
-   a diff and approval).
-
-| Phase | Name | Artifact in the repo |
+| Module | Select when | Procedure and resulting artifacts |
 |---|---|---|
-| 0 | Context and mode (new/adopt) | Start `docs/decisions.md` (Context section) |
-| 1 | Prerequisites | `docs/prerequisites.md` |
-| 2 | Project interview | `docs/decisions.md` + `GLOSSARY.md` |
-| 3 | Architecture | `ARCHITECTURE.md` + `docs/adr/` + `docs/radar.md` |
-| 4 | Git environment for agents | hooks, `.gitignore`, `.agentic/areas.json` |
-| 5 | Spec Kit + constitution | `.specify/memory/constitution.md` |
-| 6 | Agent instructions | `AGENTS.md` + `CLAUDE.md` + `REVIEW.md` |
-| 7 | Scrum board | `.agentic/board/` + published board (or `docs/backlog.md`) + `AGENTS.md` |
-| 8 | Methodology | `docs/methodology.md` + `docs/lessons.md` |
-| 9 | Initial backlog | 3–8 `backlog` items on the board (or `docs/backlog.md`) |
+| **Minimal bootstrap** | Default; always establish rules, commands and scope | `references/minimal-bootstrap.md`; concise `AGENTS.md` or a scoped update to existing instructions |
+| **Architecture** | Starting a product with unresolved stack/boundary choices; a material architecture change; an explicit assessment | Phases 0–3; decisions, relevant prerequisites, `ARCHITECTURE.md`, qualifying ADRs and research notes as needed |
+| **Parallel setup** | Multiple concurrent writers need ownership, worktrees and shared checks, or the user asks for this protocol | Phase 4; hooks, `.agentic/areas.json` and the applicable git protocol |
+| **Spec Kit** | Requested, already adopted, or justified by work needing its full spec workflow | Phase 5; `.specify/` and project-local integrations/constitution |
+| **Planning** | The user needs an initial backlog or an explicit team work process | Phases 2, 8 and 9 as needed; selected decisions/glossary, methodology and backlog |
+| **Board** | Persistent multi-agent coordination or a visible tracker is useful and wanted | Phase 7; CLI state and Markdown view, or authorized publication |
+| **Agent instructions** | After selected modules, if their commands/rules need an entry point | Phase 6; update `AGENTS.md`; add `CLAUDE.md` or `REVIEW.md` only where useful |
 
-## Rules for every phase
+Modules are independent unless their procedure needs a specific input. Reuse an existing decision,
+test command, tracker or constitution; do not enable another module merely to get its filename.
+For example, parallel setup can derive checks from the actual repository without an architecture
+rewrite; planning can use `docs/backlog.md` without installing the board CLI or Spec Kit.
+Read only selected phase references. Unselected modules are **out of scope**, not incomplete.
 
-**Questions for the human.** The human decides product, money and irreversible actions; you
-find the facts. Therefore:
-- Before asking, look for the answer in the supplied context, code and docs. Ask only what
-  is not there.
-- One question at a time when one depends on another. Each question includes concrete options,
-  your **recommendation** and a one-line reason. Group up to 4 independent questions: in one
-  AskUserQuestion call if available; otherwise number them in a single message.
-- “You choose” or “follow the recommendations” is a valid answer to every pending question:
-  apply your recommendations and record each as a **delegated decision** in `docs/decisions.md`
-  (so the human can review them later without rereading the conversation).
+**Resume safely.** Inspect artifacts relevant to the selected modules against their current
+completion criteria. Preserve valid work and report only concrete gaps in those modules. Older
+optional files do not force a full migration. Add missing evidence only when it matters now;
+never rewrite accepted ADRs (`references/architecture.md` §6). Do not create empty artifacts,
+future `(phase N)` pointers or a status document solely to make all phases appear complete.
 
-**Defaults** (the human has already chosen these; apply them unless instructed otherwise,
-and record any exception in `docs/decisions.md`):
-- Trunk-based: `main` always ready for production, short branches (< 24 h), nothing left unpushed.
-- Choose UI from 2–3 **real variants** (mockups or prototypes), never descriptions.
-- UI without an AI aesthetic (pastel pills, cards inside cards, purple gradients, emoji icons,
-  tiny text…): UI work follows `agentic-design`
-  (`<agentic-design>/references/ui-without-slop.md`) and runs its detector,
-  `<agentic-design>/scripts/detect-slop.mjs` (versioned copies in `.agentic/` in a project
-  with UI), including at pre-commit. Block what the change adds or modifies; existing slop
-  gets one report line, without going into the backlog (phases 2, 4 and 6).
-- Current technology, never memory: phase 3 and every feature research current options using
-  dated primary sources, recording what is learned in `docs/radar.md`.
-- Effort scales with risk: changing text needs no spec; data, permissions and payments do.
-- “Done” requires measured evidence (command + output), never a declaration.
-- No irreversible or external action without explicit human approval: production deployment,
-  deleting data, paying, publishing, creating accounts or a remote repository, changing DNS.
-- Secrets never go into code or chat: the human puts them in a local `.env` or secret manager;
-  you refer only to the variable name.
-- Real personal data never goes into agent prompts or fixtures.
-- Project documents follow the language declared in the project's `AGENTS.md`, or English
-  when no language is declared.
+## 2. Rules while preparing
 
-**Third-party skills.** Some phases use skills by other authors. Before phase 2, read
-`references/skills-map.md`: it explains how each is actually invoked (Skill tool, reading its
-SKILL.md, or user-only `/name`) and what to do when it is not installed. Never say “I will
-invoke /grill-me” — only the user can call those; read the method and apply it yourself.
+- **Ask only material unknowns.** Infer scope and constraints from the request, code and docs.
+  Ask about a missing decision only if its answer changes the work; one dependent question at
+  a time, up to four independent ones if the tool allows. Give a recommendation and reason.
+  Apply explicit delegation without asking again. Record lasting decisions in the project's
+  existing decision location; create `docs/decisions.md` only when there is lasting content.
+- **Adopt safely.** Preserve unrelated work and existing rules. Show a scoped diff for existing
+  instructions, hooks or configuration; apply changes covered by the request or prior approval.
+  Ask only for new scope or an action still requiring authorization, not for approval already
+  given. Do not replace an existing workflow just to match these templates.
+- **Exact commands and scope.** Discover the actual runtime, package manager, install/start/check
+  commands, applicable directories and restricted areas. Record prerequisites and observed
+  failures accurately. “Done” needs measured evidence (command + result); an unrun command is
+  marked unverified with its blocker. Do not invent a required tool for an unselected module.
+- **Scoped current research.** Research newly introduced or changed components, material unknown
+  support/security/API currentness, or an explicit audit. Reuse evidence matching the version,
+  target and decision when its validity still holds. Do not refresh the whole stack for agent
+  setup or every feature. Follow `references/architecture-research.md` when this module needs
+  research; never quote current versions, prices or support from memory.
+- **Risk and UI.** Use the project's risk and design rules. UI changes follow `agentic-design`
+  in the appropriate build, review, targeted-adjustment or variants mode; setup does not force
+  variants for an unchanged UI. Install versioned UI checks only in the selected protocol.
+- **Permissions.** Use existing session authorization and observed host capabilities. Do not
+  infer a read-only `.git` from the host name, pre-request full sandbox access, or treat missing
+  optional tools as blockers. `references/host-compatibility.md` defines blocked-action handling.
+- **Privacy and boundaries.** Keep secrets out of code and chat; use variable names and the
+  configured secret manager or local `.env`. Use synthetic personal data in prompts/fixtures.
+  Production deployment, data deletion, payments, publishing, accounts, remote creation and DNS
+  need the applicable explicit authorization; setup alone does not grant it.
+- **Language and commits.** Follow the project's declared language, English otherwise. Commit
+  one logical unit of authorized work with explicit paths (`git add <paths>`, never blind
+  `git add -A`); no artificial commit per phase. Push according to project/session policy.
+  Preserve unrelated staged files and obey existing commit gates.
 
-**Adopt mode** (an existing repo with code): destroy or rewrite nothing. Phases 1, 3 and 4
-become an audit (what exists, what is missing, proposal); show changes to existing `AGENTS.md`,
-`CLAUDE.md`, hooks or configuration as a diff and apply them only with approval. Existing repo
-rules (`AGENTS.md`, `CLAUDE.md`, CONTRIBUTING) apply from phase 0, including to your commits;
-if one conflicts with a default, the repo rule prevails until the human decides in phase 2.
+## 3. Close the selected route
 
-**Scale.** Effort scales with the project, as it does with features. For a small project (one
-user type, no sensitive data or payments, or a repo of a few hundred lines), combine phases 1
-and 2 in one interview (phase 1 questions go into the first round), cover only dimensions that
-change something, and write ADRs only for decisions meeting all three conditions in
-`references/architecture.md` §6 (there may be none). Phase 3 research also shrinks: 2 options,
-the “short route” limits in `references/architecture-research.md`, no subagents, and a skeleton
-only if the recommendation is new to the project or human. Keep every phase and artifact,
-but shorter; tell the human in one line that you chose the short route.
+For minimal bootstrap, use its completion checklist and stop. For selected modules, check only
+their applicable “Done when” clauses and links from the instructions. Every referenced path must
+exist, or an uncreated command must be explicitly identified as unverified/planned. Sync a board
+only if one is in use. Do not manufacture a backlog, glossary, radar, methodology, hooks or
+constitution to close a smaller route.
 
-**Commits.** At the end of each phase, commit only its files (`git add <paths>`, never blind
-`git add -A`), explaining why in the message. Push when a remote exists; create a remote
-(`gh repo create`, private by default) only with human approval.
+Report what is ready, changed files, verified commands and any concrete blockers/owners. Include
+a board link or next feature only if it exists. Preparing a repository is a complete result;
+do not require a closing “shall I start the first feature?” question. If implementation was
+already requested, continue through `agentic-feature` with the agreed scope; otherwise leave a
+brief next-step recommendation without starting unrelated work.
 
-## In other agents
+## Optional phase references
 
-This skill began in Claude Code; in another agent (Codex, Cursor, Gemini CLI, Copilot,
-OpenCode…), the method stays the same and only the tool changes. When a tool below is missing,
-use the replacement and tell the human in one line:
-- **AskUserQuestion** → chat questions: up to 4 independent numbered questions in one message,
-  each with 2–4 concrete options and your recommendation first (one-line reason); dependent
-  questions one at a time.
-- **Skill tool and plugins** (`mattpocock-skills:*`) → resolve any skill through the common
-  compatibility reference; if the host has no such tool, read the found `SKILL.md` and apply its
-  method or use the method summarized in `references/` (`skills-map.md`).
-- **Agent, Workflow and subagents** → the agent's own subagents; without them, work sequentially
-  yourself.
-- **Artifact and ArtifactData** → follow “Without a board” in `references/board.md`: the board
-  lives in `docs/backlog.md`, generated with `scrum.sh markdown > docs/backlog.md` and read as
-  a page in the editor or git hosting (outside Artifact, `board.html` opens without data);
-  regenerate at every transition and commit it at the end of each session. If the repo already
-  has a published board, write only through the CLI: the next orchestrator with the artifact
-  data tool sends it.
-- **WebSearch/WebFetch** → the agent's web tool; without one, write “not confirmed (no web)”
-  and leave the item pending in `docs/prerequisites.md`.
-- **Spec Kit** (phase 5): always initialize with `--integration claude` (this skill's paths
-  rely on `.claude/skills/speckit-*`); for agents reading `.agents/skills/` (Codex, Cursor,
-  Gemini, Copilot, OpenCode), add `specify integration install codex`, as in phase 5.
-- **Sandbox and git** (Codex with the default `workspace-write` sandbox): `.git` is read-only
-  and `../` is outside the writable area, so `git commit`, `git worktree add ../…` and
-  `git config` (phase 4's `core.hooksPath`) require approval and fail without it (`codex exec`,
-  approvals disabled). In phase 1's authorization question, ask the human to approve git
-  commands for the session or open it with full permissions (`codex --sandbox
-  danger-full-access`, only with their approval). Otherwise every commit needs approval and
-  lanes run sequentially on one branch (`<agentic-feature>/references/implementation.md` §4).
-- **Permissions** (`.claude/settings.local.json`, `update-config`) → the agent's own approval
-  mechanism; record the answer in `docs/decisions.md` as above.
+Read the phase and its supporting reference only when its module is selected. Phase numbers are
+stable reference names, not a mandatory sequence or progress quota.
 
-## Operational phases
-
-Each phase lives in its own reference so the core keeps startup, state, routing and resume short. Read the phase reference before executing it; it retains the artifact, rules, completion criteria, limits and proof command.
-
-- [Phase 0 — Context and mode](references/phase-0.md)
-- [Phase 1 — Prerequisites](references/phase-1.md)
-- [Phase 2 — Project interview](references/phase-2.md)
-- [Phase 3 — Architecture](references/phase-3.md)
-- [Phase 4 — Git environment for agents](references/phase-4.md)
-- [Phase 5 — Spec Kit + constitution](references/phase-5.md)
-- [Phase 6 — Agent instructions](references/phase-6.md)
-- [Phase 7 — Scrum board](references/phase-7.md)
-- [Phase 8 — Methodology](references/phase-8.md)
-- [Phase 9 — Initial backlog](references/phase-9.md)
-
-The lesson-line format is `- <yyyy-mm-dd> · <area> · type: <escaped|repeated> · base <base-sha> · <defect-sha>→<fix-sha> · expected: <file:line> · class: <class> · layer: <should have caught it (escaped) or caught it (repeated)> · <what happened> → <defense>`.
-
-## Phase 7 — Scrum board
-
-The full procedure lives in [references/phase-7.md](references/phase-7.md). Only the orchestrator
-sends to the artifact; subagents and jobs use CLI only, with a signal at least every 30 minutes.
-
-## Closing
-
-1. Check `AGENTS.md`: no unresolved `(phase N)` markers and every referenced path exists
-   (`ls`). Sync the board one last time.
-2. Commit the final artifacts; push if there is a remote (according to project policy).
-3. Final human message, at most 10 lines: what is ready, board link, and the “Left for you”
-   list (accounts, secrets, DNS, billing, delegated decisions to review; the same items marked
-   “waiting for human” on the board).
-4. End with ONE question, recommendation “yes”: “Shall I start `f01-<slug>` now?” If yes, invoke
-   `agentic-feature` with the Skill tool (without it, read `<agentic-feature>/SKILL.md` and
-   follow it), passing the item id (`f01-<slug>`) so it resumes that board item instead of
-   creating another. If no, leave “Next step: invoke agentic-feature with `f01-<slug>`”, using
-   the installed invocation: `/agentic-skills:agentic-feature f01-<slug>` in the Claude Code
-   plugin, `/agentic-feature f01-<slug>` in a copy, `$agentic-feature f01-<slug>` in Codex.
-
-## References: when to read each
-
-| File | Read when |
+| Procedure | Supporting material |
 |---|---|
-| `references/prerequisites.md` | phase 1 |
-| `references/project-grill.md` | phase 2 |
-| `references/architecture.md` | phase 3 |
-| `references/architecture-research.md` | phase 3 before proposing stack options; when reviewing a stack choice |
-| `references/git-environment.md` | phase 4, or when an agent asks how to use branches/worktrees |
-| `references/agents-md.md` | phase 6, or when reviewing an existing `AGENTS.md` |
-| `references/board.md` | phase 7, when board sync fails, or when writing an agent brief (who syncs) |
-| `assets/board/README.md` | phase 7 (CLI commands, configuration and selecting the Artifact branch) |
-| `assets/board/artifact-sync.md` | Artifact/ArtifactData: before authorized publishing, seeding or syncing of the board |
-| `references/methodology.md` | phase 8; also covers pitfalls of agent-written code |
-| `references/skills-map.md` | before phase 2 and whenever invoking a third-party skill |
-| `assets/decisions.template.md` | phase 0 |
-| `assets/radar.template.md` | end of phase 3 to create `docs/radar.md` |
-| `<agentic-design>/references/ui-without-slop.md` §1 and §6 only (another skill; §2's blockers are 19 KB the setup never needs) | phase 2 (UI dimension) and phase 6 (`AGENTS.md` UI rule) |
-| `<agentic-architecture>/references/vocabulary.md` (another skill) | phase 3 (§4 of `references/architecture.md`: modules, interfaces and seams) |
-| `<agentic-feature>/references/current-research.md` (another skill) | phase 3 (sources, rules, “modern, not fashion” filter) and phase 8 |
-| `assets/AGENTS.template.md`, `assets/CLAUDE.template.md`, `<agentic-code-review>/assets/REVIEW.template.md` and `<agentic-code-review>/references/review-md.md` (another skill) | phase 6 |
-| `scripts/check-environment.sh` | phase 1 (exit 0 = essentials OK; 1 = essential missing) |
-| `scripts/prepare-repo.sh` | phase 4 (dry run by default; `--apply` to write; `--with-ui`; `--show <file>`) |
-| `scripts/prepare-repo.test.mjs` | when changing `prepare-repo.sh` or its generated hook: `node --test <skill>/scripts/*.test.mjs` (unquoted: quoted globs require Node ≥ 21) |
+| [Minimal bootstrap](references/minimal-bootstrap.md) | [Agent instructions](references/agents-md.md), `assets/AGENTS.template.md` |
+| [Phase 0 — Context and mode](references/phase-0.md) | `assets/decisions.template.md` when decisions need a file |
+| [Phase 1 — Prerequisites](references/phase-1.md) | `references/prerequisites.md`; optional `scripts/check-environment.sh` for modules using this tooling |
+| [Phase 2 — Project interview](references/phase-2.md) | `references/project-grill.md`; `references/skills-map.md` for third-party invocation |
+| [Phase 3 — Architecture](references/phase-3.md) | `references/architecture.md`, `references/architecture-research.md`; `assets/radar.template.md` if a radar is useful |
+| [Phase 4 — Git environment](references/phase-4.md) | `references/git-environment.md`; `scripts/prepare-repo.sh` (dry run, `--show <file>`, then authorized `--apply`; `--with-ui` when needed) |
+| [Phase 5 — Spec Kit](references/phase-5.md) | `references/skills-map.md`; host-specific project integrations |
+| [Phase 6 — Agent instructions](references/phase-6.md) | `references/agents-md.md`; optional `assets/CLAUDE.template.md` and `<agentic-code-review>/references/review-md.md` |
+| [Phase 7 — Board](references/phase-7.md) | `references/board.md`, `assets/board/README.md`; `assets/board/artifact-sync.md` before authorized publication/sync |
+| [Phase 8 — Methodology](references/phase-8.md) | `references/methodology.md`; create lessons only for a selected ongoing process |
+| [Phase 9 — Backlog](references/phase-9.md) | `references/skills-map.md`; an existing tracker or `docs/backlog.md` is sufficient |
+
+Third-party methods use the same resolver as siblings; read `references/skills-map.md` only when
+invoking one. Missing web research is “not confirmed (no web)”, not fabricated evidence. Missing
+delegation permits sequential work. Missing Artifact permits a CLI/Markdown view if a board is
+selected; only the orchestrator with send capability publishes or syncs. Missing Spec Kit permits
+the light spec path. These fallbacks do not select the corresponding module.

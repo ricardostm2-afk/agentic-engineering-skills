@@ -1,69 +1,52 @@
-<!-- agentic-project template: replace every {{...}}, remove what does not apply and this
-comment. With UI (phase 4, --with-ui): {{ui-rules}} = `.agentic/ui-without-slop.md`, {{detector}} =
-`.agentic/detect-slop.mjs`, {{D-ui}} = brand exceptions (phase 2). Without UI, remove the
-“UI” line. -->
+<!-- Menu for agentic-project: replace every {{...}} and remove unused sections/rows and this
+comment. Do not create files to satisfy this template. For minimal bootstrap keep purpose,
+scope, exact verified commands and essential rules. Add parallel, UI, board, radar or process
+pointers only when selected and already present. No future (phase N) links. -->
 # AGENTS.md
 
 ## Mission
-{{What the product does, for whom, in one sentence.}}
-{{The strongest constraint, in one sentence (e.g. personal data stays in the chosen region).}}
-Non-goals: {{one line, or “docs/decisions.md, Out of scope”}}.
+{{What the project does and for whom, in one sentence.}}
+Scope / non-goals: {{requested work and the relevant boundary}}.
 
 ## Commands
+Run from {{working directory}} with {{runtime/package manager and prerequisites}}.
 ```bash
-{{install}}             # dependencies
-{{run}}                 # local app, synthetic data
-{{typecheck}}           # types
-{{lint}}                # style
-{{area-tests}} <folder> # tests for the changed area
-{{all-tests}}           # full verification: before merging into main
+{{install}}             # dependencies; omit when unnecessary
+{{run}}                 # local app with synthetic data; omit for non-app repos
+{{focused-check}}       # changed area's verification
+{{full-check}}          # project verification before integration
 ```
-Hooks before push (`.githooks/`): fix the cause of failures.
+Verification: {{command results; mark blocked or planned commands unverified with a reason}}.
 
 ## Code map
-- Areas, folders, checks and risk: `.agentic/areas.json` (read before changing code).
-- Architecture: `ARCHITECTURE.md`. Terms: `GLOSSARY.md` (use these names in code and tests).
-- Decisions: `docs/decisions.md`; hard to reverse: `docs/adr/`. Principles (read before deciding
-  what they cover; do not copy them): `.specify/memory/constitution.md`.
+- Change boundaries: {{owned paths; generated/vendor/protected paths}}.
+- Before {{task/area}}, read {{existing applicable document and why}}.
+{{Optional existing area map, glossary, architecture or ADR pointers, with read triggers.}}
 
 ## Workflow
-- Replies and project documents follow {{language declared here; English by default}}.
-- Features: skill `agentic-feature`; review: `agentic-code-review` (read `REVIEW.md`).
-  Process and “done”: `docs/methodology.md`.
-- Branch `agent/<id>-<topic>` (< 24 h), own worktree (never two agents in one tree):
-  `git worktree add ../{{repo}}-<agent> -b agent/<id>-<topic> main`.
-- TDD: red test first, then green. Only files from your brief.
-- Dependency APIs: check installed types or version-matched docs.
-- Unclear scope: choose smaller; record it on the board.
-- Ask only about human decisions (product, money, irreversible actions): one per question,
-  with options and a recommendation.
-- Technology: check version/status in a dated primary source before recommending
-  (`docs/radar.md` first).
-- Merge into `main` only with green checks; the orchestrator pushes at the end.
-- UI: follow `{{ui-rules}}` (exceptions: `docs/decisions.md` {{D-ui}}). Before review,
-  `node {{detector}} --diff <starting commit>` with no blockers on changed lines (fix or
-  `slop-ok: <reason>`); existing ones get one report line.
+- Replies and project documents use {{declared language; English by default}}.
+- Follow {{existing branch, commit and review conventions}}.
+- Features use `agentic-feature`; fixes use `agentic-fix`; review uses `agentic-code-review`.
+  {{Add REVIEW.md only if it exists and contains project-specific guidance.}}
+- Keep changes within the agreed scope. Use the smallest verification that proves the change,
+  plus project-required checks; “done” needs executed command + result.
+- Dependency APIs: inspect installed types or version-matched docs. Research changed/new
+  components or material unknown currentness; reuse valid evidence for the same scope.
+- Ask only material unresolved decisions, with a recommendation; honor existing delegation.
+{{Parallel setup only: worktree/ownership rules and exact checked commands.}}
+{{UI only: applicable design rules, detector command and scoped approved exceptions.}}
 
 ## Hard rules
-- No secrets in code, logs or chat: variable names only (`.env` outside git).
-- No real personal data in prompts, fixtures or logs: use synthetic data.
-- Without explicit human approval: no production deployment, deleting data, paying, publishing,
-  creating accounts or changing DNS. These actions are irreversible or external.
-- No `--no-verify`, `git push --force` on shared branches, or blind `git add -A`: the first hides
-  errors, the second deletes others' work, the third includes others' files.
-- Never edit applied migrations: create a new one.
-- “Done”: executed command + output.
-{{Project-specific rules, each with a reason.}}
+- No secrets in code, logs or chat: use variable names and the configured secret store.
+- No real personal data in prompts or fixtures: use synthetic data.
+- Obtain applicable authorization for production deployment, deleting data, payments,
+  publishing, accounts or DNS; carry existing authorization forward.
+- No `--no-verify`, force-push on shared branches or blind `git add -A`: preserve checks and
+  other people's work; stage only intended paths.
+{{Project-specific essential rules, each with a reason; remove this placeholder if none.}}
 
 ## Where to record things
-- Board: {{URL, or “docs/backlog.md” without a published board (`scrum.sh markdown > docs/backlog.md`
-  at every transition and in the session's final commit)}}. CLI `.agentic/board/scrum.sh` (`help`;
-  CLI: README; 4 “Sync” steps: `artifact-sync.md`). All agents record via CLI and run
-  `scrum.sh agent heartbeat` at each transition and at least every 30 min while working.
-  Only the orchestrator (session with artifact data tool) sends to the artifact; subagents,
-  workflow agents and jobs use CLI only. Orchestrator also runs “Sync” at that cadence
-  (step 1 reads `new-requests`; `url` = this URL; deferred: ToolSearch `select:ArtifactData`).
-  Without the tool, use CLI; next orchestrator with it sends pending data. Never schedule sync.
-- Lasting decisions: `docs/decisions.md` or ADR.
-- Technology used, tested or rejected: `docs/radar.md` (at delivery).
-- Lesson: `docs/lessons.md` (format in the heading); if mechanical, make it a hook, lint or test.
+{{Existing decisions/work tracker and when to update it; omit this section if unnecessary.}}
+{{Optional board: actual CLI path and update/sync procedure; only the orchestrator publishes.}}
+{{Optional radar: source, scope, verification date and invalidation trigger for reusable evidence.}}
+{{Optional lessons: existing path and format; mechanical lessons become checks.}}

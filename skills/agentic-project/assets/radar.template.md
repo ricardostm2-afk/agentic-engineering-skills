@@ -3,10 +3,13 @@
 <!--
 Rules (remove comments when filling this in):
 - The radar is not a rule: AGENTS.md, the constitution and ADRs take precedence in a conflict.
-- Read at agentic-feature step 1b (research), write at delivery before the final commit.
-- One line per entry, with a primary source (URL) and the last verification date. Versions and
-  support status require a source, never memory.
-- Refresh entries older than ~6 months at step 1b when a feature touches them.
+- This optional file stores reusable evidence; do not create it merely to close setup.
+- Read relevant entries when a material research question arises; write when new evidence matters.
+- One line per entry, with a primary source (URL), verification date, component/version/target
+  scope and invalidation trigger. Versions and support status require a source, never memory.
+- Refresh only invalidated evidence or material unknown currentness (changed versions, APIs,
+  constraints, support/security state, provider terms/prices, or the entry's Review on trigger).
+  Reuse matching valid evidence; never refresh the whole stack solely because a new task starts.
 - New entries go into Trial, Assess or Avoid. Adopt, and changes between Adopt and Avoid,
   require a human decision recorded under “Decided by”. Exception: at agentic-project phase 3,
   its decisions go straight into Adopt: the stack (human or delegated, ADR-NNNN or D-NNN),
@@ -32,10 +35,9 @@ Rules (remove comments when filling this in):
 - **Assess**: promising, not used yet. State the trigger for a trial.
 - **Avoid**: do not use. State why so nobody researches it again without a new reason.
 
-| Ring | Entry | Area | Why (one line) | Source | Verified on | Decided by |
-|---|---|---|---|---|---|---|
-| Adopt | <e.g. framework X 1.2> | stack | <chosen in architecture: …> | <URL> | <date> | <human \| delegated, ADR-0001> |
-| Adopt | <e.g. test runner Y 3.1> | tests | <phase 3 technical choice: …> | <URL> | <date> | <agent, D-NNN (phase 3)> |
-| Trial | <e.g. `<dialog>` + invoker commands on screen Y> | frontend | <one fewer dependency; measure …> | <URL> | <date> | <human, feature NNN grill> |
-| Assess | <…> | <…> | <trigger: “when Baseline Newly” / “when upgrading to vN”> | <URL> | <date> | <agent, feature NNN> |
-| Avoid | <…> | <…> | <e.g. experimental, one browser only> | <URL> | <date> | <agent, feature NNN> |
+| Ring | Entry | Area / target scope | Why (one line) | Source | Verified on | Review on / invalidation | Decided by |
+|---|---|---|---|---|---|---|---|
+| Adopt | <framework X 1.2> | <runtime/target> | <chosen for …> | <URL> | <date> | <version/support/constraint change> | <human \| delegated, ADR-0001> |
+| Trial | <bounded option> | <affected area> | <gain being measured> | <URL> | <date> | <trial result / end date> | <decision> |
+| Assess | <promising option> | <scope> | <unresolved question> | <URL> | <date> | <event that warrants a trial> | <decision> |
+| Avoid | <unsuitable option/version> | <affected target> | <failed mandatory criterion> | <URL> | <date> | <fix/support/target change> | <decision> |

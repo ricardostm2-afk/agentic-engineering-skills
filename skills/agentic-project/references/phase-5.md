@@ -1,6 +1,13 @@
 Phase 5 — Spec Kit + constitution
 
-1. `git status` must be clean (the next step rewrites files; you need to see the diff).
+Only when **Spec Kit** is selected: requested, already adopted or justified by the work. Minimal
+bootstrap and ordinary planning can finish without it. Before initialization, inspect whether
+this project's integration already satisfies the need; if so, reuse it rather than force-init.
+Use the current project's integration, resolved through `host-compatibility.md`.
+
+1. Inspect `git status` and protect existing work (the next step rewrites files). Run init only
+   with clean target paths and a recoverable baseline, or in an isolated copy for comparison.
+   Do not stash, reset or overwrite unrelated user changes to make this gate pass.
 2. `specify init --here --force --non-interactive --integration claude`. Creates `.specify/`
    and `speckit-*` skills in `.claude/skills/`. If another agent reading `.agents/skills/` will
    work in the repo (Codex, Cursor, Gemini, Copilot, OpenCode; including this session if it is

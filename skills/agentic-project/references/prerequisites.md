@@ -4,9 +4,10 @@ Goal: discover early what blocks or increases the cost of the project and only t
 resolve. A forgotten prerequisite later becomes a lost week (slow account approval, data that
 cannot leave its chosen region, costs exceeding budget).
 
-How to use: first check whether context, code or docs answer each item. Ask only what is
-missing, in category order (earlier categories change more things). Include a recommendation
-with each question. Record everything in `docs/prerequisites.md`.
+Use only categories affecting selected setup modules. First check whether context, code or docs
+answer the question. Ask only a material unknown, in order of impact, with a recommendation.
+Record real prerequisites in the existing record or `docs/prerequisites.md` when useful; minimal
+bootstrap can report its few blockers in the handoff. This is a question bank, not a census.
 
 ## 1. Goal and user
 - What problem does it solve, for whom, and how is it done today without the product?
@@ -41,23 +42,23 @@ monitoring, app stores): account exists? **Who owns it** (organization, with 2FA
 Who has admin access? DPA when processing personal data?
 
 ## 6. Local tools
-Run `scripts/check-environment.sh`. Essential: `git`, `node>=20`. Recommended: `gh`, `uv`,
-`specify`, `agentic-feature` (entry point for every feature), `agentic-design` (essential with
-UI: rules and slop detector used by phases 2, 4, 6), and the `mattpocock-skills` plugin.
-Optional: `gitleaks`. Install only with human approval; the script prints the exact command.
+Inspect the repo's actual runtime and package manager first. `scripts/check-environment.sh`
+checks this set's optional setup toolchain (`git`, `node>=20`; recommended `gh`, `uv`, `specify`
+and sibling/plugin skills). Its missing-tool status blocks only a selected module using that
+tool, not preparation of an unrelated stack. `agentic-design` is needed for selected UI checks;
+Spec Kit and the third-party plugin are not prerequisites for minimal bootstrap.
 
-Ask all authorizations together in one question (each a table row, approval recorded in
-`docs/decisions.md`):
-- **Web research**: `WebSearch` and `WebFetch` (no domain list, or a minimal list: package
-  registry, stack docs, price pages) in `.claude/settings.local.json`, outside git (phase 4's
-  base `.gitignore` ignores it; until then, explicit-path commits exclude it). Without approval
-  or network, phase 3 marks versions/prices “not confirmed” and this item stays pending.
-- **Phase 3 skeleton**: downloading dependencies into a temporary folder (scaffolder and
-  `npm install`) runs third-party code; without approval, “Measured in skeleton” is “not measured”.
-- **Sandbox git commands** (only for read-only `.git` sandboxes, such as Codex
-  `workspace-write`): approve `git commit`, `git worktree add`, `git config` for the session,
-  or open with full permissions (`codex --sandbox danger-full-access`). Without approval,
-  every skill commit needs approval and agent lanes run sequentially on one branch.
+Use `host-compatibility.md` for observed capabilities and approvals. Existing authorization
+persists. Do not infer read-only git from a host/sandbox name or ask for blanket full access.
+Request only a concrete needed operation when the host actually requires permission:
+
+- **Research:** use available web access for the scoped question; if unavailable, mark the
+  relevant claim “not confirmed”. Do not edit approval configuration merely to avoid prompts.
+- **Skeleton/install:** state command, purpose and destination; reuse installation authorization.
+  Without access, record the measurement as not performed.
+- **Git:** try authorized operations in the intended directory. Diagnose an observed failure
+  before proposing an allowed alternative or the host's real approval mechanism. Never weaken
+  controls or repeat a rejected escalation.
 
 ## 7. Human-only access
 List explicitly; these are the most common critical path:

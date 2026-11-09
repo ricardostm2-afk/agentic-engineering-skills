@@ -1,22 +1,25 @@
 Phase 6 — Agent instructions
 
-Read `references/agents-md.md`. If `mattpocock-skills:writing-for-agents` exists, invoke it.
-Write `AGENTS.md` from `assets/AGENTS.template.md`, `CLAUDE.md` from `assets/CLAUDE.template.md`,
-and `REVIEW.md` from `<agentic-code-review>/assets/REVIEW.template.md`, following
-`<agentic-code-review>/references/review-md.md` (what failure means for each `risk: high` area,
-labels, paths to skip; the human approves “What failure means here”). In adopt mode, show the
-diff against existing files before writing; do not rewrite an existing `REVIEW.md`.
+Use after the selected modules to expose their actual rules and commands. Minimal bootstrap can
+write the same small entry point directly. Read `references/agents-md.md`; third-party
+`writing-for-agents` is optional and uses the common resolver.
 
-Create `AGENTS.md` with pointers to what phases 7–9 will create (board, methodology, lessons,
-backlog), marked `(phase N)`; each phase removes its marker and Closing checks none remain.
-Also include the template's UI rule (`ui-without-slop.md` + detector; only if there is UI, with
-a pointer to phase 2's “UI exceptions” decision), radar (`docs/radar.md`), and “check dependency
-APIs in the installed version's types or docs”.
+Start from the existing instructions and `assets/AGENTS.template.md`, treated as a menu. Keep
+only sections and pointers that apply. Add `CLAUDE.md` from `assets/CLAUDE.template.md` only when
+the active host needs an import/bridge; avoid a second source of rules. Add `REVIEW.md` only
+when project-specific risk or review guidance merits it, following
+`<agentic-code-review>/references/review-md.md` and its template. Preserve existing review rules;
+approval of new product/risk commitments can be explicit or already delegated.
 
-Done when `wc -c AGENTS.md` ≤ ~4000 (up to ~5 KB if project rules require it, using doc pointers
-instead of text), `wc -c REVIEW.md` ≤ ~3000 with no unfilled `{{`, the human has approved “What
-failure means here” in `REVIEW.md` (or delegated it, recorded in `docs/decisions.md`), every
-listed command has run successfully and every unmarked path exists. Mark commands depending
-on something approved but not yet created (a new project's first code, a typecheck adopt mode
-decided to add) as `(to create in the first feature)` or `(to create: D-NNN)` so no agent treats
-them as verified.
+For adoption, show a scoped diff and apply the changes already authorized. Do not rewrite
+unrelated instructions or create pointers to future phases. Only link architecture, glossary,
+ADRs, constitution, board, methodology, radar, lessons or versioned UI checks when they exist
+and a trigger explains when to read them. Do not select other modules to satisfy a template.
+Retain the operational rule to check dependency APIs in installed types or version-matched docs.
+
+Done when `AGENTS.md` is concise (~1–2 KB for a simple repo, general target ≤ ~4000 bytes;
+up to ~5 KB for necessary project rules), `REVIEW.md` if created is ≤ ~3000 bytes, there are no
+unfilled `{{` placeholders or future-phase pointers, and every referenced path exists.
+Commands must have actual results or be clearly marked unverified/planned with the blocker;
+do not claim readiness for a path not yet runnable. A new project's future command can be
+marked `(to create in the first feature)` or `(to create: D-NNN)`, never reported as verified.

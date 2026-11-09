@@ -8,6 +8,7 @@ Do not delete a revoked decision: mark it “superseded by D-NNN”.
 ## Context
 - **What it is**: {{one sentence}}
 - **Mode**: {{new | adopt}} — {{why, one line}}
+- **Selected setup modules**: {{minimal bootstrap plus justified additions; omit unselected artifacts}}
 - **Detected / chosen stack**: {{…}}
 - **What already existed**: {{code, docs, accounts, services}}
 - **Document language**: {{as declared in AGENTS.md; English by default}}
