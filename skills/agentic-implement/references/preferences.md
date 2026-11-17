@@ -16,6 +16,19 @@ and overrides this file. The interface has its own source: the project's design 
   test, and the screen says what is missing instead of looking broken.
 - Prove the absence of hardcoded values with a search (`git grep` for the current customer's name
   in production code returns empty), rather than asserting it.
+- When the user corrects a mistake class that was corrected before (this session, an earlier one,
+  or an `AGENTS.md` rule), fix it and do not add another prose line: follow
+  `<agentic-code-review>/references/encode-corrections.md` within the authorized scope, or
+  propose its check as a diff.
+- Comments are not a defense: they go stale, nothing enforces them, and the next agent copies a
+  commented workaround as an approved pattern. Do not add a comment that explains, justifies or
+  apologizes for a workaround (a timer that hides an ordering problem, a cast, a retry, a disabled
+  check): fix the cause, or report it open. A constraint comment (“do not remove”, “keep this
+  order”) becomes the cheapest check in scope (type, test, lint) when one fits; otherwise keep it
+  and report the constraint as unenforced. Keep comments that state what code cannot: an external
+  contract or bug outside the repo (with its link), a non-obvious unit, or a required suppression's
+  reason. Respect the project's existing comment and documentation conventions (public API docs,
+  license headers, generated markers).
 
 ## Product text
 

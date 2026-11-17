@@ -89,6 +89,9 @@ Related: [[another-memory]]
   rejection) and it is not already in a rules file. One entry in, one out: a cap of ~30 lines.
 - **Move down to the sub-index** when the rule moves into a project file (keep only the reason),
   or when nobody needs it without opening the topic.
+- **A `feedback` memory a machine can check** (an import, a banned API, a format) belongs in a
+  lint, type or test in the repo, not in memory or `AGENTS.md` prose: see `agentic-code-review`'s
+  `references/encode-corrections.md`. Once the check exists, keep only the reason, or delete it.
 - **Move down to `history-index.md`** when the state closes.
 - **Split a sub-index in two** at ~25 entries or ~3 KB.
 - **Topic subfolders** only after ~500 files, and after testing that Claude reads them: the

@@ -55,7 +55,8 @@ Optional: commits end with `Verified: <checks>` or `Verified: none — <why>`.}}
   errors, the second deletes others' work, the third includes others' files.
 - Never edit applied migrations: create a new one.
 - “Done”: executed command + output.
-{{Project-specific rules, each with a reason.}}
+{{Project-specific rules, each with a reason. Optional: a `Rule | Enforced by` table
+(lint/type/test/prose) for rules that agents broke before.}}
 
 ## Where to record things
 - Board: {{URL, or “docs/backlog.md” without a published board (`scrum.sh markdown > docs/backlog.md`

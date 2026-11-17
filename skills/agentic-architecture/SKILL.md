@@ -135,7 +135,8 @@ tests replace old ones instead of piling up.
 
 Done when the following are decided, each with its origin (human or delegated): **interface**
 (inputs, invariants, ordering, errors, configuration), **seam** (placement, adapters and
-dependency category) and **tests** (new ones at the interface and old ones to delete); and
+dependency category), **boundary check** (what rejects the wrong import, `references/deepening.md`)
+and **tests** (new ones at the interface and old ones to delete); and
 when the human has confirmed the shared understanding.
 
 ## 6. Execution through agentic-feature

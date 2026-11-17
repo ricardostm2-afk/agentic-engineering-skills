@@ -46,6 +46,18 @@ substitutable`, `ports and adapters` or `mock`.
   implementation, used by its tests) as well as the external seam at the interface. An
   internal seam stays outside the interface, even when tests use it.
 
+## Enforce the boundary
+
+Agents copy the nearest import. A boundary that only a diagram or `AGENTS.md` states will be
+crossed. When the design hides internals or separates layers (client/server, renderer/main,
+domain/infrastructure), name the check that rejects the wrong import: language visibility, package
+exports, or the repo's dependency rule (eslint `no-restricted-imports`, dependency-cruiser,
+import-linter, ArchUnit). Its error names the interface to use. Prove it red on one wrong import. Propose it as a diff when repo changes were not authorized.
+
+**Delete the old way.** A deprecated path left beside the new one is the next agent's template.
+Migrate callers, then delete the legacy interface in the same plan; if it must stay, ban new uses
+with the same kind of check.
+
 ## Tests: replace, do not stack
 
 - Old unit tests for shallow modules become waste once tests exist at the deepened module's

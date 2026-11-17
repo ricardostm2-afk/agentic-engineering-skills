@@ -32,6 +32,11 @@ Ideas from two sources, in our own words without copied text: Microsoft's articl
 no license (only its ideas were read). These inform the refactor recipe in `references/tests.md`,
 the stop after two failures at one gate, and code/spec/test triage (step 5).
 
+From Lauren Tan's talk “All Code Is Slop (Except Mine)” (AI Engineer, 2026-11-14) and the
+`no-comments` skill of `cursor/plugins` pstack (MIT, revision `536a3352a`), ideas only: the
+comment rule in `references/preferences.md` (workaround comments get fixed, constraint comments
+become checks).
+
 ## How to update
 
 1. In an isolated checkout of each upstream, `git fetch origin main`, pin the new SHA and compare

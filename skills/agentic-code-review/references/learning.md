@@ -27,7 +27,9 @@ and an area's `escaped` lessons.
 
 ## Fix at the source
 
-Do not resolve repeated findings by repeating them. In order:
+Do not resolve repeated findings, or a correction the user had to make twice, by repeating them.
+Follow `encode-corrections.md` (architecture → types → lint whose error names the fix → test →
+prose). In order:
 1. if a machine detects it without false positives, make a guard, lint rule or test (prove
    refusal: seeded defect red, restored green);
 2. otherwise one `REVIEW.md` line (“What failure means here” or “Repeated findings”, `review-md.md`)
@@ -113,3 +115,25 @@ Keep the winner; put comparison in commit message.
 Small projects need only integration commit `Review:` lines (`git log --grep '^Review:'`): rounds
 to pass, first-round pass count, share of “wrong”/“does not matter” responses (noise), `escaped`
 lessons by area. Precision, recall and hours saved only when measured; never estimate them.
+
+**Revert rate.** Integrated changes reverted within 30 days, divided by changes integrated in the
+same window. Count from history, for example `git log --since=60.days --until=30.days --first-parent`
+on the integration branch against `git log --grep '^Revert' --since=60.days` whose reverted SHA falls
+in that window. State the window and the counts; under ~50 integrated changes report the counts
+without a rate. A falling rate is evidence that the defenses work; a rising one points at the area
+to read in the `escaped` lessons. Lauren Tan's team judges an agent-heavy codebase by it (“All Code
+Is Slop (Except Mine)”, AI Engineer, 2026-11-14: about 0.5% at ~11,000 PRs a month).
+
+## Before an unattended loop
+
+Foundations come before a factory: automating a sloppy inner loop produces more slop and burns
+tokens. Before proposing scheduled agents, auto-merge, or a loop that finds and fixes bugs without
+a human in it, check and report:
+- the project's checks and `verify` skill (`<agentic-project>/references/verify-skill.md`) run
+  green 3 times in a row on a clean tree, and the loop runs the same gates as a human change;
+- repeated mistake classes are encoded as checks (“Fix at the source” above), not left as prose;
+- the revert rate is measured, with counts, and the loop's own changes are counted in it;
+- the loop has a stop: a cap on changes per run and a rule that pauses it when its reverts rise.
+
+Any gap is the first work item, not a reason to skip the loop silently. Turning on the loop, or
+lowering the review level for its changes, remains the user's decision.
