@@ -56,8 +56,8 @@ and see it red for the right reason. Seam, interface and module, here and in the
 `<agentic-architecture>/references/vocabulary.md` defines.
 
 Work in **vertical slices**: one test, the minimum implementation to turn it green, then the next.
-Good tests, bad ones to avoid, timeouts and child processes, and proving a forced red:
-`references/tests.md`. In a refactor task (structure changes, behavior does not), there is no new red:
+Good tests, bad ones to avoid, property, differential and flaky tests, timeouts and
+child processes, and proving a forced red: `references/tests.md`. In a refactor task (structure changes, behavior does not), there is no new red:
 follow “Refactor” in `references/tests.md`, with its own completion criterion.
 
 Done when the test runs red and the failure shows the missing behavior rather than a setup error.
@@ -72,7 +72,8 @@ Done when the brief explains every line of the diff.
 
 ## 5. Green with proof
 
-Run the new test, the area tests and typecheck, using the brief's or `AGENTS.md`'s commands.
+Run the new test, the area tests and typecheck, using the brief's or `AGENTS.md`'s commands. A
+user-visible change also runs the affected rows of the project `verify` skill, when it exists.
 Save each command and result. A skipped test, missing database or setup returning empty counts as
 **red**. Measure the command's own exit code, without a pipe. Project proof rules, when present,
 override this list.

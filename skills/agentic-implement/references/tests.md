@@ -46,6 +46,41 @@ A test launching a server, browser or another child process can hang the suite w
 - **Orphan**: an orphan child hangs the suite. After green, run the suite twice consecutively:
   both runs finish.
 
+## Property tests
+
+Use one when a rule must hold for every input: parsing, serialization, money, sorting, permissions,
+migrations, retries. State the rule as a property. A library such as fast-check (JS/TS), Hypothesis
+(Python) or proptest (Rust) then generates thousands of inputs to break it and shrinks any failure to
+a minimal case. The generator does not share the biases of the agent that wrote the code, so it finds
+edge cases that example tests miss.
+
+- **Round-trip**: `decode(encode(x))` equals `x` (parsers, serializers, codecs).
+- **Invariant**: something never happens (a balance never goes negative, a list stays sorted).
+- **Idempotency**: running it twice equals running it once (migration, normalization, retry).
+- **Equivalence**: the optimized version matches a naive one that is obviously correct.
+
+A property test still needs a red. Show it fails on the base (or on a seeded defect) before trusting
+it. Fix the seed in CI, or print it on failure, so that a red can be reproduced. Add the library only
+when the project's dependency rules allow it. Otherwise, write a small loop over generated inputs at
+the same seam.
+
+## Differential tests
+
+For a migration, rewrite or port where the old system's behavior is the spec, treat the old system as
+the oracle. Run old and new on the same inputs (random, or sampled real traffic with synthetic data),
+and compare the outputs. Normalize what does not matter (whitespace, key order, timestamps). Keep a
+written list of approved intentional differences. Any other difference is a finding, never a side to
+pick. The refactor case is below.
+
+## Flaky tests
+
+A test that passes and fails on the same code teaches the agent to rerun instead of fixing. Never
+skip it, add a sleep, raise a timeout without measuring, or retry until it passes. Find the cause
+(shared state, ordering, real clock or network, an unregistered child) and fix it. Prove the fix with
+the test passing N times in a row (N from the project; otherwise 20). If the cause cannot be found
+within the task, delete the test and record why in the commit body, along with the behavior that is
+now uncovered. That is better than leaving a check nobody believes.
+
 ## Refactor: pin, change, prove equal
 
 A task changing structure without changing behavior (splitting a file, deepening a module, moving

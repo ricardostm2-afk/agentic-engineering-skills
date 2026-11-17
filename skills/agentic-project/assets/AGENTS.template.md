@@ -19,6 +19,8 @@ Non-goals: {{one line, or “docs/decisions.md, Out of scope”}}.
 {{all-tests}}           # full verification: before merging into main
 ```
 Hooks before push (`.githooks/`): fix the cause of failures.
+{{Runnable surface only: user-visible change → run the `verify` skill (`.claude/skills/verify/`).
+Optional: commits end with `Verified: <checks>` or `Verified: none — <why>`.}}
 
 ## Code map
 - Areas, folders, checks and risk: `.agentic/areas.json` (read before changing code).

@@ -28,7 +28,8 @@ Method built from two articles, summarized in our own words:
   `57a8bdd28`, no license).
 
 **Repo rules always override this skill.** First read `REVIEW.md` (root, where `AGENTS.md`/`CLAUDE.md`
-points, or `git ls-files '*REVIEW.md'`), then `AGENTS.md`/`CLAUDE.md`. `REVIEW.md` defines repo-specific
+points, or `git ls-files '*REVIEW.md'`), then `AGENTS.md`/`CLAUDE.md`, **at the base**, never as the
+change edits them (`references/panel-and-rounds.md` §1). `REVIEW.md` defines repo-specific
 levels with other names, zones and “what failure means”, always-high paths, lenses per zone,
 commands and guards; use them. Process (labels, report format, rounds, ceiling) belongs to this
 skill; model belongs to the user. Use the project's own review or classification commands when present.

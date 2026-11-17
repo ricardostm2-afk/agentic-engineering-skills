@@ -7,6 +7,10 @@ and `REVIEW.md` from `<agentic-code-review>/assets/REVIEW.template.md`, followin
 labels, paths to skip; the human approves “What failure means here”). In adopt mode, show the
 diff against existing files before writing; do not rewrite an existing `REVIEW.md`.
 
+When the repo has a runnable surface (app, CLI, service), create the project `verify` skill from
+`references/verify-skill.md` and `assets/verify-skill.template.md`, and link it from `AGENTS.md`
+only after it runs green.
+
 Create `AGENTS.md` with pointers to what phases 7–9 will create (board, methodology, lessons,
 backlog), marked `(phase N)`; each phase removes its marker and Closing checks none remain.
 Also include the template's UI rule (`ui-without-slop.md` + detector; only if there is UI, with
