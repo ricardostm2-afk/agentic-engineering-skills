@@ -20,6 +20,8 @@ the agentic-skills repository.
 3. Move down to the sub-index when the rule moves into a project file (keep only the reason);
    move down to `history-index.md` when the state closes.
 4. Each memory appears on exactly one index line. No orphans, no missing links.
+5. Save a fact when it repeats, not on first sight; a working fact moves up after three sessions
+   (`**Seen:**` dates). Contradicted by actual output: fix or delete it now, never keep both.
 
 ## What never goes in
 

@@ -81,9 +81,9 @@ override this list.
 **Two failures at the same gate.** If two attempts fail the same gate (the same test, typecheck,
 a hook) for the same reason, do not try a third with the same idea. Write one sentence stating the
 premise both share, what both took for granted, and look in code, test and brief for what disproves
-it. If it falls and the new approach fits the brief, proceed and say so in the handoff; if it does
-not fit, or you cannot find the premise, return `blocked: premise <the sentence> — <what you saw>`,
-with your recommendation.
+it. If it falls and one new approach fits the brief, proceed and say so in the handoff. Only one: if
+it fails the same way, if none fits, or if you cannot find the premise, return
+`blocked: premise <the sentence> — <what you saw>`, with your recommendation.
 
 **Code, spec or test.** A persistent red can come from code, spec or test. Before returning
 `spec-conflict`, write all three hypotheses, each with evidence confirming or disproving it: code
