@@ -242,7 +242,7 @@
       "targetPath": "skills/agentic-implement/SKILL.md",
       "mode": "adapted",
       "reason": "Only step 3 (test first, vertical slices, public seam) comes from tdd. The closed brief as input, project preferences, commit per cause and status handoff are original.",
-      "targetSha256": "56e06fe5fc7e07a53397c10b62ce6a1212652049cb696dcdb00edcca505c735e"
+      "targetSha256": "ba4cd9fba144ac8755c111184c3bc140c0f2e805dc027072d1c69de7094ec07c"
     },
     {
       "upstream": "mattpocock",

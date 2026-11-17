@@ -128,3 +128,14 @@ test("guide and template give the same numeric limits", () => {
   assert.match(guide, /cap of ~30 lines/);
   assert.match(index, /Cap of ~30 lines/);
 });
+
+test("facts are earned by repetition and dropped on contradiction", () => {
+  const guide = read(MEMORY, "GUIDE.md");
+  assert.ok(guide.includes("\n## Earned by repetition, dropped on contradiction\n"));
+  assert.match(guide, /\*\*three separate sessions\*\*/);
+  assert.match(guide, /never keep both versions/);
+  assert.match(guide, /a second contradiction deletes it/);
+  assert.match(guide, /"Tests pass", "feature done" or "deploy works" are states, not facts/);
+  assert.match(read(MEMORY, "memory-template.md"), /\*\*Seen:\*\* optional/);
+  assert.match(read(TEMPLATE, "README.md"), /moves up after three sessions/);
+});

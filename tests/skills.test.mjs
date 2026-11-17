@@ -719,6 +719,7 @@ test("agentic-implement: second failure at the same gate stops a third identical
   const step5 = section(read("agentic-implement", "SKILL.md"), "## 5. ");
   assert.match(step5, /\*\*Two failures at the same gate\.\*\*/);
   assert.match(step5, /do not try a third with the same idea/);
+  assert.match(step5, /proceed and say so in the handoff\. Only one: if\s+it fails the same way/);
   assert.match(step5, /\x60blocked: premise <the sentence> — <what you saw>\x60/);
   assert.match(section(read("agentic-implement", "references", "choosing-the-agent.md"), "## 1. "), /\*\*Already failed\?\*\*[^]*premise the agent returned/);
   assert.deepEqual(markersOutside(/Two failures at the same gate|do not try a third with/, "agentic-implement/SKILL.md"), []);

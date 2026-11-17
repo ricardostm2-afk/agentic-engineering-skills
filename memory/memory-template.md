@@ -15,4 +15,6 @@ The fact or rule, in one or two sentences. One fact per file.
 
 **How to apply:** when and where this changes what you do.
 
+**Seen:** optional; full dates of the sessions where this fact changed a decision (keep the last three).
+
 Related: [[another-memory]]

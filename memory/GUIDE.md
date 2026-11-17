@@ -94,6 +94,28 @@ Related: [[another-memory]]
 - **Topic subfolders** only after ~500 files, and after testing that Claude reads them: the
   documentation shows a flat folder.
 
+## Earned by repetition, dropped on contradiction
+
+These rules follow the fact lifecycle that TokenEconomizer (Microsoft Research and UC Berkeley)
+measured on coding agents: a fact is injected only once repeated evidence supports it, and is
+retired as soon as later sessions contradict it.
+
+- **Save on repetition, not on first sight.** A single observation (a command that worked once, a
+  guess about the build) stays in the conversation. Save it when it shows up again in another
+  session, when you state it, or when forgetting it once already cost lost data, money or a rejected delivery.
+- **Promote on confirmations.** Apart from what guides any session (who you are, the product,
+  where the work lives), move a working fact up to `MEMORY.md` only after it changed a decision in
+  **three separate sessions**. Record them in an optional `**Seen:**` line with full
+  dates, and keep the date list short (the last three are enough).
+- **Contradiction wins over memory.** When actual output, code or your instruction contradicts a
+  memory, fix or delete it in that same session; never keep both versions. When the evidence is
+  partial (another environment, an unexplained failure), add `**Stale:** <date> — <what you saw>`
+  instead; a second contradiction deletes it.
+- **No claims of completion.** "Tests pass", "feature done" or "deploy works" are states, not facts:
+  they belong in Git, CI and the task, never in memory.
+- **Drop what no longer fires.** A `MEMORY.md` entry that has not changed a decision for a month
+  of regular work moves down to its sub-index, so the startup block stays small.
+
 ## What never goes in
 
 - Secrets: passwords, keys, tokens, certificates, URLs containing credentials.
