@@ -59,6 +59,28 @@ A reviewer change is any change to brief, `REVIEW.md`, prompts, model, effort or
   caught cases); applies only with at least 1 caught case.
 - Results (cases run, caught before/after, clean) go in change commit message.
 - Measure recall alongside noise, never alone: flagging much raises recall and overwhelms author.
+- **Recall by stage.** Report caught cases at three points: raw lens findings, after confirmation
+  (`panel-and-rounds.md` §6: verifier, fixer reproduction), and in the final report. One end-to-end number hides a bug that
+  a lens found and consolidation or the verifier dropped. Fix the stage that lost it.
+- **Credit only the right bug.** Each escaped case carries a one-sentence answer key. A finding counts
+  only when it describes that bug, not merely when it lands on the same hunk.
+- **Keep tuning and test cases apart.** Tune the brief or `REVIEW.md` on some cases and judge the
+  result on others. Stop raising recall when the next gain only fits the cases, not new changes.
+
+## Turning misses into rules
+
+Adapted from https://claude.dev/blog/how-the-claude-code-team-thinks-about-verification/. Two ways
+to find rules worth adding:
+
+1. **Mine reviews and reverts.** A candidate pattern needs at least 2 PRs or lessons, and a trigger
+   that can be read from a diff. Before adding it, try to disprove it: look for merged changes that
+   match the trigger and were fine. Then propose it as a diff for the human to approve.
+2. **Replay against an incident.** Run the review on the change that caused a known incident. If the
+   panel misses the bug on a small diff, the reviewer lacked information. Add the `REVIEW.md` line or
+   the reliability-checklist item that would have caught it (`review-md.md`), and keep the case as an
+   escaped evaluation case.
+
+Each rule earns its place: prune it when it stops matching or catching (`review-md.md`, “Prune”).
 
 ## A/B instructions
 

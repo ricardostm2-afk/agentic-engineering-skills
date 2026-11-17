@@ -25,8 +25,8 @@ or inside a plugin). Run scripts with the project repo as the current directory,
 them by their full path (`bash <skill>/scripts/…`).
 
 Resolve `<agentic-feature>` (`$AGENTIC_FEATURE_DIR`), `<agentic-design>` (`$AGENTIC_DESIGN_DIR`),
-`<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`) and `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`)
-by the common reference's normative order. The reference confirms `SKILL.md`, rejects ambiguity and
+`<agentic-code-review>` (`$AGENTIC_CODE_REVIEW_DIR`), `<agentic-implement>` (`$AGENTIC_IMPLEMENT_DIR`)
+and `<agentic-architecture>` (`$AGENTIC_ARCHITECTURE_DIR`) by the common reference's normative order. The reference confirms `SKILL.md`, rejects ambiguity and
 explains invocation prefixes; this skill does not repeat the paths or silently choose an older copy.
 
 The common reference also supplies the UI, review and architecture siblings and their host-specific
@@ -56,7 +56,7 @@ invocation prefixes; this skill keeps their methods and does not repeat their se
 | 3 | Architecture | `ARCHITECTURE.md` + `docs/adr/` + `docs/radar.md` |
 | 4 | Git environment for agents | hooks, `.gitignore`, `.agentic/areas.json` |
 | 5 | Spec Kit + constitution | `.specify/memory/constitution.md` |
-| 6 | Agent instructions | `AGENTS.md` + `CLAUDE.md` + `REVIEW.md` |
+| 6 | Agent instructions | `AGENTS.md` + `CLAUDE.md` + `REVIEW.md` + `.claude/skills/verify/` (runnable surface only) |
 | 7 | Scrum board | `.agentic/board/` + published board (or `docs/backlog.md`) + `AGENTS.md` |
 | 8 | Methodology | `docs/methodology.md` + `docs/lessons.md` |
 | 9 | Initial backlog | 3–8 `backlog` items on the board (or `docs/backlog.md`) |

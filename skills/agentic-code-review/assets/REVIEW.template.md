@@ -26,6 +26,11 @@ Style and formatting are not findings: {{lint, formatter, hooks}} own them.
 
 {{Class → what to seek → proof, from lessons; initially “(none yet)”.}}
 
+## Reliability checklist
+
+{{Optional. One line per item: trigger readable from the diff → check → origin (incident, revert
+or PR). Only matching items run. Initially “(none yet)”.}}
+
 ## Process
 
 Labels, proof, report format, rounds and ceiling: `agentic-code-review`. Model belongs to the user.

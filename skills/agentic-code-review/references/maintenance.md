@@ -75,7 +75,8 @@ level. Normal review agent ceiling and rounds apply.
 ## Flaky tests and slow CI
 
 - Flaky: from recent CI runs, one fix attempt per test; accept only clear, simple working fixes
-  (test passes N consecutive times).
+  (test passes N consecutive times). Never a skip, sleep or retry-until-pass. With no cause found,
+  delete the test and record why, following `<agentic-implement>/references/tests.md` “Flaky tests”.
 - Slow CI: idea table ordered by daily minutes saved, estimated from run history; one change per commit.
 
 ## Model and effort

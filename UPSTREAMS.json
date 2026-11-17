@@ -242,7 +242,7 @@
       "targetPath": "skills/agentic-implement/SKILL.md",
       "mode": "adapted",
       "reason": "Only step 3 (test first, vertical slices, public seam) comes from tdd. The closed brief as input, project preferences, commit per cause and status handoff are original.",
-      "targetSha256": "f4508ed23a6acc7d1ad3e0e7a60588280c7fd5d3a0b8c02fb17e334630744f65"
+      "targetSha256": "56e06fe5fc7e07a53397c10b62ce6a1212652049cb696dcdb00edcca505c735e"
     },
     {
       "upstream": "mattpocock",
@@ -251,7 +251,7 @@
       "targetPath": "skills/agentic-implement/references/tests.md",
       "mode": "adapted",
       "reason": "English adaptation of good tests, seams, bad tests and mocks only at system boundaries from tdd/mocking.md (the tdd/SKILL.md portion is listed separately). Adds timeouts, child processes, the refactor recipe and cycle rules.",
-      "targetSha256": "0e2db3536945b99c2a79bd0cb3d575920ce3e5e43ba7abdd05b9c29aa0b070f1"
+      "targetSha256": "57a211efe6656ed0dee63479a92963cc9b5de52a8016755460b558f090702620"
     },
     {
       "upstream": "mattpocock",

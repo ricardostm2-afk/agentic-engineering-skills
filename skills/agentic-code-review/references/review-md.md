@@ -24,7 +24,16 @@ what failure means in **this** repo. Without it reviewers flag generic matters (
    with its checking command; review the source. Name the tool owning style and formatting
    (lint, formatter, hooks): these are not findings.
 3. **Repeated findings**: class → what to look for → proof. Start with “(none yet)”.
-4. **Process**, one line: review follows `agentic-code-review` (labels, proof, report format,
+4. **Reliability checklist** (optional; from the first escaped incident): one line per item,
+   `trigger → check → origin`. The **trigger** must be readable from a diff (a path glob, a changed
+   type or field, a new migration). The **check** is the question the reviewer answers, or the
+   command it runs. The **origin** is the incident, revert or PR that taught it. Example:
+   `session storage or message types change → does a transcript saved before this change still load
+   when the new field is missing? → incident 2026-08 resume crash`. The orchestrator runs only the
+   items whose trigger matches (`panel-and-rounds.md` §4), so the list can grow without making every
+   review longer. An item a machine can check without false positives becomes a test or guard and
+   leaves the list.
+5. **Process**, one line: review follows `agentic-code-review` (labels, proof, report format,
    rounds, ceiling); model belongs to the user. `REVIEW.md` only supplies repo-specific rules.
 
 Optional only if needed: **Levels** (names, paths for each, always-high paths, diff classifier
@@ -48,6 +57,19 @@ Through repeated findings, not intuition:
 - when a defect escapes review, ask what information the reviewer lacked and fix that here
   (or in brief), recording the lesson (`learning.md`);
 - a `REVIEW.md` change is a reviewer change: run evaluation cases before adoption.
+
+## Where the reviewer reads it
+
+Review reads `REVIEW.md` from the base, never from the change under review
+(`panel-and-rounds.md` §1). A change cannot modify the rules that judge it. A `REVIEW.md` edit
+takes effect for the changes after it is integrated, with the human's approval.
+
+## Prune
+
+Rule files only grow if you let them. When you add a line, or at least once a quarter, drop
+items whose origin no longer exists (code removed, risk retired), items a check now enforces, and
+items that matched no change and caught nothing in the last evaluation run (`learning.md`). Record
+each removal in the commit body.
 
 ## Without `REVIEW.md`
 

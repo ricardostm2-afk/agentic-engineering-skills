@@ -56,6 +56,16 @@ left the machine. If rebase conflicts are unclear, stop and ask.
 - Before push, check message against diff: `git show --stat HEAD` and reread. Claims absent
   from the commit mislead later audits.
 - Never edit applied database migrations: add a new one.
+- **Verification stamp.** Every commit ends with a `Verified:` trailer naming what ran on this tree:
+  `Verified: unit, e2e(verify: checkout), review(agentic-code-review)`, or `Verified: none — <why>`.
+  `none` is allowed, never left out, so `git log --grep '^Verified: none'` lists unverified work.
+- **Commit gate (optional).** A `commit-msg` hook can check the stamp. It has three modes, set in
+  `.agentic/gate` (`off`, `observe`, `enforce`). `observe` only logs what it would have blocked to
+  `.agentic/gate.log`. Start every new gate there, and switch to `enforce` once a week of logs shows
+  no false positives. `enforce` blocks a commit with no trailer, and a `Verified: none` without a
+  reason. After 2 blocks in the same session it lets the next commit through and logs it, so that an
+  agent is never stuck. The gate's config and hook are always-high review paths
+  (`<agentic-code-review>/references/panel-and-rounds.md` §1).
 
 ## Hooks (`.githooks/`, active with `git config core.hooksPath .githooks`)
 
