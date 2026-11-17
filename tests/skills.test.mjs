@@ -769,3 +769,15 @@ test("agentic-feature: human-stops table includes playbook approval in step 5 an
   assert.match(step5, /\x60references\/implementation\.md\x60 §4/);
   assert.deepEqual(markersOutside(/human approves playbook/, "agentic-feature/references/implementation.md"), []);
 });
+
+test("agentic-explain answers short questions in text and builds interactive pages on the spot, without a fixed template", () => {
+  const skill = read("agentic-explain", "SKILL.md");
+  assert.match(skill, /Build an \*\*interactive page\*\* \(`references\/interactive-pages\.md`\)/);
+  assert.match(skill, /designs and writes it for this question, with no fixed template/);
+  assert.match(skill, /Run it and record the trace when the code can run/);
+  const pages = read("agentic-explain", "references", "interactive-pages.md");
+  assert.match(pages, /there is\s+no template, schema or generator to fill/);
+  assert.match(pages, /No network at runtime/);
+  assert.match(pages, /`textContent`, never `innerHTML`/);
+  assert.match(pages, /Without a browser, say the page was \*\*not seen\*\*/);
+});

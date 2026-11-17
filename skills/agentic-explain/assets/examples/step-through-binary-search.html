@@ -1,0 +1,473 @@
+<!doctype html>
+<!-- Example of an agent-built step-through page (binary search). An illustration of the qualities in references/interactive-pages.md, not a template to fill. -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-E+NcSM6ErWfDOrQ5EToFLUWnI+zfSfoiCDnl6vD5tL4='; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Binary search, step by step</title>
+<style>
+/* Single theme: achromatic colours, one role per token. Compositions only consume them. */
+:root {
+  color-scheme: light dark;
+  --page: #ffffff;
+  --panel: #f4f4f4;
+  --text: #202020;
+  --text-secondary: #555555;
+  --link: #333333;
+  --line: #737373;
+  --focus: #161616;
+  --diagram-fill: #ffffff;
+  --diagram-stroke: #505050;
+  --diagram-label: #202020;
+  --font-body: system-ui, sans-serif;
+  --font-code: ui-monospace, monospace;
+  --type-body: 1rem;
+  --type-note: .9375rem;
+  --type-section: 1.625rem;
+  --type-title: 2.375rem;
+  --leading: 1.65;
+  --leading-heading: 1.22;
+  --weight-body: 400;
+  --weight-heading: 650;
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1.25rem;
+  --space-5: 1.75rem;
+  --space-6: 2.75rem;
+  --space-7: 4rem;
+  --radius-control: .25rem;
+  --radius-panel: .5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #171717;
+    --panel: #242424;
+    --text: #ededed;
+    --text-secondary: #bcbcbc;
+    --link: #dddddd;
+    --line: #999999;
+    --focus: #ffffff;
+    --diagram-fill: #171717;
+    --diagram-stroke: #b0b0b0;
+    --diagram-label: #ededed;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #171717;
+  --panel: #242424;
+  --text: #ededed;
+  --text-secondary: #bcbcbc;
+  --link: #dddddd;
+  --line: #999999;
+  --focus: #ffffff;
+  --diagram-fill: #171717;
+  --diagram-stroke: #b0b0b0;
+  --diagram-label: #ededed;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--text); font-family: var(--font-body); font-size: var(--type-body); line-height: var(--leading); font-weight: var(--weight-body); }
+h1, h2, h3, strong, th, dt { font-weight: var(--weight-heading); }
+h1, h2, h3 { line-height: var(--leading-heading); margin: 0 0 var(--space-4); }
+h1 { font-size: var(--type-title); }
+h2 { font-size: var(--type-section); }
+h3 { font-size: var(--type-body); }
+p, ul, ol, dl, figure, pre { margin: 0 0 var(--space-4); }
+li + li { margin-top: var(--space-2); }
+code, pre { font-family: var(--font-code); font-size: var(--type-note); overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; padding: var(--space-4); background: var(--panel); border-radius: var(--radius-panel); }
+a { color: var(--link); text-underline-offset: .2em; overflow-wrap: anywhere; }
+mark { background: var(--panel); color: var(--text); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+details { margin: var(--space-4) 0; }
+summary { cursor: pointer; min-height: 44px; padding: var(--space-3) 0; text-decoration: underline; text-underline-offset: .2em; }
+details > :not(summary) { margin-top: var(--space-3); }
+figcaption, small { font-size: var(--type-note); color: var(--text-secondary); }
+svg { display: block; width: 100%; height: auto; font-family: var(--font-body); }
+svg text { fill: var(--diagram-label); font-size: var(--type-body); }
+svg rect, svg polygon, svg circle, svg ellipse { fill: var(--diagram-fill); stroke: var(--diagram-stroke); stroke-width: 1.5; }
+svg path, svg line, svg polyline { fill: none; stroke: var(--diagram-stroke); stroke-width: 1.5; }
+svg marker path { fill: var(--diagram-stroke); stroke: none; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+caption { text-align: left; margin-bottom: var(--space-3); font-weight: var(--weight-heading); }
+td, th { vertical-align: top; padding: var(--space-3); }
+thead { background: var(--panel); }
+td:first-child, th:first-child { padding-left: 0; }
+
+/* Step player layout. Colour, type and spacing come from theme.css; state is shown by inversion and line weight. */
+.walkthrough { max-width: 76rem; margin: 0 auto; padding: var(--space-5) var(--space-4) var(--space-7); }
+.walkthrough header { max-width: 48rem; }
+.walkthrough h1 { font-size: clamp(1.75rem, 5vw, var(--type-title)); }
+.meta { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: var(--type-note); color: var(--text-secondary); }
+.badge { border: 1px solid var(--line); border-radius: var(--radius-control); padding: 0 var(--space-2); color: var(--text); }
+.badge-observed { border-width: 2px; border-color: var(--text); }
+.badge-reasoned, .badge-synthetic { border-style: dashed; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.player { display: grid; gap: var(--space-4); margin: var(--space-5) 0; }
+.controls { display: grid; gap: var(--space-2); padding: var(--space-3); background: var(--panel); border-radius: var(--radius-panel); }
+@media (min-width: 900px) { .controls { position: sticky; top: 0; z-index: 1; } }
+.buttons { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.controls button, .controls select { min-width: 44px; min-height: 44px; padding: 0 var(--space-3); font: inherit; color: var(--text); background: var(--page); border: 1px solid var(--line); border-radius: var(--radius-control); cursor: pointer; }
+.controls button:disabled { opacity: .45; cursor: default; }
+.controls button:focus-visible, .controls select:focus-visible, .controls input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.controls input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--text); }
+.secondary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); font-size: var(--type-note); }
+.position { font-variant-numeric: tabular-nums; font-weight: var(--weight-heading); }
+
+.narration { border-left: 4px solid var(--text); padding: var(--space-2) var(--space-4); min-height: 5rem; }
+.narration p { margin: 0 0 var(--space-2); }
+.step-text { font-size: 1.125rem; }
+.decision { font-size: var(--type-note); }
+
+.columns { display: grid; gap: var(--space-4); }
+@media (min-width: 900px) { .columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .columns.single { grid-template-columns: minmax(0, 1fr); } }
+.panel { min-width: 0; background: var(--panel); border-radius: var(--radius-panel); padding: var(--space-4); }
+.panel h2 { font-size: var(--type-body); margin-bottom: var(--space-3); }
+
+.code-scroll { max-height: 28rem; overflow: auto; position: relative; }
+.code-lines { margin: 0; padding-left: 3.25rem; font-family: var(--font-code); font-size: var(--type-note); color: var(--text-secondary); }
+.code-lines li { margin: 0; padding: 0 var(--space-2); white-space: pre; border-radius: var(--radius-control); }
+.code-lines li + li { margin-top: 0; }
+.code-lines code { white-space: pre; overflow-wrap: normal; color: var(--text); }
+.code-lines li.current { background: var(--text); color: var(--page); }
+.code-lines li.current::marker { color: var(--text); font-weight: var(--weight-heading); }
+.code-lines li.current code { color: var(--page); font-weight: var(--weight-heading); }
+
+.structure { margin: 0 0 var(--space-4); }
+.structure figcaption { margin-bottom: var(--space-2); font-family: var(--font-code); }
+.cells { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; margin: 0; padding: 0; }
+.cells li + li { margin-top: 0; }
+.type-stack .cells { flex-direction: column; align-items: flex-start; }
+.cell { display: grid; justify-items: center; align-content: start; min-width: 3rem; }
+.cell .index { font-size: .75rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.cell .value { min-width: 3rem; padding: var(--space-2) var(--space-3); text-align: center; font-family: var(--font-code); background: var(--page); border: 1px solid var(--line); border-radius: var(--radius-control); }
+.cell .pointer { font-size: .75rem; font-family: var(--font-code); font-weight: var(--weight-heading); min-height: 1.2em; }
+.cell.hot .value { background: var(--text); color: var(--page); border-color: var(--text); font-weight: var(--weight-heading); }
+.cell.muted .value { color: var(--text-secondary); border-style: dashed; }
+.cell.nul .value { border-style: dotted; color: var(--text-secondary); }
+.arrow { align-self: center; color: var(--text-secondary); }
+.outside, .empty, .graph-legend { font-size: var(--type-note); color: var(--text-secondary); font-family: var(--font-code); margin: var(--space-2) 0 0; }
+
+.type-vars table th, .type-vars table td { padding: var(--space-1) var(--space-3); border-bottom: 1px solid var(--line); }
+.type-vars tr.changed th, .type-vars tr.changed td { background: var(--text); color: var(--page); }
+.type-vars tr.changed code { font-weight: var(--weight-heading); }
+.grid-scroll, .graph-scroll { overflow-x: auto; }
+.grid { width: auto; }
+.grid th, .grid td { padding: var(--space-1) var(--space-3); border: 1px solid var(--line); text-align: center; font-family: var(--font-code); font-variant-numeric: tabular-nums; }
+.grid td.hot { background: var(--text); color: var(--page); font-weight: var(--weight-heading); }
+.graph-scroll svg { min-width: 18rem; max-width: 34rem; }
+.graph-scroll .node { fill: var(--diagram-fill); stroke: var(--diagram-stroke); stroke-width: 1.5; }
+.graph-scroll .node.visited { stroke-width: 3; stroke-dasharray: 4 3; }
+.graph-scroll .node.hot { fill: var(--text); stroke: var(--text); stroke-width: 3; }
+.graph-scroll .node-label { font-family: var(--font-code); font-size: 17px; }
+.graph-scroll .node-label.hot { fill: var(--page); font-weight: var(--weight-heading); }
+.graph-scroll .node-note, .graph-scroll .edge-label { font-size: 15px; fill: var(--text-secondary); }
+.graph-scroll .edge.hot { stroke: var(--text); stroke-width: 4; }
+
+.counter-box h3 { font-size: var(--type-note); margin: 0 0 var(--space-2); }
+.counters { display: grid; grid-template-columns: max-content auto; gap: var(--space-1) var(--space-4); margin: 0; font-variant-numeric: tabular-nums; }
+.counters dd { margin: 0; font-family: var(--font-code); font-weight: var(--weight-heading); }
+.keys { font-size: var(--type-note); color: var(--text-secondary); margin: 0; }
+
+.complexity { max-width: 48rem; margin-top: var(--space-6); }
+.complexity dl { display: grid; grid-template-columns: max-content auto; gap: var(--space-2) var(--space-4); }
+.complexity dd { margin: 0; }
+.complexity table { width: auto; font-variant-numeric: tabular-nums; }
+.complexity th, .complexity td { border-bottom: 1px solid var(--line); padding: var(--space-1) var(--space-4) var(--space-1) 0; }
+.all-steps { max-width: 48rem; }
+.all-steps code { display: block; color: var(--text-secondary); }
+
+</style></head><body>
+<main class="walkthrough">
+<header><h1>Binary search, step by step</h1><p>Each comparison with the middle value discards half of what is left, so a sorted array of n values needs about log2(n) rounds.</p>
+<p class="meta"><span class="badge badge-observed">Observed execution: <code>node record-search.mjs</code></span></p></header>
+<div id="player" class="player" hidden></div>
+<details class="all-steps"><summary>All steps as text</summary><ol><li id="text-step-1">Search 89 in 12 sorted values: the whole array is still possible. <code>line 2: let lo = 0, hi = a.length - 1;</code></li><li id="text-step-2">The middle of 0..11 is index 5, value 55. <code>line 4: const mid = Math.floor((lo + hi) / 2);</code></li><li id="text-step-3">55 &lt; 89, so 89 can only be to the right: everything up to 5 is discarded. <em>Decision: a[mid] &lt; x → lo = 6</em> <code>line 6: if (a[mid] &lt; x) lo = mid + 1;</code></li><li id="text-step-4">The middle of 6..11 is index 8, value 95. <code>line 4: const mid = Math.floor((lo + hi) / 2);</code></li><li id="text-step-5">95 &gt; 89, so 89 can only be to the left: everything from 8 is discarded. <em>Decision: a[mid] &gt; x → hi = 7</em> <code>line 7: else hi = mid - 1;</code></li><li id="text-step-6">The middle of 6..7 is index 6, value 72. <code>line 4: const mid = Math.floor((lo + hi) / 2);</code></li><li id="text-step-7">72 &lt; 89, so 89 can only be to the right: everything up to 6 is discarded. <em>Decision: a[mid] &lt; x → lo = 7</em> <code>line 6: if (a[mid] &lt; x) lo = mid + 1;</code></li><li id="text-step-8">The middle of 7..7 is index 7, value 89. <code>line 4: const mid = Math.floor((lo + hi) / 2);</code></li><li id="text-step-9">a[7] is 89: found after 7 comparisons. <em>Decision: a[mid] === x → return 7</em> <code>line 5: if (a[mid] === x) return mid;</code></li></ol></details>
+<section class="complexity"><h2>Cost and complexity</h2><p class="meta"><span class="badge badge-observed">Measured</span></p><dl><dt>Time</dt><dd><code>O(log n)</code></dd><dt>Space</dt><dd><code>O(1)</code></dd><dt>Why</dt><dd>Each round halves hi − lo; multiplying n by 4 adds a constant 4 comparisons in the worst case measured below. Only lo, hi and mid are stored.</dd></dl><table><caption>Measured</caption><thead><tr><th scope="col">n</th><th scope="col">comparisons</th></tr></thead><tbody><tr><td>16</td><td>10</td></tr><tr><td>64</td><td>14</td></tr><tr><td>256</td><td>18</td></tr><tr><td>1024</td><td>22</td></tr><tr><td>4096</td><td>26</td></tr></tbody></table></section>
+</main>
+<script type="application/json" id="trace-data">{"trace":{"version":1,"title":"Binary search, step by step","language":"en","summary":"Each comparison with the middle value discards half of what is left, so a sorted array of n values needs about log2(n) rounds.","evidence":"observed","run":"node record-search.mjs","code":{"language":"javascript","firstLine":1,"lines":["function search(a, x) {","  let lo = 0, hi = a.length - 1;","  while (lo \u003c= hi) {","    const mid = Math.floor((lo + hi) / 2);","    if (a[mid] === x) return mid;","    if (a[mid] \u003c x) lo = mid + 1;","    else hi = mid - 1;","  }","  return -1;","}"]},"structures":[{"id":"a","type":"array","label":"a (sorted)"},{"id":"vars","type":"vars","label":"variables"}],"counters":[{"id":"cmp","label":"comparisons"}],"steps":[{"line":2,"text":"Search 89 in 12 sorted values: the whole array is still possible.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":0,"hi":11},"highlight":[],"muted":[]},"vars":{"values":{"x":89,"lo":0,"hi":11}}},"counters":{"cmp":0}},{"line":4,"text":"The middle of 0..11 is index 5, value 55.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":0,"hi":11,"mid":5},"highlight":[5],"muted":[]},"vars":{"values":{"x":89,"lo":0,"hi":11,"mid":5}}},"counters":{"cmp":0}},{"line":6,"text":"55 \u003c 89, so 89 can only be to the right: everything up to 5 is discarded.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":6,"hi":11,"mid":5},"highlight":[],"muted":[0,1,2,3,4,5]},"vars":{"values":{"x":89,"lo":6,"hi":11,"mid":5}}},"counters":{"cmp":2},"decision":"a[mid] \u003c x → lo = 6"},{"line":4,"text":"The middle of 6..11 is index 8, value 95.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":6,"hi":11,"mid":8},"highlight":[8],"muted":[0,1,2,3,4,5]},"vars":{"values":{"x":89,"lo":6,"hi":11,"mid":8}}},"counters":{"cmp":2}},{"line":7,"text":"95 \u003e 89, so 89 can only be to the left: everything from 8 is discarded.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":6,"hi":7,"mid":8},"highlight":[],"muted":[0,1,2,3,4,5,8,9,10,11]},"vars":{"values":{"x":89,"lo":6,"hi":7,"mid":8}}},"counters":{"cmp":4},"decision":"a[mid] \u003e x → hi = 7"},{"line":4,"text":"The middle of 6..7 is index 6, value 72.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":6,"hi":7,"mid":6},"highlight":[6],"muted":[0,1,2,3,4,5,8,9,10,11]},"vars":{"values":{"x":89,"lo":6,"hi":7,"mid":6}}},"counters":{"cmp":4}},{"line":6,"text":"72 \u003c 89, so 89 can only be to the right: everything up to 6 is discarded.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":7,"hi":7,"mid":6},"highlight":[],"muted":[0,1,2,3,4,5,6,8,9,10,11]},"vars":{"values":{"x":89,"lo":7,"hi":7,"mid":6}}},"counters":{"cmp":6},"decision":"a[mid] \u003c x → lo = 7"},{"line":4,"text":"The middle of 7..7 is index 7, value 89.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":7,"hi":7,"mid":7},"highlight":[7],"muted":[0,1,2,3,4,5,6,8,9,10,11]},"vars":{"values":{"x":89,"lo":7,"hi":7,"mid":7}}},"counters":{"cmp":6}},{"line":5,"text":"a[7] is 89: found after 7 comparisons.","state":{"a":{"values":[3,8,13,21,34,55,72,89,95,101,144,233],"pointers":{"lo":7,"hi":7,"mid":7},"highlight":[7],"muted":[0,1,2,3,4,5,6,8,9,10,11]},"vars":{"values":{"x":89,"lo":7,"hi":7,"mid":7}}},"counters":{"cmp":7},"decision":"a[mid] === x → return 7"}],"complexity":{"time":"O(log n)","space":"O(1)","evidence":"measured","measurements":[{"n":16,"counts":{"cmp":10}},{"n":64,"counts":{"cmp":14}},{"n":256,"counts":{"cmp":18}},{"n":1024,"counts":{"cmp":22}},{"n":4096,"counts":{"cmp":26}}],"basis":"Each round halves hi − lo; multiplying n by 4 adds a constant 4 comparisons in the worst case measured below. Only lo, hi and mid are stored."}},"labels":{"play":"Play","pause":"Pause","prev":"Previous step","next":"Next step","first":"First step","last":"Last step","speed":"Speed","step":"Step","of":"of","code":"Code","state":"State","counters":"Cost so far","decision":"Decision","complexity":"Cost and complexity","time":"Time","space":"Space","basis":"Why","measured":"Measured","n":"n","observed":"Observed execution","reasoned":"Reasoned trace, not executed","synthetic":"Synthetic example","derived":"Derived from the code, not measured","allSteps":"All steps as text","source":"Source","empty":"empty","keys":"Keys: ← → step, space play/pause, Home/End.","line":"line","nul":"null","top":"top","front":"front","changed":"changed","now":"now","visited":"visited"}}</script>
+<script>(() => {
+  "use strict";
+  const root = document.getElementById("player");
+  const {trace, labels: t} = JSON.parse(document.getElementById("trace-data").textContent);
+  const steps = trace.steps, total = steps.length;
+  const structures = trace.structures || [], counters = trace.counters || [];
+  const firstLine = trace.code ? (trace.code.firstLine || 1) : 1;
+  const SVG = "http://www.w3.org/2000/svg";
+
+  // Each step shows the last state given for every structure, so a trace only lists what changed.
+  const resolved = [];
+  {
+    let state = {}, count = {};
+    for (const step of steps) {
+      state = Object.assign({}, state, step.state || {});
+      count = Object.assign({}, count, step.counters || {});
+      resolved.push({state, count});
+    }
+  }
+
+  function el(tag, attrs, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === false || v === undefined || v === null) continue;
+      if (k === "class") node.className = v; else node.setAttribute(k, v === true ? "" : String(v));
+    }
+    for (const c of children) if (c !== null && c !== undefined) node.append(c instanceof Node ? c : document.createTextNode(String(c)));
+    return node;
+  }
+  function svg(tag, attrs, textContent) {
+    const node = document.createElementNS(SVG, tag);
+    for (const [k, v] of Object.entries(attrs || {})) node.setAttribute(k, String(v));
+    if (textContent !== undefined) node.textContent = textContent;
+    return node;
+  }
+  const show = v => v === null ? t.nul : typeof v === "string" ? v : JSON.stringify(v);
+  const hidden = text => el("span", {class: "visually-hidden"}, text);
+
+  // Controls
+  const button = (label, glyph, action) => {
+    const b = el("button", {type: "button", "aria-label": label, title: label}, glyph);
+    b.addEventListener("click", action);
+    return b;
+  };
+  const first = button(t.first, "⏮", () => go(0));
+  const prev = button(t.prev, "◀", () => go(current - 1));
+  const play = button(t.play, "▶", () => toggle());
+  const next = button(t.next, "▶|", () => go(current + 1));
+  const last = button(t.last, "⏭", () => go(total - 1));
+  const range = el("input", {type: "range", min: 1, max: total, value: 1, "aria-label": t.step});
+  range.addEventListener("input", () => go(Number(range.value) - 1));
+  const speed = el("select", {"aria-label": t.speed});
+  for (const [label, ms] of [["0.5×", 2400], ["1×", 1200], ["2×", 600]]) speed.append(el("option", {value: ms, selected: ms === 1200}, label));
+  speed.addEventListener("change", () => { if (timer) { stop(); start(); } });
+  const position = el("span", {class: "position"});
+  const controls = el("div", {class: "controls", role: "group", "aria-label": t.step},
+    el("div", {class: "buttons"}, first, prev, play, next, last), range,
+    el("div", {class: "secondary"}, position, el("label", {}, `${t.speed} `, speed)));
+
+  // Narration
+  const narration = el("div", {class: "narration", "aria-live": "polite"});
+
+  // Code
+  let codeLines = [], codeBox = null;
+  if (trace.code) {
+    const list = el("ol", {class: "code-lines", start: firstLine});
+    codeLines = trace.code.lines.map(line => {
+      const item = el("li", {}, el("code", {}, line.length ? line : " "));
+      list.append(item);
+      return item;
+    });
+    codeBox = el("section", {class: "panel code", "aria-label": t.code}, el("h2", {}, t.code + (trace.code.language ? ` · ${trace.code.language}` : "")), el("div", {class: "code-scroll"}, list));
+  }
+
+  // State
+  const stateBoxes = new Map();
+  const stateSection = el("section", {class: "panel state", "aria-label": t.state}, el("h2", {}, t.state));
+  for (const s of structures) {
+    const body = el("div", {class: `structure-body type-${s.type}`});
+    stateSection.append(el("figure", {class: "structure"}, el("figcaption", {}, s.label || s.id), body));
+    stateBoxes.set(s.id, body);
+  }
+  const counterList = el("dl", {class: "counters"});
+  if (counters.length) stateSection.append(el("div", {class: "counter-box"}, el("h3", {}, t.counters), counterList));
+  if (!structures.length && !counters.length) stateSection.hidden = true;
+
+  const layout = el("div", {class: "stage"}, narration);
+  const columns = el("div", {class: codeBox ? "columns" : "columns single"});
+  if (codeBox) columns.append(codeBox);
+  columns.append(stateSection);
+  root.append(controls, layout, columns, el("p", {class: "keys"}, t.keys));
+  root.hidden = false;
+
+  // Graph geometry is fixed for the whole trace, so nodes never jump between steps.
+  const geometry = new Map();
+  for (const s of structures.filter(x => x.type === "graph")) geometry.set(s.id, layoutGraph(s));
+
+  function layoutGraph(s) {
+    const W = 400, R = 20, pos = new Map();
+    const layoutKind = s.layout || (s.nodes.every(n => n.x !== undefined) ? "manual" : "circle");
+    let H = 320;
+    if (layoutKind === "manual") {
+      for (const n of s.nodes) pos.set(n.id, [40 + n.x / 100 * (W - 80), 40 + n.y / 100 * (H - 80)]);
+    } else if (layoutKind === "tree") {
+      const children = new Map(s.nodes.map(n => [n.id, []])), incoming = new Set();
+      for (const e of s.edges || []) { children.get(e.from).push(e.to); incoming.add(e.to); }
+      const roots = s.nodes.filter(n => !incoming.has(n.id)).map(n => n.id);
+      if (!roots.length) roots.push(s.nodes[0].id);
+      const levels = [], seen = new Set();
+      let frontier = roots;
+      while (frontier.length) {
+        const level = frontier.filter(id => !seen.has(id));
+        level.forEach(id => seen.add(id));
+        if (level.length) levels.push(level);
+        frontier = level.flatMap(id => children.get(id));
+      }
+      const rest = s.nodes.map(n => n.id).filter(id => !seen.has(id));
+      if (rest.length) levels.push(rest);
+      H = Math.max(160, levels.length * 88 + 24);
+      levels.forEach((level, d) => level.forEach((id, i) => pos.set(id, [(i + 1) * W / (level.length + 1), 44 + d * 88])));
+    } else {
+      const n = s.nodes.length, cx = W / 2, cy = H / 2, r = n === 1 ? 0 : Math.min(W, H) / 2 - 48;
+      s.nodes.forEach((node, i) => pos.set(node.id, [cx + r * Math.cos(2 * Math.PI * i / n - Math.PI / 2), cy + r * Math.sin(2 * Math.PI * i / n - Math.PI / 2)]));
+    }
+    return {W, H, R, pos};
+  }
+
+  function renderGraph(s, value, body) {
+    const {W, H, R, pos} = geometry.get(s.id);
+    const active = new Set(value.active || []), visited = new Set(value.visited || []);
+    const hotEdges = new Set((value.activeEdges || []).map(([a, b]) => `${a}>${b}`));
+    const image = svg("svg", {viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": s.label || s.id});
+    const defs = svg("defs");
+    const marker = svg("marker", {id: `tip-${s.id}`, markerWidth: 10, markerHeight: 10, refX: 9, refY: 5, orient: "auto", markerUnits: "userSpaceOnUse"});
+    marker.append(svg("path", {d: "M0 0L10 5L0 10Z"}));
+    defs.append(marker);
+    image.append(defs);
+    for (const e of s.edges || []) {
+      const [x1, y1] = pos.get(e.from), [x2, y2] = pos.get(e.to);
+      const len = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / len, uy = (y2 - y1) / len;
+      const hot = hotEdges.has(`${e.from}>${e.to}`) || (!s.directed && hotEdges.has(`${e.to}>${e.from}`));
+      const line = svg("line", {x1: x1 + ux * R, y1: y1 + uy * R, x2: x2 - ux * (R + 2), y2: y2 - uy * (R + 2), class: hot ? "edge hot" : "edge"});
+      if (s.directed) line.setAttribute("marker-end", `url(#tip-${s.id})`);
+      image.append(line);
+      if (e.label) image.append(svg("text", {x: (x1 + x2) / 2, y: (y1 + y2) / 2 - 6, "text-anchor": "middle", class: "edge-label"}, e.label));
+    }
+    const notes = value.notes || {};
+    for (const n of s.nodes) {
+      const [x, y] = pos.get(n.id);
+      const kind = active.has(n.id) ? "hot" : visited.has(n.id) ? "visited" : "";
+      image.append(svg("circle", {cx: x, cy: y, r: R, class: `node ${kind}`}));
+      image.append(svg("text", {x, y: y + 5, "text-anchor": "middle", class: `node-label ${kind}`}, n.label || n.id));
+      if (notes[n.id]) image.append(svg("text", {x, y: y + R + 16, "text-anchor": "middle", class: "node-note"}, notes[n.id]));
+    }
+    body.append(el("div", {class: "graph-scroll"}, image));
+    const summary = [];
+    if (active.size) summary.push(`${t.now}: ${[...active].join(", ")}`);
+    const done = [...visited].filter(n => !active.has(n));
+    if (done.length) summary.push(`${t.visited}: ${done.join(", ")}`);
+    if (summary.length) body.append(el("p", {class: "graph-legend"}, summary.join("  ·  ")));
+  }
+
+  function renderCells(s, value, body) {
+    const values = value.values, hot = new Set(value.highlight || []), muted = new Set(value.muted || []);
+    const pointers = Object.entries(value.pointers || {});
+    if (!values.length) { body.append(el("p", {class: "empty"}, t.empty)); }
+    const row = el("ol", {class: "cells", start: 0});
+    const order = s.type === "stack" ? values.map((_, i) => values.length - 1 - i) : values.map((_, i) => i);
+    order.forEach((i, position) => {
+      const names = pointers.filter(([, p]) => p === i).map(([n]) => n);
+      const tags = [];
+      if (s.type === "stack" && position === 0) tags.push(t.top);
+      if (s.type === "queue" && position === 0) tags.push(t.front);
+      const cell = el("li", {class: ["cell", hot.has(i) ? "hot" : "", muted.has(i) ? "muted" : ""].join(" ").trim()},
+        s.type === "array" || s.type === "list" ? el("span", {class: "index"}, i) : null,
+        el("span", {class: "value"}, show(values[i])),
+        names.length || tags.length ? el("span", {class: "pointer"}, [...tags, ...names].join(" ")) : el("span", {class: "pointer"}, " "));
+      row.append(cell);
+      if (s.type === "list") row.append(el("li", {class: "arrow", "aria-hidden": "true"}, "→"));
+    });
+    if (s.type === "list") row.append(el("li", {class: "cell nul"}, el("span", {class: "value"}, t.nul)));
+    if (values.length || s.type === "list") body.append(row);
+    const outside = pointers.filter(([, p]) => p === null || p < 0 || p >= values.length);
+    if (outside.length) body.append(el("p", {class: "outside"}, outside.map(([n, p]) => `${n} = ${p === null ? t.nul : p}`).join("  ·  ")));
+  }
+
+  function renderVars(value, previous, body) {
+    const table = el("table", {});
+    const tbody = el("tbody");
+    for (const [k, v] of Object.entries(value.values)) {
+      const changed = previous && previous.values && Object.hasOwn(previous.values, k) && previous.values[k] !== v;
+      const added = previous && previous.values && !Object.hasOwn(previous.values, k);
+      tbody.append(el("tr", {class: changed || added ? "changed" : ""}, el("th", {scope: "row"}, el("code", {}, k)), el("td", {}, el("code", {}, show(v)), changed || added ? hidden(` (${t.changed})`) : null)));
+    }
+    table.append(tbody);
+    body.append(table);
+  }
+
+  function renderTable(s, value, body) {
+    const hot = new Set((value.highlight || []).map(([r, c]) => `${r},${c}`));
+    const table = el("table", {class: "grid"});
+    if (s.colLabels) {
+      const head = el("tr", {}, s.rowLabels ? el("th", {}) : null, ...s.colLabels.map(c => el("th", {scope: "col"}, c)));
+      table.append(el("thead", {}, head));
+    }
+    const tbody = el("tbody");
+    value.rows.forEach((row, r) => tbody.append(el("tr", {}, s.rowLabels ? el("th", {scope: "row"}, s.rowLabels[r] ?? "") : null,
+      ...row.map((v, c) => el("td", {class: hot.has(`${r},${c}`) ? "hot" : ""}, show(v))))));
+    table.append(tbody);
+    body.append(el("div", {class: "grid-scroll"}, table));
+  }
+
+  let current = -1, timer = null;
+  function go(i) {
+    i = Math.max(0, Math.min(total - 1, i));
+    if (i === current) return;
+    current = i;
+    const step = steps[i], {state, count} = resolved[i];
+    position.textContent = `${t.step} ${i + 1} ${t.of} ${total}`;
+    range.value = i + 1;
+    range.setAttribute("aria-valuetext", position.textContent);
+    first.disabled = prev.disabled = i === 0;
+    next.disabled = last.disabled = i === total - 1;
+    narration.replaceChildren(hidden(position.textContent + ". "), el("p", {class: "step-text"}, step.text),
+      ...(step.decision ? [el("p", {class: "decision"}, el("strong", {}, `${t.decision}: `), step.decision)] : []));
+    codeLines.forEach((line, n) => {
+      const isCurrent = step.line !== undefined && n === step.line - firstLine;
+      line.classList.toggle("current", isCurrent);
+      if (isCurrent) line.setAttribute("aria-current", "step"); else line.removeAttribute("aria-current");
+    });
+    if (codeBox && step.line !== undefined) {
+      const scroller = codeBox.querySelector(".code-scroll"), line = codeLines[step.line - firstLine];
+      const top = line.offsetTop - scroller.offsetTop;
+      if (top < scroller.scrollTop || top > scroller.scrollTop + scroller.clientHeight - line.offsetHeight) scroller.scrollTop = Math.max(0, top - scroller.clientHeight / 3);
+    }
+    for (const s of structures) {
+      const body = stateBoxes.get(s.id), value = state[s.id];
+      body.replaceChildren();
+      if (!value) { body.append(el("p", {class: "empty"}, "—")); continue; }
+      if (s.type === "vars") renderVars(value, i > 0 ? resolved[i - 1].state[s.id] : null, body);
+      else if (s.type === "graph") renderGraph(s, value, body);
+      else if (s.type === "table") renderTable(s, value, body);
+      else renderCells(s, value, body);
+    }
+    counterList.replaceChildren(...counters.flatMap(c => [el("dt", {}, c.label), el("dd", {}, count[c.id] ?? 0)]));
+    try { history.replaceState(null, "", `#step-${i + 1}`); } catch { /* sandboxed frames may refuse */ }
+    if (i === total - 1) stop();
+  }
+
+  function start() {
+    if (current === total - 1) go(0);
+    play.textContent = "⏸";
+    play.setAttribute("aria-label", t.pause);
+    play.title = t.pause;
+    timer = setInterval(() => go(current + 1), Number(speed.value));
+  }
+  function stop() {
+    clearInterval(timer);
+    timer = null;
+    play.textContent = "▶";
+    play.setAttribute("aria-label", t.play);
+    play.title = t.play;
+  }
+  function toggle() { timer ? stop() : start(); }
+
+  document.addEventListener("keydown", event => {
+    const tag = event.target && event.target.tagName;
+    if (event.altKey || event.ctrlKey || event.metaKey || tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    if (event.key === " ") {
+      if (tag === "BUTTON" || tag === "SUMMARY" || tag === "A") return;
+      event.preventDefault();
+      toggle();
+      return;
+    }
+    const actions = {ArrowRight: () => go(current + 1), ArrowLeft: () => go(current - 1), Home: () => go(0), End: () => go(total - 1)};
+    if (actions[event.key]) { event.preventDefault(); stop(); actions[event.key](); }
+  });
+
+  const fromHash = /^#step-(\d+)$/.exec(location.hash || "");
+  go(fromHash ? Number(fromHash[1]) - 1 : 0);
+})();
+</script>
+</body></html>
