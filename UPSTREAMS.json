@@ -152,7 +152,7 @@
       "targetPath": "skills/agentic-architecture/SKILL.md",
       "mode": "adapted",
       "reason": "English adaptation of improve-codebase-architecture: six steps with completion criteria, measured proof for each candidate in a declared history window (commits per candidate, coupling, co-change, deletion test, file:line and a command for every number), an agentic-design-compliant visual report published with Artifact, a one-question-at-a-time grill and execution through agentic-feature. Frontmatter has name and description only; requests trigger the skill. The agentic-implement sibling supplies the refactor recipe linked by deepening.md.",
-      "targetSha256": "ef1176305b5a114caf7b5b62725f3a9358dc39b6bada4cacfc26d90094370855"
+      "targetSha256": "2d5fc094d24b1bb7f4f37fbff711ca569132b959186b3080e1ba86497e1d45b5"
     },
     {
       "upstream": "mattpocock",
@@ -170,7 +170,7 @@
       "targetPath": "skills/agentic-architecture/references/deepening.md",
       "mode": "adapted",
       "reason": "English adaptation with the report's dependency-category labels. Old shallow-module tests are removed only after the agentic-implement refactor recipe.",
-      "targetSha256": "f756f46886831ee259d174c71196c7ce029893abd8982830dc2a611dbe71c164"
+      "targetSha256": "6ba98e291381daaf51111cac2ef00a4f97e17bae9009f06cdfe695fc63f82dac"
     },
     {
       "upstream": "mattpocock",

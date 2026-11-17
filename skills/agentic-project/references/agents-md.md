@@ -20,7 +20,9 @@ operational and written for agents.
   unforeseen cases; a rule without a reason gets bypassed at the first unusual case.
 - **Tested commands**: every command in `AGENTS.md` ran in this session and works.
 - **Mechanical rules become automatic checks** (hook, lint, test), not sentences. Keep rules
-  needing judgment in `AGENTS.md`.
+  needing judgment in `AGENTS.md`. Hard rules may carry a short `Rule | Enforced by` table; a
+  correction repeated against a prose rule moves it up the ladder in
+  `<agentic-code-review>/references/encode-corrections.md`.
 - **Each rule in one place.** Project principles live in the constitution; decision reasons
   in `docs/decisions.md`/ADRs; process in `docs/methodology.md`. `AGENTS.md` points to them
   (“before touching personal data, read constitution principle II”) instead of copying them.

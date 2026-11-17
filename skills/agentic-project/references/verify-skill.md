@@ -21,18 +21,26 @@ result.
 
 1. **Boot.** Exact commands to start the app with synthetic data, and the readiness signal to wait
    for (a health URL, a log line, a port). Never a fixed sleep.
-2. **Drive.** The tool for this surface. A browser goes through Playwright, CDP or the host's
+2. **Doctor.** One read-only check that answers “is this instance worth driving?”: the process is
+   up, it is this checkout's build, the port belongs to it, the test account works. Run it first,
+   and again whenever a step fails in a way that looks like the environment.
+3. **Drive.** The tool for this surface. A browser goes through Playwright, CDP or the host's
    browser tool. Mobile goes through a simulator or emulator MCP. Desktop goes through computer
    use. A backend goes through an API harness (`curl`, a small script) or the queue's CLI. Name the
-   tool and how to install it.
-3. **Feature map.** One row per user-facing feature: entry path or command, the steps, stable
+   tool and how to install it. Steps that every run repeats (sign in, seed a record, open a
+   screen, read the console) become small executable helpers in the skill's folder, invoked by
+   name in the skill body. Agents then reuse them instead of rewriting the same driver code on
+   every run, which saves tokens and makes the driver itself testable.
+4. **Feature map.** One row per user-facing feature: entry path or command, the steps, stable
    selectors or requests, and the expected observable result. This is the rubric. A finding is a
    row whose result differs.
-4. **Inspect.** What to collect for each failed step: a screenshot, the DOM or response body,
+5. **Inspect.** What to collect for each failed step: a screenshot, the DOM or response body,
    console and server logs, and the network trace. A failure report names the step, what was
    expected, what was seen, and the path to the evidence. “Timeout after 30s” on its own is not
    a report.
-5. **Teardown.** Stop every process it started, including after a failure midway.
+6. **Teardown.** Stop every process it started, including after a failure midway. Kill what it
+   started, never by process name. Teardown keeps the evidence: proof files survive it, in the
+   folder the skill names.
 
 ## Keep it fast and reliable
 
@@ -46,6 +54,7 @@ It is the smoke-test harness that every user-visible change passes through, so t
 - Prove that it can fail. Break one feature-map row (a selector, a status code), see red, and
   restore.
 - Prune rows for features that no longer exist, in the same change that removes the feature.
+  A change that adds a user-facing feature adds its row in the same change.
 
 ## How the other skills use it
 

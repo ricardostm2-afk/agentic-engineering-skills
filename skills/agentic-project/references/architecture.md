@@ -65,6 +65,9 @@ Good architecture for agents makes every change quick to verify without a shared
 - **Deterministic tests**: controllable clock, randomness and network.
 - **Clear boundaries**: every area has an owner and checks (area map), preventing collisions
   between parallel agents.
+- **Enforced boundaries**: forbidden imports between layers or areas fail a lint or dependency
+  check whose error names the allowed interface, not a sentence in `AGENTS.md`
+  (`<agentic-architecture>/references/deepening.md`, “Enforce the boundary”).
 
 ## 4. Deep modules
 
