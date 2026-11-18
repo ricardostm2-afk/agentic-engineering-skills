@@ -139,3 +139,14 @@ test("facts are earned by repetition and dropped on contradiction", () => {
   assert.match(read(MEMORY, "memory-template.md"), /\*\*Seen:\*\* optional/);
   assert.match(read(TEMPLATE, "README.md"), /moves up after three sessions/);
 });
+
+test("memory is written at the end of work, indexed by situation and never pruned by age", () => {
+  const guide = read(MEMORY, "GUIDE.md");
+  const readme = read(TEMPLATE, "README.md");
+  for (const section of ["## Shape it by the questions the work repeats", "## Write at the end of a unit of work"]) assert.ok(guide.includes(`\n${section}\n`), section);
+  assert.match(guide, /what did this\s+work have to find out that the next session would have to find out again\?/);
+  assert.match(guide, /\*\*dead end\*\*/);
+  assert.match(guide, /Write the hook as the situation that should make someone open the file/);
+  assert.match(guide, /\*\*Never prune by age\.\*\*/);
+  assert.match(readme, /Never prune by age/);
+});

@@ -90,3 +90,26 @@ repeat before trusting a difference of one case.
    against regressions; it does not show the change works. Spread across repetitions is a result
    too: outputs that still vary widely after the change mean the wording does not bind yet.
    Adapted from the skill-testing guidance of `obra/superpowers` (MIT, revision `22f0b463`).
+
+## Change a skill from evidence
+
+When traces show a skill misdirecting work, treat each edit as a candidate that must beat the
+current version, not as an improvement by default:
+
+1. **Diagnose in layers.** Summarize each case run (what the agent did and where it went wrong),
+   then each full run, then consolidate across runs before editing. Raw logs are too long to compare;
+   one bad run is a clue, a failure seen across runs is a target.
+2. **One idea per candidate.** A candidate changes one thing: a step, a wording, a memory or
+   handoff design. Several ideas in one revision cannot tell you which one helped.
+3. **Judge on cases you did not diagnose from.** Keep some cases out of the diagnosis and decide on
+   those, as `agentic-code-review`'s `learning.md` does for the reviewer. A revision that fixes only
+   the cases it was written from fits them, not the next task.
+4. **The incumbent stays by default.** Most revisions lose: in Meta FAIR's study of self-improving
+   agent memory, 37 of 44 generated revisions did not beat the best earlier version, and a plausible
+   simplification fell well below it. Promote only a candidate that wins on held-out cases over
+   repeated runs (`metrics.mjs --min-runs`), and record the losers and their results in the commit
+   message so nobody retries them.
+
+Adapted from *Self-Improving Memory: Meta-Optimization and Harness Distillation for Continual
+Learning Agents* (Meta FAIR, 2026, https://facebookresearch.github.io/RAM/blogs/self_improving_memory/),
+summarized in our own words.

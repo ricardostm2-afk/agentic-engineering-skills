@@ -22,6 +22,10 @@ the agentic-skills repository.
 4. Each memory appears on exactly one index line. No orphans, no missing links.
 5. Save a fact when it repeats, not on first sight; a working fact moves up after three sessions
    (`**Seen:**` dates). Contradicted by actual output: fix or delete it now, never keep both.
+6. Write each index hook as the symptom or situation that should open the file, not the topic
+   name. Never prune by age or keep only "the latest N"; retire on contradiction or disuse.
+7. At the end of a task, ask once what the next session would have to rediscover; most times the
+   answer is nothing.
 
 ## What never goes in
 

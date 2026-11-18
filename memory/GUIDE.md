@@ -29,6 +29,41 @@ According to Claude Code's memory documentation (read in 2026-10, version 2.1):
 | 3 | One fact per file | 1 to 4 KB | on demand |
 | 4 | `history-index.md`: states that have closed | unlimited | on demand |
 
+## Shape it by the questions the work repeats
+
+The layers are a starting point, not a fixed schema. No single memory layout works best for every
+kind of work, so shape the sub-indexes around what the next session will need to look up:
+
+- Work where the same failures come back (a build, a flaky suite, an integration) gains most from a
+  sub-index that maps each **symptom** to its fix or dead end, with one file per fix.
+- Data work gains from one sub-index of facts that are slow to rediscover: units, encodings, which
+  key joins two tables, which column is the real timestamp.
+- A topic that never answers a question in practice does not need a sub-index.
+
+When notes keep growing in one file, the cure is an index from situations to files, not a longer
+file: a single append-only notes file without that index was the weakest design in the study below.
+
+## Write at the end of a unit of work
+
+Memory improves only if something writes it at the right time. When a task ends, and before a
+session closes or its context is compacted, take one short pass with one question: **what did this
+work have to find out that the next session would have to find out again?** Typical answers:
+
+- a unit, encoding or relation that took a search to establish;
+- a command, path or flag that works only in a non-obvious form (if every agent needs it, it belongs
+  in `AGENTS.md`/`CLAUDE.md`, and memory keeps only the reason);
+- a **dead end**: an approach that failed, with the symptom and why, so it is not tried again.
+
+Then file it with the rules below: a first sighting stays in the conversation unless rediscovering it
+is costly, a repeat earns a file, and a fact that one read of the obvious file answers stays out.
+Update or retire what the work contradicted in the same pass. Most passes write nothing, and that is
+an expected result, not a skipped step.
+
+The sections above and the hook and pruning rules below follow Meta FAIR's study of self-improving
+agent memory, *Self-Improving Memory: Meta-Optimization and Harness Distillation for Continual
+Learning Agents* (2026, https://facebookresearch.github.io/RAM/blogs/self_improving_memory/),
+summarized in our own words.
+
 ## The folder template
 
 `template/` is the empty folder to copy:
@@ -77,9 +112,14 @@ Related: [[another-memory]]
   project). Claude Code adds fields such as `modified` when it writes: do not add them by hand.
 - `[[name]]` links point to another memory by `name`. A link without a file is an error.
 - One fact per file. Two facts mean two files. Use full dates (`2026-10-28`), never "yesterday".
-  Do not store what code or Git already tells you (architecture, paths, fixes).
+  Do not store what code or Git already tells you (architecture, paths, a fix already committed).
+  A recurring symptom and how to clear it, or a fact that took a search across many files, is not that.
 - Each memory appears on one line of exactly one index, like this:
   `- [Title](file.md) — one-line hook`. No orphans, no missing links.
+- Write the hook as the situation that should make someone open the file (the symptom, the error
+  text, the task), not the topic name: `— export test fails only after 23:00: fixture timezone`
+  beats `— notes about exports`. The index is read to decide what to open; a topic label cannot
+  answer that.
 
 ## When a memory moves up or down
 
@@ -118,6 +158,10 @@ retired as soon as later sessions contradict it.
   they belong in Git, CI and the task, never in memory.
 - **Drop what no longer fires.** A `MEMORY.md` entry that has not changed a decision for a month
   of regular work moves down to its sub-index, so the startup block stays small.
+- **Never prune by age.** Do not cut a sub-index to "the latest N" entries or drop facts because
+  they are old: in the study, a revision that kept only the two latest fixes scored 36.6 against
+  55.7 for the indexed design it replaced. Old facts that still fire stay; move entries down or out
+  only on contradiction or when they stop changing decisions.
 
 ## What never goes in
 
