@@ -14,6 +14,8 @@ const CASES = readdirSync(EVALS, { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && !["fixtures", "results"].includes(entry.name))
   .map((entry) => entry.name);
 const GRADER_TYPES = ["regex", "tool_used", "tool_order", "file_exists", "llm", "baseline"];
+// Vocabulary that tells the agent it is being measured (evals/README.md, "Keep the case blind").
+const BLIND = /\b(evals?|evaluations?|test cases?|judges?|graders?|rubrics?|scor(?:e|es|ed|ing)|benchmarks?|experiments?|candidates?)\b/i;
 const temporary = [];
 process.on("exit", () => temporary.forEach((dir) => rmSync(dir, { recursive: true, force: true })));
 
@@ -122,6 +124,7 @@ test("there are cases, and each is a folder with prompt, case.yaml, scaffold and
     assert.match(prompt.fields.max_turns, /^\d+$/, name);
     assert.match(prompt.body.trim(), /\S/, name + ": empty prompt");
     assert.doesNotMatch(prompt.body, /agentic-|SKILL|skill/i, name + ": the prompt must not name a skill");
+    assert.doesNotMatch(prompt.body, BLIND, name + ": the prompt must read as an organic request (evals/README.md, Keep the case blind)");
     const yaml = readFileSync(path.join(dir, "case.yaml"), "utf8");
     assert.match(yaml, /^schema_version: "1\.1"$/m, name);
     assert.match(yaml, new RegExp("^name: " + name + "$", "m"), name + ": name equals the folder");
@@ -168,4 +171,11 @@ test("scaffold scripts build the repository (POSIX only)", { skip: process.platf
     if (branch) assert.equal(spawnSync("git", ["branch", "--show-current"], { cwd: work, encoding: "utf8" }).stdout.trim(), branch);
     assert.equal(spawnSync("git", ["status", "--short"], { cwd: work, encoding: "utf8" }).stdout, "", name + ": clean tree");
   }
+});
+test("blinding: the organic-prompt guard catches leaks, and scaffolds commit as an ordinary author", () => {
+  for (const leak of ["This is an eval of the fix flow.", "A judge will score the result.", "You are one candidate in a benchmark."]) assert.match(leak, BLIND, leak);
+  for (const organic of ["Compare the current path with the retained review.", "Fix the sort order and run the tests."]) assert.doesNotMatch(organic, BLIND, organic);
+  const text = readFileSync(path.join(EVALS, "fixtures", "make-repo.sh"), "utf8");
+  assert.doesNotMatch(text, /user\.name=eval|eval@example/, "make-repo.sh: git history must not name the measurement");
+  assert.match(readFileSync(path.join(EVALS, "README.md"), "utf8"), /## Keep the case blind/);
 });

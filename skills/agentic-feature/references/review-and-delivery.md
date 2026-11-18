@@ -104,7 +104,8 @@ Each trap → prevention. Check in review and whenever writing/assessing tests.
    Location, format, type/expected/layer meanings, evaluation conversion:
    `<agentic-code-review>/references/learning.md`. Only type: escaped raises track. Without project
    location put line under Needs you.
-7. **Final human message**, brief:
+7. **Final human message**, brief, in the fixed shape below; its prose follows
+   `<agentic-implement>/references/writing.md`:
 
 ```
 Done: <user-visible change, 2–4 lines>

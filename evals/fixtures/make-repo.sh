@@ -9,7 +9,7 @@ mode="${1:?mode: fix | branch}"
 overlay="${2:?overlay name}"
 message="${3:-orders-api}"
 [ -d "$here/$overlay" ] || { echo "no such overlay: $overlay" >&2; exit 2; }
-commit() { git -c user.name=eval -c user.email=eval@example.invalid commit -q -m "$1"; }
+commit() { git -c user.name=dev -c user.email=dev@example.invalid commit -q -m "$1"; }
 
 git init -q -b main
 cp -R "$here/base/." .

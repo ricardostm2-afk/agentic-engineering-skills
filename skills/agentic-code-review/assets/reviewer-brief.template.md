@@ -46,8 +46,8 @@ other mutations. <For an uncommitted-only review command: orchestrator already r
   (runtime-built name, string, enum, wrapper, schema, `REVIEW.md` consumers), live configuration
   (environment variable, flag enabled for a customer). Found use is Important; production-only
   information goes as integrator question. Deleted killswitch, permanent flag or incident path goes
-  to human with recommendation: neither finding nor approval. Also run “Silence the verifier”
-  search from `<agentic-code-review>/references/panel-and-rounds.md` §3 on diff.
+  to human with recommendation: neither finding nor approval. Also apply “Silence the verifier”
+  and “Safety fact” from `<agentic-code-review>/references/panel-and-rounds.md` §3.
 - **Spec** (written intent only): missing, unrequested, seemingly done but incomplete behavior.
   Also acceptance test required by `<agentic-code-review>/references/panel-and-rounds.md` §3 for
   fixed-point level, without reading author's tests. If writing it, run in `<review-wt>`, copy to

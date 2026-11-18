@@ -15,6 +15,11 @@
 
 Method adapted for any project, following the language declared in its `AGENTS.md`, with English as the default. Removed REA-specific rules/commands/contribution guidance. Measurement reference preserved; retains oracles, coverage, baseline, equivalent costs and authorization limits.
 
+Added 2026-11-18, outside the REA upstream: `SKILL.md` describes and points to the pruning of
+tests that guard no behavior and to the general checks on measured numbers. Both references live in
+`agentic-implement` (its pruning-tests and measurement references), whose origin
+records their sources; this folder keeps only REA-derived files.
+
 Installing this folder provides instructions and references; it does not install services, models, engines, CLI or MCP. This folder's license does not license model weights, voices, commercial tools or third-party data; it does not change the rest of the repository's license.
 
 ## How to update without losing the adaptation

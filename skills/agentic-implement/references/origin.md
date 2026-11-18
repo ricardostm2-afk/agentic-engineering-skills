@@ -37,6 +37,33 @@ From Lauren Tan's talk “All Code Is Slop (Except Mine)” (AI Engineer, 2026-1
 comment rule in `references/preferences.md` (workaround comments get fixed, constraint comments
 become checks).
 
+Since 2026-11-18 three more MIT sources are reused, at the request of the person who maintains this
+set, as ideas in our own words
+with no copied text:
+
+- `cursor/plugins` pstack, revision `93b916d4a1e806507e22f4716b352fa91f2b227e` (MIT, Copyright (c)
+  2026 Lauren Tan): `benchmark-checklist`, `principle-explain-the-number` and the perf and hillclimb
+  playbooks inform `references/measurement.md`; `unslop`, `technical-writing` and `ketchup` inform
+  `references/writing.md`; the principle skills (model the domain, boundary discipline, type-system
+  discipline, idempotent operations, separate shared state, migrate callers then delete, minimize
+  reader load) inform `references/design-defaults.md`. Left out on purpose: the rule that TDD is
+  optional when a test is expensive (step 3 keeps red first), model and vendor routing, and
+  “subtract before you add” outside the task's scope (step 4 keeps pre-existing cleanup out).
+- `caldoai/skills`, revision `d5b68dace378219890d821adb3685538e2c69b04` (MIT, Copyright (c) 2026
+  Maze): the `prune-tests` categories extend “Bad tests” in `references/tests.md` (cannot fail,
+  guards the past, copy, production code for the test) and inform `references/pruning-tests.md`,
+  the pass over existing tests that `agentic-ci-audit` enters. The upstream deletes on
+  classification alone; here every deletion carries proof, needs an explicit request and keeps
+  deliberate redundancy.
+- `obra/superpowers`, revision `22f0b463e7a5e579904dd6211a520321035526f7` (MIT, Copyright (c)
+  2025 Jesse Vincent): the test-writing reference and the debugging notes inform the change
+  detector, the mock rules, waiting for a condition, finding the polluter, the mutation check and
+  clean output in `references/tests.md`, and the check before an irreversible effect in
+  `references/design-defaults.md`. Left out on purpose: testing instruction files only through the
+  consuming agent's behavior (this repo guards skill text with tests on purpose), validation at
+  every layer (one check where data enters stays the rule) and deciding behavior ambiguities alone
+  (step 2 still returns them).
+
 ## How to update
 
 1. In an isolated checkout of each upstream, `git fetch origin main`, pin the new SHA and compare

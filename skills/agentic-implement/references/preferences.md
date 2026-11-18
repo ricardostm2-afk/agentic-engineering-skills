@@ -9,6 +9,9 @@ and overrides this file. The interface has its own source: the project's design 
 
 ## Code
 
+- When the task leaves a shape to choose (types, where a check goes, a retried or concurrent
+  operation, replacing an internal interface), use `design-defaults.md`. Existing patterns and
+  the allowed scope win over it.
 - Code serves any customer, not just the first: what varies between customers (name, domain, IP,
   tables, values) comes from data or configuration; examples use example domains. A product serving
   multiple customers breaks on the second if it hardcodes what belonged to the first.
@@ -39,6 +42,8 @@ and overrides this file. The interface has its own source: the project's design 
   `<agentic-design>/references/ui-without-slop.md`.
 - Published text serves its reader: no working notes (“From an SEO perspective…”, “Before
   publishing, …”) or unsourced statistics reach it.
+- Prose for the person supervising the work (final message, PR or commit body, documentation) has
+  its own habits in `writing.md`. They are not review findings and never change a required format.
 - Images: the filename describes what is visible, in the product's language (lowercase, hyphens,
   no accents), never the tool that generated it; `alt` describes it (on a public site, with brand
   and location); `width` and `height` match the file; crop in the file rather than `object-position`.

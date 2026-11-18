@@ -35,6 +35,23 @@ example and takes the shortest path that compiles.
 
 If the fix is structural, ship only the structural fix. The prose rule was the symptom: remove it.
 
+## When the rung is prose
+
+Match the form of the line to how the agent failed:
+
+- **Knew the rule and skipped it under pressure:** a short prohibition, plus the exact excuse it
+  gave and why that excuse does not hold.
+- **Followed the rule but produced the wrong shape:** describe what the output is, its parts in
+  order. A list of what not to write invites negotiation.
+- **Left out a required part:** a required field or slot in the template it fills, not a reminder
+  beside the template.
+- **Should act only in some cases:** key the rule to something observable (“when the brief names a
+  seam”), not a blanket rule with exceptions.
+
+Write a real exception as its own condition: “do X unless it matters” reopens the question every
+time. When a prose rule fails to stop the same mistake again, change its form before adding words.
+The forms adapt the skill-writing guidance of `obra/superpowers` (MIT, revision `22f0b463`).
+
 ## Prove and scope it
 
 - **Prove it fails on a real past mistake**: seed or replay the original error, see red, restore

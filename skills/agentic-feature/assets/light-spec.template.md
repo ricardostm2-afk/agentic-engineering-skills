@@ -71,6 +71,10 @@ Include end-to-end acceptance test, real dependency test, entry point task for U
 - [ ] Each new data value has a reader.
 - [ ] UI entry point task and end-to-end test exist.
 - [ ] Each new dependency and Newly/Limited capability is in Research line.
+- [ ] Inputs §1 does not name but users will meet (empty, huge, repeated, concurrent, malformed): the likeliest 5 at most have expected result and proving task, or sit in Out of scope. Silence is no permission to fail.
+- [ ] Names, signatures and types match between producing and consuming tasks.
+- [ ] No line leaves its decision open (“TBD”, “handle errors”, “add validation”, a name no task defines).
+- [ ] Read as implementer who cannot ask: no guess left that would change what gets built.
 
 ## 5. Agent plan
 

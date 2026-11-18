@@ -75,7 +75,12 @@ rigid heuristics: note where there is friction.
   signal is complexity concentrating in one place when shallow modules merge, rather than
   moving elsewhere;
 - **interface**: what a caller must know to use it (inputs, ordering, errors,
-  configuration), with `file:line`.
+  configuration), with `file:line`;
+- **special cases**: code inside the candidate that exists for one situation (a branch on one
+  value, a parameter one caller understands, a swallowed exception, a retry or sleep, a disabled
+  test), with `file:line`. Each is a requirement the design never accounted for. Several that share
+  a missing concept are one finding: propose the change that removes them together, not a patch
+  per case.
 
 A number you have not measured does not go in: state what remains unmeasured in the candidate.
 Classify each one's dependencies using the four categories in `references/deepening.md`.

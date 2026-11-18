@@ -92,6 +92,9 @@ or rejected choices). UI lane: absolute agentic-design path and chosen variant.
 - At phase changes (spec committed, lanes launched, lanes combined), prepare compaction/new-session
   summary: base/SHAs, briefs, owners, state, decisions, blockers, next step. Compaction rules live
   in user/project CLAUDE.md. Model does not run /compact.
+- Work that outlives one sitting (several lanes, a run reviewed after the human steps away, a
+  resumed session, a loop of attempts) keeps one append-only decision trail, each row pointing at
+  its evidence: `references/decision-trail.md`. Short tasks and one direct lane do not.
 
 **Stop lanes** (human stop after Standard notice or wrong brief): use launching agent's stop tool
 for subagent; launcher stop command (or codex exec process) for Codex. Worktrees/branches remain:
