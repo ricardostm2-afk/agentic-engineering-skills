@@ -140,7 +140,8 @@ The validator checks form, not truth; truth belongs to step 4.
 
 - Every Important gets a response: **fixed** (commit and passing proof), **wrong** (contradicting
   `file:line`, or “not reproduced” with the attempt), **intentional** (where decided) or
-  **does not matter** (why).
+  **does not matter** (why). PR and bot comments get the same responses after the checks in
+  panel §8.
 - Fixing is outside this skill: Important findings go to the author (the agent who made the change,
   or a fix session, which is authorship). If the human asks you to fix, you become that fix's author
   and the next round reviews it.
@@ -199,6 +200,7 @@ An open Important or “Direction” goes first.
 | File | When |
 |---|---|
 | `references/layers.md` | explaining where review fits, or when the human asks what it misses |
+| `references/blast-radius.md` | “What could this break?” asked alone, or the safety fact of a Complete change |
 | `references/risk-levels.md` | step 1, every round |
 | `references/panel-and-rounds.md` | steps 0, 2–6 |
 | `references/review-md.md` | writing or reviewing `REVIEW.md`, or a repeated finding |

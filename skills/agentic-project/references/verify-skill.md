@@ -56,6 +56,23 @@ It is the smoke-test harness that every user-visible change passes through, so t
 - Prune rows for features that no longer exist, in the same change that removes the feature.
   A change that adds a user-facing feature adds its row in the same change.
 
+## Upkeep pass
+
+A feature map drifts as the application changes. On request, or when a run finds the map wrong,
+do one pass and name its outcome: **clean** (every row driven, nothing to change), **changed** (one
+change with proven corrections) or **blocked** (what stopped it).
+
+- Edit only the verify skill's own folder. A row describing behavior the application no longer has
+  is either map drift (fix the row) or a product regression (report it; never reword the map to
+  hide it).
+- Drive every row live at least once, with the doctor before the first drive and again after any
+  failed one. A row that cannot be reached counts only with its concrete missing prerequisite
+  (account, entitlement, platform, external state) and the route tried; a prerequisite the map
+  omitted is drift.
+- Re-drive any helper or row you corrected before the change ships.
+
+The upkeep pass adapts the `maintain-verification-skill` idea of `cursor/plugins` pstack (MIT).
+
 ## How the other skills use it
 
 - `agentic-implement` and `agentic-fix` writers run the affected rows before committing a

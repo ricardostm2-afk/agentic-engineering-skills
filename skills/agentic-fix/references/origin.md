@@ -21,6 +21,12 @@ An original skill from this repo. The method incorporates adapted material from 
     `How to undo`, escaped defects become evaluation cases;
   - OpenAI, [Maintaining software with the GPT-6 family](https://developers.openai.com/blog/maintaining-software-with-the-gpt-6-family):
     evidence from multiple sources, indirect uses, safeguards escalate to the human.
+- Since 2026-11-18, at the request of the person who maintains this set, ideas only and in our
+  own words: `obra/superpowers`, revision
+  `22f0b463e7a5e579904dd6211a520321035526f7` (MIT, Copyright (c) 2025 Jesse Vincent). Its
+  `systematic-debugging` skill informs the working twin, tracing a bad value back to where it was
+  produced, one logged run across a chain of components and the structural stop in
+  `references/diagnosis.md`.
 
 
 ## Local adaptation

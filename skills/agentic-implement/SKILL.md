@@ -58,7 +58,8 @@ and see it red for the right reason. Seam, interface and module, here and in the
 Work in **vertical slices**: one test, the minimum implementation to turn it green, then the next.
 Good tests, bad ones to avoid, property, differential and flaky tests, timeouts and
 child processes, and proving a forced red: `references/tests.md`. In a refactor task (structure changes, behavior does not), there is no new red:
-follow “Refactor” in `references/tests.md`, with its own completion criterion.
+follow “Refactor” in `references/tests.md`, with its own completion criterion. A measured number
+(faster, smaller, a score) follows `references/measurement.md`.
 
 Done when the test runs red and the failure shows the missing behavior rather than a setup error.
 

@@ -16,6 +16,7 @@ Review <reviewed-sha> · <level> · [lens <lens> · ]round <n>/<limit> · <i> Im
 Pre-existing: <file:line · class; …> | none
 Not confirmed: <file:line · why; …>      ← only if verifier gave no verdict
 Acceptance test: <what it tests · file path or description>   ← spec lens
+Safe because: <fact — rung and proof> | unproven — <what is missing>   ← correctness lens, when panel §3 asks
 Direction: <challenge to approved approach>     ← only if present; not a finding
 Level: <file:line requiring more than assigned level>   ← only if present
 Not read: <what and why> | nothing
@@ -35,6 +36,8 @@ Not read: <what and why> | nothing
 - **Pre-existing**: one line, semicolon-separated items. Outside backlog and this fix.
 - **Acceptance test** (spec lens): what it tests, file path or description, per
   `<skill>/references/panel-and-rounds.md` §3.
+- **Safe because** (correctness lens): the fact the change's safety rests on and how far its proof
+  got, per `<skill>/references/blast-radius.md`. `unproven` is a limit to report, not a finding.
 - Labels: only `[Important]` and `[Nit]`. Style and formatting are not findings.
 
 ## Examples
@@ -44,12 +47,13 @@ One lens, with findings:
 ```text example
 Review 9f3c2ab · Complete · lens correctness · round 1/2 · 2 Important · 1 Nit · 1 Pre-existing
 
-[Important] api/src/routes/orders.ts:142 — another organization's id returns 403 instead of 404, confirming the order exists — reproduce: npm test -- orders.isolation (red on 9f3c2ab) — class: error reveals another organization's resource
+[Important] api/src/routes/orders.ts:142 — another organization's id returns 403 instead of 404, confirming the order exists — reproduce: ran: npm test -- orders.isolation (red on 9f3c2ab) — class: error reveals another organization's resource
 [Important] docs/RUNBOOK.md:57 — instructs running scripts/migrate.sh, deleted by this change — reproduce: absent: scripts/migrate.sh (git ls-tree 9f3c2ab) — class: lying doc
 [Nit] api/src/routes/orders.ts:9 — unused import
 
 Pre-existing: api/src/lib/dates.ts:30 · fixed timezone
 Acceptance test: request with another organization's id is refused · <tmp>/acceptance-orders/isolation.test.ts
+Safe because: only the lookup's error path changed, and no other route calls it — read: api/src/routes/index.ts:31 (git grep getOrder: 1 caller)
 Not read: nothing
 ```
 

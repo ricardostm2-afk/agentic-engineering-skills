@@ -94,7 +94,9 @@ have misdirected an agent or caused excess work in recent sessions:
 3. compare result quality, behavior, tool calls, tokens, time and cost. One run each is a clue,
    not a measurement: repeat when differences are small.
 
-Keep the winner; put comparison in commit message.
+Keep the winner; put comparison in commit message. Both runs get the task as a user would type it:
+neither is told a comparison is happening or what is being varied, and the result is judged from
+the trace and the work, not from what the run says it followed.
 
 ## Model and effort
 
@@ -133,7 +135,9 @@ a human in it, check and report:
   green 3 times in a row on a clean tree, and the loop runs the same gates as a human change;
 - repeated mistake classes are encoded as checks (“Fix at the source” above), not left as prose;
 - the revert rate is measured, with counts, and the loop's own changes are counted in it;
-- the loop has a stop: a cap on changes per run and a rule that pauses it when its reverts rise.
+- the loop has a stop: a cap on changes per run and a rule that pauses it when its reverts rise;
+- each run leaves a decision trail a human can audit afterwards, one row per attempt with its
+  evidence (`<agentic-feature>/references/decision-trail.md`).
 
 Any gap is the first work item, not a reason to skip the loop silently. Turning on the loop, or
 lowering the review level for its changes, remains the user's decision.

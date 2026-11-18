@@ -47,7 +47,7 @@ Bound the process family and retained state, not just parent heap or worker coun
 
 ## Compare equivalent completions
 
-Run the real public workflow before/after with equivalent inputs, results, coverage and evidence semantics. Include small cases, distinguish cold sessions, runtime caches and OS caches; alternate/repeat when variance changes the decision. A fake engine does not qualify the real provider.
+Run the real public workflow before/after with equivalent inputs, results, coverage and evidence semantics. Include small cases, distinguish cold sessions, runtime caches and OS caches; alternate/repeat when variance changes the decision. A fake engine does not qualify the real provider. General checks on any measured number (limiter, errors, work really done): `<agentic-implement>/references/measurement.md` (sibling: `$AGENTIC_IMPLEMENT_DIR` first, then as `<agentic-project>`).
 
 Report results, phase timings, total time/CPU, process-family peak and accounting method, limit stops and cleanup. Summed RSS may count shared memory more than once. Check payload and profiler exit statuses; retain failed attempts and unmeasured costs.
 

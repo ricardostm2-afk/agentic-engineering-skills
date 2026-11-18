@@ -2,8 +2,9 @@
 name: agentic-ci-audit
 description: >-
   Audits test suites and CI pipelines for false greens, missing test discovery, stale fixtures, invalid
-  caches and measured waste. Use for suite reliability or cost audits; use agentic-fix for one failing
-  test and normal project checks for feature validation.
+  caches and measured waste, and prunes tests that guard no behavior. Use for suite reliability, cost
+  audits or a requested test pruning; use agentic-fix for one failing test and normal project checks
+  for feature validation.
 ---
 
 # CI and test audit
@@ -32,7 +33,7 @@ For each candidate, identify expected behavior, producer and consumers. Build a 
 
 - **Divergent fixture:** compare admission assumptions, versions, protocol responses and real entrypoints. Preserve deliberately invalid fixtures and the rejection they are meant to test; look for other instances in the family.
 - **Suspicious green:** inject a controlled failure or perturb the implementation in an isolated copy. The existing test/gate must detect it. A self-confirming mock, abandoned module or lost exit code can manufacture green. Restore mutations at the end.
-- **Shared setup or pruning:** map every distinct assertion to the retained scenario, including identity, permissions, cancellation, cleanup, limits and relevant concurrency. Fewer cases or a weaker oracle are not acceleration.
+- **Shared setup or pruning:** map every distinct assertion to the retained scenario, including identity, permissions, cancellation, cleanup, limits and relevant concurrency. Fewer cases or a weaker oracle are not acceleration. Removing tests that guard no behavior follows `<agentic-implement>/references/pruning-tests.md`, and any measured number `<agentic-implement>/references/measurement.md` (sibling: `$AGENTIC_IMPLEMENT_DIR` first, then as `<agentic-project>`).
 - **External integration:** separate fake producer, real boundary and real service/engine. A simulated browser or fake driver does not prove the installed provider. Distinguish allowed skips from unmet mandatory prerequisites.
 
 Classify as reproduced defect, demonstrated cost, hypothesis or unavailable evidence. Keep command/output/exit status, expected result, scope and competing explanations. A baseline failure may be pre-existing and still relevant to the audit; do not attribute it to the PR merely by similarity.

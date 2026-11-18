@@ -12,7 +12,8 @@ look and what evidence justifies each change, and deliver small cleanups for rev
 or a scheduled task without that request. Project request-only audit rules (`AGENTS.md`,
 `REVIEW.md`, decisions) override any trigger here.
 
-Suite or CI audits, including flaky and slow tests, enter through `agentic-ci-audit`.
+Suite or CI audits, including flaky and slow tests and pruning tests that guard no behavior, enter
+through `agentic-ci-audit`.
 The criteria below for those cases guide review of the resulting diff; they do not activate maintenance.
 
 ## Rules (preventing false positives)

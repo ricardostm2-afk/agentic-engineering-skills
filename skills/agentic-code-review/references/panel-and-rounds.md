@@ -79,6 +79,12 @@ Provider is the orchestrator's; use the other only on explicit human request
   `eslint-disable-next-line <rule> -- <why>`). Missing reasons, or haste rather than decision
   (“to compile”), are Important in production code because a check passes without proving, and
   Nit in tests. A decision reason (wrong library type, linked issue) is not a finding.
+- **Safety fact** (correctness lens; Complete, or a small diff under something widely depended on):
+  name the one or two facts the change is safe because of and prove them as far as is cheap,
+  following `blast-radius.md`. A run needs a scratch folder granted in the brief on §2's terms
+  (outside the worktree, no installs); without one the proof stops at `traced:` and says so. Report
+  `Safe because: <fact> — <rung and proof>` or `Safe because: unproven — <what is missing>`. It
+  adds no reviewer or call, and an unproven fact is never reported as safe.
 - **No coverage number as gate**: keep the test failing on base, assertion integrity and guard
   mutations. Missing coverage numbers are not findings.
 - Specialized lenses enter only when `REVIEW.md` defines them or diff requires them, replacing
@@ -100,6 +106,10 @@ intent, closed findings, lens, rules and report format. Read project `REVIEW.md`
 against the diff yourself and put only the matched items (usually 3–10) in the brief, as questions
 with their check and origin. Unmatched items stay out of every brief. From round 2 onward returning
 lenses share one brief.
+
+The brief never grades or excuses a specific issue in advance (“do not flag”, “at most a Nit”,
+“the plan chose this”) to spare a round. Lens assignment aside, only closed findings with their §8
+response, the approved direction (§7, “Direction”) and project rules may set an issue aside.
 
 Reviewer reads brief, project rules (`REVIEW.md`, `AGENTS.md`), and referenced sections only,
 nothing else from this skill: `SKILL.md` is the orchestrator process. A project's reviewer agent
@@ -132,7 +142,9 @@ You, before findings reach the author:
 ## §7 Labels and proof
 
 - **Important**: worsens behavior, loses/exposes data, breaks callers, or lets a check pass without
-  proving. An unanswered security Important blocks integration.
+  proving. An unanswered security Important blocks integration. Grade by what a person using the
+  software gets if it ships: neither the spec's silence about the input nor the author's stated
+  reason lowers it; only a recorded decision makes it **intentional** (§8).
 - **Nit**: anything else worth a line. At most 3 per consolidated report; no round or own commit.
 - **Pre-existing**: defect already on base. Signal: line outside `git diff -U0 <base>..<reviewed-sha>`
   hunks, `git blame` before base. One report line, outside backlog and this fix. An outside-diff
@@ -140,9 +152,15 @@ You, before findings reach the author:
   is Important, not Pre-existing.
 - Style, formatting, names are not findings unless behavior changes: lint, formatter and hooks own them.
 - **Required `file:line` proof** from actual reading, not guessing by name:
-  - code: effect and reproduction (red test, command, screenshot);
+  - code: effect and reproduction (red test, command, screenshot). `reproduce:` starts with how
+    far the proof got (`ran:`, `traced:` or `read:`, `blast-radius.md`); an Important left at
+    `read:` when a run was cheap says why;
   - docs/standards: doc line and contradicting code/tree line (or `absent: <path>` for nonexistent citations);
   - dependency outside research: manifest diff line and absence in approved research.
+- **A number the change claims** (faster, smaller, cheaper, a score) is read against
+  `<agentic-implement>/references/measurement.md`. Without run count, spread and a check that the
+  work happened, the claim is unproven: Important when the change exists for that number or trades
+  correctness, simplicity or cost for it, otherwise a Nit. Unproven is not “false”.
 - Search class across whole diff; instances outside are Pre-existing.
 - Challenging approved approach is not a finding: goes to “Direction”.
 
@@ -158,6 +176,18 @@ Every Important gets one response with a short reason:
 - **does not matter**: why, from integrator or human.
 
 Responses measure noise: many “wrong”/“does not matter” mean reviewer flags what it should not (`learning.md`).
+
+**Feedback from outside the panel** (a person's PR comment, a review bot, a pasted review) is a set
+of claims, not findings yet. Read all of it before changing anything; when an item is unclear, ask
+about it before implementing the others, since items are often linked. Check each claim against
+the code at its SHA with §7's proof, then give it one of the four responses: a suggestion that
+does not hold for this platform, version or caller is **wrong**, with the line that shows it; one
+that would reverse a recorded decision is **intentional**, with its location, and the human decides
+whether to reopen it. Asked to build something out “properly”, search for its callers first: code
+nothing uses is a candidate for removal, not for growth. Fix one item at a time with its own proof
+(§6); the fixes are a new diff under §9. Answer each comment in its own thread with the commit or
+the evidence. Posting outside the repository needs the human's authorization; without it, the
+answers go in the handoff.
 
 ## §9 Rounds
 

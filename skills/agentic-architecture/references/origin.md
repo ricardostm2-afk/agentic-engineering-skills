@@ -74,6 +74,11 @@ Codex, and `agentic-implement` and `agentic-feature` point to the vocabulary.
   [“Cheap code, precious trust”](https://commandline.microsoft.com/agentic-software-engineering-large-scale-code-migration-language-modernization-spec-driven-development/)
   (Command Line, 2026-10-26), and pinning behavior before refactoring in
   `unclebob/ub-mode`, revision `57a8bdd28`, which has no license).
+- Assessment counts special cases inside a candidate (a branch on one value, a parameter for one
+  caller, a swallowed exception, a retry or sleep, a disabled test) as evidence of a missing
+  concept: an idea from the `untangle-codebase` skill of `caldoai/skills`, revision `d5b68dac`
+  (MIT, Copyright (c) 2026 Maze), in our own words. Its whole-codebase single pass was left out:
+  here a candidate is assessed with evidence and executed through `agentic-feature`.
 - Glossary and ADRs: formats follow `agentic-project` (`GLOSSARY.md`, ADRs in `docs/adr/`);
   the plugin's `domain-modeling` remains optional.
 

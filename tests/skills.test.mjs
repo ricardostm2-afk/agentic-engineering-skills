@@ -781,3 +781,122 @@ test("agentic-explain answers short questions in text and builds interactive pag
   assert.match(pages, /`textContent`, never `innerHTML`/);
   assert.match(pages, /Without a browser, say the page was \*\*not seen\*\*/);
 });
+
+test("measured claims: one reference owns the checks and the siblings point to it", () => {
+  const text = read("agentic-implement", "references", "measurement.md").replace(/\s+/g, " ");
+  assert.match(text, /What limits it\?[^]*run the way it ships[^]*physically possible[^]*Did it fail\?[^]*Does it repeat\?[^]*Does it matter\?[^]*Did the work happen\?/);
+  assert.match(text, /One change, one measurement, keep or revert in full/);
+  assert.match(text, /The verdict is \*\*inconclusive\*\*/);
+  assert.match(read("agentic-implement", "SKILL.md"), /references\/measurement\.md/);
+  assert.match(read("agentic-fix", "references", "diagnosis.md"), /<agentic-implement>\/references\/measurement\.md/);
+  assert.match(read("agentic-analysis-optimization", "SKILL.md"), /<agentic-implement>\/references\/measurement\.md/);
+  assert.match(read("agentic-ci-audit", "SKILL.md"), /<agentic-implement>\/references\/measurement\.md/);
+  const proof = section(read("agentic-code-review", "references", "panel-and-rounds.md"), "## §7 ").replace(/\s+/g, " ");
+  assert.match(proof, /A number the change claims[^]*the claim is unproven[^]*Unproven is not “false”/);
+});
+test("agentic-code-review: the safety fact is proven by rung without adding a reviewer", () => {
+  const ref = read("agentic-code-review", "references", "blast-radius.md").replace(/\s+/g, " ");
+  assert.match(ref, /\*\*stated\*\*[^]*\*\*read\*\*[^]*\*\*traced\*\*[^]*\*\*ran\*\*[^]*\*\*reproduced\*\*/);
+  assert.match(ref, /adds no reviewer, round or call/);
+  assert.match(ref, /nothing installed/);
+  const lenses = section(read("agentic-code-review", "references", "panel-and-rounds.md"), "## §3 ").replace(/\s+/g, " ");
+  assert.match(lenses, /\*\*Safety fact\*\*[^]*blast-radius\.md[^]*an unproven fact is never reported as safe/);
+  assert.match(read("agentic-code-review", "assets", "report.template.md"), /^Safe because: /m);
+  assert.match(read("agentic-code-review", "assets", "reviewer-brief.template.md"), /“Safety fact”/);
+  assert.match(read("agentic-code-review", "SKILL.md"), /references\/blast-radius\.md/);
+});
+test("pruning tests needs a request and proof per deletion, and has one home", () => {
+  const ref = read("agentic-implement", "references", "pruning-tests.md").replace(/\s+/g, " ");
+  assert.match(ref, /Only on an explicit human request/);
+  assert.match(ref, /Deleting a test is not a way to turn a task green/);
+  assert.match(ref, /\*\*The past\*\*[^]*\*\*Nothing\*\*[^]*\*\*The implementation\*\*[^]*\*\*Another test's behavior\*\*/);
+  assert.match(ref, /A deletion without proof is a silenced check/);
+  assert.match(ref, /Deliberately redundant coverage is kept/);
+  assert.ok(!existsSync(path.join(SKILLS, "agentic-ci-audit", "references", "pruning-tests.md")), "ci-audit keeps only upstream-derived files");
+  assert.match(read("agentic-ci-audit", "SKILL.md"), /<agentic-implement>\/references\/pruning-tests\.md/);
+  assert.match(readFrontmatter(read("agentic-ci-audit", "SKILL.md")).fields.description, /prunes tests that guard no behavior/);
+  const bad = section(read("agentic-implement", "references", "tests.md"), "## Bad tests").replace(/\s+/g, " ");
+  assert.match(bad, /\*\*Cannot fail\*\*[^]*\*\*Guards the past\*\*[^]*\*\*Copy\*\*[^]*\*\*Production code for the test\*\*/);
+  assert.match(bad, /Never delete a test to turn the current task green/);
+  assert.match(read("agentic-code-review", "references", "maintenance.md").replace(/\s+/g, " "), /pruning tests that guard no behavior, enter through \x60agentic-ci-audit\x60/);
+});
+test("agentic-architecture: special cases inside a candidate count as one finding", () => {
+  const measure = read("agentic-architecture", "SKILL.md").replace(/\s+/g, " ");
+  assert.match(measure, /\*\*special cases\*\*: code inside the candidate[^]*a requirement the design never accounted for[^]*not a patch per case/);
+  assert.match(read("agentic-architecture", "references", "origin.md"), /untangle-codebase/);
+});
+test("long work keeps one append-only decision trail; short work keeps none", () => {
+  const ref = read("agentic-feature", "references", "decision-trail.md").replace(/\s+/g, " ");
+  assert.match(ref, /A short task or one direct lane does not keep a trail/);
+  assert.match(ref, /\*\*Append only\.\*\*/);
+  assert.match(ref, /\*\*The orchestrator owns the file\.\*\*/);
+  assert.match(ref, /do not keep two/);
+  assert.match(ref, /does not count as review/);
+  assert.match(read("agentic-feature", "references", "implementation.md"), /references\/decision-trail\.md/);
+  assert.match(read("agentic-code-review", "references", "learning.md"), /<agentic-feature>\/references\/decision-trail\.md/);
+});
+test("writing habits and design defaults never override formats, scope or review rules", () => {
+  const writing = read("agentic-implement", "references", "writing.md").replace(/\s+/g, " ");
+  assert.match(writing, /never override a format a template or the project defines/);
+  assert.match(writing, /A reviewer does not raise them as findings/);
+  const defaults = read("agentic-implement", "references", "design-defaults.md").replace(/\s+/g, " ");
+  assert.match(defaults, /none of them is a reason to widen the diff/);
+  assert.match(defaults, /the brief and project rules, then the surrounding code's established pattern, then these defaults/);
+  const prefs = read("agentic-implement", "references", "preferences.md");
+  assert.match(prefs, /design-defaults\.md/);
+  assert.match(prefs, /writing\.md/);
+  const origin = read("agentic-implement", "references", "origin.md");
+  for (const source of ["93b916d4a1e806507e22f4716b352fa91f2b227e", "d5b68dace378219890d821adb3685538e2c69b04", "Lauren Tan", "Maze"]) assert.ok(origin.includes(source), source);
+});
+test("small pstack additions: refuted hypotheses are reverted, probes settle forks, verify has an upkeep pass", () => {
+  assert.match(read("agentic-fix", "references", "diagnosis.md").replace(/\s+/g, " "), /every change made for a hypothesis that was refuted is reverted/);
+  assert.match(read("agentic-feature", "references", "questions.md").replace(/\s+/g, " "), /A fork a run can settle[^]*The probe never integrates/);
+  const upkeep = section(read("agentic-project", "references", "verify-skill.md"), "## Upkeep pass").replace(/\s+/g, " ");
+  assert.match(upkeep, /\*\*clean\*\*[^]*\*\*changed\*\*[^]*\*\*blocked\*\*/);
+  assert.match(upkeep, /never reword the map to hide it/);
+  assert.match(read("agentic-code-review", "references", "learning.md").replace(/\s+/g, " "), /neither is told a comparison is happening/);
+});
+test("superpowers additions keep their limits: one boundary check, no pre-graded briefs, outside feedback verified", () => {
+  const flat = (...parts) => read(...parts).replace(/\s+/g, " ");
+  const tests = flat("agentic-implement", "references", "tests.md");
+  assert.match(section(read("agentic-implement", "references", "tests.md"), "## Bad tests"), /\*\*Change detector\*\*[^]*are behavior, and pinning them is right/);
+  assert.match(tests, /\*\*Wait for the condition, not a duration\.\*\*[^]*\*\*Find the polluter\.\*\*/);
+  assert.match(tests, /\*\*Mutation check\*\* before handing back[^]*name the gap in the handoff/);
+  assert.match(flat("agentic-implement", "references", "pruning-tests.md"), /a change detector, \x60tests\.md\x60/);
+  const defaults = flat("agentic-implement", "references", "design-defaults.md");
+  assert.match(defaults, /Inside, pass the parsed type and do not re-check it/);
+  assert.match(defaults, /checks its own precondition again right before the effect[^]*the caller that passed the bad value still gets fixed/);
+  const diagnosis = flat("agentic-fix", "references", "diagnosis.md");
+  assert.match(diagnosis, /a working twin[^]*List every difference/);
+  assert.match(diagnosis, /\*\*Trace the bad value back\.\*\*/);
+  assert.match(diagnosis, /never its value/);
+  assert.match(diagnosis, /the cause is structural \(step 4 of \x60agentic-fix\x60\)/);
+  const panel = read("agentic-code-review", "references", "panel-and-rounds.md");
+  assert.match(section(panel, "## §4 "), /never grades or excuses a specific issue in advance[^]*only closed findings with their §8 response, the approved direction/);
+  assert.match(section(panel, "## §7 "), /neither the spec's silence about the input nor the author's stated reason lowers it/);
+  const outside = section(panel, "## §8 ");
+  assert.match(outside, /\*\*Feedback from outside the panel\*\*[^]*not findings yet[^]*the fixes are a new diff under §9/);
+  assert.match(outside, /Posting outside the repository needs the human's authorization/);
+  assert.match(flat("agentic-code-review", "SKILL.md"), /PR and bot comments get the same responses after the checks in panel §8/);
+  assert.match(flat("agentic-code-review", "references", "encode-corrections.md"), /## When the rung is prose[^]*Write a real exception as its own condition/);
+  assert.match(flat("agentic-feature", "assets", "light-spec.template.md"), /Silence is no permission to fail/);
+  assert.match(flat("agentic-feature", "references", "decision-trail.md"), /also what it costs if wrong[^]*trust the trail and \x60git log\x60 over your recollection/);
+  for (const skill of ["agentic-implement", "agentic-fix"]) {
+    const origin = read(skill, "references", "origin.md");
+    for (const source of ["22f0b463e7a5e579904dd6211a520321035526f7", "Jesse Vincent"]) assert.ok(origin.includes(source), `${skill}: ${source}`);
+  }
+});
+test("CREDITS.md names the revision, holder and skills of each idea source reused in references", () => {
+  const rows = readFileSync(path.join(ROOT, "CREDITS.md"), "utf8").split("\n## Ideas from other sources")[1].split("\n## ")[0].split("\n");
+  const sources = [
+    ["cursor/plugins", "93b916d4a1e806507e22f4716b352fa91f2b227e", "Lauren Tan", ["agentic-implement", "agentic-code-review", "agentic-feature"]],
+    ["caldoai/skills", "d5b68dace378219890d821adb3685538e2c69b04", "Maze", ["agentic-implement", "agentic-architecture"]],
+    ["obra/superpowers", "22f0b463e7a5e579904dd6211a520321035526f7", "Jesse Vincent", ["agentic-implement", "agentic-fix", "agentic-code-review", "agentic-feature"]],
+  ];
+  for (const [repo, sha, holder, skills] of sources) {
+    const row = rows.find((line) => line.includes(repo) && line.includes(sha));
+    assert.ok(row, `${repo} ${sha}`);
+    assert.ok(row.includes(holder), `${repo}: ${holder}`);
+    for (const skill of skills) assert.ok(row.includes("\x60" + skill + "\x60"), `${repo}: ${skill}`);
+  }
+});

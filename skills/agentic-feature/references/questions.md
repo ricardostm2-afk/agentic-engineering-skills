@@ -14,6 +14,9 @@ frontier (1/2 below). Ignore other formatting: recommendation precedes question,
    are resolved: only these may be asked now.
 2. **Facts are yours, decisions theirs.** Answers in code, docs, data, Reading: look (or delegate)
    instead of asking. Ask only choices: priority, tradeoff, desired behavior, acceptable risk.
+   A fork a run can settle (which approach holds, whether the library handles the case, a timing)
+   is a fact too: build the smallest throwaway probe outside production source, observe, and bring
+   the result as the recommendation. The probe never integrates.
 3. **Question format**: decision title; 1–2-line context citing Reading fact; 2–4 concrete mutually
    exclusive options; **recommendation** first with why. Make “yes” accept recommendation.
 4. **Delivery**: up to 4 independent questions at a time; sequential if one answer changes another.
@@ -106,6 +109,7 @@ Invent concrete domain scenarios; do not ask “what about edge cases?”.
 |---|---|
 | In 2 weeks, how know it worked? | Existing measurable observation (count, event, time) or question to specific user. |
 | Which passing acceptance test reassures you? | End-to-end user-language scenario with distinguishing data. |
+| What would make it a failure even if it works as specified? | The harm to avoid (slower checkout, more support tickets, a broken habit) and the observation that would show it. |
 
 ### Out of scope
 
